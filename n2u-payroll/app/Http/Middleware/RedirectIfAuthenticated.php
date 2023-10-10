@@ -7,20 +7,32 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\User;
 
 class RedirectIfAuthenticated
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  string|null  ...$guards
+     * @return mixed
      */
-    public function handle(Request $request, Closure $next, string ...$guards): Response
+    
+    public function handle(Request $request, Closure $next, string ...$guards)
     {
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                $user = Auth::user();
+                $role = $user->role;
+                if($role == 'member') {
+                    return redirect()->route('indexs');
+                } elseif ($role == 'admin') {
+                    return redirect()->route('admindashboard');
+                }
                 return redirect(RouteServiceProvider::HOME);
             }
         }

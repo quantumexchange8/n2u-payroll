@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RecordController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +39,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/clock_in', [RecordController::class, 'clock_in'])->name('clock_in');
     
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('admin/dashboard', [AdminController::class, 'Admindashboard'])->name('admindashboard');
 });

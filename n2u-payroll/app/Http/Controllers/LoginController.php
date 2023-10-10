@@ -45,8 +45,15 @@ class LoginController extends Controller
         ];
     
         if (Auth::attempt($credentials)) {
-            // Authentication successful, redirect to the desired page
-            return redirect('dashboard');
+            // Authentication successful, get the authenticated user
+            $user = Auth::user();
+    
+            // Check the user's role and redirect accordingly
+            if ($user->role === 'member') {
+                return redirect()->route('index'); // Redirect to member dashboard
+            } elseif ($user->role === 'admin') {
+                return redirect()->route('admindashboard'); // Redirect to admin dashboard
+            }
         } else {
             // Authentication failed, show an error message
             return redirect()->back()
