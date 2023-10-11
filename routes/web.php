@@ -19,11 +19,7 @@ use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return view('auth.login');
-})->name('login');
-
-
-
-// Route::get('index', Controller::class, 'dashboard')->name('index');
+});
 
 Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/login_post', [LoginController::class, 'login_post'])->name('login_post');
