@@ -42,7 +42,7 @@
         <header class="header white-bg fixed-top d-flex align-content-center flex-wrap">
             <!-- Logo -->
             <div class="logo" style="display: flex;justify-content:center">
-                <a href="{{ route('index') }}" class="default-logo"><img src="assets/img/logo-02.png" alt="" style="width: 160px;"></a>
+                <a href="{{ route('index') }}" class="default-logo"><img src="/assets/img/logo-02.png" alt="" style="width: 160px;"></a>
                 {{-- <a href="../../index.html" class="mobile-logo"><img src="../../assets/img/mobile-logo.png" alt=""></a> --}}
             </div>
             <!-- End Logo -->
@@ -315,6 +315,12 @@
                                <span class="link-title">Dashboard</span>
                             </a>
                          </li>
+                         <li>
+                            <a href="{{ route('employee') }}">
+                                <i class="icofont-worker"></i>
+                                <span class="link-title">Employee</span>
+                             </a>
+                        </li>
                         {{-- <li>
                             <a href="#">
                                 <i class="icofont-shopping-cart"></i>
@@ -739,49 +745,30 @@
                                     <table class="text-nowrap hoverable dh-table">
                                         <thead>
                                             <tr>
+                                                <th>Employee ID</th>
                                                 <th>Name</th>
-                                                <th>Amount</th>
                                                 <th>Date</th>
-                                                <th>Tag</th>
-                                                <th>Actions</th>
+                                                <th>Time</th>
+                                                {{-- <th>Actions</th> --}}
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
+                                            {{-- <tr>
                                                 <td>Christine McDonald</td>
                                                 <td>$1564.32</td>
                                                 <td>26 November 2019</td>
                                                 <td>UX Solutions</td>
                                                 <td><a href="invoice-details.html" class="details-btn">View Details <i class="icofont-arrow-right"></i></a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Christine McDonald</td>
-                                                <td>$1564.32</td>
-                                                <td>26 November 2019</td>
-                                                <td>Branding</td>
-                                                <td><a href="invoice-details.html" class="details-btn">View Details <i class="icofont-arrow-right"></i></a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Christine McDonald</td>
-                                                <td>$1564.32</td>
-                                                <td>26 November 2019</td>
-                                                <td>UX Solutions</td>
-                                                <td><a href="invoice-details.html" class="details-btn">View Details <i class="icofont-arrow-right"></i></a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Christine McDonald</td>
-                                                <td>$1564.32</td>
-                                                <td>26 November 2019</td>
-                                                <td>UX Solutions</td>
-                                                <td><a href="invoice-details.html" class="details-btn">View Details <i class="icofont-arrow-right"></i></a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Christine McDonald</td>
-                                                <td>$1564.32</td>
-                                                <td>26 November 2019</td>
-                                                <td>UX Solutions</td>
-                                                <td><a href="invoice-details.html" class="details-btn">View Details <i class="icofont-arrow-right"></i></a></td>
-                                            </tr>
+                                            </tr> --}}
+                                            @foreach ($punchRecords as $punchRecord)
+                                                <tr>
+                                                    <td>{{$punchRecord->employee_id}}</td>
+                                                    <td>{{$punchRecord->users->name}}</td>
+                                                    <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toDateString() }}</td>
+                                                    <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toTimeString() }}</td>
+                                                </tr>
+                                            @endforeach
+                                        
                                         </tbody>
                                     </table>
                                     <!-- End Invoice List Table -->

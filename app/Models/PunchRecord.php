@@ -12,4 +12,12 @@ class PunchRecord extends Model
     protected $fillable = [
         'employee_id'
     ];
+
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'employee_id', 'employee_id');
+    }
+
+
 }

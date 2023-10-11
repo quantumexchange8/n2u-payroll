@@ -41,4 +41,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::get('admin/dashboard', [AdminController::class, 'Admindashboard'])->name('admindashboard');
+
+    Route::get('admin/employee', [AdminController::class, 'employee'])->name('employee');
+    Route::post('admin/addEmployee', [AdminController::class, 'addEmployee'])->name('addEmployee');
 });
