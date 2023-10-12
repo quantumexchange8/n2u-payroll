@@ -149,29 +149,46 @@
                             <span class="link-title">Dashboard</span>
                         </a>
                     </li>
-                    <li class="active">
-                        <a href="{{ route('employee') }}">
-                           <i class="icofont-worker"></i>
-                           <span class="link-title">Employee</span>
+                    {{-- <li class="active">
+                        <a href="{{ route('createEmployee') }}">
+                            <i class="icofont-worker"></i>
+                            <span class="link-title">Employee</span>
                         </a>
-                     </li>
-                    {{-- <li>
+                    </li> --}}
+                    <li>
                         <a href="#">
-                            <i class="icofont-shopping-cart"></i>
-                            <span class="link-title">Ecommerce</span>
+                            <i class="icofont-worker"></i>
+                            <span class="link-title">Employee</span>
                         </a>
-
+                    
                         <!-- Sub Menu -->
                         <ul class="nav sub-menu">
-                            <li><a href="../ecommerce/ecommerce.html">Dashboard 1</a></li>
-                            <li><a href="../ecommerce/ecommerce2.html">dashboard 2</a></li>
-                            <li><a href="../ecommerce/orders.html">orders</a></li>
-                            <li><a href="../ecommerce/product-catelog.html">Products Catalog</a></li>
-                            <li><a href="../ecommerce/product-details.html">Product Details</a></li>
-                            <li><a href="../ecommerce/cartlist.html">cart list</a></li>
+                            <li>
+                                <a href="{{ route('viewEmployee') }}">View Employee</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('createEmployee') }}">Create Employee</a>
+                            </li>
                         </ul>
                         <!-- End Sub Menu -->
-                    </li> --}}
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icofont-briefcase"></i>
+                            <span class="link-title">Position Management</span>
+                        </a>
+                    
+                        <!-- Sub Menu -->
+                        <ul class="nav sub-menu">
+                            <li>
+                                <a href="{{ route('viewPosition') }}">View Position</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('createPosition') }}">Create Position</a>
+                            </li>
+                        </ul>
+                        <!-- End Sub Menu -->
+                    </li>   
                 </ul>
                 <!-- End Nav -->
                 </div>
@@ -189,56 +206,66 @@
                                 <h4 class="font-20 mb-20">Multiple Column</h4>
 
                                 <!-- Form -->
-                                <form action="{{Route('addEmployee')}}" method="POST">
+                                <form action="{{ route('updateEmployee', $user->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
+                                    @method('put')
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <!-- Form Group -->
                                             <div class="form-group">
                                                 <label class="font-14 bold mb-2">Employee ID</label>
-                                                <input type="text" class="theme-input-style" id="employee_id" name="employee_id" placeholder="Employee ID">
+                                                <input type="text" class="theme-input-style" id="employee_id" name="employee_id" autocomplete="off" value="{{$user->employee_id}}">
                                             </div>
                                             <!-- End Form Group -->
 
                                             <!-- Form Group -->
                                             <div class="form-group">
                                                 <label class="font-14 bold mb-2">Full Name</label>
-                                                <input type="text" class="theme-input-style" id="full_name" name="full_name" placeholder="Full Name">
+                                                <input type="text" class="theme-input-style" id="full_name" name="full_name" autocomplete="off" placeholder="Full Name" value="{{$user->full_name}}">
+                                            </div>
+                                            <!-- End Form Group -->
+
+                                            <!-- Form Group -->
+                                            <div class="form-group">
+                                                <label class="font-14 bold mb-2">IC Number</label>
+                                                <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number" value="{{$user->ic_number}}">
                                             </div>
                                             <!-- End Form Group -->
 
                                             <!-- Form Group -->
                                             <div class="form-group">
                                                 <label class="font-14 bold mb-2">Address</label>
-                                                <input type="text" class="theme-input-style" id="address" name="address" placeholder="Address">
-                                            </div>
-                                            <!-- End Form Group -->
-                                            
-                                            <!-- Form Group -->
-                                            <div class="form-group">
-                                                <label class="font-14 bold mb-2">Email</label>
-                                                <input type="email" class="theme-input-style" id="email" name="email" placeholder="Email Address">
+                                                <input type="text" class="theme-input-style" id="address" name="address" autocomplete="off" placeholder="Address" value="{{$user->address}}">
                                             </div>
                                             <!-- End Form Group -->
                                             
                                             <!-- Form Group -->
                                             <div class="form-group">
                                                 <label class="font-14 bold mb-2">Position</label>
-                                                <input type="text" class="theme-input-style" id="position_id" placeholder="Position">
-                                            </div>
+                                                <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off">
+                                                    @foreach($positions as $position)
+                                                        <option value="{{ $position->id }}" {{ $user->position->id === $position->id ? 'selected' : '' }}>
+                                                            {{ $position->position }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>                                            
                                             <!-- End Form Group -->
 
                                             <!-- Form Group -->
                                             <div class="form-group">
                                                 <label class="font-14 bold mb-2">Employee Type</label>
-                                                <input type="text" class="theme-input-style" id="employee_type" name="employee_type" placeholder="Employee Type">
-                                            </div>
+                                                <select class="theme-input-style" id="employee_type" name="employee_type">
+                                                    <option value="Full Time" {{ $user->employee_type === 'Full Time' ? 'selected' : '' }}>Full Time</option>
+                                                    <option value="Part Time" {{ $user->employee_type === 'Part Time' ? 'selected' : '' }}>Part Time</option>
+                                                </select>                                                
+                                            </div>                                            
                                             <!-- End Form Group -->
 
                                             <!-- Form Group -->
                                             <div class="form-group">
                                                 <label class="font-14 bold mb-2">Working Hour</label>
-                                                <input type="text" class="theme-input-style" id="working_hour" name="working_hour" placeholder="Working Hour">
+                                                <input type="text" class="theme-input-style" id="working_hour" name="working_hour" autocomplete="off" placeholder="Working Hour" value="{{$user->working_hour}}">
                                             </div>
                                             <!-- End Form Group -->
                                              
@@ -247,44 +274,51 @@
                                         <div class="col-lg-6">
                                             <!-- Form Group -->
                                             <div class="form-group">
+                                                <label class="font-14 bold mb-2">Email</label>
+                                                <input type="email" class="theme-input-style" id="email" name="email" autocomplete="off" placeholder="Email Address" value="{{$user->email}}">
+                                            </div>
+                                            <!-- End Form Group -->
+
+                                            <!-- Form Group -->
+                                            <div class="form-group">
                                                 <label class="font-14 bold mb-2">Bank Name</label>
-                                                <input type="text" class="theme-input-style" id="bank_name" placeholder="Bank Name">
+                                                <input type="text" class="theme-input-style" id="bank_name" name="bank_name" autocomplete="off" placeholder="Bank Name" value="{{$user->bank_name}}">
                                             </div>
                                             <!-- End Form Group -->
                                             
                                             <!-- Form Group -->
                                             <div class="form-group">
                                                 <label class="font-14 bold mb-2">Bank Account</label>
-                                                <input type="text" class="theme-input-style" id="bank_account" placeholder="Bank Account">
+                                                <input type="text" class="theme-input-style" id="bank_account" name="bank_account" autocomplete="off" placeholder="Bank Account" value="{{$user->bank_account}}">
                                             </div>
                                             <!-- End Form Group -->
                                             
                                             <!-- Form Group -->
                                             <div class="form-group">
                                                 <label class="font-14 bold mb-2">Passport Size Photo</label>
-                                                <input type="text" class="theme-input-style" id="passport_size_photo" placeholder="Passport Size Photo">
+                                                <input type="file" class="theme-input-style" id="passport_size_photo" name="passport_size_photo" >
                                             </div>
                                             <!-- End Form Group -->
 
                                             <!-- Form Group -->
                                             <div class="form-group">
                                                 <label class="font-14 bold mb-2">IC Photo</label>
-                                                <input type="text" class="theme-input-style" id="ic_photo" placeholder="IC Photo">
+                                                <input type="file" class="theme-input-style" id="ic_photo" name="ic_photo">
                                             </div>
                                             <!-- End Form Group -->
                                             
                                             <!-- Form Group -->
                                             <div class="form-group">
                                                 <label class="font-14 bold mb-2">Offer Letter</label>
-                                                <input type="text" class="theme-input-style" id="offer_letter" placeholder="Office Letter">
+                                                <input type="file" class="theme-input-style" id="offer_letter" name="offer_letter" placeholder="Office Letter">
                                             </div>
                                             <!-- End Form Group -->
 
                                             <!-- Form Group -->
-                                            <div class="form-group">
+                                            {{-- <div class="form-group">
                                                 <label class="font-14 bold mb-2">Password</label>
-                                                <input type="password" class="theme-input-style" id="password" name="password" placeholder="Password">
-                                            </div>
+                                                <input type="password" class="theme-input-style" id="password" name="password" placeholder="Password" >
+                                            </div> --}}
                                             <!-- End Form Group -->
                                         </div>
                                     </div>
@@ -307,7 +341,7 @@
                                     <!-- Form Row -->
                                     <div class="form-row">
                                         <div class="col-12 text-right">
-                                            <button type="submit" class="btn long">Submit</button>
+                                            <button type="submit" class="btn long">Update</button>
                                         </div>
                                     </div>
                                     <!-- End Form Row -->

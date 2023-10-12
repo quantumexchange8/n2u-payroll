@@ -38,6 +38,18 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('admin/dashboard', [AdminController::class, 'Admindashboard'])->name('admindashboard');
 
-    Route::get('admin/employee', [AdminController::class, 'employee'])->name('employee');
+    Route::get('admin/viewEmployee', [AdminController::class, 'viewEmployee'])->name('viewEmployee');
+    Route::get('admin/createEmployee', [AdminController::class, 'createEmployee'])->name('createEmployee');
     Route::post('admin/addEmployee', [AdminController::class, 'addEmployee'])->name('addEmployee');
+    Route::get('admin/editEmployee/{id}', [AdminController::class, 'editEmployee'])->name('editEmployee');
+    Route::put('admin/updateEmployee/{id}', [AdminController::class, 'updateEmployee'])->name('updateEmployee');
+    Route::delete('admin/deleteEmployee/{id}', [AdminController::class, 'deleteEmployee'])->name('deleteEmployee');
+
+    Route::get('admin/viewPosition', [AdminController::class, 'viewPosition'])->name('viewPosition');
+    Route::get('admin/createPosition', [AdminController::class, 'createPosition'])->name('createPosition');
+    Route::post('admin/addPosition', [AdminController::class, 'addPosition'])->name('addPosition');
+    Route::get('admin/editPosition/{id}', [AdminController::class, 'editPosition'])->name('editPosition');
+    Route::put('admin/updatePosition/{id}', [AdminController::class, 'updatePosition'])->name('updatePosition');
+    Route::delete('admin/deletePosition/{id}', [AdminController::class, 'deletePosition'])->name('deletePosition');
+
 });

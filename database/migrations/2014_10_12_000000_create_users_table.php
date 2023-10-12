@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('employee_id')->unique();
             $table->string('full_name');
+            $table->string('ic_number')->unique();
             $table->string('address');
             $table->string('email');
             $table->string('position_id')->nullable();
@@ -29,7 +30,8 @@ return new class extends Migration
             $table->string('password');
             $table->string('role')->default('member');
             $table->rememberToken();
-            $table->timestamps(); 
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

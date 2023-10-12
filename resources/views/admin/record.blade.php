@@ -315,12 +315,46 @@
                                <span class="link-title">Dashboard</span>
                             </a>
                          </li>
-                         <li>
-                            <a href="{{ route('employee') }}">
+                         {{-- <li>
+                            <a href="{{ route('createEmployee') }}">
                                 <i class="icofont-worker"></i>
                                 <span class="link-title">Employee</span>
                              </a>
+                        </li> --}}
+                        <li>
+                            <a href="#">
+                                <i class="icofont-worker"></i>
+                                <span class="link-title">Employee</span>
+                            </a>
+                        
+                            <!-- Sub Menu -->
+                            <ul class="nav sub-menu">
+                                <li>
+                                    <a href="{{ route('viewEmployee') }}">View Employee</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('createEmployee') }}">Create Employee</a>
+                                </li>
+                            </ul>
+                            <!-- End Sub Menu -->
                         </li>
+                        <li>
+                            <a href="#">
+                                <i class="icofont-briefcase"></i>
+                                <span class="link-title">Position Management</span>
+                            </a>
+                        
+                            <!-- Sub Menu -->
+                            <ul class="nav sub-menu">
+                                <li>
+                                    <a href="{{ route('viewPosition') }}">View Position</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('createPosition') }}">Create Position</a>
+                                </li>
+                            </ul>
+                            <!-- End Sub Menu -->
+                        </li>   
                         {{-- <li>
                             <a href="#">
                                 <i class="icofont-shopping-cart"></i>
