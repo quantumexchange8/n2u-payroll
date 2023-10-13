@@ -11,15 +11,21 @@
                     <h4 class="font-20 mb-20">Multiple Column</h4>
 
                     <!-- Form -->
-                    <form action="{{ route('updatePosition', $position->id) }}" method="POST">
+                    <form action="{{Route('addShift')}}" method="POST">
                         @csrf
-                        @method('put')
                         <div class="row">
                             <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Position ID</label>
-                                    <input type="text" class="theme-input-style" id="position_id" name="position_id" autocomplete="off" placeholder="Position ID" value="{{$position->position_id}}">
+                                    <label class="font-14 bold mb-2">Shift ID</label>
+                                    <input type="text" class="theme-input-style" id="shift_id" name="shift_id" autocomplete="off" placeholder="Shift ID">
+                                </div>
+                                <!-- End Form Group -->
+                                
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Shift Name</label>
+                                    <input type="text" class="theme-input-style" id="shift_name" name="shift_name" autocomplete="off" placeholder="Shift Name">
                                 </div>
                                 <!-- End Form Group --> 
                             </div>
@@ -27,10 +33,17 @@
                             <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Position</label>
-                                    <input type="text" class="theme-input-style" id="position" name="position" autocomplete="off" placeholder="Position" value="{{$position->position}}">
+                                    <label class="font-14 bold mb-2">Start Time</label>
+                                    <input type="time" class="theme-input-style" id="shift_start" name="shift_start" autocomplete="off" placeholder="Start Time">
                                 </div>
-                                <!-- End Form Group -->                                          
+                                <!-- End Form Group -->
+                                
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">End Time</label>
+                                    <input type="time" class="theme-input-style" id="shift_end" name="shift_end" autocomplete="off" placeholder="End Time">
+                                </div>
+                                <!-- End Form Group --> 
                             </div>
                         </div>
 
@@ -52,7 +65,7 @@
                         <!-- Form Row -->
                         <div class="form-row">
                             <div class="col-12 text-right">
-                                <button type="submit" class="btn long">Update</button>
+                                <button type="submit" class="btn long">Submit</button>
                             </div>
                         </div>
                         <!-- End Form Row -->

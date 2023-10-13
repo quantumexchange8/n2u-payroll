@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('position_id')->nullable();
             $table->string('employee_type');
             $table->integer('working_hour');
+            $table->string('employed_since')->nullable();
+            $table->string('nation')->nullable();
             $table->string('bank_name')->nullable();
             $table->integer('bank_account')->nullable();
             $table->string('passport_size_photo')->nullable();

@@ -52,4 +52,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('admin/updatePosition/{id}', [AdminController::class, 'updatePosition'])->name('updatePosition');
     Route::delete('admin/deletePosition/{id}', [AdminController::class, 'deletePosition'])->name('deletePosition');
 
+    Route::get('admin/viewShift', [AdminController::class, 'viewShift'])->name('viewShift');
+    Route::get('admin/createShift', [AdminController::class, 'createShift'])->name('createShift');
+    Route::post('admin/addShift', [AdminController::class, 'addShift'])->name('addShift');
+    Route::get('admin/editShift/{id}', [AdminController::class, 'editShift'])->name('editShift');
+    Route::put('admin/updateShift/{id}', [AdminController::class, 'updateShift'])->name('updateShift');
+    Route::delete('admin/deleteShift/{id}', [AdminController::class, 'deleteShift'])->name('deleteShift');
+
 });

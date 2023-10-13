@@ -27,6 +27,8 @@ class User extends Authenticatable
         'position_id',
         'employee_type',
         'working_hour',
+        'employed_since',
+        'nation',
         'bank_name',
         'bank_account',
         'passport_size_photo',

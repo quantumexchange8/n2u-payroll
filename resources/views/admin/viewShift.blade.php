@@ -17,7 +17,7 @@
                         <div class="col-md-4">
                             <div class="form-row">
                                 <div class="col-12 text-right mt-20 mr-60">
-                                    <a href="{{Route('createPosition')}}" class="btn long">Create</a>
+                                    <a href="{{Route('createShift')}}" class="btn long">Create</a>
                                 </div>
                             </div>
                         </div>
@@ -27,21 +27,25 @@
                         <table class="text-nowrap hoverable dh-table">
                             <thead>
                                 <tr>
-                                    <th>Position ID</th>
-                                    <th>Position</th>
+                                    <th>Shift ID</th>
+                                    <th>Shift Name</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($positions as $position)
+                                @foreach($shifts as $shift)
                                     <tr>
-                                        <td>{{ $position->position_id }}</td>
-                                        <td>{{ $position->position }}</td>
+                                        <td>{{ $shift->shift_id }}</td>
+                                        <td>{{ $shift->shift_name }}</td>
+                                        <td>{{ $shift->shift_start }}</td>
+                                        <td>{{ $shift->shift_end }}</td>
                                         <td>
-                                            <a href="{{ route('editPosition', ['id' => $position->id]) }}" class="details-btn">
+                                            <a href="{{ route('editShift', ['id' => $shift->id]) }}" class="details-btn">
                                                 Edit <i class="icofont-arrow-right"></i>
                                             </a>
-                                            <form action="{{ route('deletePosition', ['id' => $position->id]) }}" method="POST" style="display: inline;">
+                                            <form action="{{ route('deleteShift', ['id' => $shift->id]) }}" method="POST" style="display: inline;">
                                                 @method('DELETE')
                                                 @csrf
                                                 <button type="submit" class="details-btn delete-btn" style="margin-left: 10px;">
