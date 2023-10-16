@@ -28,6 +28,10 @@
    <link rel="stylesheet" href="../../assets/css/style.css">
    <!-- ======= END MAIN STYLES ======= -->
 
+    <!-- ======= BEGIN PAGE LEVEL PLUGINS STYLES ======= -->
+    <link rel="stylesheet" href="../../assets/plugins/fullcalendar/fullcalendar.min.css">
+    <!-- ======= END BEGIN PAGE LEVEL PLUGINS STYLES ======= -->
+
 </head>
 
 <body>
@@ -57,11 +61,11 @@
                             <!-- Main Header User -->
                             <div class="main-header-user">
                                 <a href="#" class="d-flex align-items-center" data-toggle="dropdown">
-                                    {{-- <div class="menu-icon">
+                                    <div class="menu-icon">
                                         <span></span>
                                         <span></span>
                                         <span></span>
-                                    </div> --}}
+                                    </div>
 
                                     <div class="user-profile d-xl-flex align-items-center d-none">
                                         <!-- User Avatar -->
@@ -82,7 +86,7 @@
                                     <a href="#">My Profile</a>
                                     <a href="#">task</a>
                                     <a href="#">Settings</a>
-                                    <a href="#">Log Out</a>
+                                    <a href="{{ route('logout') }}">Log Out</a>
                                 </div>
                             </div>
                             <!-- End Main Header User -->
@@ -166,16 +170,13 @@
                             <li>
                                 <a href="{{ route('viewEmployee') }}">View Employee</a>
                             </li>
-                            <li>
-                                <a href="{{ route('createEmployee') }}">Create Employee</a>
-                            </li>
                         </ul>
                         <!-- End Sub Menu -->
                     </li>
                     <li>
                         <a href="#">
                             <i class="icofont-briefcase"></i>
-                            <span class="link-title">Position Management</span>
+                            <span class="link-title">Position & Department</span>
                         </a>
                     
                         <!-- Sub Menu -->
@@ -184,7 +185,7 @@
                                 <a href="{{ route('viewPosition') }}">View Position</a>
                             </li>
                             <li>
-                                <a href="{{ route('createPosition') }}">Create Position</a>
+                                <a href="{{ route('viewDepartment') }}">View Department</a>
                             </li>
                         </ul>
                         <!-- End Sub Menu -->
@@ -200,12 +201,15 @@
                             <li>
                                 <a href="{{ route('viewShift') }}">View Shift</a>
                             </li>
-                            <li>
-                                <a href="{{ route('createShift') }}">Create Shift</a>
-                            </li>
                         </ul>
                         <!-- End Sub Menu -->
-                    </li>      
+                    </li>
+                    {{-- <li>
+                        <a href="{{ route('schedule') }}">
+                            <i class="icofont-table"></i>
+                            <span class="link-title">Schedule</span>
+                        </a>
+                    </li> --}}
                 </ul>
                 <!-- End Nav -->
                 </div>
@@ -234,6 +238,13 @@
     <script src="../../assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="../../assets/js/script.js"></script>
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
+
+    <!-- ======= BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
+   <script src="../../assets/plugins/jquery-ui/jquery-ui.min.js"></script>
+   <script src="../../assets/plugins/moment/moment.min.js"></script>
+   <script src="../../assets/plugins/fullcalendar/fullcalendar.min.js"></script>
+   <script src="../../assets/plugins/fullcalendar/custom-fullcalendar.js"></script>
+   <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
 </body>
 
 </html>

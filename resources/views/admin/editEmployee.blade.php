@@ -16,10 +16,23 @@
                         @method('put')
                         <div class="row">
                             <div class="col-lg-6">
+                                @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Employee ID</label>
                                     <input type="text" class="theme-input-style" id="employee_id" name="employee_id" autocomplete="off" value="{{$user->employee_id}}">
+                                        @error('employee_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
 
@@ -27,6 +40,9 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Full Name</label>
                                     <input type="text" class="theme-input-style" id="full_name" name="full_name" autocomplete="off" placeholder="Full Name" value="{{$user->full_name}}">
+                                    @error('full_name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
 
@@ -34,6 +50,9 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">IC Number</label>
                                     <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number" value="{{$user->ic_number}}">
+                                    @error('ic_number')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
 
@@ -41,6 +60,9 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Address</label>
                                     <input type="text" class="theme-input-style" id="address" name="address" autocomplete="off" placeholder="Address" value="{{$user->address}}">
+                                    @error('address')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
                                 
@@ -69,8 +91,11 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Working Hour</label>
-                                    <input type="text" class="theme-input-style" id="working_hour" name="working_hour" autocomplete="off" placeholder="Working Hour" value="{{$user->working_hour}}">
+                                    <label class="font-14 bold mb-2">Salary</label>
+                                    <input type="text" class="theme-input-style" id="salary" name="salary" autocomplete="off" placeholder="Salary" value="{{$user->salary}}">
+                                    @error('salary')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
 
@@ -78,6 +103,9 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Employed Since</label>
                                     <input type="date" class="theme-input-style" id="employed_since" name="employed_since" autocomplete="off" placeholder="Employed Since" value="{{$user->employed_since}}">
+                                    @error('employed_since')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
                                     
@@ -88,6 +116,9 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Email</label>
                                     <input type="email" class="theme-input-style" id="email" name="email" autocomplete="off" placeholder="Email Address" value="{{$user->email}}">
+                                    @error('email')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
 
@@ -95,12 +126,15 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Nation</label>
                                     <input type="text" class="theme-input-style" id="nation" name="nation" autocomplete="off" placeholder="Nation" value="{{$user->nation}}">
+                                    @error('nation')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label for="bank_name">Bank Name</label>
+                                    <label class="font-14 bold mb-2">Bank Name</label>
                                     <select class="theme-input-style" id="bank_name" name="bank_name" autocomplete="off">
                                         <option value="">Select Bank Name</option>
                                         <option value="Maybank" {{ $user->bank_name === 'Maybank' ? 'selected' : '' }}>Maybank</option>
@@ -128,53 +162,41 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Bank Account</label>
                                     <input type="text" class="theme-input-style" id="bank_account" name="bank_account" autocomplete="off" placeholder="Bank Account" value="{{$user->bank_account}}">
+                                    @error('bank_account')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
                                 
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Passport Size Photo</label>
-                                    <input type="file" class="theme-input-style" id="passport_size_photo" name="passport_size_photo" >
+                                    <input type="file" class="theme-input-style" id="passport_size_photo" name="passport_size_photo" style="background: #ffffff;">
                                 </div>
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">IC Photo</label>
-                                    <input type="file" class="theme-input-style" id="ic_photo" name="ic_photo">
+                                    <input type="file" class="theme-input-style" id="ic_photo" name="ic_photo" style="background: #ffffff;">
                                 </div>
                                 <!-- End Form Group -->
                                 
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Offer Letter</label>
-                                    <input type="file" class="theme-input-style" id="offer_letter" name="offer_letter" placeholder="Office Letter">
+                                    <input type="file" class="theme-input-style" id="offer_letter" name="offer_letter" placeholder="Office Letter" style="background: #ffffff;">
                                 </div>
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
-                                {{-- <div class="form-group">
+                                <div class="form-group" style="display: none;">
                                     <label class="font-14 bold mb-2">Password</label>
-                                    <input type="password" class="theme-input-style" id="password" name="password" placeholder="Password" >
-                                </div> --}}
+                                    <input type="password" class="theme-input-style" id="password" name="password" placeholder="Password" value="{{$user->password}}">
+                                </div>
                                 <!-- End Form Group -->
                             </div>
                         </div>
-
-                        <!-- Form Row -->
-                        <div class="form-group pt-1">
-                            <div class="d-flex align-items-center mb-3">
-                                <!-- Custom Checkbox -->
-                                <label class="custom-checkbox position-relative mr-2">
-                                    <input type="checkbox" id="check5">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <!-- End Custom Checkbox -->
-                                
-                                <label for="check5">Remember me</label>
-                            </div>
-                        </div>
-                        <!-- End Form Row -->
 
                         <!-- Form Row -->
                         <div class="form-row">

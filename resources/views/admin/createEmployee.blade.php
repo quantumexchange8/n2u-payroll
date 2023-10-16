@@ -81,9 +81,9 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Working Hour</label>
-                                    <input type="number" class="theme-input-style" id="working_hour" name="working_hour" autocomplete="off" placeholder="Working Hour">
-                                    @error('working_hour')
+                                    <label class="font-14 bold mb-2">Salary</label>
+                                    <input type="number" class="theme-input-style" id="salary" name="salary" autocomplete="off" placeholder="Salary">
+                                    @error('salary')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -97,8 +97,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <!-- End Form Group -->
-                                    
+                                <!-- End Form Group -->                                    
                             </div>
 
                             <div class="col-lg-6">
@@ -124,7 +123,7 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label for="bank_name">Bank Name</label>
+                                    <label class="font-14 bold mb-2">Bank Name</label>
                                     <select class="theme-input-style" id="bank_name" name="bank_name" autocomplete="off">
                                         <option value="">Select Bank Name</option>
                                         <option value="Maybank">Maybank</option>
@@ -151,32 +150,31 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Bank Account</label>
-                                    <input type="text" class="theme-input-style" id="bank_account" name="bank_account" autocomplete="off" placeholder="Bank Account">
+                                    <input type="number" class="theme-input-style" id="bank_account" name="bank_account" autocomplete="off" placeholder="Bank Account">
                                     @error('bank_account')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                
                                 <!-- End Form Group -->
                                 
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Passport Size Photo</label>
-                                    <input type="file" class="theme-input-style" id="passport_size_photo" name="passport_size_photo">
+                                    <input type="file" class="theme-input-style" id="passport_size_photo" name="passport_size_photo" style="background: #ffffff;">
                                 </div>
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">IC Photo</label>
-                                    <input type="file" class="theme-input-style" id="ic_photo" name="ic_photo">
+                                    <input type="file" class="theme-input-style" id="ic_photo" name="ic_photo" style="background: #ffffff;">
                                 </div>
                                 <!-- End Form Group -->
                                 
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Offer Letter</label>
-                                    <input type="file" class="theme-input-style" id="offer_letter" name="offer_letter" placeholder="Office Letter">
+                                    <input type="file" class="theme-input-style" id="offer_letter" name="offer_letter" style="background: #ffffff;">
                                 </div>
                                 <!-- End Form Group -->
 
@@ -191,21 +189,6 @@
                                 <!-- End Form Group -->
                             </div>
                         </div>
-
-                        <!-- Form Row -->
-                        <div class="form-group pt-1">
-                            <div class="d-flex align-items-center mb-3">
-                                <!-- Custom Checkbox -->
-                                <label class="custom-checkbox position-relative mr-2">
-                                    <input type="checkbox" id="check5">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <!-- End Custom Checkbox -->
-                                
-                                <label for="check5">Remember me</label>
-                            </div>
-                        </div>
-                        <!-- End Form Row -->
 
                         <!-- Form Row -->
                         <div class="form-row">

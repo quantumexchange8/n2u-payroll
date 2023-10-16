@@ -32,9 +32,10 @@
                                     <td><a href="invoice-details.html" class="details-btn">View Details <i class="icofont-arrow-right"></i></a></td>
                                 </tr> --}}
                                 @foreach ($punchRecords as $punchRecord)
+                                {{-- {{ dd($punchRecord->user) }} --}}
                                     <tr>
                                         <td>{{$punchRecord->employee_id}}</td>
-                                        <td>{{$punchRecord->users->name}}</td>
+                                        <td>{{$punchRecord->user->full_name}}</td>
                                         <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toDateString() }}</td>
                                         <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toTimeString() }}</td>
                                     </tr>

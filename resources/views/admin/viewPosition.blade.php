@@ -15,8 +15,8 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="form-row">
-                                <div class="col-12 text-right mt-20 mr-60">
+                            <div class="form-row" style="margin-top: 12px; margin-right: 20px;">
+                                <div class="col-12 text-right">
                                     <a href="{{Route('createPosition')}}" class="btn long">Create</a>
                                 </div>
                             </div>
@@ -29,6 +29,7 @@
                                 <tr>
                                     <th>Position ID</th>
                                     <th>Position</th>
+                                    {{-- <th>Department</th> --}}
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -37,6 +38,7 @@
                                     <tr>
                                         <td>{{ $position->position_id }}</td>
                                         <td>{{ $position->position }}</td>
+                                        
                                         <td>
                                             <a href="{{ route('editPosition', ['id' => $position->id]) }}" class="details-btn">
                                                 Edit <i class="icofont-arrow-right"></i>

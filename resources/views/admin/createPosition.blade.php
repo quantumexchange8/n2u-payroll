@@ -15,38 +15,36 @@
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Position ID</label>
                                     <input type="text" class="theme-input-style" id="position_id" name="position_id" autocomplete="off" placeholder="Position ID">
                                 </div>
-                                <!-- End Form Group --> 
-                            </div>
+                                <!-- End Form Group -->
 
-                            <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Position</label>
                                     <input type="text" class="theme-input-style" id="position" name="position" autocomplete="off" placeholder="Position">
                                 </div>
-                                <!-- End Form Group -->                                          
+                                <!-- End Form Group -->
                             </div>
-                        </div>
 
-                        <!-- Form Row -->
-                        <div class="form-group pt-1">
-                            <div class="d-flex align-items-center mb-3">
-                                <!-- Custom Checkbox -->
-                                <label class="custom-checkbox position-relative mr-2">
-                                    <input type="checkbox" id="check5">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <!-- End Custom Checkbox -->
-                                
-                                <label for="check5">Remember me</label>
+                            <div class="col-lg-6">
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Department</label>
+                                    <select class="theme-input-style" id="department_id" name="department_id" autocomplete="off">
+                                        <option value="">Select Department</option>
+                                        @foreach($departments as $department)
+                                            <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <!-- End Form Group --> 
                             </div>
                         </div>
-                        <!-- End Form Row -->
 
                         <!-- Form Row -->
                         <div class="form-row">

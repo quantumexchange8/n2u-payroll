@@ -15,8 +15,8 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="form-row">
-                                <div class="col-12 text-right mt-20 mr-60">
+                            <div class="form-row" style="margin-top: 12px; margin-right: 20px;">
+                                <div class="col-12 text-right ">
                                     <a href="{{Route('createEmployee')}}" class="btn long">Create</a>
                                 </div>
                             </div>

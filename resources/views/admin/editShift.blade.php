@@ -49,21 +49,6 @@
                         </div>
 
                         <!-- Form Row -->
-                        <div class="form-group pt-1">
-                            <div class="d-flex align-items-center mb-3">
-                                <!-- Custom Checkbox -->
-                                <label class="custom-checkbox position-relative mr-2">
-                                    <input type="checkbox" id="check5">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <!-- End Custom Checkbox -->
-                                
-                                <label for="check5">Remember me</label>
-                            </div>
-                        </div>
-                        <!-- End Form Row -->
-
-                        <!-- Form Row -->
                         <div class="form-row">
                             <div class="col-12 text-right">
                                 <button type="submit" class="btn long">Update</button>

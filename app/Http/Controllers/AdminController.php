@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\PunchRecord;
 use App\Models\User;
 use App\Models\Position;
+use App\Models\Department;
 use App\Models\Shift;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\EmployeeRequest;
 use Carbon\Carbon;
@@ -18,7 +21,7 @@ class AdminController extends Controller
     public function Admindashboard()
     {
 
-        $punchRecords = PunchRecord::with('users')->get();
+        $punchRecords = PunchRecord::with('user')->get();
         //dd($punchRecords);
 
         // Modify the date and time columns
@@ -45,27 +48,41 @@ class AdminController extends Controller
     }
 
     public function addEmployee(EmployeeRequest $request){        
-        User::create([
-            'employee_id' => $request->employee_id,
-            'full_name' => $request->full_name,
-            'ic_number' => $request->ic_number,
-            'address' => $request->address,
-            'email' => $request->email,
-            'position_id' => $request->position_id,
-            'employee_type' => $request->employee_type,
-            'working_hour' => $request->working_hour,
-            'employed_since' => $request->employed_since,
-            'nation' => $request->nation,
-            'bank_name' => $request->bank_name,
-            'bank_account' => $request->bank_account,
-            'passport_size_photo' => $request->passport_size_photo,
-            'ic_photo' => $request->ic_photo,
-            'offer_letter' => $request->offer_letter,
-            'password' => Hash::make($request->password)
-        ]);
+        // Validate the incoming request data
+        $validatedData = $request->validated();
 
-        Alert::success('Congrats', 'Successfully Registered');
-        return redirect()->route('viewEmployee');        
+        // Handle passport size photo
+        if ($request->hasFile('passport_size_photo')) {
+            $file = $request->file('passport_size_photo');
+            $extension = $file->getClientOriginalExtension();
+            $filename = $validatedData['full_name'] . '_photo.' . $extension; // Modify the file name
+            $file->move('uploads/employee/passportSizePhoto/', $filename);
+            $validatedData['passport_size_photo'] = $filename;
+        }
+
+        // Handle IC photo
+        if ($request->hasFile('ic_photo')) {
+            $file = $request->file('ic_photo');
+            $extension = $file->getClientOriginalExtension();
+            $filename = $validatedData['full_name'] . '_ic.' . $extension; // Modify the file name
+            $file->move('uploads/employee/icPhoto/', $filename);
+            $validatedData['ic_photo'] = $filename;
+        }
+
+        // Handle offer letter
+        if ($request->hasFile('offer_letter')) {
+            $file = $request->file('offer_letter');
+            $extension = $file->getClientOriginalExtension();
+            $filename = $validatedData['full_name'] . '_offer_letter.' . $extension; // Modify the file name
+            $file->move('uploads/employee/offerLetter/', $filename);
+            $validatedData['offer_letter'] = $filename;
+        }
+
+        // Create the user record with the validated and modified data
+        User::create($validatedData);
+
+        Alert::success('Done', 'Successfully Registered');
+        return redirect()->route('viewEmployee'); 
     }
    
     public function editEmployee($id) {
@@ -75,32 +92,87 @@ class AdminController extends Controller
         return view('admin.editEmployee', compact('user', 'positions'));
     }
     
-    public function updateEmployee(Request $request, $id){
+    public function updateEmployee(EmployeeRequest $request, $id) {
         $data = User::find($id);
-
-        //Update the user's data based on the form input
-        $data->update([
-            'employee_id' => $request->input('employee_id'),
-            'full_name' => $request->input('full_name'),
-            'ic_number' => $request->input('ic_number'),
-            'address' => $request->input('address'),
-            'email' => $request->input('email'),
-            'position_id' => $request->input('position_id'),
-            'employee_type' => $request->input('employee_type'),
-            'working_hour' => $request->input('working_hour'),
-            'employed_since' => $request->input('employed_since'),
-            'nation' => $request->input('nation'),
-            'bank_name' => $request->input('bank_name'),
-            'bank_account' => $request->input('bank_account'),
-            'passport_size_photo' => $request->input('passport_size_photo'),
-            'ic_photo' => $request->input('ic_photo'),
-            'offer_letter' => $request->input('offer_letter'),
-            // 'password'  => $request->input('password'),
-        ]);
-
-        Alert::success('Congrats', 'Successfully Updated');
+    
+        // Validate the incoming request data
+        $validatedData = $request->validated();
+    
+        // Handle file uploads if necessary
+        $photoPath = 'uploads/employee/passportSizePhoto/';
+        $icPath = 'uploads/employee/icPhoto/';
+        $offerLetterPath = 'uploads/employee/offerLetter/';
+    
+        // Handle passport size photo
+        if ($request->hasFile('passport_size_photo')) {
+            $photo = $request->file('passport_size_photo');
+            $photoExtension = $photo->getClientOriginalExtension();
+            $photoName = $data->full_name . '_photo.' . $photoExtension;
+    
+            // Delete all previous files with the same full name
+            $filesToDelete = glob($photoPath . $data->full_name . '_photo.*');
+            foreach ($filesToDelete as $fileToDelete) {
+                if (File::exists($fileToDelete)) {
+                    File::delete($fileToDelete);
+                }
+            }
+    
+            // Upload the new passport size photo
+            $photo->move($photoPath, $photoName);
+    
+            // Update the database field with the new file name
+            $validatedData['passport_size_photo'] = $photoName;
+        }
+    
+        // Handle IC photo
+        if ($request->hasFile('ic_photo')) {
+            $icPhoto = $request->file('ic_photo');
+            $icExtension = $icPhoto->getClientOriginalExtension();
+            $icName = $data->full_name . '_ic.' . $icExtension;
+    
+            // Delete all previous files with the same full name
+            $filesToDelete = glob($icPath . $data->full_name . '_ic.*');
+            foreach ($filesToDelete as $fileToDelete) {
+                if (File::exists($fileToDelete)) {
+                    File::delete($fileToDelete);
+                }
+            }
+    
+            // Upload the new IC photo
+            $icPhoto->move($icPath, $icName);
+    
+            // Update the database field with the new file name
+            $validatedData['ic_photo'] = $icName;
+        }
+    
+        // Handle offer letter
+        if ($request->hasFile('offer_letter')) {
+            $offerLetter = $request->file('offer_letter');
+            $offerLetterExtension = $offerLetter->getClientOriginalExtension();
+            $offerLetterName = $data->full_name . '_offer_letter.' . $offerLetterExtension;
+    
+            // Delete all previous files with the same full name
+            $filesToDelete = glob($offerLetterPath . $data->full_name . '_offer_letter.*');
+            foreach ($filesToDelete as $fileToDelete) {
+                if (File::exists($fileToDelete)) {
+                    File::delete($fileToDelete);
+                }
+            }
+    
+            // Upload the new offer letter
+            $offerLetter->move($offerLetterPath, $offerLetterName);
+    
+            // Update the database field with the new file name
+            $validatedData['offer_letter'] = $offerLetterName;
+        }
+    
+        // Update the user's data based on the validated form input
+        $data->update($validatedData);
+    
+        Alert::success('Done', 'Successfully Updated');
         return redirect()->route('viewEmployee');
     }
+    
 
     public function deleteEmployee($id){
 
@@ -111,7 +183,7 @@ class AdminController extends Controller
         }
 
         $employee->delete(); // Soft delete the employee
-        Alert::success('Congrats', 'Successfully Deleted');
+        Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewEmployee');
     }
 
@@ -122,7 +194,8 @@ class AdminController extends Controller
     }
     
     public function createPosition(){
-        return view('admin.createPosition');
+        $departments = Department::all();
+        return view('admin.createPosition', compact('departments'));
     }
 
     public function addPosition(Request $request){
@@ -130,11 +203,13 @@ class AdminController extends Controller
 
         $data = $request->validate([
             'position_id' => 'required',
-            'position' => 'required'
+            'position' => 'required',
+            'department_id' => 'required'
         ]);
 
         if($data){
             Position::create($data);
+            Alert::success('Done', 'Successfully Inserted');
         } else {
             return redirect()->back();
         }
@@ -143,21 +218,27 @@ class AdminController extends Controller
     }
 
     public function editPosition($id){
-        $position = Position::find($id);
-        
-        return view('admin.editPosition', ['position' => $position]);
+
+        // $test = Position::find($id);
+        // $positions = Position::where('position_id', $test->position_id)->with(['department'])->first();
+        // dd($positions);
+        $positions = Position::with('department')->find($id);
+        // dd($positions);
+        $departments = Department::all();
+        return view('admin.editPosition', compact('positions', 'departments'));
     }
 
     public function updatePosition(Request $request, $id){
         $data = Position::find($id);
-
+        // dd($request->all());
         //Update the user's data based on the form input
         $data->update([
             'position_id' => $request->input('position_id'),
             'position' => $request->input('position'),
+            'department_id' => $request->input('department_id')
         ]);
 
-        Alert::success('Congrats', 'Successfully Updated');
+        Alert::success('Done', 'Successfully Updated');
         return redirect()->route('viewPosition');
     }
 
@@ -171,8 +252,69 @@ class AdminController extends Controller
 
         $position->delete(); // Soft delete the employee
 
-        Alert::success('Congrats', 'Successfully Deleted');
+        Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewPosition');
+    }
+
+    public function viewDepartment(){
+        $departments = Department::all();
+        //dd($users);
+        return view('admin.viewDepartment', ['departments' => $departments]);
+    }
+    
+    public function createDepartment(){
+        return view('admin.createDepartment');
+    }
+
+    public function addDepartment(Request $request){
+        //dd($request->all());
+
+        $data = $request->validate([
+            'department_id' => 'required',
+            'department' => 'required'
+        ]);
+
+        if($data){
+            Department::create($data);
+            Alert::success('Done', 'Successfully Inserted');
+        } else {
+            return redirect()->back();
+        }
+
+        return redirect()->route('viewDepartment');
+    }
+
+    public function editDepartment($id){
+        $department = Department::find($id);
+        
+        return view('admin.editDepartment', ['department' => $department]);
+    }
+
+    public function updateDepartment(Request $request, $id){
+        $data = Department::find($id);
+
+        //Update the user's data based on the form input
+        $data->update([
+            'department_id' => $request->input('department_id'),
+            'department' => $request->input('department')
+        ]);
+
+        Alert::success('Done', 'Successfully Updated');
+        return redirect()->route('viewDepartment');
+    }
+
+    public function deleteDepartment($id){
+
+        $department = Department::find($id);
+
+        if (!$department) {
+            return redirect()->route('viewDepartment');
+        }
+
+        $department->delete(); // Soft delete the employee
+
+        Alert::success('Done', 'Successfully Deleted');
+        return redirect()->route('viewDepartment');
     }
 
     public function viewShift(){
@@ -221,7 +363,7 @@ class AdminController extends Controller
             'shift_end' => $request->input('shift_end')
         ]);
 
-        Alert::success('Congrats', 'Successfully Updated');
+        Alert::success('Done', 'Successfully Updated');
         return redirect()->route('viewShift');
     }
 
@@ -235,7 +377,38 @@ class AdminController extends Controller
 
         $shift->delete(); // Soft delete the employee
 
-        Alert::success('Congrats', 'Successfully Deleted');
+        Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewShift');
     }
+
+    public function schedule(){
+        $schedules = Schedule::all();
+        $users = User::all();
+
+
+        return view('admin.schedule', [
+            'schedules' => $schedules,
+            'users' => $users
+        ]);
+    }
+    
+    public function addSchedule(Request $request){
+
+        $data = $request->validate([
+            'schedule_id' => 'required',
+            'date' => 'required',
+            'employee_id' => 'required',
+            'shift_id' => 'required'
+        ]);
+
+        if($data){
+            Schedule::create($data);
+        } else {
+            return redirect()->back();
+        }
+
+        return redirect()->route('schedule');
+    }
+
+    
 }

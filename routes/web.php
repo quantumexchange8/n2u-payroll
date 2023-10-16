@@ -49,8 +49,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('admin/createPosition', [AdminController::class, 'createPosition'])->name('createPosition');
     Route::post('admin/addPosition', [AdminController::class, 'addPosition'])->name('addPosition');
     Route::get('admin/editPosition/{id}', [AdminController::class, 'editPosition'])->name('editPosition');
-    Route::put('admin/updatePosition/{id}', [AdminController::class, 'updatePosition'])->name('updatePosition');
+    Route::post('admin/updatePosition/{id}', [AdminController::class, 'updatePosition'])->name('updatePosition');
     Route::delete('admin/deletePosition/{id}', [AdminController::class, 'deletePosition'])->name('deletePosition');
+
+    Route::get('admin/viewDepartment', [AdminController::class, 'viewDepartment'])->name('viewDepartment');
+    Route::get('admin/createDepartment', [AdminController::class, 'createDepartment'])->name('createDepartment');
+    Route::post('admin/addDepartment', [AdminController::class, 'addDepartment'])->name('addDepartment');
+    Route::get('admin/editDepartment/{id}', [AdminController::class, 'editDepartment'])->name('editDepartment');
+    Route::put('admin/updateDepartment/{id}', [AdminController::class, 'updateDepartment'])->name('updateDepartment');
+    Route::delete('admin/deleteDepartment/{id}', [AdminController::class, 'deleteDepartment'])->name('deleteDepartment');
 
     Route::get('admin/viewShift', [AdminController::class, 'viewShift'])->name('viewShift');
     Route::get('admin/createShift', [AdminController::class, 'createShift'])->name('createShift');
@@ -59,4 +66,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('admin/updateShift/{id}', [AdminController::class, 'updateShift'])->name('updateShift');
     Route::delete('admin/deleteShift/{id}', [AdminController::class, 'deleteShift'])->name('deleteShift');
 
+    Route::get('admin/schedule', [AdminController::class, 'schedule'])->name('schedule');
+    // Route::post('admin/addSchedule', [AdminController::class, 'addSchedule'])->name('addSchedule');
 });

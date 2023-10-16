@@ -26,7 +26,7 @@ class User extends Authenticatable
         'email',
         'position_id',
         'employee_type',
-        'working_hour',
+        'salary',
         'employed_since',
         'nation',
         'bank_name',
