@@ -42,7 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('admin/createEmployee', [AdminController::class, 'createEmployee'])->name('createEmployee');
     Route::post('admin/addEmployee', [AdminController::class, 'addEmployee'])->name('addEmployee');
     Route::get('admin/editEmployee/{id}', [AdminController::class, 'editEmployee'])->name('editEmployee');
-    Route::put('admin/updateEmployee/{id}', [AdminController::class, 'updateEmployee'])->name('updateEmployee');
+    Route::post('admin/updateEmployee/{id}', [AdminController::class, 'updateEmployee'])->name('updateEmployee');
     Route::delete('admin/deleteEmployee/{id}', [AdminController::class, 'deleteEmployee'])->name('deleteEmployee');
 
     Route::get('admin/viewPosition', [AdminController::class, 'viewPosition'])->name('viewPosition');
@@ -56,16 +56,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('admin/createDepartment', [AdminController::class, 'createDepartment'])->name('createDepartment');
     Route::post('admin/addDepartment', [AdminController::class, 'addDepartment'])->name('addDepartment');
     Route::get('admin/editDepartment/{id}', [AdminController::class, 'editDepartment'])->name('editDepartment');
-    Route::put('admin/updateDepartment/{id}', [AdminController::class, 'updateDepartment'])->name('updateDepartment');
+    Route::post('admin/updateDepartment/{id}', [AdminController::class, 'updateDepartment'])->name('updateDepartment');
     Route::delete('admin/deleteDepartment/{id}', [AdminController::class, 'deleteDepartment'])->name('deleteDepartment');
 
     Route::get('admin/viewShift', [AdminController::class, 'viewShift'])->name('viewShift');
     Route::get('admin/createShift', [AdminController::class, 'createShift'])->name('createShift');
     Route::post('admin/addShift', [AdminController::class, 'addShift'])->name('addShift');
     Route::get('admin/editShift/{id}', [AdminController::class, 'editShift'])->name('editShift');
-    Route::put('admin/updateShift/{id}', [AdminController::class, 'updateShift'])->name('updateShift');
+    Route::post('admin/updateShift/{id}', [AdminController::class, 'updateShift'])->name('updateShift');
     Route::delete('admin/deleteShift/{id}', [AdminController::class, 'deleteShift'])->name('deleteShift');
 
-    Route::get('admin/schedule', [AdminController::class, 'schedule'])->name('schedule');
+    // Route::get('admin/schedule', [AdminController::class, 'schedule'])->name('schedule');
     // Route::post('admin/addSchedule', [AdminController::class, 'addSchedule'])->name('addSchedule');
 });

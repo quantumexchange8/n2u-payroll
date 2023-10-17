@@ -11,7 +11,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="card-body pt-20">
-                                <h4 class="font-20">Hoverable Table</h4>
+                                <h4 class="font-20">Shift Table</h4>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -27,7 +27,7 @@
                         <table class="text-nowrap hoverable dh-table">
                             <thead>
                                 <tr>
-                                    <th>Shift ID</th>
+                                    {{-- <th>Shift ID</th> --}}
                                     <th>Shift Name</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>
@@ -37,7 +37,7 @@
                             <tbody>
                                 @foreach($shifts as $shift)
                                     <tr>
-                                        <td>{{ $shift->shift_id }}</td>
+                                        {{-- <td>{{ $shift->shift_id }}</td> --}}
                                         <td>{{ $shift->shift_name }}</td>
                                         <td>{{ $shift->shift_start }}</td>
                                         <td>{{ $shift->shift_end }}</td>

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('shifts', function (Blueprint $table) {
             $table->id();
-            $table->string('shift_id')->unique();
+            $table->string('shift_id', 6)->unique();
             $table->string('shift_name');
             $table->string('shift_start');
             $table->string('shift_end');

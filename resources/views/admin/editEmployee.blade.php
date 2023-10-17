@@ -8,12 +8,11 @@
             <div class="col-lg-12">
                 <!-- Base Horizontal Form With Icons -->
                 <div class="form-element py-30 multiple-column">
-                    <h4 class="font-20 mb-20">Multiple Column</h4>
+                    <h4 class="font-20 mb-20">Edit Employee</h4>
 
                     <!-- Form -->
                     <form action="{{ route('updateEmployee', $user->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        @method('put')
                         <div class="row">
                             <div class="col-lg-6">
                                 @if ($errors->any())
@@ -72,7 +71,7 @@
                                     <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off">
                                         @foreach($positions as $position)
                                             <option value="{{ $position->id }}" {{ $user->position->id === $position->id ? 'selected' : '' }}>
-                                                {{ $position->position }}
+                                                {{ $position->position_name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -125,10 +124,25 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Nation</label>
-                                    <input type="text" class="theme-input-style" id="nation" name="nation" autocomplete="off" placeholder="Nation" value="{{$user->nation}}">
-                                    @error('nation')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+                                    <select class="theme-input-style" id="nation" name="nation" autocomplete="off">
+                                        <option value="">Select Nation</option>
+                                        <option value="Malaysia" {{ $user->nation === 'Malaysia' ? 'selected' : '' }}>Malaysia</option>
+                                        <option value="Thailand" {{ $user->nation === 'Thailand' ? 'selected' : '' }}>Thailand</option>
+                                        <option value="Cambodia" {{ $user->nation === 'Cambodia' ? 'selected' : '' }}>Cambodia</option>
+                                        <option value="Nepal" {{ $user->nation === 'Nepal' ? 'selected' : '' }}>Nepal</option>
+                                        <option value="Myanmar" {{ $user->nation === 'Myanmar' ? 'selected' : '' }}>Myanmar</option>
+                                        <option value="Laos" {{ $user->nation === 'Laos' ? 'selected' : '' }}>Laos</option>
+                                        <option value="Vietnam" {{ $user->nation === 'Vietnam' ? 'selected' : '' }}>Vietnam</option>
+                                        <option value="Philippines" {{ $user->nation === 'Philippines' ? 'selected' : '' }}>Philippines</option>
+                                        <option value="Pakistan" {{ $user->nation === 'Pakistan' ? 'selected' : '' }}>Pakistan</option>
+                                        <option value="Sri Lanka" {{ $user->nation === 'Sri Lanka' ? 'selected' : '' }}>Sri Lanka</option>
+                                        <option value="Turkmenistan" {{ $user->nation === 'Turkmenistan' ? 'selected' : '' }}>Turkmenistan</option>
+                                        <option value="Uzbekistan" {{ $user->nation === 'Uzbekistan' ? 'selected' : '' }}>Uzbekistan</option>
+                                        <option value="Kazakhstan" {{ $user->nation === 'Kazakhstan' ? 'selected' : '' }}>Kazakhstan</option>
+                                        <option value="India" {{ $user->nation === 'India' ? 'selected' : '' }}>India</option>
+                                        <option value="Indonesia" {{ $user->nation === 'Indonesia' ? 'selected' : '' }}>Indonesia</option>
+                                        <option value="Bangladesh" {{ $user->nation === 'Bangladesh' ? 'selected' : '' }}>Bangladesh</option>                                                  
+                                    </select>
                                 </div>
                                 <!-- End Form Group -->
 

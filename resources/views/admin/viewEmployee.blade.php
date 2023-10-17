@@ -11,7 +11,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="card-body pt-20">
-                                <h4 class="font-20">Hoverable Table</h4>
+                                <h4 class="font-20">Enployee Table</h4>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -27,7 +27,6 @@
                         <table class="text-nowrap hoverable dh-table">
                             <thead>
                                 <tr>
-                                    {{-- <th></th> --}}
                                     <th>Employee ID</th>
                                     <th>Full Name</th>
                                     <th>Employee Type</th>
@@ -36,20 +35,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- {{$users}} --}}
                                 @foreach($users as $user)
                                     <tr>
-                                        {{-- <td>                                  
-                                            <!-- Avatar -->
-                                            <div class="avatar mr-20">
-                                                <img src="../../assets/img/avatar/avatar-user.png" alt="">
-                                            </div>
-                                            <!-- EndAvatar -->
-                                        </td> --}}
                                         <td>{{ $user->employee_id }}</td>
                                         <td>{{ $user->full_name }}</td>
                                         <td>{{ $user->employee_type }}</td>
-                                        <td>{{ $user->position->position }}</td>
+                                        <td>{{ $user->position->position_name }}</td>
                                         <td>
                                             <a href="{{ route('editEmployee', ['id' => $user->id]) }}" class="details-btn">
                                                 Edit <i class="icofont-arrow-right"></i>

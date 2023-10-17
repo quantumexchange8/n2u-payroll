@@ -8,7 +8,7 @@
             <div class="col-lg-12">
                 <!-- Base Horizontal Form With Icons -->
                 <div class="form-element py-30 multiple-column">
-                    <h4 class="font-20 mb-20">Multiple Column</h4>
+                    <h4 class="font-20 mb-20">Create New Employee</h4>
 
                     <!-- Form -->
                     <form action="{{route('addEmployee')}}" method="POST" enctype="multipart/form-data">
@@ -62,7 +62,7 @@
                                     <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off">
                                         <option value="">Select Position</option>
                                         @foreach($positions as $position)
-                                            <option value="{{ $position->id }}">{{ $position->position }}</option>
+                                            <option value="{{ $position->id }}">{{ $position->position_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>                                            
@@ -114,10 +114,25 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Nation</label>
-                                    <input type="text" class="theme-input-style" id="nation" name="nation" autocomplete="off" placeholder="Nation">
-                                    @error('nation')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+                                    <select class="theme-input-style" id="nation" name="nation" autocomplete="off">
+                                        <option value="">Select Nation</option>
+                                        <option value="Malaysia">Malaysia</option>
+                                        <option value="Thailand">Thailand</option>
+                                        <option value="Cambodia">Cambodia</option>
+                                        <option value="Nepal">Nepal</option>
+                                        <option value="Myanmar">Myanmar</option>
+                                        <option value="Laos">Laos</option>
+                                        <option value="Vietnam">Vietnam</option>
+                                        <option value="Philippines">Philippines</option>
+                                        <option value="Pakistan">Pakistan</option>
+                                        <option value="Sri Lanka">Sri Lanka</option>
+                                        <option value="Turkmenistan">Turkmenistan</option>
+                                        <option value="Uzbekistan">Uzbekistan</option>
+                                        <option value="Kazakhstan">Kazakhstan</option>
+                                        <option value="India">India</option>
+                                        <option value="Indonesia">Indonesia</option>
+                                        <option value="Bangladesh">Bangladesh</option>                                                  
+                                    </select>
                                 </div>
                                 <!-- End Form Group -->
 

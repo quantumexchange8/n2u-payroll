@@ -8,25 +8,17 @@
             <div class="col-lg-12">
                 <!-- Base Horizontal Form With Icons -->
                 <div class="form-element py-30 multiple-column">
-                    <h4 class="font-20 mb-20">Multiple Column</h4>
+                    <h4 class="font-20 mb-20">Create New Position</h4>
 
                     <!-- Form -->
                     <form action="{{Route('addPosition')}}" method="POST">
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Position ID</label>
-                                    <input type="text" class="theme-input-style" id="position_id" name="position_id" autocomplete="off" placeholder="Position ID">
-                                </div>
-                                <!-- End Form Group -->
-
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Position</label>
-                                    <input type="text" class="theme-input-style" id="position" name="position" autocomplete="off" placeholder="Position">
+                                    <input type="text" class="theme-input-style" id="position_name" name="position_name" autocomplete="off" placeholder="Position Name">
                                 </div>
                                 <!-- End Form Group -->
                             </div>
@@ -38,7 +30,7 @@
                                     <select class="theme-input-style" id="department_id" name="department_id" autocomplete="off">
                                         <option value="">Select Department</option>
                                         @foreach($departments as $department)
-                                            <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                            <option value="{{ $department->id }}">{{ $department->department_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

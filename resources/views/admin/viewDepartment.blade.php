@@ -11,7 +11,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="card-body pt-20">
-                                <h4 class="font-20">Hoverable Table</h4>
+                                <h4 class="font-20">Department Table</h4>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -34,7 +34,7 @@
                             <tbody>
                                 @foreach($departments as $department)
                                     <tr>
-                                        <td>{{ $department->department }}</td>
+                                        <td>{{ $department->department_name }}</td>
                                         <td>
                                             <a href="{{ route('editDepartment', ['id' => $department->id]) }}" class="details-btn">
                                                 Edit <i class="icofont-arrow-right"></i>

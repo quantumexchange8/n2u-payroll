@@ -46,7 +46,7 @@
         <header class="header white-bg fixed-top d-flex align-content-center flex-wrap">
             <!-- Logo -->
             <div class="logo">
-                <a href="../../index.html" class="default-logo"><img src="../../assets/img/logo.png" alt=""></a>
+                <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-02.png" alt="" style="width: 160px; margin-left: 50px;"></a>
                 <a href="../../index.html" class="mobile-logo"><img src="../../assets/img/mobile-logo.png" alt=""></a>
             </div>
             <!-- End Logo -->
@@ -62,16 +62,16 @@
                             <div class="main-header-user">
                                 <a href="#" class="d-flex align-items-center" data-toggle="dropdown">
                                     <div class="menu-icon">
+                                        {{-- <span></span>
                                         <span></span>
-                                        <span></span>
-                                        <span></span>
+                                        <span></span> --}}
                                     </div>
 
                                     <div class="user-profile d-xl-flex align-items-center d-none">
                                         <!-- User Avatar -->
-                                        <div class="user-avatar">
+                                        {{-- <div class="user-avatar">
                                             <img src="../../assets/img/avatar/user.png" alt="">
-                                        </div>
+                                        </div> --}}
                                         <!-- End User Avatar -->
 
                                         <!-- User Info -->
@@ -153,12 +153,6 @@
                             <span class="link-title">Dashboard</span>
                         </a>
                     </li>
-                    {{-- <li class="active">
-                        <a href="{{ route('createEmployee') }}">
-                            <i class="icofont-worker"></i>
-                            <span class="link-title">Employee</span>
-                        </a>
-                    </li> --}}
                     <li>
                         <a href="#">
                             <i class="icofont-worker"></i>
@@ -210,6 +204,17 @@
                             <span class="link-title">Schedule</span>
                         </a>
                     </li> --}}
+                    <li>
+                        <a href="{{ route('logout') }}"
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                           <i class="icofont-magic-alt"></i>
+                           <span class="link-title">Logout</span>
+                        </a>
+   
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                           @csrf
+                        </form>
+                    </li>
                 </ul>
                 <!-- End Nav -->
                 </div>

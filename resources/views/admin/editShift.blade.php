@@ -8,21 +8,13 @@
             <div class="col-lg-12">
                 <!-- Base Horizontal Form With Icons -->
                 <div class="form-element py-30 multiple-column">
-                    <h4 class="font-20 mb-20">Multiple Column</h4>
+                    <h4 class="font-20 mb-20">Edit Shift</h4>
 
                     <!-- Form -->
                     <form action="{{ route('updateShift', $shift->id) }}" method="POST">
                         @csrf
-                        @method('put')
                         <div class="row">
-                            <div class="col-lg-6">
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Shift ID</label>
-                                    <input type="text" class="theme-input-style" id="shift_id" name="shift_id" autocomplete="off" placeholder="Shift ID" value="{{$shift->shift_id}}">
-                                </div>
-                                <!-- End Form Group -->
-                                
+                            <div class="col-lg-6">                               
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Shift Name</label>

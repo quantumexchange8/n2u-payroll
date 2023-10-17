@@ -172,7 +172,6 @@ class AdminController extends Controller
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('viewEmployee');
     }
-    
 
     public function deleteEmployee($id){
 
@@ -189,8 +188,8 @@ class AdminController extends Controller
 
     public function viewPosition(){
         $positions = Position::all();
-        //dd($users);
-        return view('admin.viewPosition', ['positions' => $positions]);
+        $departments = Department::all();
+        return view('admin.viewPosition', compact('positions', 'departments'));
     }
     
     public function createPosition(){
@@ -199,42 +198,38 @@ class AdminController extends Controller
     }
 
     public function addPosition(Request $request){
-        //dd($request->all());
-
         $data = $request->validate([
-            'position_id' => 'required',
-            'position' => 'required',
+            'position_name' => 'required',
             'department_id' => 'required'
         ]);
-
-        if($data){
-            Position::create($data);
+    
+        if ($data) {
+            $position = new Position();
+            $position->position_id = $position->generatePositionId();
+            $position->position_name = $data['position_name'];
+            $position->department_id = $data['department_id'];
+            $position->save();
+    
             Alert::success('Done', 'Successfully Inserted');
         } else {
             return redirect()->back();
         }
-
+    
         return redirect()->route('viewPosition');
     }
-
+    
     public function editPosition($id){
-
-        // $test = Position::find($id);
-        // $positions = Position::where('position_id', $test->position_id)->with(['department'])->first();
-        // dd($positions);
         $positions = Position::with('department')->find($id);
-        // dd($positions);
         $departments = Department::all();
         return view('admin.editPosition', compact('positions', 'departments'));
     }
 
     public function updatePosition(Request $request, $id){
         $data = Position::find($id);
-        // dd($request->all());
+
         //Update the user's data based on the form input
         $data->update([
-            'position_id' => $request->input('position_id'),
-            'position' => $request->input('position'),
+            'position_name' => $request->input('position_name'),
             'department_id' => $request->input('department_id')
         ]);
 
@@ -258,7 +253,7 @@ class AdminController extends Controller
 
     public function viewDepartment(){
         $departments = Department::all();
-        //dd($users);
+  
         return view('admin.viewDepartment', ['departments' => $departments]);
     }
     
@@ -267,22 +262,24 @@ class AdminController extends Controller
     }
 
     public function addDepartment(Request $request){
-        //dd($request->all());
-
         $data = $request->validate([
-            'department_id' => 'required',
-            'department' => 'required'
+            'department_name' => 'required'
         ]);
-
+    
         if($data){
-            Department::create($data);
+            $department = new Department();
+            $department->department_id = $department->generateDepartmentId();
+            $department->department_name = $data['department_name'];
+            $department->save();
+    
             Alert::success('Done', 'Successfully Inserted');
         } else {
             return redirect()->back();
         }
-
+    
         return redirect()->route('viewDepartment');
     }
+    
 
     public function editDepartment($id){
         $department = Department::find($id);
@@ -295,8 +292,7 @@ class AdminController extends Controller
 
         //Update the user's data based on the form input
         $data->update([
-            'department_id' => $request->input('department_id'),
-            'department' => $request->input('department')
+            'department_name' => $request->input('department_name')
         ]);
 
         Alert::success('Done', 'Successfully Updated');
@@ -319,7 +315,6 @@ class AdminController extends Controller
 
     public function viewShift(){
         $shifts = Shift::all();
-        //dd($users);
         return view('admin.viewShift', ['shifts' => $shifts]);
     }
     
@@ -328,17 +323,22 @@ class AdminController extends Controller
     }
 
     public function addShift(Request $request){
-        //dd($request->all());
 
         $data = $request->validate([
-            'shift_id' => 'required',
             'shift_name' => 'required',
             'shift_start' => 'required',
             'shift_end' => 'required'
         ]);
 
         if($data){
-            Shift::create($data);
+            $shift = new Shift();
+            $shift->shift_id = $shift->generateShiftId();
+            $shift->shift_name = $data['shift_name'];
+            $shift->shift_start = $data['shift_start'];
+            $shift->shift_end = $data['shift_end'];
+            $shift->save();
+
+            Alert::success('Done', 'Successfully Inserted');
         } else {
             return redirect()->back();
         }
@@ -357,7 +357,6 @@ class AdminController extends Controller
 
         //Update the user's data based on the form input
         $data->update([
-            'shift_id' => $request->input('shift_id'),
             'shift_name' => $request->input('shift_name'),
             'shift_start' => $request->input('shift_start'),
             'shift_end' => $request->input('shift_end')
@@ -381,34 +380,34 @@ class AdminController extends Controller
         return redirect()->route('viewShift');
     }
 
-    public function schedule(){
-        $schedules = Schedule::all();
-        $users = User::all();
+    // public function schedule(){
+    //     $schedules = Schedule::all();
+    //     $users = User::all();
 
 
-        return view('admin.schedule', [
-            'schedules' => $schedules,
-            'users' => $users
-        ]);
-    }
+    //     return view('admin.schedule', [
+    //         'schedules' => $schedules,
+    //         'users' => $users
+    //     ]);
+    // }
     
-    public function addSchedule(Request $request){
+    // public function addSchedule(Request $request){
 
-        $data = $request->validate([
-            'schedule_id' => 'required',
-            'date' => 'required',
-            'employee_id' => 'required',
-            'shift_id' => 'required'
-        ]);
+    //     $data = $request->validate([
+    //         'schedule_id' => 'required',
+    //         'date' => 'required',
+    //         'employee_id' => 'required',
+    //         'shift_id' => 'required'
+    //     ]);
 
-        if($data){
-            Schedule::create($data);
-        } else {
-            return redirect()->back();
-        }
+    //     if($data){
+    //         Schedule::create($data);
+    //     } else {
+    //         return redirect()->back();
+    //     }
 
-        return redirect()->route('schedule');
-    }
+    //     return redirect()->route('schedule');
+    // }
 
     
 }

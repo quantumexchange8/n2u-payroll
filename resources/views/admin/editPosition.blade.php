@@ -8,7 +8,7 @@
             <div class="col-lg-12">
                 <!-- Base Horizontal Form With Icons -->
                 <div class="form-element py-30 multiple-column">
-                    <h4 class="font-20 mb-20">Multiple Column</h4>
+                    <h4 class="font-20 mb-20">Edit Position</h4>
 
                     <!-- Form -->
                     <form action="{{ route('updatePosition', $positions->id) }}" method="POST">
@@ -17,15 +17,8 @@
                             <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Position ID</label>
-                                    <input type="text" class="theme-input-style" id="position_id" name="position_id" autocomplete="off" placeholder="Position ID" value="{{$positions->position_id}}">
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
                                     <label class="font-14 bold mb-2">Position</label>
-                                    <input type="text" class="theme-input-style" id="position" name="position" autocomplete="off" placeholder="Position" value="{{$positions->position}}">
+                                    <input type="text" class="theme-input-style" id="position_name" name="position_name" autocomplete="off" placeholder="Position Name" value="{{$positions->position_name}}">
                                 </div>
                                 <!-- End Form Group -->
                             </div>
@@ -41,8 +34,8 @@
                                             </option>
                                         @endforeach --}}
                                         @foreach($departments as $department)
-                                            <option value="{{ $department->id }}" name="department_id">
-                                                {{ $department->department }}
+                                            <option value="{{ $department->id }}" {{ $positions->department->id === $department->id ? 'selected' : '' }}>
+                                                {{ $department->department_name }}
                                             </option>
                                         @endforeach
                                     </select>

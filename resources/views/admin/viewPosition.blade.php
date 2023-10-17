@@ -11,7 +11,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="card-body pt-20">
-                                <h4 class="font-20">Hoverable Table</h4>
+                                <h4 class="font-20">Position Table</h4>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -27,18 +27,18 @@
                         <table class="text-nowrap hoverable dh-table">
                             <thead>
                                 <tr>
-                                    <th>Position ID</th>
-                                    <th>Position</th>
-                                    {{-- <th>Department</th> --}}
+                                    {{-- <th>Position ID</th> --}}
+                                    <th>Position Name</th>
+                                    <th>Department</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($positions as $position)
                                     <tr>
-                                        <td>{{ $position->position_id }}</td>
-                                        <td>{{ $position->position }}</td>
-                                        
+                                        {{-- <td>{{ $position->position_id }}</td> --}}
+                                        <td>{{ $position->position_name }}</td>
+                                        <td>{{ $position->department->department_name }}</td>
                                         <td>
                                             <a href="{{ route('editPosition', ['id' => $position->id]) }}" class="details-btn">
                                                 Edit <i class="icofont-arrow-right"></i>
