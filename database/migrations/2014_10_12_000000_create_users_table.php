@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('email');
             $table->string('position_id')->nullable();
             $table->string('employee_type');
-            $table->integer('working_hour');
+            $table->integer('working_hour')->nullable();
+            $table->integer('salary')->nullable();
             $table->string('employed_since')->nullable();
             $table->string('nation')->nullable();
             $table->string('bank_name')->nullable();

@@ -19,9 +19,11 @@ class UserSeeder extends Seeder
             'employee_id' => 'Admin123',
             'full_name' => 'admin',
             'address' => 'Test',
-            'employee_type' => 'admin',
-            'working_hour' => '12',     
+            'ic_number' => '123',
+            'address' => '123',
             'email' => 'admin@admin.com',
+            'working_hour' => '12',
+            'employee_type' => 'admin',
             'password' => Hash::make('Test1234.'),
             'role' => 'admin'
         ]);
