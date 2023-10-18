@@ -20,17 +20,12 @@
                                     <th>Name</th>
                                     <th>Date</th>
                                     <th>Time</th>
+                                    <th>In</th>
+                                    <th>Out</th>
                                     {{-- <th>Actions</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- <tr>
-                                    <td>Christine McDonald</td>
-                                    <td>$1564.32</td>
-                                    <td>26 November 2019</td>
-                                    <td>UX Solutions</td>
-                                    <td><a href="invoice-details.html" class="details-btn">View Details <i class="icofont-arrow-right"></i></a></td>
-                                </tr> --}}
                                 @foreach ($punchRecords as $punchRecord)
                                 {{-- {{ dd($punchRecord->user) }} --}}
                                     <tr>
@@ -38,6 +33,8 @@
                                         <td>{{$punchRecord->user->full_name}}</td>
                                         <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toDateString() }}</td>
                                         <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toTimeString() }}</td>
+                                        <td>{{$punchRecord->in}}</td>
+                                        <td>{{$punchRecord->out}}</td>
                                     </tr>
                                 @endforeach
                             

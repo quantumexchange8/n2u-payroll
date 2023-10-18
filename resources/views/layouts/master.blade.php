@@ -47,7 +47,7 @@
             <!-- Logo -->
             <div class="logo">
                 <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-02.png" alt="" style="width: 160px; margin-left: 50px;"></a>
-                <a href="../../index.html" class="mobile-logo"><img src="../../assets/img/mobile-logo.png" alt=""></a>
+                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="../../assets/img/logo-02.png"  alt="" style="width: 160px; margin-left: 50px;"></a>
             </div>
             <!-- End Logo -->
 
@@ -61,11 +61,11 @@
                             <!-- Main Header User -->
                             <div class="main-header-user">
                                 <a href="#" class="d-flex align-items-center" data-toggle="dropdown">
-                                    <div class="menu-icon">
-                                        {{-- <span></span>
+                                    {{-- <div class="menu-icon">
                                         <span></span>
-                                        <span></span> --}}
-                                    </div>
+                                        <span></span>
+                                        <span></span>
+                                    </div> --}}
 
                                     <div class="user-profile d-xl-flex align-items-center d-none">
                                         <!-- User Avatar -->
@@ -82,12 +82,12 @@
                                         <!-- End User Info -->
                                     </div>
                                 </a>
-                                <div class="dropdown-menu">
+                                {{-- <div class="dropdown-menu">
                                     <a href="#">My Profile</a>
                                     <a href="#">task</a>
                                     <a href="#">Settings</a>
                                     <a href="{{ route('logout') }}">Log Out</a>
-                                </div>
+                                </div> --}}
                             </div>
                             <!-- End Main Header User -->
 
@@ -105,7 +105,7 @@
                         <!-- Header Right -->
                         <div class="main-header-right d-flex justify-content-end">
                             <ul class="nav">
-                                <li class="d-none d-lg-flex">
+                                <li class="d-lg-flex">
                                     <!-- Main Header Time -->
                                     <div class="main-header-date-time text-right">
                                         <h3 class="time">
@@ -144,79 +144,123 @@
 
                 <!-- Sidebar Body -->
                 <div class="sidebar-body">
-                <!-- Nav -->
-                <ul class="nav">
-                    <li class="nav-category">Main</li>
-                    <li>
-                        <a href="{{route('admindashboard')}}">
-                            <i class="icofont-pie-chart"></i>
-                            <span class="link-title">Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="icofont-worker"></i>
-                            <span class="link-title">Employee</span>
-                        </a>
-                    
-                        <!-- Sub Menu -->
-                        <ul class="nav sub-menu">
+                    <!-- Nav -->
+                    @if(Auth::user()->role == 'admin')
+                        <ul class="nav">
+                            <li class="nav-category">Main</li>
                             <li>
-                                <a href="{{ route('viewEmployee') }}">View Employee</a>
+                                <a href="{{route('admindashboard')}}">
+                                    <i class="icofont-pie-chart"></i>
+                                    <span class="link-title">Dashboard</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="icofont-worker"></i>
+                                    <span class="link-title">Employee</span>
+                                </a>
+                            
+                                <!-- Sub Menu -->
+                                <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('viewEmployee') }}">View Employee</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu -->
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="icofont-briefcase"></i>
+                                    <span class="link-title">Position & Department</span>
+                                </a>
+                            
+                                <!-- Sub Menu -->
+                                <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('viewPosition') }}">View Position</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewDepartment') }}">View Department</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu -->
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="icofont-clock-time"></i>
+                                    <span class="link-title">Shift Management</span>
+                                </a>
+                            
+                                <!-- Sub Menu -->
+                                <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('viewShift') }}">View Shift</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu -->
+                            </li>
+                            <li>
+                                <a href="{{ route('schedule') }}">
+                                    <i class="icofont-table"></i>
+                                    <span class="link-title">Schedule</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('logout') }}"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="icofont-magic-alt"></i>
+                                <span class="link-title">Logout</span>
+                                </a>
+        
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                                </form>
                             </li>
                         </ul>
-                        <!-- End Sub Menu -->
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="icofont-briefcase"></i>
-                            <span class="link-title">Position & Department</span>
-                        </a>
-                    
-                        <!-- Sub Menu -->
-                        <ul class="nav sub-menu">
+                    @else
+                        <ul class="nav">
+                            <li class="nav-category">Main</li>
                             <li>
-                                <a href="{{ route('viewPosition') }}">View Position</a>
+                                <a href="{{route('homepage')}}">
+                                    <i class="icofont-pie-chart"></i>
+                                    <span class="link-title">Dashboard</span>
+                                </a>
+                            </li>
+                            {{-- <li>
+                                <a href="{{route('viewSchedule')}}">
+                                    <i class="icofont-table"></i>
+                                    <span class="link-title">Schedule</span>
+                                </a>
+                            </li> --}}
+                            <li>
+                                <a href="{{route('viewProfile')}}">
+                                    <i class="icofont-ui-user"></i>
+                                    <span class="link-title">Profile</span>
+                                </a>
+                            
+                                {{-- <!-- Sub Menu -->
+                                <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="#">Edit Profile</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu --> --}}
                             </li>
                             <li>
-                                <a href="{{ route('viewDepartment') }}">View Department</a>
+                                <a href="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="icofont-magic-alt"></i>
+                                    <span class="link-title">Logout</span>
+                                </a>
+            
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
                             </li>
                         </ul>
-                        <!-- End Sub Menu -->
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="icofont-clock-time"></i>
-                            <span class="link-title">Shift Management</span>
-                        </a>
-                    
-                        <!-- Sub Menu -->
-                        <ul class="nav sub-menu">
-                            <li>
-                                <a href="{{ route('viewShift') }}">View Shift</a>
-                            </li>
-                        </ul>
-                        <!-- End Sub Menu -->
-                    </li>
-                    {{-- <li>
-                        <a href="{{ route('schedule') }}">
-                            <i class="icofont-table"></i>
-                            <span class="link-title">Schedule</span>
-                        </a>
-                    </li> --}}
-                    <li>
-                        <a href="{{ route('logout') }}"
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                           <i class="icofont-magic-alt"></i>
-                           <span class="link-title">Logout</span>
-                        </a>
-   
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                           @csrf
-                        </form>
-                    </li>
-                </ul>
-                <!-- End Nav -->
+                    @endif
+                
+                    <!-- End Nav -->
                 </div>
                 <!-- End Sidebar Body -->
             </nav>

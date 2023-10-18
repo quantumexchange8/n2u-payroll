@@ -29,7 +29,7 @@ class RedirectIfAuthenticated
                 $user = Auth::user();
                 $role = $user->role;
                 if($role == 'member') {
-                    return redirect()->route('indexs');
+                    return redirect()->route('homepage');
                 } elseif ($role == 'admin') {
                     return redirect()->route('admindashboard');
                 }

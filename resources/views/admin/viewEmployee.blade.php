@@ -11,7 +11,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="card-body pt-20">
-                                <h4 class="font-20">Enployee Table</h4>
+                                <h4 class="font-20">Employee Table</h4>
                             </div>
                         </div>
                         <div class="col-md-4">

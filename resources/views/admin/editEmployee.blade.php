@@ -224,6 +224,52 @@
                 </div>
                 <!-- End Horizontal Form With Icons -->
             </div>
+
+            <div class="col-lg-12">
+                <!-- Base Horizontal Form With Icons -->
+                <div class="form-element py-30 multiple-column">
+                    <h4 class="font-20 mb-20">Change Password</h4>
+
+                    <!-- Form -->
+                    <form action="{{ route('updateEmployeePassword', $user->id) }}" method="POST">
+                        @csrf
+                        <div class="row">
+                            <div class="col-lg-6">
+                                @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+
+                                <!-- Form Group -->
+                                <div class="form-group mb-4">
+                                    <label for="new-pass" class="bold font-14 mb-2">New Password</label>
+                                    <input type="password" class="theme-input-style" id="new-pass" name="new_password" placeholder="********">
+                                    @error('new_password')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <!-- End Form Group -->
+                                    
+                            </div>
+                        </div>
+
+                        <!-- Form Row -->
+                        <div class="form-row">
+                            <div class="col-12 text-right">
+                                <button type="submit" class="btn long">Update Password</button>
+                            </div>
+                        </div>
+                        <!-- End Form Row -->
+                    </form>
+                    <!-- End Form -->
+                </div>
+                <!-- End Horizontal Form With Icons -->
+            </div>
         </div>
     </div>
 </div>

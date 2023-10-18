@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('punch_records', function (Blueprint $table) {
-            $table->id();
-            $table->string('employee_id');
-            $table->string('in');
-            $table->string('out');
-            $table->timestamps();
+        Schema::table('schedules', function (Blueprint $table) {
+            $table->softDeletes();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('punch_records');
+        Schema::table('schedules', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 };

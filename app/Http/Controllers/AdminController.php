@@ -173,6 +173,27 @@ class AdminController extends Controller
         return redirect()->route('viewEmployee');
     }
 
+    public function updateEmployeePassword(Request $request, $id){
+        // Validate the input, including your password requirements
+        $request->validate([
+            'new_password' => ['required', 'min:8', 'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)/'],
+        ]);
+    
+        // Find the user by ID
+        $user = User::find($id);
+    
+        // Hash the new password
+        $hashedPassword = Hash::make($request->input('new_password'));
+    
+        // Update the user's password
+        $user->password = $hashedPassword;
+        $user->save();
+    
+        Alert::success('Done', 'Successfully Updated');
+        return redirect()->route('viewEmployee');
+    }
+    
+
     public function deleteEmployee($id){
 
         $employee = User::find($id);
@@ -200,7 +221,7 @@ class AdminController extends Controller
     public function addPosition(Request $request){
         $data = $request->validate([
             'position_name' => 'required',
-            'department_id' => 'required'
+            'department_id' => 'nullable'
         ]);
     
         if ($data) {
@@ -380,34 +401,45 @@ class AdminController extends Controller
         return redirect()->route('viewShift');
     }
 
-    // public function schedule(){
-    //     $schedules = Schedule::all();
-    //     $users = User::all();
+    public function schedule(){
+        $schedules = Schedule::all();
+        $users = User::all();
+        $shifts = Shift::all();
 
+        if (request()->wantsJson()) {
+            return response()->json($schedules);
+        }
 
-    //     return view('admin.schedule', [
-    //         'schedules' => $schedules,
-    //         'users' => $users
-    //     ]);
-    // }
+        return view('admin.schedule', [
+            'schedules' => $schedules,
+            'users' => $users,
+            'shifts' => $shifts
+        ]);
+    }
     
-    // public function addSchedule(Request $request){
+    public function addSchedule(Request $request){
 
-    //     $data = $request->validate([
-    //         'schedule_id' => 'required',
-    //         'date' => 'required',
-    //         'employee_id' => 'required',
-    //         'shift_id' => 'required'
-    //     ]);
+        $data = $request->validate([
+            'date' => 'required',
+            'employee_id' => 'required',
+            'shift_id' => 'required'
+        ]);
 
-    //     if($data){
-    //         Schedule::create($data);
-    //     } else {
-    //         return redirect()->back();
-    //     }
+        if($data){
+            $schedule = new Schedule();
+            $schedule->schedule_id = $schedule->generateScheduleId();
+            $schedule->date = $data['date'];
+            $schedule->employee_id = $data['employee_id'];
+            $schedule->shift_id = $data['shift_id'];
+            $schedule->save();
+                        
+            Alert::success('Done', 'Successfully Inserted');
+        } else {
+            return redirect()->back();
+        }
 
-    //     return redirect()->route('schedule');
-    // }
+        return redirect()->route('schedule');
+    }
 
     
 }

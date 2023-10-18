@@ -50,7 +50,7 @@ class LoginController extends Controller
     
             // Check the user's role and redirect accordingly
             if ($user->role === 'member') {
-                return redirect()->route('index'); // Redirect to member dashboard
+                return redirect()->route('homepage'); // Redirect to member dashboard
             } elseif ($user->role === 'admin') {
                 return redirect()->route('admindashboard'); // Redirect to admin dashboard
             }
@@ -83,7 +83,7 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        return redirect()->to('index');
+        return redirect()->to('dashboard');
     }
 
     public function logout()

@@ -31,7 +31,7 @@ Route::post('/register_post', [LoginController::class, 'register_post'])->name('
 
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('dashboard', [MemberController::class, 'dashboard'])->name('index');
+    Route::get('dashboard', [MemberController::class, 'dashboard'])->name('homepage');
     Route::post('/clock_in', [RecordController::class, 'clock_in'])->name('clock_in');
     
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('admin/addEmployee', [AdminController::class, 'addEmployee'])->name('addEmployee');
     Route::get('admin/editEmployee/{id}', [AdminController::class, 'editEmployee'])->name('editEmployee');
     Route::post('admin/updateEmployee/{id}', [AdminController::class, 'updateEmployee'])->name('updateEmployee');
+    Route::post('admin/updateEmployeePassword/{id}', [AdminController::class, 'updateEmployeePassword'])->name('updateEmployeePassword');
     Route::delete('admin/deleteEmployee/{id}', [AdminController::class, 'deleteEmployee'])->name('deleteEmployee');
 
     Route::get('admin/viewPosition', [AdminController::class, 'viewPosition'])->name('viewPosition');
@@ -66,6 +67,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('admin/updateShift/{id}', [AdminController::class, 'updateShift'])->name('updateShift');
     Route::delete('admin/deleteShift/{id}', [AdminController::class, 'deleteShift'])->name('deleteShift');
 
-    // Route::get('admin/schedule', [AdminController::class, 'schedule'])->name('schedule');
-    // Route::post('admin/addSchedule', [AdminController::class, 'addSchedule'])->name('addSchedule');
+    Route::get('admin/schedule', [AdminController::class, 'schedule'])->name('schedule');
+    Route::post('admin/addSchedule', [AdminController::class, 'addSchedule'])->name('addSchedule');
+
+
+    // User
+
+    // Route::get('user/viewSchedule', [MemberController::class, 'viewSchedule'])->name('viewSchedule');
+
+    Route::get('user/viewProfile', [MemberController::class, 'viewProfile'])->name('viewProfile');
+    Route::post('user/updateProfile', [MemberController::class, 'updateProfile'])->name('updateProfile');
 });

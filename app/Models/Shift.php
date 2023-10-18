@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class Shift extends Model
 {
@@ -15,6 +16,11 @@ class Shift extends Model
         'shift_name',
         'shift_start',
         'shift_end'
+    ];
+
+    protected $casts = [
+        'shift_start' => 'datetime',
+        'shift_end' => 'datetime',
     ];
 
     public function generateShiftId(){
@@ -29,4 +35,12 @@ class Shift extends Model
 
         return 'S' . $newId;
     }
+
+    public function getFormattedShiftTimeAttribute()
+{
+    $shift_start = Carbon::parse($this->shift_start);
+    $shift_end = Carbon::parse($this->shift_end);
+
+    return $shift_start->format('h:i A') . ' - ' . $shift_end->format('h:i A');
+}
 }
