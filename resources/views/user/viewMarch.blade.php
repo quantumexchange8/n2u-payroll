@@ -9,7 +9,15 @@
             <div class="col-12">
                 <div class="card mb-30">
                     <div class="card-body pt-30">
-                        <h4 class="font-20 ">Schedule Table</h4>
+                        <div class="row">
+                            <div class="col-6">
+                                <h4 class="font-20">Schedule for March</h4>
+                            </div>
+                            <div class="col-6 text-right">
+                                <a href="{{ route('viewFebruary') }}" class="btn btn-primary">Previous</a>
+                                <a href="{{ route('viewApril') }}" class="btn btn-primary">Next</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
@@ -24,7 +32,6 @@
                                     <th>Thursday</th>
                                     <th>Friday</th>
                                     <th>Saturday</th>
-                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -36,14 +43,16 @@
                                     $scheduleDate = \Carbon\Carbon::createFromFormat('Y-m-d', $schedule->date);
                                     $shiftInfo = null;
                                     if ($schedule->shift && $schedule->shift->shift_start && $schedule->shift->shift_end) {
-                                        $shiftInfo = $schedule->shift->shift_start->format('h:i A') . ' - ' . $schedule->shift->shift_end->format('h:i A');
+                                        $shiftInfo = $schedule->shift->shift_start->format('h:i A') . ' - ' . $schedule->shift->shift_end->format('h:ia');
                                     }
-                                    // Determine the day of the week (0 = Sunday, 1 = Monday, etc.)
-                                    $dayOfWeek = $scheduleDate->dayOfWeek;
+                                    // Check if the schedule date falls within November (month number 11)
+                                    if ($scheduleDate->month === 3) {
+                                        // Determine the day of the week (0 = Sunday, 1 = Monday, etc.)
+                                        $dayOfWeek = $scheduleDate->dayOfWeek;
                                     @endphp
-                    
+            
                                     <tr>
-                                        <td>{{ $scheduleDate->format('Y-m-d') }}</td>
+                                        <td>{{ $scheduleDate->format('d F Y') }}</td>
                                         @for ($i = 0; $i < 7; $i++)
                                         <td>
                                             @if ($i === $dayOfWeek)
@@ -55,9 +64,14 @@
                                                     {{ $startTime->format('h:ia') }}<br>-<br>{{ $endTime->format('h:ia') }}
                                                 </div>
                                             @endif
-                                        </td>                                        
+                                        </td>
                                         @endfor
                                     </tr>
+            
+                                    @php
+                                    } // Close the if statement for checking the month
+                                    @endphp
+            
                                 @endforeach
                             </tbody>
                         </table>
@@ -65,6 +79,11 @@
                     </div>
                 </div>    
             </div>
+            
+            
+
+            
+            
 
         </div>
     </div>

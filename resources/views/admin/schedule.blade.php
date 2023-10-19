@@ -5,54 +5,54 @@
 <div class="main-content d-flex flex-column flex-md-row">
     <div class="d-none d-md-block">
         <!-- Tasks Aside -->
-        <div class="tasks_aside calendar_aside">
+        {{-- <div class="tasks_aside calendar_aside">
             <div class="card">
                 <!-- Aside Header -->
                 <div class="aside-header">
-                <div class="add-event-btn">
-                    <a href="#" class="btn w-100" data-toggle="modal" data-target="#createEventModal">
-                        <img src="../../assets/img/svg/plus_white.svg" alt="" class="svg mr-1"> 
-                        Add New Event
-                    </a>
-                </div>
+                    <div class="add-event-btn">
+                        <a href="#" class="btn w-100" data-toggle="modal" data-target="#createEventModal">
+                            <img src="../../assets/img/svg/plus_white.svg" alt="" class="svg mr-1"> 
+                            Add New Event
+                        </a>
+                    </div>
                 </div>
                 <!-- End Aside Header -->
 
                 <!-- Aside Body -->
                 <div id="external-events" class="aside-body external-events">
-                <ul  id="external-events-listing" class="nav flex-column">
-                    <li class="lavel fc-event">
-                        <a href="#"><span class="tag_color birthday"></span>Birthday</a>
-                    </li>
-                    <li class="lavel fc-event">
-                        <a href="#"><span class="tag_color event"></span>Event</a>
-                    </li>
-                    <li class="lavel fc-event">
-                        <a href="#"><span class="tag_color friend"></span>Friend</a>
-                    </li>
-                    <li class="lavel fc-event">
-                        <a href="#"><span class="tag_color work"></span>Work</a>
-                    </li>
-                    <li class="lavel fc-event">
-                        <a href="#"><span class="tag_color new_project"></span>New Project</a>
-                    </li>
-                    <li class="lavel fc-event">
-                        <a href="#"><span class="tag_color anniversary"></span>Anniversary</a>
-                    </li>
-                    <li class="lavel fc-event">
-                        <a href="#"><span class="tag_color meeting"></span>Meeting</a>
-                    </li>
-                    <li class="lavel fc-event">
-                        <a href="#"><span class="tag_color travel"></span>Travel</a>
-                    </li>
-                    <li class="lavel fc-event">
-                        <a href="#"><span class="tag_color rest"></span>Rest</a>
-                    </li>
-                </ul>
+                    <ul  id="external-events-listing" class="nav flex-column">
+                        <li class="lavel fc-event">
+                            <a href="#"><span class="tag_color birthday"></span>Birthday</a>
+                        </li>
+                        <li class="lavel fc-event">
+                            <a href="#"><span class="tag_color event"></span>Event</a>
+                        </li>
+                        <li class="lavel fc-event">
+                            <a href="#"><span class="tag_color friend"></span>Friend</a>
+                        </li>
+                        <li class="lavel fc-event">
+                            <a href="#"><span class="tag_color work"></span>Work</a>
+                        </li>
+                        <li class="lavel fc-event">
+                            <a href="#"><span class="tag_color new_project"></span>New Project</a>
+                        </li>
+                        <li class="lavel fc-event">
+                            <a href="#"><span class="tag_color anniversary"></span>Anniversary</a>
+                        </li>
+                        <li class="lavel fc-event">
+                            <a href="#"><span class="tag_color meeting"></span>Meeting</a>
+                        </li>
+                        <li class="lavel fc-event">
+                            <a href="#"><span class="tag_color travel"></span>Travel</a>
+                        </li>
+                        <li class="lavel fc-event">
+                            <a href="#"><span class="tag_color rest"></span>Rest</a>
+                        </li>
+                    </ul>
                 </div>
                 <!-- End Aside Body -->
             </div>
-        </div>
+        </div> --}}
         <!-- End Tasks Aside -->
     </div>
     <div class="container-fluid">
@@ -68,9 +68,9 @@
             <div class="modal-content">
                 <div class="modal-header flex-column border-bottom-0 pt-2 pb-0">
                     <h6 id="modalTitle1">Required his you </h6>
-                    <p id="modalDate" class="font-14">17 . 10 . 2019</p>
+                    {{-- <p id="modalDate" class="font-14">17 . 10 . 2019</p> --}}
                 </div>
-                <div id="modalBody1" class="modal-body border-bottom-0 pt-0 mt-10">
+                {{-- <div id="modalBody1" class="modal-body border-bottom-0 pt-0 mt-10">
                     <div class="calendar-modal-location d-flex align-items-center">
                         <span class="icon"><img src="../../assets/img/svg/popup-location.svg" class="svg" alt=""></span>
                         <span id="modalLocation" class="content">Po Box 931, Sterling City, Malta</span>
@@ -83,7 +83,7 @@
                         <span class="color"></span>
                         <span id="modalEvent" class="content">Anniversary</span>
                     </div>
-                </div>
+                </div> --}}
                 <div class="modal-footer justify-content-around pb-2 border-top-0">
                     <button class="edit-btn" data-toggle="modal" data-target="#createEventModal" data-dismiss="modal"><i class="icofont-ui-edit"></i> Edit</button>
                     <button type="button" class="delete-btn" data-dismiss="modal"><i class="icofont-ui-delete"></i> Close</button>
@@ -145,9 +145,11 @@
             </form>
         </div>
     </div>
-    
 </div>
+
 <!-- End Main Content -->
+
+
 
 
 @endsection

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class LoginController extends Controller
 {
@@ -50,14 +51,17 @@ class LoginController extends Controller
     
             // Check the user's role and redirect accordingly
             if ($user->role === 'member') {
+                Alert::success('Welcome', 'Login Successful.');
                 return redirect()->route('homepage'); // Redirect to member dashboard
             } elseif ($user->role === 'admin') {
+                Alert::success('Welcome', 'Login Successful.');
                 return redirect()->route('admindashboard'); // Redirect to admin dashboard
             }
         } else {
             // Authentication failed, show an error message
-            return redirect()->back()
-                ->with('login_error', 'Invalid employee ID or password.');
+            
+            return redirect()->back()->with('login_error', 'Invalid employee ID or password.');
+                
         }
     }
 

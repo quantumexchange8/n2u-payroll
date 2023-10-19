@@ -27,7 +27,7 @@ class MemberController extends Controller
         ]);
     }
 
-    // public function viewSchedule(){
+    // public function viewOctober(){
     //     // Get the currently logged-in user
     //     $user = auth()->user(); // Assuming you are using Laravel's built-in authentication
 
@@ -41,6 +41,94 @@ class MemberController extends Controller
     //         'shifts' => $shifts
     //     ]);
     // }
+
+    // Define a private method to fetch schedules and shifts
+    private function fetchSchedulesAndShifts(){
+        // Get the currently logged-in user
+        $user = auth()->user(); // Assuming you are using Laravel's built-in authentication
+
+        // Retrieve schedules related to the logged-in user (employee)
+        $schedules = Schedule::where('employee_id', $user->id)->orderBy('date')->get();
+
+        $shifts = Shift::all();
+
+        return [
+            'schedules' => $schedules,
+            'shifts' => $shifts,
+        ];
+    }
+
+    public function viewJanuary(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewJanuary', $data);
+    }
+
+    public function viewFebruary(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewFebruary', $data);
+    }
+
+    public function viewMarch(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewMarch', $data);
+    }
+
+    public function viewApril(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewApril', $data);
+    }
+
+    public function viewMay(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewMay', $data);
+    }
+
+    public function viewJune(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewJune', $data);
+    }
+
+    public function viewJuly(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewJuly', $data);
+    }
+
+    public function viewAugust(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewAugust', $data);
+    }
+
+    public function viewSeptember(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewSeptember', $data);
+    }
+
+    public function viewOctober(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewOctober', $data);
+    }
+
+    public function viewNovember(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewNovember', $data);
+    }
+
+    public function viewDecember(){
+        $data = $this->fetchSchedulesAndShifts();
+
+        return view('user.viewDecember', $data);
+    }
 
     public function viewProfile(){
         $user = auth()->user(); // Retrieve the currently logged-in user

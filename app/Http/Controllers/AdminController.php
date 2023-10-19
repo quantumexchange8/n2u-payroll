@@ -410,11 +410,11 @@ class AdminController extends Controller
             return response()->json($schedules);
         }
 
-        return view('admin.schedule', [
-            'schedules' => $schedules,
-            'users' => $users,
-            'shifts' => $shifts
-        ]);
+        $shiftIds = Schedule::pluck('shift_id', 'id');
+
+
+        return view('admin.schedule', compact('schedules', 'users', 'shifts', 'shiftIds'));
+
     }
     
     public function addSchedule(Request $request){
@@ -440,6 +440,17 @@ class AdminController extends Controller
 
         return redirect()->route('schedule');
     }
+
+    public function getShiftID(Request $request)
+    {
+        $date = $request->input('date');
+    
+        // Query the database to retrieve the Shift ID based on the date
+        $shiftID = Schedule::where('date', $date)->pluck('shift_id')->first();
+    
+        return response()->json(['shift_id' => $shiftID]);
+    }
+    
 
     
 }

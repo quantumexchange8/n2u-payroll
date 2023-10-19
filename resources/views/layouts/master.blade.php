@@ -24,13 +24,13 @@
    <link rel="stylesheet" href="../../assets/plugins/perfect-scrollbar/perfect-scrollbar.min.css">
    <!-- ======= END BEGIN GLOBAL MANDATORY STYLES ======= -->
 
-   <!-- ======= MAIN STYLES ======= -->
-   <link rel="stylesheet" href="../../assets/css/style.css">
-   <!-- ======= END MAIN STYLES ======= -->
-
     <!-- ======= BEGIN PAGE LEVEL PLUGINS STYLES ======= -->
     <link rel="stylesheet" href="../../assets/plugins/fullcalendar/fullcalendar.min.css">
     <!-- ======= END BEGIN PAGE LEVEL PLUGINS STYLES ======= -->
+
+    <!-- ======= MAIN STYLES ======= -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <!-- ======= END MAIN STYLES ======= -->
 
 </head>
 
@@ -226,25 +226,58 @@
                                     <span class="link-title">Dashboard</span>
                                 </a>
                             </li>
-                            {{-- <li>
-                                <a href="{{route('viewSchedule')}}">
+                            <li>
+                                <a href="#">
                                     <i class="icofont-table"></i>
                                     <span class="link-title">Schedule</span>
                                 </a>
-                            </li> --}}
+
+                                <!-- Sub Menu -->
+                                <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('viewJanuary') }}">January</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewFebruary') }}">February</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewMarch') }}">March</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewApril') }}">April</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewMay') }}">May</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewJune') }}">June</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewJuly') }}">July</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewAugust') }}">August</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewSeptember') }}">September</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewOctober') }}">October</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewNovember') }}">November</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewDecember') }}">December</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu -->
+                            </li>
                             <li>
                                 <a href="{{route('viewProfile')}}">
                                     <i class="icofont-ui-user"></i>
                                     <span class="link-title">Profile</span>
                                 </a>
-                            
-                                {{-- <!-- Sub Menu -->
-                                <ul class="nav sub-menu">
-                                    <li>
-                                        <a href="#">Edit Profile</a>
-                                    </li>
-                                </ul>
-                                <!-- End Sub Menu --> --}}
                             </li>
                             <li>
                                 <a href="{{ route('logout') }}"

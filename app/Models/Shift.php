@@ -23,6 +23,10 @@ class Shift extends Model
         'shift_end' => 'datetime',
     ];
 
+    public function schedules(){
+        return $this->hasMany(Schedule::class);
+    }
+
     public function generateShiftId(){
         $latestShift = static::latest('shift_id')->first();
 
