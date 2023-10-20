@@ -29,7 +29,7 @@ class Schedule extends Model
         $latestPosition = static::latest('schedule_id')->first();
 
         if (!$latestPosition) {
-            return 'T000001';
+            return 'T0001';
         }
 
         $latestId = intval(substr($latestPosition->position_id, 1));

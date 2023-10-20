@@ -27,20 +27,26 @@ class MemberController extends Controller
         ]);
     }
 
-    // public function viewOctober(){
-    //     // Get the currently logged-in user
-    //     $user = auth()->user(); // Assuming you are using Laravel's built-in authentication
+    public function viewSchedule(Request $request){
+        // Check if the request wants JSON data
+        if ($request->wantsJson()) {
+            // Retrieve and return joined data for FullCalendar
+            $joinedData = Schedule::join('users', 'schedules.employee_id', '=', 'users.id')
+                ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
+                ->get();
 
-    //     // Retrieve schedules related to the logged-in user (employee)
-    //     $schedules = Schedule::where('employee_id', $user->id)->orderBy('date')->get();
+            return response()->json($joinedData);
+        }
 
-    //     $shifts = Shift::all();
+        // If it's not a JSON request, return the view for the schedule page
+        $schedules = Schedule::all();
+        $users = User::where('role', 'member')->with('position')->get();
+        $shifts = Shift::all();
 
-    //     return view('user.viewSchedule', [
-    //         'schedules' => $schedules,
-    //         'shifts' => $shifts
-    //     ]);
-    // }
+        return view('user.viewSchedule', compact('schedules', 'users', 'shifts'));
+    }
+
 
     // Define a private method to fetch schedules and shifts
     private function fetchSchedulesAndShifts(){
@@ -135,30 +141,6 @@ class MemberController extends Controller
         $positions = Position::all();
         return view('user.viewProfile', compact('user', 'positions'));
     }
-
-
-    // public function updateProfile(Request $request) {
-    //     // Use the currently authenticated user
-    //     $user = User::where('id', '=', Auth::user()->id)->first();
-        
-    //     // Validate the input
-    //     $request->validate([
-    //         'full_name' => 'required|string|max:255',
-    //         'address' => 'required|string|max:255',
-    //         'email' => 'required|email|max:255',
-    //     ]);
-    
-    //     // Update the user's data
-    //     $user->full_name = $request->input('full_name');
-    //     $user->address = $request->input('address');
-    //     $user->email = $request->input('email');
-        
-    //     // Save the changes
-    //     $user->save();
-    
-    //     Alert::success('Done', 'Successfully Updated');
-    //     return redirect()->route('viewProfile');
-    // }
 
     public function updateProfile(Request $request) {
         // Use the currently authenticated user

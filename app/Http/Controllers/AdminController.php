@@ -351,6 +351,8 @@ class AdminController extends Controller
             'shift_end' => 'required'
         ]);
 
+        // dd($request->all());
+
         if($data){
             $shift = new Shift();
             $shift->shift_id = $shift->generateShiftId();
@@ -358,6 +360,7 @@ class AdminController extends Controller
             $shift->shift_start = $data['shift_start'];
             $shift->shift_end = $data['shift_end'];
             $shift->save();
+
 
             Alert::success('Done', 'Successfully Inserted');
         } else {
@@ -401,22 +404,26 @@ class AdminController extends Controller
         return redirect()->route('viewShift');
     }
 
-    public function schedule(){
-        $schedules = Schedule::all();
-        $users = User::all();
-        $shifts = Shift::all();
+    public function schedule(Request $request){
+        // Check if the request wants JSON data
+        if ($request->wantsJson()) {
+            // Retrieve and return joined data for FullCalendar
+            $joinedData = Schedule::join('users', 'schedules.employee_id', '=', 'users.id')
+                ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
+                ->get();
 
-        if (request()->wantsJson()) {
-            return response()->json($schedules);
+            return response()->json($joinedData);
         }
 
-        $shiftIds = Schedule::pluck('shift_id', 'id');
+        // If it's not a JSON request, return the view for the schedule page
+        $schedules = Schedule::all();
+        $users = User::where('role', 'member')->with('position')->get();
+        $shifts = Shift::all();
 
-
-        return view('admin.schedule', compact('schedules', 'users', 'shifts', 'shiftIds'));
-
+        return view('admin.schedule', compact('schedules', 'users', 'shifts'));
     }
-    
+  
     public function addSchedule(Request $request){
 
         $data = $request->validate([
@@ -441,15 +448,21 @@ class AdminController extends Controller
         return redirect()->route('schedule');
     }
 
-    public function getShiftID(Request $request)
-    {
-        $date = $request->input('date');
-    
-        // Query the database to retrieve the Shift ID based on the date
-        $shiftID = Schedule::where('date', $date)->pluck('shift_id')->first();
-    
-        return response()->json(['shift_id' => $shiftID]);
+    public function deleteSchedule($id){
+
+        $schedule = Schedule::find($id);
+
+        if (!$schedule) {
+            return redirect()->route('schedule');
+        }
+
+        $schedule->delete(); // Soft delete the employee
+
+        // Alert::success('Done', 'Successfully Deleted');
+        // return redirect()->route('schedule');
     }
+
+    
     
 
     

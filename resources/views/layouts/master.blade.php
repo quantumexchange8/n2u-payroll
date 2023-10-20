@@ -11,6 +11,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <meta name="description" content="">
    <meta name="keywords" content="">
+   <meta name="csrf-token" content="{{ csrf_token() }}">
 
    <!-- Favicon -->
    <link rel="shortcut icon" href="../../assets/img/favicon.png">
@@ -227,7 +228,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{ route('viewSchedule') }}">
                                     <i class="icofont-table"></i>
                                     <span class="link-title">Schedule</span>
                                 </a>
