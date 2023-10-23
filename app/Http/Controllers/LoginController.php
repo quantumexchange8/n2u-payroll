@@ -51,10 +51,8 @@ class LoginController extends Controller
     
             // Check the user's role and redirect accordingly
             if ($user->role === 'member') {
-                Alert::success('Welcome', 'Login Successful.');
                 return redirect()->route('homepage'); // Redirect to member dashboard
             } elseif ($user->role === 'admin') {
-                Alert::success('Welcome', 'Login Successful.');
                 return redirect()->route('admindashboard'); // Redirect to admin dashboard
             }
         } else {

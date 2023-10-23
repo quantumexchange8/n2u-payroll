@@ -7,9 +7,11 @@ use App\Models\Schedule;
 use App\Models\User;
 use App\Models\Shift;
 use App\Models\Position;
+use App\Models\PunchRecord;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 class MemberController extends Controller
 {
     public function dashboard(){
@@ -21,9 +23,20 @@ class MemberController extends Controller
 
         $shifts = Shift::all();
 
+        $punchRecords = PunchRecord::with('user')->get();
+        //dd($punchRecords);
+
+        // Modify the date and time columns
+        $punchRecords->each(function ($punchRecord) {
+            $punchRecord->date = Carbon::parse($punchRecord->created_at)->toDateString();
+            $punchRecord->time = Carbon::parse($punchRecord->created_at)->toTimeString();
+        });
+
         return view('user.homepage', [
             'schedules' => $schedules,
-            'shifts' => $shifts
+            'shifts' => $shifts,
+            'punchRecords' => $punchRecords,
+            'user' => $user
         ]);
     }
 
@@ -49,6 +62,7 @@ class MemberController extends Controller
 
         return view('user.viewSchedule', compact('schedules', 'user', 'shifts'));
     }
+
 
     public function viewProfile(){
         $user = auth()->user(); // Retrieve the currently logged-in user

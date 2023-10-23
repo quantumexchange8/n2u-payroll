@@ -60,6 +60,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('admin/updateDepartment/{id}', [AdminController::class, 'updateDepartment'])->name('updateDepartment');
     Route::delete('admin/deleteDepartment/{id}', [AdminController::class, 'deleteDepartment'])->name('deleteDepartment');
 
+    Route::get('admin/viewDuty', [AdminController::class, 'viewDuty'])->name('viewDuty');
+    Route::get('admin/createDuty', [AdminController::class, 'createDuty'])->name('createDuty');
+    Route::post('admin/addDuty', [AdminController::class, 'addDuty'])->name('addDuty');
+    Route::get('admin/editDuty/{id}', [AdminController::class, 'editDuty'])->name('editDuty');
+    Route::post('admin/updateDuty/{id}', [AdminController::class, 'updateDuty'])->name('updateDuty');
+    Route::delete('admin/deleteDuty/{id}', [AdminController::class, 'deleteDuty'])->name('deleteDuty');
+
     Route::get('admin/viewShift', [AdminController::class, 'viewShift'])->name('viewShift');
     Route::get('admin/createShift', [AdminController::class, 'createShift'])->name('createShift');
     Route::post('admin/addShift', [AdminController::class, 'addShift'])->name('addShift');

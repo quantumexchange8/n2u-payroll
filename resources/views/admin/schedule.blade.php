@@ -41,7 +41,6 @@
                                     @endforeach
                                 </select>
                             </div>
-
                         </div>
 
                         <button type="button" class="close" data-dismiss="modal">
@@ -143,13 +142,37 @@
                         
                         <div class="custom-select-box d-inline-flex align-items-center m_style">
                             <label for="employee_id"><img src="../../assets/img/svg/color.svg" alt="" class="svg"></label>
-                            <input type="text" id="employee_id" name="employee_id">
+                            <input type="text" id="edit_employee_id" name="employee_id">
                         </div>
     
                         <div class="calendar-modal-title-wrap w-100 d-flex mt-10">
                             <div class="calendar-modal-title m_style flex-grow">
                                 <label for="shift_id"><i class="icofont-clock-time"></i></label>
-                                <input type="text" id="shift_id" name="shift_id">
+                                <input type="text" id="edit_shift_id" name="shift_id">
+                            </div>
+                        </div>
+
+                        <div class="custom-select-box d-inline-flex align-items-center m_style">
+                            <label for="edit_employee_id"><img src="../../assets/img/svg/color.svg" alt="" class="svg"></label>
+                            <select id="edit_employee_id" name="employee_id">
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}" {{ $user->id === $user->employee_id ? 'selected' : '' }}>
+                                        {{ $user->full_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+    
+                        <div class="calendar-modal-title-wrap w-100 d-flex mt-10">
+                            <div class="calendar-modal-title m_style flex-grow">
+                                <label for="edit_shift_id"><i class="icofont-clock-time"></i></label>
+                                <select id="edit_shift_id" name="shift_id">
+                                    @foreach ($shifts as $shift)
+                                        <option value="{{ $shift->id }}" {{ $shift->id === $shift->shift_id ? 'selected' : '' }}>
+                                            {{ $shift->formatted_shift_time }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -160,7 +183,7 @@
                         <form id="scheduleForm">
                             <div class="calendar-modal-location m_style mt-10">
                                 <label for="date"><i class="icofont-calendar"></i></label>
-                                <input type="date" id="date" name="date">
+                                <input type="date" id="edit_date" name="date">
                             </div>
                         </form>
                     </div>
@@ -176,6 +199,49 @@
 </div>
 
 <!-- End Main Content -->
+
+<script>
+    // In your editEventModal script
+    $('#editEventButton').click(function() {
+        // Get the values from the data attributes set in fullCalModal
+        var fullName = $('#modalFullName').data('full-name');
+        var date = $('#modalDate').data('date');
+        var shiftStart = $('#modalShiftStart').data('shift-start');
+        var shiftEnd = $('#modalShiftEnd').data('shift-end');
+
+        // Format the shift times
+        var formattedShiftTime = formatShiftTime(shiftStart, shiftEnd);
+
+        // Set the values in the editEventModal
+        $('#edit_employee_id').val(fullName);
+        $('#edit_shift_id').val(formattedShiftTime);
+        $('#edit_date').val(date);
+
+        // Open the editEventModal
+        $('#editEventModal').modal();
+    });
+
+    // Function to format the shift time
+    function formatShiftTime(shiftStart, shiftEnd) {
+        // Assuming shiftStart and shiftEnd are in a 24-hour format, e.g., "14:00"
+        // You may need to adjust this based on the actual format of your data
+        var formattedShiftStart = formatTime(shiftStart);
+        var formattedShiftEnd = formatTime(shiftEnd);
+
+        return formattedShiftStart + ' - ' + formattedShiftEnd;
+    }
+
+    // Function to format a 24-hour time to AM/PM format
+    function formatTime(time) {
+        var hour = parseInt(time.split(':')[0]);
+        var minute = time.split(':')[1];
+        var ampm = hour >= 12 ? 'pm' : 'am';
+        hour = hour % 12 || 12; // Convert 0 to 12
+
+        return hour + ':' + minute + ampm;
+    }
+
+</script>
 
 <script>
     // Get a reference to the delete button and the form containing the CSRF token.
@@ -223,7 +289,6 @@
             console.error('Error:', error);
         });
     });
-
 </script>
 
 @endsection

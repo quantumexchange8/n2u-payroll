@@ -65,76 +65,41 @@
                       <!-- End Invoice List Table -->
                   </div>
               </div>
-          </div>
+            </div>
           
             <div class="col-12">
               <div class="card mb-30">
                   <div class="card-body pt-30">
-                      <h4 class="font-20 ">Upcoming Shift</h4>
+                      <h4 class="font-20 ">Clock In and Clock Out</h4>
                   </div>
                   <div class="table-responsive">
                       <!-- Invoice List Table -->
                       <table class="text-nowrap table-bordered dh-table">
-                        <thead>
-                            <tr style="text-align: center;">
-                                <th>Date</th>
-                                <th>Sunday</th>
-                                <th>Monday</th>
-                                <th>Tuesday</th>
-                                <th>Wednesday</th>
-                                <th>Thursday</th>
-                                <th>Friday</th>
-                                <th>Saturday</th>
+                          <thead>
+                            <tr>
+                              <th>Employee ID</th>
+                              <th>Name</th>
+                              <th>Date</th>
+                              <th>Time</th>
+                              <th>In</th>
+                              <th>Out</th>
+                              {{-- <th>Actions</th> --}}
                             </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                            // Get the current date
-                            $currentDate = \Carbon\Carbon::now();
-                            
-                            // Filter schedules for upcoming dates starting from today
-                            $upcomingSchedules = $schedules->filter(function ($schedule) use ($currentDate) {
-                                $scheduleDate = \Carbon\Carbon::createFromFormat('Y-m-d', $schedule->date);
-                                
-                                // Filter out schedules that are earlier than the current date
-                                return $scheduleDate->gte($currentDate) && $scheduleDate->format('Y-m-d') <= '2100-12-31'; // Adjust the end date as needed
-                            });
-                                    
-                            // Limit the number of rows to 7
-                            $upcomingSchedules = $upcomingSchedules->take(7);
-                            @endphp
-                    
-                            @foreach ($upcomingSchedules as $schedule)
-                                @php
-                                $scheduleDate = \Carbon\Carbon::createFromFormat('Y-m-d', $schedule->date);
-                                $shiftInfo = null;
-                                if ($schedule->shift && $schedule->shift->shift_start && $schedule->shift->shift_end) {
-                                    $shiftInfo = $schedule->shift->shift_start->format('h:i A') . ' - ' . $schedule->shift->shift_end->format('h:ia');
-                                }
-                                $dayOfWeek = $scheduleDate->dayOfWeek;
-                                @endphp
-                    
+                          </thead>
+                          <tbody>
+                            @foreach ($punchRecords as $punchRecord)
+                            {{-- {{ dd($punchRecord->user) }} --}}
                                 <tr>
-                                    <td>{{ $scheduleDate->format('d F Y') }}</td>
-                                    @for ($i = 0; $i < 7; $i++)
-                                    <td>
-                                        @if ($i === $dayOfWeek)
-                                            @php
-                                                $startTime = \Carbon\Carbon::parse($schedule->shift->shift_start);
-                                                $endTime = \Carbon\Carbon::parse($schedule->shift->shift_end);
-                                            @endphp
-                                            <div style="text-align: center;">
-                                                {{ $startTime->format('h:ia') }}<br>-<br>{{ $endTime->format('h:ia') }}
-                                            </div>
-                                        @endif
-                                    </td>
-                                    @endfor
+                                    <td>{{$punchRecord->employee_id}}</td>
+                                    <td>{{$punchRecord->user->full_name}}</td>
+                                    <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toDateString() }}</td>
+                                    <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toTimeString() }}</td>
+                                    <td>{{$punchRecord->in}}</td>
+                                    <td>{{$punchRecord->out}}</td>
                                 </tr>
                             @endforeach
-                        </tbody>
-                    </table>
-                    
-                    
+                          </tbody>
+                      </table>                   
                       <!-- End Invoice List Table -->
                   </div>
               </div>    
@@ -158,8 +123,14 @@
     // Toggle between "Clock In" and "Clock Out" in the button.
     if (statusInput.value === 'Clock In') {
       clockButton.innerText = 'Clock Out';
+      clockButton.style.backgroundColor = '#FFFFFF';
+      clockButton.style.color = '#6045E2';
+      clockButton.style.border = '2px solid #6045E2';
     } else {
       clockButton.innerText = 'Clock In';
+      clockButton.style.backgroundColor = '#6045E2';
+      clockButton.style.color = '#FFFFFF';
+      clockButton.style.border = 'none';
     }
 
     // Update the "status" input field based on the button text.

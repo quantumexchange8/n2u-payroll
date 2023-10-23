@@ -188,6 +188,20 @@
                             </li>
                             <li>
                                 <a href="#">
+                                    <i class="icofont-files-stack"></i>
+                                    <span class="link-title">Duty</span>
+                                </a>
+                            
+                                <!-- Sub Menu -->
+                                <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('viewDuty') }}">View Duty</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu -->
+                            </li>
+                            <li>
+                                <a href="#">
                                     <i class="icofont-clock-time"></i>
                                     <span class="link-title">Shift Management</span>
                                 </a>

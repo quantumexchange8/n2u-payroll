@@ -28,11 +28,6 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Department</label>
                                     <select class="theme-input-style" id="department_id" name="department_id" autocomplete="off">
-                                        {{-- @foreach($positions as $position)
-                                            <option >
-                                                {{ $position->department }}
-                                            </option>
-                                        @endforeach --}}
                                         @foreach($departments as $department)
                                             <option value="{{ $department->id }}" {{ $positions->department->id === $department->id ? 'selected' : '' }}>
                                                 {{ $department->department_name }}

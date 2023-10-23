@@ -6,6 +6,7 @@ use App\Models\PunchRecord;
 use App\Models\User;
 use App\Models\Position;
 use App\Models\Department;
+use App\Models\Duty;
 use App\Models\Shift;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
@@ -334,6 +335,68 @@ class AdminController extends Controller
         return redirect()->route('viewDepartment');
     }
 
+    public function viewDuty(){
+        $duties = Duty::all();
+  
+        return view('admin.viewDuty', ['duties' => $duties]);
+    }
+    
+    public function createDuty(){
+        return view('admin.createDuty');
+    }
+
+    public function addDuty(Request $request){
+        $data = $request->validate([
+            'duty_name' => 'required'
+        ]);
+    
+        if($data){
+            $duty = new Duty();
+            $duty->duty_id = $duty->generateDutyId();
+            $duty->duty_name = $data['duty_name'];
+            $duty->save();
+    
+            Alert::success('Done', 'Successfully Inserted');
+        } else {
+            return redirect()->back();
+        }
+    
+        return redirect()->route('viewDuty');
+    }
+    
+
+    public function editDuty($id){
+        $duty = Duty::find($id);
+        
+        return view('admin.editDuty', ['duty' => $duty]);
+    }
+
+    public function updateDuty(Request $request, $id){
+        $data = Duty::find($id);
+
+        //Update the user's data based on the form input
+        $data->update([
+            'duty_name' => $request->input('duty_name')
+        ]);
+
+        Alert::success('Done', 'Successfully Updated');
+        return redirect()->route('viewDuty');
+    }
+
+    public function deleteDuty($id){
+
+        $duty = Duty::find($id);
+
+        if (!$duty) {
+            return redirect()->route('viewDuty');
+        }
+
+        $duty->delete(); // Soft delete the employee
+
+        Alert::success('Done', 'Successfully Deleted');
+        return redirect()->route('viewDepartment');
+    }
+
     public function viewShift(){
         $shifts = Shift::all();
         return view('admin.viewShift', ['shifts' => $shifts]);
@@ -455,6 +518,7 @@ class AdminController extends Controller
     
             Alert::success('Done', 'Successfully Inserted');
         } else {
+            
             return redirect()->back();
         }
 

@@ -31,11 +31,4 @@ class Department extends Model
 
         return 'D' . $newId;
     }
-
-    public function setDepartmentNameAttribute($value){
-        $this->attributes['department_name'] = ucwords($value);
-    }
-
-
-
 }

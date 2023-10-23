@@ -63,6 +63,12 @@ $(function() {
     
         var shiftStart = event.shiftStart;
         var shiftEnd = event.shiftEnd;
+
+        // Set data attributes for the fields in fullCalModal
+        $('#modalFullName').data('full-name', fullName);
+        $('#modalDate').data('date', date);
+        $('#modalShiftStart').data('shift-start', shiftStart);
+        $('#modalShiftEnd').data('shift-end', shiftEnd);
     
         // Display data in the modal
         $('#modalScheduleId').html(scheduleId);
@@ -73,8 +79,7 @@ $(function() {
 
     
         $('#fullCalModal').modal();
-    }
-    ,
+    },
     dayClick: function(date, jsEvent, view) {
         $("#createEventModal").modal("show");
     },
