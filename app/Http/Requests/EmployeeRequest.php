@@ -26,7 +26,7 @@ class EmployeeRequest extends FormRequest
             'full_name' => ['required', 'regex:/^[a-zA-Z\s\/\']+$/'],
             'ic_number' => 'required',
             'address' => 'required',
-            'email' => 'required|email',
+            'email' => 'nullable',
             'position_id' => 'nullable',
             'employee_type' => 'nullable',
             'salary' => ['nullable', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'],
@@ -34,16 +34,11 @@ class EmployeeRequest extends FormRequest
             'nation' => 'required',
             'bank_name' => 'nullable',
             'bank_account' => ['nullable', 'numeric'],
-            'password' => ['required', 'min:8', 'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)/'],
+            'password' => 'required',
             'passport_size_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'ic_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'offer_letter' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-
-            // Valid password
-            // Be at least 8 characters long.
-            // Contain at least one uppercase letter.
-            // Contain at least one lowercase letter.
-            // Contain at least one digit.
+            'role'=> 'required',
         ];
     }
 

@@ -34,7 +34,8 @@ class User extends Authenticatable
         'passport_size_photo',
         'ic_photo',
         'offer_letter',
-        'password'
+        'password',
+        'role'
     ];
     
     public function position() {

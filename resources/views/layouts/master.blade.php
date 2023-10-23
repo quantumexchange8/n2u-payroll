@@ -3,7 +3,7 @@
 
 <head>
    <!-- Page Title -->
-   <title>Dashmin - Multipurpose Bootstrap Dashboard Template</title>
+   <title>N2U Payroll</title>
 
    <!-- Meta Data -->
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -232,47 +232,6 @@
                                     <i class="icofont-table"></i>
                                     <span class="link-title">Schedule</span>
                                 </a>
-
-                                <!-- Sub Menu -->
-                                <ul class="nav sub-menu">
-                                    <li>
-                                        <a href="{{ route('viewJanuary') }}">January</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewFebruary') }}">February</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewMarch') }}">March</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewApril') }}">April</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewMay') }}">May</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewJune') }}">June</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewJuly') }}">July</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewAugust') }}">August</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewSeptember') }}">September</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewOctober') }}">October</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewNovember') }}">November</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewDecember') }}">December</a>
-                                    </li>
-                                </ul>
-                                <!-- End Sub Menu -->
                             </li>
                             <li>
                                 <a href="{{route('viewProfile')}}">
@@ -285,8 +244,7 @@
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="icofont-magic-alt"></i>
                                     <span class="link-title">Logout</span>
-                                </a>
-            
+                                </a>            
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                     @csrf
                                 </form>
@@ -309,11 +267,13 @@
 
         <!-- Footer -->
         <footer class="footer">
-            Dashmin © 2020 created by <a href="https://www.themelooks.com/"> ThemeLooks</a>
+            N2U Payroll <a href="https://payroll.n2umalaysia.com/"></a>
         </footer>
         <!-- End Footer -->
     </div>
     <!-- End wrapper -->
+
+
 
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
     <script src="../../assets/js/jquery.min.js"></script>
@@ -323,11 +283,20 @@
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
 
     <!-- ======= BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
-   <script src="../../assets/plugins/jquery-ui/jquery-ui.min.js"></script>
-   <script src="../../assets/plugins/moment/moment.min.js"></script>
-   <script src="../../assets/plugins/fullcalendar/fullcalendar.min.js"></script>
-   <script src="../../assets/plugins/fullcalendar/custom-fullcalendar.js"></script>
-   <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
+    <script src="../../assets/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../../assets/plugins/moment/moment.min.js"></script>
+    <script src="../../assets/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
+
+
+    @if(Auth::check())
+        @if(Auth::user()->role === 'admin')
+            <script src="../../assets/plugins/fullcalendar/admin-fullcalendar.js"></script>
+        @elseif(Auth::user()->role === 'member')
+            <script src="../../assets/plugins/fullcalendar/member-fullcalendar.js"></script>
+        @endif
+    @endif
+
 </body>
 
 </html>

@@ -15,14 +15,15 @@
         </div>
     </div>
 
-    <div id="createEventModal" class="modal fade" style="margin-left: 120px;">
+
+    <div id="createEventModal" class="modal fade" style="margin-left: 80px;">
         <div class="modal-dialog modal-dialog-centered">
             <form action="{{route('addSchedule')}}" method="POST">
-                @csrf
+            @csrf
                 <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header pb-0 border-bottom-0 flex-column">
-                        <div class="custom-select-box d-inline-flex align-items-center m_style mt-3">
+                        <div class="custom-select-box d-inline-flex align-items-center m_style">
                             <label for="employee_id"><img src="../../assets/img/svg/color.svg" alt="" class="svg"></label>
                             <select name="employee_id">
                                 @foreach ($users as $user)
@@ -30,7 +31,7 @@
                                 @endforeach
                             </select>
                         </div>
-    
+
                         <div class="calendar-modal-title-wrap w-100 d-flex mt-10">
                             <div class="calendar-modal-title m_style flex-grow">
                                 <label for="shift_id"><i class="icofont-clock-time"></i></label>
@@ -40,32 +41,40 @@
                                     @endforeach
                                 </select>
                             </div>
+
                         </div>
-                        
-  
+
                         <button type="button" class="close" data-dismiss="modal">
                             <span aria-hidden="true">×</span>
                             <span class="sr-only">close</span>
                         </button>
                     </div>
                     <!-- End Modal Header -->
-    
+
                     <!-- Modal Body -->
                     <div id="modalBody2" class="modal-body border-bottom-0 pt-0 pb-0">
-                        <form id="scheduleForm">
-                            <div class="calendar-modal-location m_style mt-10">
-                                <label for="date"><i class="icofont-calendar"></i></label>
-                                <input type="date" name="date" placeholder="Date">
+                        <form>
+
+                            <div class="calendar-modal-dates mt-10 d-flex">
+                            <div class="calendar-modal-start-date m_style mr-2">
+                                <label for="formGroupExampleInput2"></label>
+                                <input type="date" name="date_start" placeholder="Date">
+                            </div>
+                            
+                            <div class="calendar-modal-end-date m_style mr-2">
+                                <label for="formGroupExampleInput3"></label>
+                                <input type="date" name="date_end" placeholder="Date">
+                            </div>
                             </div>
                         </form>
                     </div>
                     <!-- End Modal Body -->
-    
+
                     <div class="modal-footer border-top-0 pt-10">
                         <button class="btn" id="saveSchedule">Save</button>
                     </div>
                 </div>
-            </form>
+            </form>    
         </div>
     </div>
 
@@ -103,9 +112,9 @@
                 </div>
     
                 <div class="modal-footer justify-content-around pb-2 border-top-0">
-                    {{-- <button class="edit-btn" data-toggle="modal" data-target="#editEventModal" data-dismiss="modal" id="editEventButton">
-                        <i class="icofont-ui-edit"></i> Edit
-                    </button> --}}
+                    <button class="edit-btn" data-toggle="modal" data-target="#editEventModal" data-dismiss="modal" id="editEventButton">
+                        {{-- <i class="icofont-ui-edit"></i> Edit --}}
+                    </button>
     
                     <form id="deleteEventForm" method="POST" action="{{ route('deleteSchedule', ['id' => 0]) }}">
                         @csrf
@@ -163,10 +172,7 @@
                 </div>
             </form>
         </div>
-    </div> --}}
-    
-    
-    
+    </div>   --}}
 </div>
 
 <!-- End Main Content -->
@@ -220,26 +226,6 @@
 
 </script>
 
-{{-- <script>
-    // Get a reference to the "Edit" button.
-    const editEventButton = document.getElementById('editEventButton');
-
-    // Add a click event listener to the "Edit" button.
-    editEventButton.addEventListener('click', function () {
-        // Get data from the fullCalModal (you can customize this part based on your modal structure).
-        const fullName = document.getElementById('modalFullName').textContent;
-        const shiftStart = document.getElementById('modalShiftStart').textContent;
-        const shiftEnd = document.getElementById('modalShiftEnd').textContent;
-        // const date = document.getElementById('modalDate').textContent;
-
-        // Populate the fields in the editEventModal.
-        document.getElementById('employee_id').value = fullName; // Assuming the "employee_id" is an input field.
-        document.getElementById('shift_id').value = shiftStart + ' - ' + shiftEnd; // Assuming the "shift_id" is a select element.
-
-        // Set the date input to the date from fullCalModal.
-        // document.getElementById('date').value = date; // Assuming the "date" is an input field.
-    });
-</script> --}}
-  
-
 @endsection
+
+

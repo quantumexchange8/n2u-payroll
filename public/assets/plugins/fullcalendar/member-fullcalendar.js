@@ -34,7 +34,10 @@ $(function() {
     events: function(start, end, timezone, callback) {
         // Fetch events with joined data directly from your endpoint using AJAX
         $.ajax({
-            url: '/admin/schedule', // Use the route URL
+            url: '/user/viewSchedule', // Use the route URL
+            data: {
+                user_id: userId, // Pass the user's ID as a parameter
+            },
             dataType: 'json',
             success: function(data) {
                 var events = data.map(function(event) {

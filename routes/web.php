@@ -76,18 +76,6 @@ Route::group(['middleware' => 'auth'], function () {
     // User
 
     Route::get('user/viewSchedule', [MemberController::class, 'viewSchedule'])->name('viewSchedule');
-    Route::get('user/viewJanuary', [MemberController::class,'viewJanuary'])->name('viewJanuary');
-    Route::get('user/viewFebruary', [MemberController::class,'viewFebruary'])->name('viewFebruary');
-    Route::get('user/viewMarch', [MemberController::class,'viewMarch'])->name('viewMarch');
-    Route::get('user/viewApril', [MemberController::class,'viewApril'])->name('viewApril');
-    Route::get('user/viewMay', [MemberController::class,'viewMay'])->name('viewMay');
-    Route::get('user/viewJune', [MemberController::class,'viewJune'])->name('viewJune');
-    Route::get('user/viewJuly', [MemberController::class,'viewJuly'])->name('viewJuly');
-    Route::get('user/viewAugust', [MemberController::class,'viewAugust'])->name('viewAugust');
-    Route::get('user/viewSeptember', [MemberController::class,'viewSeptember'])->name('viewSeptember');
-    Route::get('user/viewOctober', [MemberController::class, 'viewOctober'])->name('viewOctober');
-    Route::get('user/viewNovember', [MemberController::class, 'viewNovember'])->name('viewNovember');
-    Route::get('user/viewDecember', [MemberController::class, 'viewDecember'])->name('viewDecember');
 
     Route::get('user/viewProfile', [MemberController::class, 'viewProfile'])->name('viewProfile');
     Route::post('user/updateProfile', [MemberController::class, 'updateProfile'])->name('updateProfile');

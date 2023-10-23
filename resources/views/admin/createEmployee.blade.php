@@ -18,7 +18,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Employee ID</label>
-                                    <input type="text" class="theme-input-style" id="employee_id" name="employee_id" autocomplete="off" placeholder="Employee ID">
+                                    <input type="text" class="theme-input-style" id="employee_id" name="employee_id" autocomplete="off" placeholder="Employee ID" value="{{ old('employee_id') }}">
                                     @error('employee_id')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -29,7 +29,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Full Name</label>
-                                    <input type="text" class="theme-input-style" id="full_name" name="full_name" autocomplete="off" placeholder="Full Name">
+                                    <input type="text" class="theme-input-style" id="full_name" name="full_name" autocomplete="off" placeholder="Full Name" value="{{ old('full_name') }}">
                                     @error('full_name')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -38,8 +38,8 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">IC Number</label>
-                                    <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number">
+                                    <label class="font-14 bold mb-2">IC Number / Passport</label>
+                                    <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number" value="{{ old('ic_number') }}">
                                     @error('ic_number')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -49,7 +49,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Address</label>
-                                    <input type="text" class="theme-input-style" id="address" name="address" autocomplete="off" placeholder="Address">
+                                    <input type="text" class="theme-input-style" id="address" name="address" autocomplete="off" placeholder="Address" value="{{ old('address') }}">
                                     @error('address')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -59,7 +59,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Position</label>
-                                    <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off">
+                                    <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off" value="{{ old('position_id') }}">
                                         <option value="">Select Position</option>
                                         @foreach($positions as $position)
                                             <option value="{{ $position->id }}">{{ $position->position_name }}</option>
@@ -71,7 +71,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Employee Type</label>
-                                    <select class="theme-input-style" id="employee_type" name="employee_type">
+                                    <select class="theme-input-style" id="employee_type" name="employee_type" value="{{ old('employee_type') }}">
                                         <option value="">Select Employee Type</option>
                                         <option value="Full Time">Full Time</option>
                                         <option value="Part Time">Part Time</option>
@@ -82,7 +82,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Salary</label>
-                                    <input type="number" class="theme-input-style" id="salary" name="salary" autocomplete="off" placeholder="Salary">
+                                    <input type="number" class="theme-input-style" id="salary" name="salary" autocomplete="off" placeholder="Salary" value="{{ old('salary') }}">
                                     @error('salary')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -92,19 +92,31 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Employed Since</label>
-                                    <input type="date" class="theme-input-style" id="employed_since" name="employed_since" autocomplete="off" placeholder="Employed Since">
+                                    <input type="date" class="theme-input-style" id="employed_since" name="employed_since" autocomplete="off" placeholder="Employed Since" value="{{ old('employee_since') }}">
                                     @error('employed_since')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <!-- End Form Group -->                                    
+                                <!-- End Form Group -->
+                                
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Role</label>
+                                    <select class="theme-input-style" id="role" name="role" value="{{ old('role') }}">
+                                        <option value="">Select Role</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="member">Member</option>
+                                    </select>
+                                </div>
+                                <!-- End Form Group --> 
+
                             </div>
 
                             <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Email</label>
-                                    <input type="email" class="theme-input-style" id="email" name="email" autocomplete="off" placeholder="Email Address">
+                                    <input type="email" class="theme-input-style" id="email" name="email" autocomplete="off" placeholder="Email Address" value="{{ old('email') }}">
                                     @error('email')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -113,9 +125,9 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Nation</label>
+                                    <label class="font-14 bold mb-2">Nationality</label>
                                     <select class="theme-input-style" id="nation" name="nation" autocomplete="off">
-                                        <option value="">Select Nation</option>
+                                        <option value="">Select Nationality</option>
                                         <option value="Malaysia">Malaysia</option>
                                         <option value="Thailand">Thailand</option>
                                         <option value="Cambodia">Cambodia</option>
@@ -165,7 +177,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Bank Account</label>
-                                    <input type="number" class="theme-input-style" id="bank_account" name="bank_account" autocomplete="off" placeholder="Bank Account">
+                                    <input type="number" class="theme-input-style" id="bank_account" name="bank_account" autocomplete="off" placeholder="Bank Account" value="{{ old('bank_account') }}">
                                     @error('bank_account')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -196,7 +208,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Password</label>
-                                    <input type="password" class="theme-input-style" id="password" name="password" placeholder="Password">
+                                    <input type="password" class="theme-input-style" id="password" name="password" placeholder="Password" value="{{ old('password') }}">
                                 </div>
                                 @error('password')
                                     <span class="text-danger">{{ $message }}</span>

@@ -47,7 +47,7 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">IC Number</label>
+                                    <label class="font-14 bold mb-2">IC Number / Passport</label>
                                     <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number" value="{{$user->ic_number}}">
                                     @error('ic_number')
                                         <span class="text-danger">{{ $message }}</span>
@@ -107,6 +107,16 @@
                                     @enderror
                                 </div>
                                 <!-- End Form Group -->
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Role</label>
+                                    <select class="theme-input-style" id="role" name="role">
+                                        <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
+                                        <option value="member" {{ $user->role === 'member' ? 'selected' : '' }}>Member</option>
+                                    </select>                                                
+                                </div>                                            
+                                <!-- End Form Group -->
                                     
                             </div>
 
@@ -123,9 +133,9 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Nation</label>
+                                    <label class="font-14 bold mb-2">Nationality</label>
                                     <select class="theme-input-style" id="nation" name="nation" autocomplete="off">
-                                        <option value="">Select Nation</option>
+                                        <option value="">Select Nationality</option>
                                         <option value="Malaysia" {{ $user->nation === 'Malaysia' ? 'selected' : '' }}>Malaysia</option>
                                         <option value="Thailand" {{ $user->nation === 'Thailand' ? 'selected' : '' }}>Thailand</option>
                                         <option value="Cambodia" {{ $user->nation === 'Cambodia' ? 'selected' : '' }}>Cambodia</option>

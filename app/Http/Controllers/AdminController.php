@@ -351,8 +351,6 @@ class AdminController extends Controller
             'shift_end' => 'required'
         ]);
 
-        // dd($request->all());
-
         if($data){
             $shift = new Shift();
             $shift->shift_id = $shift->generateShiftId();
@@ -427,19 +425,34 @@ class AdminController extends Controller
     public function addSchedule(Request $request){
 
         $data = $request->validate([
-            'date' => 'required',
+            'date_start' => 'required|date',
+            'date_end' => 'required|date|after_or_equal:date_start', // Ensure date_end is after or equal to date_start
             'employee_id' => 'required',
             'shift_id' => 'required'
         ]);
 
+        //dd($request->all());
+
         if($data){
-            $schedule = new Schedule();
-            $schedule->schedule_id = $schedule->generateScheduleId();
-            $schedule->date = $data['date'];
-            $schedule->employee_id = $data['employee_id'];
-            $schedule->shift_id = $data['shift_id'];
-            $schedule->save();
-                        
+            $start = Carbon::parse($data['date_start']);
+            $end = Carbon::parse($data['date_end']);
+            $dates = [];
+    
+            // Generate an array of dates between date_start and date_end
+            while ($start->lte($end)) {
+                $dates[] = $start->toDateString();
+                $start->addDay();
+            }
+    
+            foreach ($dates as $date) {
+                $schedule = new Schedule();
+                $schedule->schedule_id = $schedule->generateScheduleId();
+                $schedule->date = $date;
+                $schedule->employee_id = $data['employee_id'];
+                $schedule->shift_id = $data['shift_id'];
+                $schedule->save();
+            }
+    
             Alert::success('Done', 'Successfully Inserted');
         } else {
             return redirect()->back();

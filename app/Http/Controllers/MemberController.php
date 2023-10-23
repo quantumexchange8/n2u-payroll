@@ -30,110 +30,24 @@ class MemberController extends Controller
     public function viewSchedule(Request $request){
         // Check if the request wants JSON data
         if ($request->wantsJson()) {
+
+            $userId = $request->input('user_id');
             // Retrieve and return joined data for FullCalendar
             $joinedData = Schedule::join('users', 'schedules.employee_id', '=', 'users.id')
                 ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                ->where('users.id', $userId)
                 ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
                 ->get();
 
             return response()->json($joinedData);
         }
 
-        // If it's not a JSON request, return the view for the schedule page
+        $user = User::where('id', '=', Auth::user()->id)->first();
+
         $schedules = Schedule::all();
-        $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
 
-        return view('user.viewSchedule', compact('schedules', 'users', 'shifts'));
-    }
-
-
-    // Define a private method to fetch schedules and shifts
-    private function fetchSchedulesAndShifts(){
-        // Get the currently logged-in user
-        $user = auth()->user(); // Assuming you are using Laravel's built-in authentication
-
-        // Retrieve schedules related to the logged-in user (employee)
-        $schedules = Schedule::where('employee_id', $user->id)->orderBy('date')->get();
-
-        $shifts = Shift::all();
-
-        return [
-            'schedules' => $schedules,
-            'shifts' => $shifts,
-        ];
-    }
-
-    public function viewJanuary(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewJanuary', $data);
-    }
-
-    public function viewFebruary(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewFebruary', $data);
-    }
-
-    public function viewMarch(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewMarch', $data);
-    }
-
-    public function viewApril(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewApril', $data);
-    }
-
-    public function viewMay(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewMay', $data);
-    }
-
-    public function viewJune(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewJune', $data);
-    }
-
-    public function viewJuly(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewJuly', $data);
-    }
-
-    public function viewAugust(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewAugust', $data);
-    }
-
-    public function viewSeptember(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewSeptember', $data);
-    }
-
-    public function viewOctober(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewOctober', $data);
-    }
-
-    public function viewNovember(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewNovember', $data);
-    }
-
-    public function viewDecember(){
-        $data = $this->fetchSchedulesAndShifts();
-
-        return view('user.viewDecember', $data);
+        return view('user.viewSchedule', compact('schedules', 'user', 'shifts'));
     }
 
     public function viewProfile(){
