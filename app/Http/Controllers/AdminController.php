@@ -471,7 +471,8 @@ class AdminController extends Controller
             // Retrieve and return joined data for FullCalendar
             $joinedData = Schedule::join('users', 'schedules.employee_id', '=', 'users.id')
                 ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-                ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
+                ->leftJoin('duties', 'schedules.duty_id', '=', 'duties.id')
+                ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date', 'duties.duty_name')
                 ->get();
 
             return response()->json($joinedData);
@@ -481,8 +482,9 @@ class AdminController extends Controller
         $schedules = Schedule::all();
         $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
+        $duties = Duty::all();
 
-        return view('admin.schedule', compact('schedules', 'users', 'shifts'));
+        return view('admin.schedule', compact('schedules', 'users', 'shifts', 'duties'));
     }
   
     public function addSchedule(Request $request){
@@ -491,7 +493,8 @@ class AdminController extends Controller
             'date_start' => 'required|date',
             'date_end' => 'required|date|after_or_equal:date_start', // Ensure date_end is after or equal to date_start
             'employee_id' => 'required',
-            'shift_id' => 'required'
+            'shift_id' => 'required',
+            'duty_id' => 'nullable'
         ]);
 
         //dd($request->all());
@@ -513,6 +516,7 @@ class AdminController extends Controller
                 $schedule->date = $date;
                 $schedule->employee_id = $data['employee_id'];
                 $schedule->shift_id = $data['shift_id'];
+                $schedule->duty_id = $data['duty_id'];
                 $schedule->save();
             }
     
@@ -522,6 +526,37 @@ class AdminController extends Controller
             return redirect()->back();
         }
 
+        return redirect()->route('schedule');
+    }
+
+    // public function editSchedule(Request $request) {
+    //     $users = User::all();
+    //     $shifts = Shift::all();
+    //     $duties = Duty::all();
+    //     $scheduleId = $request->input('scheduleId');
+    //     // Retrieve other data as needed
+    
+    //     // Pass the data to the view
+    //     // return view('admin.editSchedule', [
+    //     //     'scheduleId' => $scheduleId, 'users'
+    //     //     // Pass other data as an array
+    //     // ]);
+
+    //     return view('admin.editSchedule', compact('users', 'scheduleId', 'shifts', 'duties'));
+    // }
+
+    public function updateSchedule(Request $request, $id){
+
+        $data = Schedule::find($id);
+        // $data = User::find($request->edit_employee_id);
+        dd($request->all());
+        $data->update([
+            'employee_id' => $data->employee_id,
+            'shift_id' => $data->shift_id,
+            'duty_id' => $data->duty_id
+        ]);
+
+        Alert::success('Done', 'Successfully Updated');
         return redirect()->route('schedule');
     }
 

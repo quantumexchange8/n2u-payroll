@@ -11,7 +11,7 @@
                     <h4 class="font-20 mb-20">Create New Position</h4>
 
                     <!-- Form -->
-                    <form action="{{Route('addPosition')}}" method="POST">
+                    <form action="{{route('addPosition')}}" method="POST">
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">

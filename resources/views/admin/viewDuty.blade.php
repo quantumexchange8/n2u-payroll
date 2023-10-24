@@ -34,9 +34,9 @@
                             <tbody>
                                 @foreach($duties as $duty)
                                     <tr>
-                                        <td>{{ $duty->$duty_name }}</td>
+                                        <td>{{ $duty->duty_name }}</td>
                                         <td>
-                                            <a href="{{ route('editDuty', ['id' => $$duty->id]) }}" class="details-btn">
+                                            <a href="{{ route('editDuty', ['id' => $duty->id]) }}" class="details-btn">
                                                 Edit <i class="icofont-arrow-right"></i>
                                             </a>
                                             <form action="{{ route('deleteDuty', ['id' => $duty->id]) }}" method="POST" style="display: inline;">

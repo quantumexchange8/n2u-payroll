@@ -11,7 +11,7 @@
                     <h4 class="font-20 mb-20">Create New Shift</h4>
 
                     <!-- Form -->
-                    <form action="{{Route('addShift')}}" method="POST">
+                    <form action="{{route('addShift')}}" method="POST">
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">                                

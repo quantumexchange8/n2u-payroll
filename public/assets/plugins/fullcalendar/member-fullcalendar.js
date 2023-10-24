@@ -41,19 +41,19 @@ $(function() {
             dataType: 'json',
             success: function(data) {
                 var events = data.map(function(event) {
+                    var title = event.shiftStart + ' - ' + event.shiftEnd;
                     return {
                         id: event.id,
-                        title: event.full_name,
+                        title: title,
                         start: event.date,
-                        end: event.date, // Adjust the end date as needed
-                        shiftStart: event.shift_start, // Include Shift Start in event properties
-                        shiftEnd: event.shift_end,     // Include Shift End in event properties
+                        end: event.date,
+                        shiftStart: event.shiftStart, // Include Shift Start in event properties
+                        shiftEnd: event.shiftEnd,     // Include Shift End in event properties
                     };
                 });
                 callback(events);
             }
         });
-        
     },
     eventClick: function(event, jsEvent, view) {
         console.log(event); // Log the event object to the console

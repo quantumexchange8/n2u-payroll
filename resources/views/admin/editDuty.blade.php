@@ -8,17 +8,17 @@
             <div class="col-lg-12">
                 <!-- Base Horizontal Form With Icons -->
                 <div class="form-element py-30 multiple-column">
-                    <h4 class="font-20 mb-20">Create New Department</h4>
+                    <h4 class="font-20 mb-20">Edit Duty</h4>
 
                     <!-- Form -->
-                    <form action="{{route('addDepartment')}}" method="POST">
+                    <form action="{{ route('updateDuty', $duty->id) }}" method="POST">
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Department</label>
-                                    <input type="text" class="theme-input-style" id="department_name" name="department_name" autocomplete="off" placeholder="Department Name" value="{{ old('department_name') }}">
+                                    <input type="text" class="theme-input-style" id="duty_name" name="duty_name" autocomplete="off" placeholder="Duty Name" value="{{$duty->duty_name}}">
                                 </div>
                                 <!-- End Form Group -->
                             </div>
@@ -27,7 +27,7 @@
                         <!-- Form Row -->
                         <div class="form-row">
                             <div class="col-12 text-right">
-                                <button type="submit" class="btn long">Submit</button>
+                                <button type="submit" class="btn long">Update</button>
                             </div>
                         </div>
                         <!-- End Form Row -->

@@ -40,28 +40,36 @@ class MemberController extends Controller
         ]);
     }
 
-    public function viewSchedule(Request $request){
+    public function viewSchedule(Request $request) {
         // Check if the request wants JSON data
         if ($request->wantsJson()) {
-
+    
             $userId = $request->input('user_id');
             // Retrieve and return joined data for FullCalendar
             $joinedData = Schedule::join('users', 'schedules.employee_id', '=', 'users.id')
                 ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
                 ->where('users.id', $userId)
-                ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
+                ->select(
+                    'schedules.id',
+                    'schedules.employee_id',
+                    'users.full_name',
+                    'shifts.shift_start as shiftStart', // Alias shift_start to shiftStart
+                    'shifts.shift_end as shiftEnd',     // Alias shift_end to shiftEnd
+                    'schedules.date'
+                )
                 ->get();
-
+    
             return response()->json($joinedData);
         }
-
+    
         $user = User::where('id', '=', Auth::user()->id)->first();
-
+    
         $schedules = Schedule::all();
         $shifts = Shift::all();
-
+    
         return view('user.viewSchedule', compact('schedules', 'user', 'shifts'));
     }
+    
 
 
     public function viewProfile(){

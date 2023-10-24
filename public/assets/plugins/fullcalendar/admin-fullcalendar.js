@@ -23,7 +23,7 @@ $(function() {
         left: 'title',
         right: 'today,prev,next'
         // left: 'title,prev,next,today',
-        // right: 'month,agendaWeek,agendaDay'
+        // right: 'month,agendaWeek,agendaDay',
     },
     firstDay: 1,
     editable: true,
@@ -45,6 +45,7 @@ $(function() {
                         end: event.date, // Adjust the end date as needed
                         shiftStart: event.shift_start, // Include Shift Start in event properties
                         shiftEnd: event.shift_end,     // Include Shift End in event properties
+                        dutyName: event.duty_name,
                     };
                 });
                 callback(events);
@@ -64,11 +65,19 @@ $(function() {
         var shiftStart = event.shiftStart;
         var shiftEnd = event.shiftEnd;
 
+        var dutyName = event.dutyName;
+
         // Set data attributes for the fields in fullCalModal
         $('#modalFullName').data('full-name', fullName);
         $('#modalDate').data('date', date);
         $('#modalShiftStart').data('shift-start', shiftStart);
         $('#modalShiftEnd').data('shift-end', shiftEnd);
+
+        if (dutyName) {
+            $('#modalDutyName').data('duty-name', dutyName);
+        } else {
+            $('#modalDutyName').data('duty-name', ''); // Set a blank value as a data attribute
+        }
     
         // Display data in the modal
         $('#modalScheduleId').html(scheduleId);
@@ -77,7 +86,19 @@ $(function() {
         $('#modalShiftStart').html(shiftStart);
         $('#modalShiftEnd').html(shiftEnd);
 
-    
+        // Set the duty name or a blank value if it's null or empty
+        if (dutyName) {
+            $('#modalDutyName').html(dutyName);
+        } else {
+            $('#modalDutyName').html(''); // Display a blank value
+        }
+
+            // Set the event's ID as a data attribute in the edit button
+        $('#editEventButton').data('event-id', event.id);
+
+        // Set the ID as a data attribute to elements in fullCalModal
+        $('#modalScheduleId').data('event-id', event.id);
+
         $('#fullCalModal').modal();
     },
     dayClick: function(date, jsEvent, view) {

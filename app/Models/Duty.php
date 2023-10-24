@@ -10,8 +10,8 @@ class Duty extends Model
     use HasFactory;
 
     protected $fillable = [
-        "duty_id",
-        "duty_name"
+        'duty_id',
+        'duty_name'
     ];
 
     public function generateDutyId(){

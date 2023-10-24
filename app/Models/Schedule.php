@@ -14,7 +14,8 @@ class Schedule extends Model
         'schedule_id',
         'date',
         'employee_id',
-        'shift_id'
+        'shift_id',
+        'duty_id'
     ];
 
     public function user(){
@@ -23,6 +24,10 @@ class Schedule extends Model
 
     public function shift(){
         return $this->belongsTo(Shift::class, 'shift_id');
+    }
+
+    public function duty(){
+        return $this->belongsTo(Duty::class, duty::class,'duty_id');
     }
 
     public function generateScheduleId(){
