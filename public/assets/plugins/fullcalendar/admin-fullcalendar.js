@@ -46,6 +46,7 @@ $(function() {
                         shiftStart: event.shift_start, // Include Shift Start in event properties
                         shiftEnd: event.shift_end,     // Include Shift End in event properties
                         dutyName: event.duty_name,
+                        remarks: event.remarks
                     };
                 });
                 callback(events);
@@ -67,6 +68,8 @@ $(function() {
 
         var dutyName = event.dutyName;
 
+        var remarks = event.remarks;
+
         // Set data attributes for the fields in fullCalModal
         $('#modalFullName').data('full-name', fullName);
         $('#modalDate').data('date', date);
@@ -78,6 +81,8 @@ $(function() {
         } else {
             $('#modalDutyName').data('duty-name', ''); // Set a blank value as a data attribute
         }
+
+        $('#modalRemarks').html(remarks);
     
         // Display data in the modal
         $('#modalScheduleId').html(scheduleId);
@@ -92,6 +97,8 @@ $(function() {
         } else {
             $('#modalDutyName').html(''); // Display a blank value
         }
+
+        $('modalRemarks').html(remarks);
 
             // Set the event's ID as a data attribute in the edit button
         $('#editEventButton').data('event-id', event.id);

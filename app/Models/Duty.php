@@ -14,6 +14,10 @@ class Duty extends Model
         'duty_name'
     ];
 
+    public function duty(){
+        return $this->belongsTo(Duty::class, 'duty_id');
+    }
+
     public function generateDutyId(){
         $latestDuty = static::latest('duty_id')->first();
 

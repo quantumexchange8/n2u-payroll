@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('employee_id');
             $table->string('shift_id');
             $table->string('duty_id');
+            $table->string('remarks');
             $table->timestamps();
             $table->softDeletes();
         });

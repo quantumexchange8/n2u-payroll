@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Models\Shift;
+use App\Models\Duty;
 use App\Models\Position;
 use App\Models\PunchRecord;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -23,6 +24,8 @@ class MemberController extends Controller
 
         $shifts = Shift::all();
 
+        $duties = Duty::all();
+
         $punchRecords = PunchRecord::with('user')->get();
         //dd($punchRecords);
 
@@ -36,7 +39,8 @@ class MemberController extends Controller
             'schedules' => $schedules,
             'shifts' => $shifts,
             'punchRecords' => $punchRecords,
-            'user' => $user
+            'user' => $user,
+            'duty' => $duties
         ]);
     }
 

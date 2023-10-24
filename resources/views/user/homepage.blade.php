@@ -27,6 +27,8 @@
                               <tr style="text-align: center;">
                                   <th>Date</th>
                                   <th>Shift</th>
+                                  <th>Duty</th>
+                                  <th>Remarks</th>
                               </tr>
                           </thead>
                           <tbody>
@@ -58,6 +60,8 @@
                                               {{ $shiftInfo }}
                                           </div>
                                       </td>
+                                      <td>{{ $schedule->duty->duty_name }}</td>
+                                      <td>{{ $schedule->remarks}}</td>
                                   </tr>
                               @endforeach
                           </tbody>

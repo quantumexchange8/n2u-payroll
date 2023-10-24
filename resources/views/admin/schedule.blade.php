@@ -15,7 +15,6 @@
         </div>
     </div>
 
-
     <div id="createEventModal" class="modal fade" style="margin-left: 80px;">
         <div class="modal-dialog modal-dialog-centered">
             <form action="{{route('addSchedule')}}" method="POST">
@@ -55,12 +54,17 @@
                         <form>
 
                             <div class="calendar-modal-location m_style mt-10" style="width: 228px;">
-                                <label for="duty_id"><i class="icofont-tag"></i></label>
+                                <label for="remark"><i class="icofont-tag"></i></label>
                                 <select name="duty_id">
                                     @foreach ($duties as $duty)
                                         <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>  
                                     @endforeach
                                 </select>
+                            </div>
+
+                            <div class="calendar-modal-location m_style mt-10" style="width: 228px;">
+                                <label for="remarks"><i class="icofont-pen-alt-4"></i></label>
+                                <input type="text" id="remarks" name="remarks" placeholder="Remarks">
                             </div>
 
                             <div class="calendar-modal-dates mt-10 d-flex">
@@ -86,8 +90,6 @@
         </div>
     </div>
 
-
-
     <div id="fullCalModal" class="modal fade">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -109,6 +111,7 @@
                                 <th>Start</th>
                                 <th>End</th>
                                 <th>Duty</th>
+                                <th>Remarks</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -117,6 +120,7 @@
                                 <td id="modalShiftStart"></td>
                                 <td id="modalShiftEnd"></td>
                                 <td id="modalDutyName"></td>
+                                <td id="modalRemarks"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -153,16 +157,26 @@
                             <span class="sr-only">close</span>
                         </button>
 
+                        <div class="custom-select-box d-none align-items-center m_style ">
+                            <label for="employee_id"><img src="../../assets/img/svg/color.svg" alt="" class="svg"></label>
+                            <input type="text" id="edit_employee_id" name="employee_id">
+                        </div>
+    
+                        <div class="calendar-modal-title-wrap w-100 d-none mt-10">
+                            <div class="calendar-modal-title m_style flex-grow">
+                                <label for="shift_id"><i class="icofont-clock-time"></i></label>
+                                <input type="text" id="edit_shift_id" name="shift_id">
+                            </div>
+                        </div>
+                        
+
                         <div class="custom-select-box d-inline-flex align-items-center m_style">
                             <label for="edit_employee_id"><img src="../../assets/img/svg/color.svg" alt="" class="svg"></label>
                             <select id="edit_employee_id" name="edit_employee_id">
                                 @foreach ($users as $user)
-                                @php
-                                    $selectedUserId = $user->id; // Replace $userToPreselect with your selected user
-                                @endphp
-                                    <option value="{{ $user->id }}" {{ $user->id === $selectedUserId ? 'selected' : '' }}>
+                                    <option value="{{ $user->id }}" {{ $user->id === $user->employee_id ? 'selected' : '' }}>
                                         {{ $user->full_name }}
-                                    </option>
+                                    </option>                               
                                 @endforeach
                             </select>
                         </div>
@@ -192,6 +206,11 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="calendar-modal-location m_style mt-10">
+                            <label for="edit_remarks"><i class="icofont-location-pin"></i></label>
+                            <input type="text" id="edit_remarks" name="remarks">
+                         </div>
                     </div>
                     <!-- End Modal Header -->
     
@@ -219,7 +238,7 @@
 
 <script>
     $(document).ready(function(){
-        // In your editEventModal script
+
         $('#editEventButton').click(function() {
             // Get the values from the data attributes set in fullCalModal
             var fullName = $('#modalFullName').data('full-name');
@@ -228,6 +247,7 @@
             var shiftEnd = $('#modalShiftEnd').data('shift-end');
             var dutyName = $('#modalDutyName').data('duty-name');
             var scheduleId = $('#modalScheduleId').text();
+            var remarks = $('#modalRemarks').data('remarks');
 
             // Format the shift times
             var formattedShiftTime = formatShiftTime(shiftStart, shiftEnd);
@@ -235,13 +255,14 @@
             // Set the scheduleId as a data attribute on the form
             $('#scheduleForm').data('schedule-id', scheduleId);
 
-            console.log(fullName, date, shiftStart, shiftEnd, dutyName, scheduleId);
+            console.log(fullName, date, shiftStart, shiftEnd, dutyName, scheduleId, remarks);
 
             // Set the values in the editEventModal
             $('#edit_employee_id').val(fullName);
             $('#edit_shift_id').val(formattedShiftTime);
             $('#edit_date').val(date);
             $('#edit_duty').val(dutyName);
+            $('#edit_remarks').val(remarks);
             $('#editEventId').val(scheduleId); // Set the ID in a hidden input field
 
             // Dynamically set the form action based on the scheduleId
@@ -252,7 +273,6 @@
             // Open the editEventModal
             $('#editEventModal').modal();
         });
-
 
         // Function to format the shift time
         function formatShiftTime(shiftStart, shiftEnd) {
@@ -281,6 +301,7 @@
             var shiftId = $('#edit_shift_id').val();
             var dutyId = $('#edit_duty_id').val();
             var date = $('#edit_date').val();
+            var remarks = $('#edit_remarks').val();
 
             // Set the schedule ID as the value for the hidden input field
             $('#scheduleForm input[name="id"]').val(scheduleId);

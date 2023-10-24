@@ -19,11 +19,9 @@ use Carbon\Carbon;
 class AdminController extends Controller
 {
     
-    public function Admindashboard()
-    {
+    public function Admindashboard(){
 
         $punchRecords = PunchRecord::with('user')->get();
-        //dd($punchRecords);
 
         // Modify the date and time columns
         $punchRecords->each(function ($punchRecord) {
@@ -89,7 +87,7 @@ class AdminController extends Controller
     public function editEmployee($id) {
         $user = User::with('position')->find($id);
         $positions = Position::all(); // Fetch all positions
-        //dd($user); // Add this line to check the retrieved data
+
         return view('admin.editEmployee', compact('user', 'positions'));
     }
     
@@ -175,7 +173,7 @@ class AdminController extends Controller
     }
 
     public function updateEmployeePassword(Request $request, $id){
-        // Validate the input, including your password requirements
+        // Validate the input
         $request->validate([
             'new_password' => ['required', 'min:8', 'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)/'],
         ]);
@@ -472,7 +470,7 @@ class AdminController extends Controller
             $joinedData = Schedule::join('users', 'schedules.employee_id', '=', 'users.id')
                 ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
                 ->leftJoin('duties', 'schedules.duty_id', '=', 'duties.id')
-                ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date', 'duties.duty_name')
+                ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date', 'duties.duty_name', 'schedules.remarks')
                 ->get();
 
             return response()->json($joinedData);
@@ -494,10 +492,9 @@ class AdminController extends Controller
             'date_end' => 'required|date|after_or_equal:date_start', // Ensure date_end is after or equal to date_start
             'employee_id' => 'required',
             'shift_id' => 'required',
-            'duty_id' => 'nullable'
+            'duty_id' => 'nullable',
+            'remarks' => 'nullable'
         ]);
-
-        //dd($request->all());
 
         if($data){
             $start = Carbon::parse($data['date_start']);
@@ -517,6 +514,7 @@ class AdminController extends Controller
                 $schedule->employee_id = $data['employee_id'];
                 $schedule->shift_id = $data['shift_id'];
                 $schedule->duty_id = $data['duty_id'];
+                $schedule->remarks = $data['remarks'];
                 $schedule->save();
             }
     
@@ -529,31 +527,20 @@ class AdminController extends Controller
         return redirect()->route('schedule');
     }
 
-    // public function editSchedule(Request $request) {
-    //     $users = User::all();
-    //     $shifts = Shift::all();
-    //     $duties = Duty::all();
-    //     $scheduleId = $request->input('scheduleId');
-    //     // Retrieve other data as needed
-    
-    //     // Pass the data to the view
-    //     // return view('admin.editSchedule', [
-    //     //     'scheduleId' => $scheduleId, 'users'
-    //     //     // Pass other data as an array
-    //     // ]);
-
-    //     return view('admin.editSchedule', compact('users', 'scheduleId', 'shifts', 'duties'));
-    // }
-
     public function updateSchedule(Request $request, $id){
 
         $data = Schedule::find($id);
-        // $data = User::find($request->edit_employee_id);
-        dd($request->all());
+        // $user = User::where('full_name', $request->edit_employee_id)->first();
+        // dd($user);
+
+        $selectedUserId = $request->input('edit_employee_id');
+        $selectedShiftId = $request->input('edit_shift_id');
+        $selectedDutyId = $request->input('edit_duty_id');
+
         $data->update([
-            'employee_id' => $data->employee_id,
-            'shift_id' => $data->shift_id,
-            'duty_id' => $data->duty_id
+            'employee_id' => $selectedUserId,
+            'shift_id' => $selectedShiftId,
+            'duty_id' => $selectedDutyId
         ]);
 
         Alert::success('Done', 'Successfully Updated');
