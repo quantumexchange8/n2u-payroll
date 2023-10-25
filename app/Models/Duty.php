@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Duty extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'duty_id',
         'duty_name'
     ];
 
@@ -18,16 +18,4 @@ class Duty extends Model
         return $this->belongsTo(Duty::class, 'duty_id');
     }
 
-    public function generateDutyId(){
-        $latestDuty = static::latest('duty_id')->first();
-
-        if (!$latestDuty) {
-            return 'J0001';
-        }
-
-        $latestId = intval(substr($latestDuty->duty_id, 1));
-        $newId = str_pad($latestId + 1, 4, '0', STR_PAD_LEFT);
-
-        return 'J' . $newId;
-    }
 }

@@ -65,6 +65,9 @@
                                             <option value="{{ $position->id }}">{{ $position->position_name }}</option>
                                         @endforeach
                                     </select>
+                                    @error('position_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>                                            
                                 <!-- End Form Group -->
 
@@ -76,6 +79,9 @@
                                         <option value="Full Time">Full Time</option>
                                         <option value="Part Time">Part Time</option>
                                     </select>
+                                    @error('employee_type')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                                 </div>                                            
                                 <!-- End Form Group -->
 
@@ -107,6 +113,9 @@
                                         <option value="admin">Admin</option>
                                         <option value="member">Member</option>
                                     </select>
+                                    @error('role')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group --> 
 
@@ -126,7 +135,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Nationality</label>
-                                    <select class="theme-input-style" id="nation" name="nation" autocomplete="off">
+                                    <select class="theme-input-style" id="nation" name="nation" autocomplete="off" value="{{ old('nationality') }}">
                                         <option value="">Select Nationality</option>
                                         <option value="Malaysia">Malaysia</option>
                                         <option value="Thailand">Thailand</option>
@@ -145,13 +154,16 @@
                                         <option value="Indonesia">Indonesia</option>
                                         <option value="Bangladesh">Bangladesh</option>                                                  
                                     </select>
+                                    @error('nationality')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Bank Name</label>
-                                    <select class="theme-input-style" id="bank_name" name="bank_name" autocomplete="off">
+                                    <select class="theme-input-style" id="bank_name" name="bank_name" autocomplete="off" value="{{ old('bank_name') }}">
                                         <option value="">Select Bank Name</option>
                                         <option value="Maybank">Maybank</option>
                                         <option value="CIMB">CIMB</option>

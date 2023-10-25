@@ -7,14 +7,6 @@
     <div class="container-fluid">
           <div class="row" style="display: flex;justify-content:center;flex-direction: column;align-items: center;flex-wrap: wrap;gap: 20px;">
 
-            <form action="{{ route('clock_in') }}" method="POST" id="clockForm">
-                @csrf
-                <input type="hidden" name="status" value="Clock In"> <!-- Initial value -->
-                <button type="submit" id="clockButton" class="btn" style="width:100%">
-                  Clock In
-                </button>
-            </form>
-
             <div class="col-12">
               <div class="card mb-30">
                   <div class="card-body pt-30">
@@ -33,16 +25,16 @@
                           </thead>
                           <tbody>
                               @php
-                              // Get the current date
-                              $currentDate = \Carbon\Carbon::now();
-                              
-                              // Filter schedules for today
-                              $todaySchedules = $schedules->filter(function ($schedule) use ($currentDate) {
-                                  $scheduleDate = \Carbon\Carbon::createFromFormat('Y-m-d', $schedule->date);
-                                  
-                                  // Filter out schedules that match the current date
-                                  return $scheduleDate->isSameDay($currentDate);
-                              });
+                                // Get the current date
+                                $currentDate = \Carbon\Carbon::now();
+                                
+                                // Filter schedules for today
+                                $todaySchedules = $schedules->filter(function ($schedule) use ($currentDate) {
+                                    $scheduleDate = \Carbon\Carbon::createFromFormat('Y-m-d', $schedule->date);
+                                    
+                                    // Filter out schedules that match the current date
+                                    return $scheduleDate->isSameDay($currentDate);
+                                });
                               @endphp
           
                               @foreach ($todaySchedules as $schedule)
@@ -55,11 +47,7 @@
           
                                   <tr>
                                       <td>{{ $currentDate->format('d F Y') }}</td>
-                                      <td>
-                                          <div style="text-align: center;">
-                                              {{ $shiftInfo }}
-                                          </div>
-                                      </td>
+                                      <td>{{ $shiftInfo }}</td>
                                       <td>{{ $schedule->duty->duty_name }}</td>
                                       <td>{{ $schedule->remarks}}</td>
                                   </tr>
@@ -70,6 +58,14 @@
                   </div>
               </div>
             </div>
+
+            <form action="{{ route('clock_in') }}" method="POST" id="clockForm">
+                @csrf
+                <input type="hidden" name="status" value="Clock In"> <!-- Initial value -->
+                <button type="submit" id="clockButton" class="btn" style="width:100%">
+                  Clock In
+                </button>
+            </form>
           
             <div class="col-12">
               <div class="card mb-30">
@@ -86,6 +82,8 @@
                             <th>Time</th>
                             <th>In</th>
                             <th>Out</th>
+                            <th>Status</th>
+                            <th>OT Approval</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -102,6 +100,8 @@
                                 <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toTimeString() }}</td>
                                 <td>{{ $punchRecord->in }}</td>
                                 <td>{{ $punchRecord->out }}</td>
+                                <td>{{ $punchRecord->status }}</td>
+                                <td>{{ $punchRecord->ot_approval }}</td>
                               </tr>
                             @endif
                           @endforeach

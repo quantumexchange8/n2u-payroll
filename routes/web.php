@@ -76,9 +76,17 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('admin/schedule', [AdminController::class, 'schedule'])->name('schedule');
     Route::post('admin/addSchedule', [AdminController::class, 'addSchedule'])->name('addSchedule');
-    // Route::get('admin/editSchedule/{scheduleId}', [AdminController::class, 'editSchedule'])->name('editSchedule');
     Route::post('admin/updateSchedule/{id}', [AdminController::class, 'updateSchedule'])->name('updateSchedule');
     Route::delete('admin/deleteSchedule/{id}', [AdminController::class, 'deleteSchedule'])->name('deleteSchedule');
+
+    Route::get('admin/viewSetting', [AdminController::class, 'viewSetting'])->name('viewSetting');
+    Route::get('admin/createSetting', [AdminController::class, 'createSetting'])->name('createSetting');
+    Route::post('admin/addSetting', [AdminController::class, 'addSetting'])->name('addSetting');
+    Route::get('admin/editSetting/{id}', [AdminController::class, 'editSetting'])->name('editSetting');
+    Route::post('admin/updateSetting/{id}', [AdminController::class, 'updateSetting'])->name('updateSetting');
+    Route::delete('admin/deleteSetting/{id}', [AdminController::class, 'deleteSetting'])->name('deleteSetting');
+
+    Route::get('admin/otApproval', [AdminController::class, 'otApproval'])->name('otApproval');
 
     // User
 

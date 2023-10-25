@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PunchRecord;
-use App\Models\User;
-use App\Models\Position;
 use App\Models\Department;
 use App\Models\Duty;
-use App\Models\Shift;
+use App\Models\Position;
+use App\Models\PunchRecord;
 use App\Models\Schedule;
+use App\Models\Setting;
+use App\Models\Shift;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
@@ -20,89 +21,23 @@ class AdminController extends Controller
 {
     
     public function Admindashboard(){
-
+        // Retrieve all punch records with associated user information
         $punchRecords = PunchRecord::with('user')->get();
-
-        // Modify the date and time columns
+    
+        // Modify the date and time columns in each punch record
         $punchRecords->each(function ($punchRecord) {
             $punchRecord->date = Carbon::parse($punchRecord->created_at)->toDateString();
             $punchRecord->time = Carbon::parse($punchRecord->created_at)->toTimeString();
         });
-
-        return view('admin.record', [
-            'punchRecords' => $punchRecords
-        ]);
+    
+        // Retrieve all schedules, shifts, and settings
+        $schedules = Schedule::all();
+        $shifts = Shift::all();
+        $settings = Setting::all();
+    
+        // Return the view with the punchRecords, schedules, shifts, and settings
+        return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings'));
     }
-
-    // public function Admindashboard($date) {
-    //     // Fetch user shift information and organize it as an associative array
-    //     $userShifts = $this->getUserShifts($date); // Pass the date as a parameter
-    
-    //     // Fetch punch records for the specified date
-    //     $punchRecords = PunchRecord::with('user')
-    //         ->leftJoin('schedules', 'punch_records.employee_id', '=', 'schedules.employee_id')
-    //         ->whereDate('punch_records.created_at', $date) // Use the passed date parameter
-    //         ->get();
-    
-    //     // Calculate the status for each punch record
-    //     $punchRecords->each(function ($record) use ($userShifts) {
-    //         $record->punch_in = Carbon::parse($record->punch_in);
-    //         $record->punch_out = Carbon::parse($record->punch_out);
-    
-    //         // Check if the user has a shift for the specified date
-    //         if (isset($userShifts[$record->employee_id])) {
-    //             $expectedShiftStart = Carbon::parse($userShifts[$record->employee_id]['shift_start']);
-    //             $expectedShiftEnd = Carbon::parse($userShifts[$record->employee_id]['shift_end']);
-    
-    //             if ($record->punch_in >= $expectedShiftStart && $record->punch_in <= $expectedShiftEnd) {
-    //                 $record->status = "On Time";
-    //             } else {
-    //                 $record->status = "Late";
-    //             }
-    //         } else {
-    //             $record->status = "No Shift Data"; // Handle cases where shift data is missing
-    //         }
-    //     });
-    
-    //     return view('admin.record', [
-    //         'punchRecords' => $punchRecords
-    //     ]);
-    // }
-
-    // public function Admindashboard($date, $userId) {
-    //     // Fetch the user's shift information for the specified date
-    //     $shiftInfo = Schedule::where('employee_id', $userId)
-    //         ->where('date', $date)
-    //         ->first();
-    
-    //     if (!$shiftInfo) {
-    //         return "No Shift Data"; // Handle cases where shift data is missing for the user on the specified date
-    //     }
-    
-    //     // Fetch the user's clock-in and clock-out records for the specified date
-    //     $punchRecord = PunchRecord::where('employee_id', $userId)
-    //         ->whereDate('created_at', $date)
-    //         ->first();
-    
-    //     if (!$punchRecord) {
-    //         return "No Clock-in Record"; // Handle cases where there is no clock-in record for the user on the specified date
-    //     }
-    
-    //     // Convert times to Carbon instances for easy comparison
-    //     $shiftStart = Carbon::parse($shiftInfo->shift_start);
-    //     $shiftEnd = Carbon::parse($shiftInfo->shift_end);
-    //     $clockIn = Carbon::parse($punchRecord->in);
-    //     $clockOut = Carbon::parse($punchRecord->out);
-    
-    //     // Determine if the user was on time or late
-    //     if ($clockIn >= $shiftStart && $clockOut <= $shiftEnd) {
-    //         return "On Time";
-    //     } else {
-    //         return "Late";
-    //     }
-    // }
-    
-    
     
     public function viewEmployee() {
         $users = User::where('role', 'member')->with('position')->get(); // Eager load the positions
@@ -295,7 +230,6 @@ class AdminController extends Controller
     
         if ($data) {
             $position = new Position();
-            $position->position_id = $position->generatePositionId();
             $position->position_name = $data['position_name'];
             $position->department_id = $data['department_id'];
             $position->save();
@@ -358,7 +292,6 @@ class AdminController extends Controller
     
         if($data){
             $department = new Department();
-            $department->department_id = $department->generateDepartmentId();
             $department->department_name = $data['department_name'];
             $department->save();
     
@@ -420,7 +353,6 @@ class AdminController extends Controller
     
         if($data){
             $duty = new Duty();
-            $duty->duty_id = $duty->generateDutyId();
             $duty->duty_name = $data['duty_name'];
             $duty->save();
     
@@ -484,7 +416,6 @@ class AdminController extends Controller
 
         if($data){
             $shift = new Shift();
-            $shift->shift_id = $shift->generateShiftId();
             $shift->shift_name = $data['shift_name'];
             $shift->shift_start = $data['shift_start'];
             $shift->shift_end = $data['shift_end'];
@@ -579,7 +510,6 @@ class AdminController extends Controller
     
             foreach ($dates as $date) {
                 $schedule = new Schedule();
-                $schedule->schedule_id = $schedule->generateScheduleId();
                 $schedule->date = $date;
                 $schedule->employee_id = $data['employee_id'];
                 $schedule->shift_id = $data['shift_id'];
@@ -631,8 +561,75 @@ class AdminController extends Controller
         // return redirect()->route('schedule');
     }
 
+    public function viewSetting(){
+        $settings = Setting::all();
+        return view('admin.viewSetting', ['settings' => $settings]);
+    }
     
-    
+    public function createSetting(){
+        return view('admin.createSetting');
+    }
 
+    public function addSetting(Request $request){
+
+        $data = $request->validate([
+            'setting_name' => 'required',
+            'value' => 'required',
+            'description' => 'required'
+        ]);
+
+        if($data){
+            $setting = new Setting();
+            $setting->setting_name = $data['setting_name'];
+            $setting->value = $data['value'];
+            $setting->description = $data['description'];
+            $setting->save();
+
+
+            Alert::success('Done', 'Successfully Inserted');
+        } else {
+            return redirect()->back();
+        }
+
+        return redirect()->route('viewSetting');
+    }
+
+    public function editSetting($id){
+        $setting = Setting::find($id);
+        
+        return view('admin.editSetting', ['setting' => $setting]);
+    }
+
+    public function updateSetting(Request $request, $id){
+        $data = Setting::find($id);
+
+        //Update the user's data based on the form input
+        $data->update([
+            'setting_name' => $request->input('setting_name'),
+            'value' => $request->input('value'),
+            'description' => $request->input('description')
+        ]);
+
+        Alert::success('Done', 'Successfully Updated');
+        return redirect()->route('viewSetting');
+    }
+
+    public function deleteSetting($id){
+
+        $setting = Setting::find($id);
+
+        if (!$setting) {
+            return redirect()->route('viewSetting');
+        }
+
+        $setting->delete(); // Soft delete the employee
+
+        Alert::success('Done', 'Successfully Deleted');
+        return redirect()->route('viewSetting');
+    }
+
+    public function otApproval(){
+
+    }
     
 }

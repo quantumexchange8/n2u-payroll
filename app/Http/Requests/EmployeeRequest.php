@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Validation\Rule;
 class EmployeeRequest extends FormRequest
 {
     /**
@@ -22,7 +22,7 @@ class EmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'employee_id' => 'required',
+            'employee_id' => ['required', Rule::unique('users', 'employee_id')],
             'full_name' => ['required', 'regex:/^[a-zA-Z\s\/\']+$/'],
             'ic_number' => 'required',
             'address' => 'required',
@@ -54,14 +54,22 @@ class EmployeeRequest extends FormRequest
             'employee_type' => 'Employee Type',
             'salary' => 'Salary',
             'employed_since' => 'Employed Since',
-            'nation' => 'Nation',
+            'nation' => 'Nationality',
             'bank_name' => 'Bank Name',
             'bank_account' => 'Bank Account',
             'password' => 'Password',
             'passport_size_photo' => 'Passport Size Photo',
             'ic_photo' => 'IC Photo',
-            'offer_letter' => 'Offer Letter'
+            'offer_letter' => 'Offer Letter',
+            'role' => 'Role'
         
+        ];
+    }
+
+    public function messages(){
+        return [
+            'employee_id.unique' => 'The provided Employee ID is already in use.',
+            // Other custom messages...
         ];
     }
 }

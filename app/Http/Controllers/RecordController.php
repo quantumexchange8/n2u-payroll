@@ -20,6 +20,8 @@ class RecordController extends Controller
             'employee_id' => $user->employee_id,
             'in' => null,
             'out' => null,
+            'status',
+            'ot_approval'
         ];
     
         if ($status === 'Clock In') {
@@ -33,7 +35,6 @@ class RecordController extends Controller
         $record = PunchRecord::create($recordData);
     
         return redirect()->route('homepage');
-
     }
     
     

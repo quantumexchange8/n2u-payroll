@@ -6,16 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Department extends Model
+class Setting extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'department_name'
+        'setting_name',
+        'value',
+        'description'
     ];
-
-    public function positions(){
-        return $this->hasMany(Position::class, 'department_id');
-    }
-
 }

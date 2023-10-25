@@ -12,7 +12,9 @@ class PunchRecord extends Model
     protected $fillable = [
         'employee_id',
         'in',
-        'out'
+        'out',
+        'status',
+        'ot_approval'
     ];
 
 

@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('punch_records', function (Blueprint $table) {
             $table->id();
             $table->string('employee_id');
-            $table->string('in');
-            $table->string('out');
+            $table->string('in')->nullable();
+            $table->string('out')->nullable();
+            $table->string('status')->nullable();
+            $table->string('ot_approval')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

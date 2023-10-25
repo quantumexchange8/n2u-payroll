@@ -221,6 +221,18 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="{{ route('otApproval') }}">
+                                    <i class="icofont-pencil"></i>
+                                    <span class="link-title">OT Approval</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('viewSetting') }}">
+                                    <i class="icofont-ui-settings"></i>
+                                    <span class="link-title">Setting</span>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{{ route('logout') }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="icofont-magic-alt"></i>
