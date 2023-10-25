@@ -34,6 +34,76 @@ class AdminController extends Controller
         ]);
     }
 
+    // public function Admindashboard($date) {
+    //     // Fetch user shift information and organize it as an associative array
+    //     $userShifts = $this->getUserShifts($date); // Pass the date as a parameter
+    
+    //     // Fetch punch records for the specified date
+    //     $punchRecords = PunchRecord::with('user')
+    //         ->leftJoin('schedules', 'punch_records.employee_id', '=', 'schedules.employee_id')
+    //         ->whereDate('punch_records.created_at', $date) // Use the passed date parameter
+    //         ->get();
+    
+    //     // Calculate the status for each punch record
+    //     $punchRecords->each(function ($record) use ($userShifts) {
+    //         $record->punch_in = Carbon::parse($record->punch_in);
+    //         $record->punch_out = Carbon::parse($record->punch_out);
+    
+    //         // Check if the user has a shift for the specified date
+    //         if (isset($userShifts[$record->employee_id])) {
+    //             $expectedShiftStart = Carbon::parse($userShifts[$record->employee_id]['shift_start']);
+    //             $expectedShiftEnd = Carbon::parse($userShifts[$record->employee_id]['shift_end']);
+    
+    //             if ($record->punch_in >= $expectedShiftStart && $record->punch_in <= $expectedShiftEnd) {
+    //                 $record->status = "On Time";
+    //             } else {
+    //                 $record->status = "Late";
+    //             }
+    //         } else {
+    //             $record->status = "No Shift Data"; // Handle cases where shift data is missing
+    //         }
+    //     });
+    
+    //     return view('admin.record', [
+    //         'punchRecords' => $punchRecords
+    //     ]);
+    // }
+
+    // public function Admindashboard($date, $userId) {
+    //     // Fetch the user's shift information for the specified date
+    //     $shiftInfo = Schedule::where('employee_id', $userId)
+    //         ->where('date', $date)
+    //         ->first();
+    
+    //     if (!$shiftInfo) {
+    //         return "No Shift Data"; // Handle cases where shift data is missing for the user on the specified date
+    //     }
+    
+    //     // Fetch the user's clock-in and clock-out records for the specified date
+    //     $punchRecord = PunchRecord::where('employee_id', $userId)
+    //         ->whereDate('created_at', $date)
+    //         ->first();
+    
+    //     if (!$punchRecord) {
+    //         return "No Clock-in Record"; // Handle cases where there is no clock-in record for the user on the specified date
+    //     }
+    
+    //     // Convert times to Carbon instances for easy comparison
+    //     $shiftStart = Carbon::parse($shiftInfo->shift_start);
+    //     $shiftEnd = Carbon::parse($shiftInfo->shift_end);
+    //     $clockIn = Carbon::parse($punchRecord->in);
+    //     $clockOut = Carbon::parse($punchRecord->out);
+    
+    //     // Determine if the user was on time or late
+    //     if ($clockIn >= $shiftStart && $clockOut <= $shiftEnd) {
+    //         return "On Time";
+    //     } else {
+    //         return "Late";
+    //     }
+    // }
+    
+    
+    
     public function viewEmployee() {
         $users = User::where('role', 'member')->with('position')->get(); // Eager load the positions
         $positions = Position::all(); // Fetch all positions
@@ -76,7 +146,7 @@ class AdminController extends Controller
             $file->move('uploads/employee/offerLetter/', $filename);
             $validatedData['offer_letter'] = $filename;
         }
-
+        // dd($validatedData);
         // Create the user record with the validated and modified data
         User::create($validatedData);
 

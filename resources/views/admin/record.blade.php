@@ -27,19 +27,25 @@
                             </thead>
                             <tbody>
                                 @foreach ($punchRecords as $punchRecord)
-                                {{-- {{ dd($punchRecord->user) }} --}}
-                                    <tr>
-                                        <td>{{$punchRecord->employee_id}}</td>
-                                        <td>{{$punchRecord->user->full_name}}</td>
-                                        <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toDateString() }}</td>
-                                        <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toTimeString() }}</td>
-                                        <td>{{$punchRecord->in}}</td>
-                                        <td>{{$punchRecord->out}}</td>
-                                    </tr>
+                                    @php
+                                        $recordDate = Carbon\Carbon::parse($punchRecord->created_at)->toDateString();
+                                        $currentDate = now()->toDateString();
+                                    @endphp
+                        
+                                    @if ($recordDate == $currentDate)
+                                        <tr>
+                                            <td>{{$punchRecord->employee_id}}</td>
+                                            <td>{{$punchRecord->user->full_name}}</td>
+                                            <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toDateString() }}</td>
+                                            <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toTimeString() }}</td>
+                                            <td>{{$punchRecord->in}}</td>
+                                            <td>{{$punchRecord->out}}</td>
+                                        </tr>
+                                    @endif
                                 @endforeach
-                            
                             </tbody>
                         </table>
+                        
                         <!-- End Invoice List Table -->
                     </div>
                 </div>

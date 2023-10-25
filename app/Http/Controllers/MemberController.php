@@ -16,9 +16,9 @@ use Carbon\Carbon;
 class MemberController extends Controller
 {
     public function dashboard(){
-
-        $user = auth()->user(); // Assuming you are using Laravel's built-in authentication
-
+        
+        // Assuming you are using Laravel's built-in authentication
+        $user = auth()->user(); 
         // Retrieve schedules related to the logged-in user (employee)
         $schedules = Schedule::where('employee_id', $user->id)->orderBy('date')->get();
 

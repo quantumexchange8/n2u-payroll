@@ -247,7 +247,7 @@
             var shiftEnd = $('#modalShiftEnd').data('shift-end');
             var dutyName = $('#modalDutyName').data('duty-name');
             var scheduleId = $('#modalScheduleId').text();
-            var remarks = $('#modalRemarks').data('remarks');
+            var remarks = $('#modalRemarks').html();
 
             // Format the shift times
             var formattedShiftTime = formatShiftTime(shiftStart, shiftEnd);

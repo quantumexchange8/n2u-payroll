@@ -10,8 +10,7 @@ class RecordController extends Controller
 {
     //
 
-    public function clock_in(Request $request)
-    {
+    public function clock_in(Request $request){
         $user = Auth::user();
        
         // Determine whether the user is clocking in or out based on the button text.
@@ -33,7 +32,8 @@ class RecordController extends Controller
     
         $record = PunchRecord::create($recordData);
     
-        return redirect()->back();
+        return redirect()->route('homepage');
+
     }
     
     
