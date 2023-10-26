@@ -19,15 +19,15 @@ class Schedule extends Model
     ];
 
     public function user(){
-        return $this->belongsTo(User::class, 'employee_id');
+        return $this->belongsTo(User::class, 'employee_id', 'id');
     }
 
     public function shift(){
-        return $this->belongsTo(Shift::class, 'shift_id');
+        return $this->belongsTo(Shift::class, 'shift_id', 'id');
     }
 
     public function duty(){
-        return $this->belongsTo(Duty::class, 'duty_id');
+        return $this->belongsTo(Duty::class, 'duty_id', 'id');
     }
 
 }

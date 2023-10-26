@@ -7,6 +7,14 @@
     <div class="container-fluid">
           <div class="row" style="display: flex;justify-content:center;flex-direction: column;align-items: center;flex-wrap: wrap;gap: 20px;">
 
+            <form action="{{ route('clock_in') }}" method="POST" id="clockForm">
+              @csrf
+              <input type="hidden" id="statusInput" name="status" value="Clock In">
+              <button type="button" id="clockButton" class="btn" style="width:100%">
+                Clock In
+              </button>
+            </form>
+
             <div class="col-12">
               <div class="card mb-30">
                   <div class="card-body pt-30">
@@ -41,7 +49,7 @@
                                   @php
                                   $shiftInfo = null;
                                   if ($schedule->shift && $schedule->shift->shift_start && $schedule->shift->shift_end) {
-                                      $shiftInfo = $schedule->shift->shift_start->format('h:i A') . ' - ' . $schedule->shift->shift_end->format('h:ia');
+                                      $shiftInfo = $schedule->shift->shift_start->format('h:i A') . ' - ' . $schedule->shift->shift_end->format('h:i A');
                                   }
                                   @endphp
           
@@ -59,14 +67,12 @@
               </div>
             </div>
 
-            <form action="{{ route('clock_in') }}" method="POST" id="clockForm">
-                @csrf
-                <input type="hidden" name="status" value="Clock In"> <!-- Initial value -->
-                <button type="submit" id="clockButton" class="btn" style="width:100%">
-                  Clock In
-                </button>
-            </form>
-          
+            @php
+              $user = Auth::user();
+              $user_id = $user ? $user->id : null;
+              $currentDate = now()->toDateString();
+            @endphp
+         
             <div class="col-12">
               <div class="card mb-30">
                   <div class="card-body pt-30">
@@ -82,8 +88,6 @@
                             <th>Time</th>
                             <th>In</th>
                             <th>Out</th>
-                            <th>Status</th>
-                            <th>OT Approval</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -93,15 +97,13 @@
                               $currentDate = now()->toDateString();
                             @endphp
                       
-                            @if ($recordDate == $currentDate)
+                            @if ($recordDate == $currentDate && $punchRecord->user->id === $user_id)
                               <tr>
                                 <td>{{ $punchRecord->user->full_name }}</td>
                                 <td>{{ $recordDate }}</td>
                                 <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toTimeString() }}</td>
                                 <td>{{ $punchRecord->in }}</td>
                                 <td>{{ $punchRecord->out }}</td>
-                                <td>{{ $punchRecord->status }}</td>
-                                <td>{{ $punchRecord->ot_approval }}</td>
                               </tr>
                             @endif
                           @endforeach
@@ -117,66 +119,127 @@
   </div>
 <!-- End Main Content -->
 
-<script>
-  // Get references to the button, form, and the status input field.
+{{-- <script>
+  // Get references to the button and form.
   const clockButton = document.getElementById('clockButton');
   const clockForm = document.getElementById('clockForm');
-  const statusInput = clockForm.querySelector('input[name="status"]');
 
   // Add a click event listener to the button.
   clockButton.addEventListener('click', async function (e) {
     e.preventDefault(); // Prevent the default form submission.
 
-    // Toggle between "Clock In" and "Clock Out" in the button.
-    if (statusInput.value === 'Clock In') {
-      clockButton.innerText = 'Clock Out';
-      clockButton.style.backgroundColor = '#FFFFFF';
-      clockButton.style.color = '#6045E2';
-      clockButton.style.border = '2px solid #6045E2';
-    } else {
-      clockButton.innerText = 'Clock In';
-      clockButton.style.backgroundColor = '#6045E2';
-      clockButton.style.color = '#FFFFFF';
-      clockButton.style.border = 'none';
-    }
+    // Get the current button text.
+    const buttonText = clockButton.innerText;
 
-    // Update the "status" input field based on the button text.
-    statusInput.value = clockButton.innerText;
+    // Determine the new status value.
+    const status = buttonText === 'Clock In' ? 'Clock In' : 'Clock Out';
 
-    // Add the CSRF token to the form data.
-    const formData = new FormData(clockForm);
-    formData.append('_token', '{{ csrf_token() }}');
+    // Update the form input with the new status.
+    const statusInput = document.getElementById('statusInput');
+    statusInput.value = status;
 
-    // Submit the form with the updated form data.
-    await fetch('{{ route('clock_in') }}', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => {
-        if (response.ok) {
-          // Display a success alert with a dynamic message based on Clock In/Out.
-          const successMessage =
-            statusInput.value === 'Clock In'
-              ? 'You have successfully clocked out.'
-              : 'You have successfully clocked in.';
-          Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: successMessage,
-          });
-        } else {
-          // Display an error alert in case of a failure.
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An error occurred while processing your request.',
-          });
-        }
-      })
-      .catch((error) => {
-        // Handle any network errors or exceptions here.
-        console.error('Error:', error);
+    // Use try-catch to handle form submission errors.
+    try {
+      const response = await fetch('{{ route('clock_in') }}', {
+        method: 'POST',
+        body: new FormData(clockForm),
       });
+
+      if (response.ok) {
+        // Update the button text to the opposite.
+        clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
+
+        // Apply styles based on the status
+        if (status === 'Clock In') {
+          clockButton.style.backgroundColor = '#FFFFFF';
+          clockButton.style.color = '#6045E2';
+          clockButton.style.border = '2px solid #6045E2';
+        } else {
+          clockButton.style.backgroundColor = '#6045E2';
+          clockButton.style.color = '#FFFFFF';
+          clockButton.style.border = 'none';
+        }
+
+        // Display a success alert
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
+        });
+
+      } else {
+        // Display an error alert
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Form submission failed. An error occurred while processing your request.',
+        });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+</script> --}}
+
+<script>
+  // Get references to the button and form.
+  const clockButton = document.getElementById('clockButton');
+  const clockForm = document.getElementById('clockForm');
+
+  // Add a click event listener to the button.
+  clockButton.addEventListener('click', async function (e) {
+    e.preventDefault(); // Prevent the default form submission.
+
+    // Get the current button text.
+    const buttonText = clockButton.innerText;
+
+    // Determine the new status value.
+    const status = buttonText === 'Clock In' ? 'Clock In' : 'Clock Out';
+
+    // Update the form input with the new status.
+    const statusInput = document.getElementById('statusInput');
+    statusInput.value = status;
+
+    // Use try-catch to handle form submission errors.
+    try {
+      const response = await fetch('{{ route('clock_in') }}', {
+        method: 'POST',
+        body: new FormData(clockForm),
+      });
+
+      if (response.ok) {
+        // Update the button text to the opposite.
+        clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
+
+        // Apply styles based on the status
+        if (status === 'Clock In') {
+          clockButton.style.backgroundColor = '#FFFFFF';
+          clockButton.style.color = '#6045E2';
+          clockButton.style.border = '2px solid #6045E2';
+        } else {
+          clockButton.style.backgroundColor = '#6045E2';
+          clockButton.style.color = '#FFFFFF';
+          clockButton.style.border = 'none';
+        }
+
+        // Display a success alert
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
+        });
+
+      } else {
+        // Display an error alert
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Form submission failed. An error occurred while processing your request.',
+        });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   });
 </script>
 

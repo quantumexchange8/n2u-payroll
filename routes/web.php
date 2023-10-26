@@ -87,6 +87,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('admin/deleteSetting/{id}', [AdminController::class, 'deleteSetting'])->name('deleteSetting');
 
     Route::get('admin/otApproval', [AdminController::class, 'otApproval'])->name('otApproval');
+    Route::get('admin/editOtApproval/{id}', [AdminController::class, 'editOtApproval'])->name('editOtApproval');
+    Route::post('admin/updateOtApproval/{id}', [AdminController::class, 'updateOtApproval'])->name('updateOtApproval');
+    Route::delete('admin/deleteOtApproval/{id}', [AdminController::class, 'deleteOtApproval'])->name('deleteOtApproval');
 
     // User
 

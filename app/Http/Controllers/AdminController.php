@@ -13,6 +13,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\EmployeeRequest;
 use Carbon\Carbon;
@@ -540,7 +542,9 @@ class AdminController extends Controller
         $data->update([
             'employee_id' => $selectedUserId,
             'shift_id' => $selectedShiftId,
-            'duty_id' => $selectedDutyId
+            'duty_id' => $selectedDutyId,
+            'date' => $request->input('date'),
+            'remarks' =>$request->input('remarks')
         ]);
 
         Alert::success('Done', 'Successfully Updated');
@@ -629,7 +633,45 @@ class AdminController extends Controller
     }
 
     public function otApproval(){
+        $punchRecords = PunchRecord::all();
+        return view('admin.otApproval', ['punchRecords' => $punchRecords]);
+    }
+ 
 
+    public function editOtApproval($id){
+        $punchRecords = PunchRecord::find($id);
+        $users = User::all();
+        
+        return view('admin.editOtApproval', [
+            'punchRecords' => $punchRecords,
+            'users' => $users
+        ]);
+    }
+
+    public function updateOtApproval(Request $request, $id){
+        $data = PunchRecord::find($id);
+
+        //Update the user's data based on the form input
+        $data->update([
+            'ot_approval' => $request->input('ot_approval')
+        ]);
+
+        Alert::success('Done', 'Successfully Updated');
+        return redirect()->route('otApproval');
+    }
+
+    public function deleteOtApproval($id){
+
+        $punchRecords = PunchRecord::find($id);
+
+        if (!$punchRecords) {
+            return redirect()->route('otApproval');
+        }
+
+        $punchRecords->delete(); // Soft delete the employee
+
+        Alert::success('Done', 'Successfully Deleted');
+        return redirect()->route('otApproval');
     }
     
 }
