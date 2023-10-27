@@ -237,125 +237,134 @@
 <!-- End Main Content -->
 
 <script>
-    $(document).ready(function(){
+    document.addEventListener('DOMContentLoaded', function() {
+        $(document).ready(function(){
+            $('#editEventButton').click(function() {
+                // Get the values from the data attributes set in fullCalModal
+                var fullName = $('#modalFullName').data('full-name');
+                var date = $('#modalDate').data('date');
+                var shiftStart = $('#modalShiftStart').data('shift-start');
+                var shiftEnd = $('#modalShiftEnd').data('shift-end');
+                var dutyName = $('#modalDutyName').data('duty-name');
+                var scheduleId = $('#modalScheduleId').text();
+                var remarks = $('#modalRemarks').html();
 
-        $('#editEventButton').click(function() {
-            // Get the values from the data attributes set in fullCalModal
-            var fullName = $('#modalFullName').data('full-name');
-            var date = $('#modalDate').data('date');
-            var shiftStart = $('#modalShiftStart').data('shift-start');
-            var shiftEnd = $('#modalShiftEnd').data('shift-end');
-            var dutyName = $('#modalDutyName').data('duty-name');
-            var scheduleId = $('#modalScheduleId').text();
-            var remarks = $('#modalRemarks').html();
+                // Format the shift times
+                var formattedShiftTime = formatShiftTime(shiftStart, shiftEnd);
 
-            // Format the shift times
-            var formattedShiftTime = formatShiftTime(shiftStart, shiftEnd);
+                // Set the scheduleId as a data attribute on the form
+                $('#scheduleForm').data('schedule-id', scheduleId);
 
-            // Set the scheduleId as a data attribute on the form
-            $('#scheduleForm').data('schedule-id', scheduleId);
+                console.log(fullName, date, shiftStart, shiftEnd, dutyName, scheduleId, remarks);
 
-            console.log(fullName, date, shiftStart, shiftEnd, dutyName, scheduleId, remarks);
+                // Set the values in the editEventModal
+                $('#edit_employee_id').val(fullName);
+                $('#edit_shift_id').val(formattedShiftTime);
+                $('#edit_date').val(date);
+                $('#edit_duty').val(dutyName);
+                $('#edit_remarks').val(remarks);
+                $('#editEventId').val(scheduleId); // Set the ID in a hidden input field
 
-            // Set the values in the editEventModal
-            $('#edit_employee_id').val(fullName);
-            $('#edit_shift_id').val(formattedShiftTime);
-            $('#edit_date').val(date);
-            $('#edit_duty').val(dutyName);
-            $('#edit_remarks').val(remarks);
-            $('#editEventId').val(scheduleId); // Set the ID in a hidden input field
+                // Dynamically set the form action based on the scheduleId
+                var formAction = '{{ route('updateSchedule', ['id' => ':id']) }}';
+                formAction = formAction.replace(':id', scheduleId);
+                $('#scheduleForm').attr('action', formAction);
 
-            // Dynamically set the form action based on the scheduleId
-            var formAction = '{{ route('updateSchedule', ['id' => ':id']) }}';
-            formAction = formAction.replace(':id', scheduleId);
-            $('#scheduleForm').attr('action', formAction);
+                // Open the editEventModal
+                $('#editEventModal').modal();
 
-            // Open the editEventModal
-            $('#editEventModal').modal();
-        });
+                // Select the option in the dropdown based on fullName
+                $('#edit_employee_id option').each(function() {
+                    if ($(this).text() === fullName) {
+                        $(this).prop('selected', true);
+                    }
+                });
+            });
 
-        // Function to format the shift time
-        function formatShiftTime(shiftStart, shiftEnd) {
-            // Assuming shiftStart and shiftEnd are in a 24-hour format, e.g., "14:00"
-            // You may need to adjust this based on the actual format of your data
-            var formattedShiftStart = formatTime(shiftStart);
-            var formattedShiftEnd = formatTime(shiftEnd);
+            // Function to format the shift time
+            function formatShiftTime(shiftStart, shiftEnd) {
+                // Assuming shiftStart and shiftEnd are in a 24-hour format, e.g., "14:00"
+                // You may need to adjust this based on the actual format of your data
+                var formattedShiftStart = formatTime(shiftStart);
+                var formattedShiftEnd = formatTime(shiftEnd);
 
-            return formattedShiftStart + ' - ' + formattedShiftEnd;
-        }
+                return formattedShiftStart + ' - ' + formattedShiftEnd;
+            }
 
-        // Function to format a 24-hour time to AM/PM format
-        function formatTime(time) {
-            var hour = parseInt(time.split(':')[0]);
-            var minute = time.split(':')[1];
-            var ampm = hour >= 12 ? 'pm' : 'am';
-            hour = hour % 12 || 12; // Convert 0 to 12
+            // Function to format a 24-hour time to AM/PM format
+            function formatTime(time) {
+                var hour = parseInt(time.split(':')[0]);
+                var minute = time.split(':')[1];
+                var ampm = hour >= 12 ? 'pm' : 'am';
+                hour = hour % 12 || 12; // Convert 0 to 12
 
-            return hour + ':' + minute + ampm;
-        }
+                return hour + ':' + minute + ampm;
+            }
 
-        $('#saveSchedule').click(function() {
-            // Get other form values here
-            var scheduleId = $('#scheduleForm').data('schedule-id');
-            var employeeId = $('#edit_employee_id').val();
-            var shiftId = $('#edit_shift_id').val();
-            var dutyId = $('#edit_duty_id').val();
-            var date = $('#edit_date').val();
-            var remarks = $('#edit_remarks').val();
+            $('#saveSchedule').click(function() {
+                // Get other form values here
+                var scheduleId = $('#scheduleForm').data('schedule-id');
+                var employeeId = $('#edit_employee_id').val();
+                var shiftId = $('#edit_shift_id').val();
+                var dutyId = $('#edit_duty_id').val();
+                var date = $('#edit_date').val();
+                var remarks = $('#edit_remarks').val();
 
-            // Set the schedule ID as the value for the hidden input field
-            $('#scheduleForm input[name="id"]').val(scheduleId);
+                // Set the schedule ID as the value for the hidden input field
+                $('#scheduleForm input[name="id"]').val(scheduleId);
 
-            // Submit the form
-            $('#scheduleForm').submit();
-        });
+                // Submit the form
+                $('#scheduleForm').submit();
+            });
 
-        // Get a reference to the delete button and the form containing the CSRF token.
-        const deleteButton = document.getElementById('deleteEventBtn');
-        const deleteForm = document.getElementById('deleteEventForm');
+            // Get a reference to the delete button and the form containing the CSRF token.
+            const deleteButton = document.getElementById('deleteEventBtn');
+            const deleteForm = document.getElementById('deleteEventForm');
 
-        // Add a click event listener to the delete button.
-        deleteButton.addEventListener('click', async function (e) {
-            e.preventDefault(); // Prevent the default form submission.
+            // Add a click event listener to the delete button.
+            deleteButton.addEventListener('click', async function (e) {
+                e.preventDefault(); // Prevent the default form submission.
 
-            const formData = new FormData(deleteForm);
-            formData.append('_token', '{{ csrf_token() }}');
+                const formData = new FormData(deleteForm);
+                formData.append('_token', '{{ csrf_token() }}');
 
-            // Submit the form with the updated form data.
-            fetch('/admin/deleteSchedule/' + $('#modalScheduleId').text(), {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-            })
-            .then((response) => {
-                if (response.ok) {
-                    // Schedule deleted successfully, display a success alert.
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Schedule deleted successfully.',
-                        
-                    }).then(() => {
-                        // After successful deletion, you can perform additional actions.
-                        // For example, refreshing the page.
-                        location.reload(); // This reloads the page.
-                    });
-                } else {
-                    // Display an error alert in case of a failure.
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'An error occurred while deleting the schedule.',
-                    });
-                }
-            })
-            .catch((error) => {
-                // Handle any network errors or exceptions here.
-                console.error('Error:', error);
+                // Submit the form with the updated form data.
+                fetch('/admin/deleteSchedule/' + $('#modalScheduleId').text(), {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                })
+                .then((response) => {
+                    if (response.ok) {
+                        // Schedule deleted successfully, display a success alert.
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Schedule deleted successfully.',
+                            
+                        }).then(() => {
+                            // After successful deletion, you can perform additional actions.
+                            // For example, refreshing the page.
+                            location.reload(); // This reloads the page.
+                        });
+                    } else {
+                        // Display an error alert in case of a failure.
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while deleting the schedule.',
+                        });
+                    }
+                })
+                .catch((error) => {
+                    // Handle any network errors or exceptions here.
+                    console.error('Error:', error);
+                });
             });
         });
     });
+
 </script>
 
 @endsection

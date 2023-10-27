@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('positions', function (Blueprint $table) {
             $table->id();
-            $table->string('position_id', 6)->unique();
             $table->string('position_name');
             $table->string('department_id');
             $table->timestamps();

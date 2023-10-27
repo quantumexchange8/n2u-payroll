@@ -63,8 +63,8 @@ $(function() {
         var fullName = event.title; // Assuming "title" contains the full name
         var date = event.start.format('YYYY-MM-DD'); // Format the date
     
-        var shiftStart = event.shiftStart;
-        var shiftEnd = event.shiftEnd;
+        var shiftStart = moment(event.shiftStart, 'HH:mm').format('hh:mm A');
+        var shiftEnd = moment(event.shiftEnd, 'HH:mm').format('hh:mm A');
 
         var dutyName = event.dutyName;
 

@@ -17,20 +17,20 @@ class Shift extends Model
         'shift_end'
     ];
 
-    protected $casts = [
-        'shift_start' => 'datetime',
-        'shift_end' => 'datetime',
-    ];
+    // protected $casts = [
+    //     'shift_start' => 'datetime',
+    //     'shift_end' => 'datetime',
+    // ];
 
     public function schedules(){
         return $this->hasMany(Schedule::class);
     }
     
     public function getFormattedShiftTimeAttribute()
-{
-    $shift_start = Carbon::parse($this->shift_start);
-    $shift_end = Carbon::parse($this->shift_end);
+    {
+        $shift_start = Carbon::parse($this->shift_start);
+        $shift_end = Carbon::parse($this->shift_end);
 
-    return $shift_start->format('h:i A') . ' - ' . $shift_end->format('h:i A');
-}
+        return $shift_start->format('h:i A') . ' - ' . $shift_end->format('h:i A');
+    }
 }

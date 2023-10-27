@@ -56,9 +56,8 @@
 
 <!-- End Main Content -->
 
+@endsection
+
 <script>
     var userId = {{ $user->id }};
 </script>
-
-
-@endsection

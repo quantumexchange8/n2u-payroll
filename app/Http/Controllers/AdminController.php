@@ -492,7 +492,7 @@ class AdminController extends Controller
 
         $data = $request->validate([
             'date_start' => 'required|date',
-            'date_end' => 'required|date|after_or_equal:date_start', // Ensure date_end is after or equal to date_start
+            'date_end' => 'nullable|date|after_or_equal:date_start', // Ensure date_end is after or equal to date_start
             'employee_id' => 'required',
             'shift_id' => 'required',
             'duty_id' => 'nullable',
@@ -649,15 +649,25 @@ class AdminController extends Controller
     }
 
     public function updateOtApproval(Request $request, $id){
-        $data = PunchRecord::find($id);
+        $punchRecord = PunchRecord::find($id);
+        
+        if (!$punchRecord) {
+            // Handle the case where the record is not found
+            return redirect()->back()->with('error', 'Record not found.');
+        }
 
-        //Update the user's data based on the form input
-        $data->update([
-            'ot_approval' => $request->input('ot_approval')
-        ]);
+        if($request->remark == null){
+            $punchRecord->ot_approval = 'Approved';
+            $punchRecord->save();
+        } else {
+            $punchRecord->ot_approval = 'Rejected';
+            $punchRecord->remarks = $request->remark;
+            $punchRecord->save();
+        }
 
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('otApproval');
+
     }
 
     public function deleteOtApproval($id){

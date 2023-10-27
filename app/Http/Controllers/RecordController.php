@@ -9,6 +9,7 @@ use App\Models\Shift;
 use App\Models\Schedule;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\DB;
 class RecordController extends Controller
 {
     //
@@ -37,9 +38,10 @@ class RecordController extends Controller
     
         // Determine whether the user is clocking in or out based on the button text.
         $status = $request->input('status'); // Assuming 'status' corresponds to the button text
-    
+
         // Fetch the schedule information for the user.
-        $schedule = Schedule::join('users', 'schedules.employee_id', '=', 'users.id')
+        $schedule = DB::table('schedules')
+            ->join('users', 'schedules.employee_id', '=', 'users.id')
             ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
             ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end')
             ->where('schedules.employee_id', $user->id)
@@ -50,6 +52,8 @@ class RecordController extends Controller
     
         // Fetch the "Overtime Calculation" setting value
         $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
+        
+       
     
         if ($schedule) {
             // Get the current time.
@@ -76,7 +80,10 @@ class RecordController extends Controller
                 'in' => $status === 'Clock In' ? 'Clock In' : null,
                 'out' => $status === 'Clock Out' ? 'Clock Out' : null,
                 'ot_approval' => null, // Your other fields here
+                'remarks' => null
             ];
+
+            
     
             // Determine the 'status' based on the button text and clock-in/clock-out time.
             if ($status === 'Clock In') {

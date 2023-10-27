@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('duties', function (Blueprint $table) {
             $table->id();
-            $table->string('duty_id', 6)->unique();
             $table->string('duty_name');
             $table->timestamps();
             $table->softDeletes();

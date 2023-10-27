@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('out')->nullable();
             $table->string('status')->nullable();
             $table->string('ot_approval')->nullable();
+            $table->string('remarks')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

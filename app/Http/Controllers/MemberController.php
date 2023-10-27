@@ -73,8 +73,6 @@ class MemberController extends Controller
     
         return view('user.viewSchedule', compact('schedules', 'user', 'shifts'));
     }
-    
-
 
     public function viewProfile(){
         $user = auth()->user(); // Retrieve the currently logged-in user

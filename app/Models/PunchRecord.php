@@ -14,7 +14,8 @@ class PunchRecord extends Model
         'in',
         'out',
         'status',
-        'ot_approval'
+        'ot_approval',
+        'remarks'
     ];
 
 

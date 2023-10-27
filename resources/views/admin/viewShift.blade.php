@@ -39,8 +39,10 @@
                                     <tr>
                                         {{-- <td>{{ $shift->shift_id }}</td> --}}
                                         <td>{{ $shift->shift_name }}</td>
-                                        <td>{{ $shift->shift_start->format('h:i A') }}</td>
-                                        <td>{{ $shift->shift_end->format('h:i A') }}</td>
+                                        {{-- <td>{{ $shift->shift_start->format('h:i A') }}</td>
+                                        <td>{{ $shift->shift_end->format('h:i A') }}</td> --}}
+                                        <td>{{ date('h:i A', strtotime($shift->shift_start)) }}</td>
+                                        <td>{{ date('h:i A', strtotime($shift->shift_end)) }}</td>
                                         <td>
                                             <a href="{{ route('editShift', ['id' => $shift->id]) }}" class="details-btn">
                                                 Edit <i class="icofont-arrow-right"></i>

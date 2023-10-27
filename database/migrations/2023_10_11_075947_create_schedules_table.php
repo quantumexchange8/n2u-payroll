@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->string('schedule_id', 6)->unique();
             $table->date('date');
             $table->string('employee_id');
             $table->string('shift_id');
-            $table->string('duty_id');
-            $table->string('remarks');
+            $table->string('duty_id')->nullable();
+            $table->string('remarks')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

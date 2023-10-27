@@ -41,7 +41,12 @@ $(function() {
             dataType: 'json',
             success: function(data) {
                 var events = data.map(function(event) {
-                    var title = event.shiftStart + ' - ' + event.shiftEnd;
+                    // Format shiftStart and shiftEnd to 12-hour format
+                    var shiftStart = moment(event.shiftStart, "HH:mm").format("hh:mm A");
+                    var shiftEnd = moment(event.shiftEnd, "HH:mm").format("hh:mm A");
+
+                    var title = shiftStart + ' - ' + shiftEnd;
+
                     return {
                         id: event.id,
                         title: title,

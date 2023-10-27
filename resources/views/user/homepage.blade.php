@@ -1,5 +1,6 @@
 @extends('layouts.master')
 @section('content')
+{{-- Sweet Alert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 <!-- Main Content -->
@@ -49,7 +50,9 @@
                                   @php
                                   $shiftInfo = null;
                                   if ($schedule->shift && $schedule->shift->shift_start && $schedule->shift->shift_end) {
-                                      $shiftInfo = $schedule->shift->shift_start->format('h:i A') . ' - ' . $schedule->shift->shift_end->format('h:i A');
+                                      $shiftStart = new DateTime($schedule->shift->shift_start);
+                                      $shiftEnd = new DateTime($schedule->shift->shift_end);
+                                      $shiftInfo = $shiftStart->format('h:i A') . ' - ' . $shiftEnd->format('h:i A');
                                   }
                                   @endphp
           
@@ -101,7 +104,7 @@
                               <tr>
                                 <td>{{ $punchRecord->user->full_name }}</td>
                                 <td>{{ $recordDate }}</td>
-                                <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->toTimeString() }}</td>
+                                <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('g:i A') }}</td>
                                 <td>{{ $punchRecord->in }}</td>
                                 <td>{{ $punchRecord->out }}</td>
                               </tr>
@@ -119,68 +122,7 @@
   </div>
 <!-- End Main Content -->
 
-{{-- <script>
-  // Get references to the button and form.
-  const clockButton = document.getElementById('clockButton');
-  const clockForm = document.getElementById('clockForm');
-
-  // Add a click event listener to the button.
-  clockButton.addEventListener('click', async function (e) {
-    e.preventDefault(); // Prevent the default form submission.
-
-    // Get the current button text.
-    const buttonText = clockButton.innerText;
-
-    // Determine the new status value.
-    const status = buttonText === 'Clock In' ? 'Clock In' : 'Clock Out';
-
-    // Update the form input with the new status.
-    const statusInput = document.getElementById('statusInput');
-    statusInput.value = status;
-
-    // Use try-catch to handle form submission errors.
-    try {
-      const response = await fetch('{{ route('clock_in') }}', {
-        method: 'POST',
-        body: new FormData(clockForm),
-      });
-
-      if (response.ok) {
-        // Update the button text to the opposite.
-        clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
-
-        // Apply styles based on the status
-        if (status === 'Clock In') {
-          clockButton.style.backgroundColor = '#FFFFFF';
-          clockButton.style.color = '#6045E2';
-          clockButton.style.border = '2px solid #6045E2';
-        } else {
-          clockButton.style.backgroundColor = '#6045E2';
-          clockButton.style.color = '#FFFFFF';
-          clockButton.style.border = 'none';
-        }
-
-        // Display a success alert
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
-        });
-
-      } else {
-        // Display an error alert
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Form submission failed. An error occurred while processing your request.',
-        });
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  });
-</script> --}}
-
+{{-- Clock in --}}
 <script>
   // Get references to the button and form.
   const clockButton = document.getElementById('clockButton');
@@ -244,3 +186,5 @@
 </script>
 
 @endsection
+
+
