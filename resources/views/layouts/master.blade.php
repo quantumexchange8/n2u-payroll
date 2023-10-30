@@ -221,9 +221,21 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="{{ route('attendance') }}">
+                                    <i class="icofont-folder-open"></i>
+                                    <span class="link-title">Attendance</span>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{{ route('otApproval') }}">
                                     <i class="icofont-pencil"></i>
                                     <span class="link-title">OT Approval</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('payroll') }}">
+                                    <i class="icofont-money"></i>
+                                    <span class="link-title">Payroll</span>
                                 </a>
                             </li>
                             <li>

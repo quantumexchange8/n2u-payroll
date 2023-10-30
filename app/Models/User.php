@@ -42,6 +42,10 @@ class User extends Authenticatable
         return $this->belongsTo(Position::class, 'position_id');
     }
 
+    public function schedules(){
+        return $this->hasMany(Schedule::class, 'employee_id', 'id');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

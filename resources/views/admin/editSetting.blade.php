@@ -15,19 +15,11 @@
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
-                                @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Setting Name</label>
-                                    <input type="text" class="theme-input-style" id="setting_name" name="setting_name" autocomplete="off" placeholder="Setting Name" value="{{$setting->setting_name}}">
+                                    <input type="text" class="theme-input-style" id="setting_name" name="setting_name" autocomplete="off" placeholder="Setting Name" value="{{$setting->setting_name}}" readonly>
                                 </div>
                                 <!-- End Form Group -->
 
@@ -35,6 +27,9 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Value</label>
                                     <input type="text" class="theme-input-style" id="value" name="value" autocomplete="off" placeholder="Value" value="{{ $setting->value }}">
+                                    @error('value')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
                             </div>

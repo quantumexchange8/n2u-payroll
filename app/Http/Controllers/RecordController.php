@@ -36,15 +36,19 @@ class RecordController extends Controller
     public function clock_in(Request $request) {
         $user = Auth::user();
     
+
         // Determine whether the user is clocking in or out based on the button text.
         $status = $request->input('status'); // Assuming 'status' corresponds to the button text
 
+        
+        $currentDate = now()->toDateString(); // Get the current date in the format 'YYYY-MM-DD'
         // Fetch the schedule information for the user.
         $schedule = DB::table('schedules')
             ->join('users', 'schedules.employee_id', '=', 'users.id')
             ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
             ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end')
             ->where('schedules.employee_id', $user->id)
+            ->whereDate('schedules.date', '=', $currentDate)
             ->first();
 
         // Get the "Late Threshold Minutes" setting value
@@ -53,7 +57,7 @@ class RecordController extends Controller
         // Fetch the "Overtime Calculation" setting value
         $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
         
-       
+    //    dd($schedule);
     
         if ($schedule) {
             // Get the current time.
@@ -76,14 +80,13 @@ class RecordController extends Controller
     
             // Determine the 'in' and 'out' fields based on the button text.
             $recordData = [
-                'employee_id' => $user->employee_id,
+                'employee_id' => $user->id,
                 'in' => $status === 'Clock In' ? 'Clock In' : null,
                 'out' => $status === 'Clock Out' ? 'Clock Out' : null,
                 'ot_approval' => null, // Your other fields here
                 'remarks' => null
             ];
-
-            
+       
     
             // Determine the 'status' based on the button text and clock-in/clock-out time.
             if ($status === 'Clock In') {
@@ -95,15 +98,15 @@ class RecordController extends Controller
                     if ($currentTime->greaterThan($lateThresholdTime)) {
                         $recordData['status'] = 'Late';
                     } else {
-                        $recordData['status'] = 'On Time';
+                        $recordData['status'] = 'On-Time';
                     }
                 } else {
-                    $recordData['status'] = 'On Time';
+                    $recordData['status'] = 'On-Time';
                 }
             }
             elseif ($status === 'Clock Out') {
                 if ($currentTime->lessThanOrEqualTo($shiftEndTime)) {
-                    $recordData['status'] = 'On Time';
+                    $recordData['status'] = 'On-Time';
                 } else {
                     // Get the "Overtime Calculation" setting value
                     $overtimeCalculationMinutes = intval($overtimeCalculation);
@@ -115,7 +118,7 @@ class RecordController extends Controller
                         $recordData['status'] = 'Overtime';
                         $recordData['ot_approval'] = 'Pending';
                     } else {
-                        $recordData['status'] = 'On Time';
+                        $recordData['status'] = 'On-Time';
                     }
                 }
             }

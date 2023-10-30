@@ -35,6 +35,7 @@ class MemberController extends Controller
             $punchRecord->time = Carbon::parse($punchRecord->created_at)->toTimeString();
         });
 
+
         return view('user.homepage', [
             'schedules' => $schedules,
             'shifts' => $shifts,

@@ -19,6 +19,9 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Position</label>
                                     <input type="text" class="theme-input-style" id="position_name" name="position_name" autocomplete="off" placeholder="Position Name" value="{{ old('position_name') }}">
+                                    @error('position_name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
                             </div>
@@ -33,6 +36,9 @@
                                             <option value="{{ $department->id }}">{{ $department->department_name }}</option>
                                         @endforeach
                                     </select>
+                                    @error('department_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group --> 
                             </div>

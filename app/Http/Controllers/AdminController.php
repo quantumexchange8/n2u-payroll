@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Duty;
 use App\Models\Position;
 use App\Models\PunchRecord;
+use App\Models\SalaryLog;
 use App\Models\Schedule;
 use App\Models\Setting;
 use App\Models\Shift;
@@ -83,7 +84,7 @@ class AdminController extends Controller
             $file->move('uploads/employee/offerLetter/', $filename);
             $validatedData['offer_letter'] = $filename;
         }
-        // dd($validatedData);
+        
         // Create the user record with the validated and modified data
         User::create($validatedData);
 
@@ -182,7 +183,7 @@ class AdminController extends Controller
     public function updateEmployeePassword(Request $request, $id){
         // Validate the input
         $request->validate([
-            'new_password' => ['required', 'min:8', 'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)/'],
+            'new_password' => ['required'],
         ]);
     
         // Find the user by ID
@@ -204,10 +205,6 @@ class AdminController extends Controller
 
         $employee = User::find($id);
 
-        if (!$employee) {
-            return redirect()->route('viewEmployee')->with('error', 'Employee not found');
-        }
-
         $employee->delete(); // Soft delete the employee
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewEmployee');
@@ -227,7 +224,7 @@ class AdminController extends Controller
     public function addPosition(Request $request){
         $data = $request->validate([
             'position_name' => 'required',
-            'department_id' => 'nullable'
+            'department_id' => 'required'
         ]);
     
         if ($data) {
@@ -266,10 +263,6 @@ class AdminController extends Controller
     public function deletePosition($id){
 
         $position = Position::find($id);
-
-        if (!$position) {
-            return redirect()->route('viewPosition');
-        }
 
         $position->delete(); // Soft delete the employee
 
@@ -328,10 +321,6 @@ class AdminController extends Controller
 
         $department = Department::find($id);
 
-        if (!$department) {
-            return redirect()->route('viewDepartment');
-        }
-
         $department->delete(); // Soft delete the employee
 
         Alert::success('Done', 'Successfully Deleted');
@@ -388,10 +377,6 @@ class AdminController extends Controller
     public function deleteDuty($id){
 
         $duty = Duty::find($id);
-
-        if (!$duty) {
-            return redirect()->route('viewDuty');
-        }
 
         $duty->delete(); // Soft delete the employee
 
@@ -455,10 +440,6 @@ class AdminController extends Controller
     public function deleteShift($id){
 
         $shift = Shift::find($id);
-
-        if (!$shift) {
-            return redirect()->route('viewShift');
-        }
 
         $shift->delete(); // Soft delete the employee
 
@@ -533,7 +514,6 @@ class AdminController extends Controller
 
         $data = Schedule::find($id);
         // $user = User::where('full_name', $request->edit_employee_id)->first();
-        // dd($user);
 
         $selectedUserId = $request->input('edit_employee_id');
         $selectedShiftId = $request->input('edit_shift_id');
@@ -555,10 +535,6 @@ class AdminController extends Controller
 
         $schedule = Schedule::find($id);
 
-        if (!$schedule) {
-            return redirect()->route('schedule');
-        }
-
         $schedule->delete(); // Soft delete the employee
 
         // Alert::success('Done', 'Successfully Deleted');
@@ -579,7 +555,7 @@ class AdminController extends Controller
         $data = $request->validate([
             'setting_name' => 'required',
             'value' => 'required',
-            'description' => 'required'
+            'description' => 'nullable'
         ]);
 
         if($data){
@@ -622,10 +598,6 @@ class AdminController extends Controller
 
         $setting = Setting::find($id);
 
-        if (!$setting) {
-            return redirect()->route('viewSetting');
-        }
-
         $setting->delete(); // Soft delete the employee
 
         Alert::success('Done', 'Successfully Deleted');
@@ -648,40 +620,89 @@ class AdminController extends Controller
         ]);
     }
 
-    public function updateOtApproval(Request $request, $id){
-        $punchRecord = PunchRecord::find($id);
-        
-        if (!$punchRecord) {
-            // Handle the case where the record is not found
-            return redirect()->back()->with('error', 'Record not found.');
-        }
 
-        if($request->remark == null){
+    public function updateOtApproval(Request $request, $id) {
+        $punchRecord = PunchRecord::find($id);
+    
+        if ($request->remark == null) {
             $punchRecord->ot_approval = 'Approved';
+    
+            // Retrieve the associated user
+            $user = User::where('id', $punchRecord->employee_id)->first();
+    
+            // Check if the user exists and has schedules
+            if ($user) {
+                $schedule = Schedule::where('employee_id', $user->id)
+                    ->whereDate('date', $punchRecord->created_at->toDateString())
+                    ->first();
+    
+                if ($schedule) {
+                    $shift = Shift::find($schedule->shift_id);
+
+                    if ($shift) {
+                        // Calculate the overtime hours based on the difference between created_at and shift end
+                        $shiftEndTime = Carbon::createFromFormat('H:i', $shift->shift_end);
+                        $createdTime = Carbon::parse($punchRecord->created_at);
+
+                        // Calculate the difference in minutes between created_at and shift end
+                        $minutesDifference = $createdTime->diffInMinutes($shiftEndTime);
+    
+                        // Convert the minutes to hours
+                        $otHours = $minutesDifference / 60;
+
+                        // Round otHours to 2 decimal places
+                        $otHours = round($otHours, 2);
+    
+                        $punchRecord->ot_hours = $otHours;
+                    }
+                }
+            }
+    
             $punchRecord->save();
         } else {
             $punchRecord->ot_approval = 'Rejected';
             $punchRecord->remarks = $request->remark;
             $punchRecord->save();
         }
-
+    
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('otApproval');
-
     }
-
+  
     public function deleteOtApproval($id){
 
         $punchRecords = PunchRecord::find($id);
-
-        if (!$punchRecords) {
-            return redirect()->route('otApproval');
-        }
 
         $punchRecords->delete(); // Soft delete the employee
 
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('otApproval');
+    }
+
+    public function attendance(){
+        // Retrieve all punch records with associated user information
+        $punchRecords = PunchRecord::with('user')->get();
+    
+        // Modify the date and time columns in each punch record
+        $punchRecords->each(function ($punchRecord) {
+            $punchRecord->date = Carbon::parse($punchRecord->created_at)->toDateString();
+            $punchRecord->time = Carbon::parse($punchRecord->created_at)->toTimeString();
+        });
+    
+        // Retrieve all schedules, shifts, and settings
+        $schedules = Schedule::all();
+        $shifts = Shift::all();
+        $settings = Setting::all();
+    
+        // Return the view with the punchRecords, schedules, shifts, and settings
+        return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings'));
+    }
+
+    public function payroll(){
+        $salaryLogs = SalaryLog::all();
+        $users = User::where('role', 'member')->with('position')->get();
+
+        return view('admin.payroll', compact('salaryLogs', 'users'));
     }
     
 }

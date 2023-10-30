@@ -21,7 +21,7 @@ class SettingSeeder extends Seeder
         Setting::create([
             'setting_name' => 'Late Threshold Minutes',
             'value' => '5 minutes',
-            'description' => 'All late to clock in 5 minutes'
+            'description' => 'Allow late in 5 minutes'
         ]);
     }
 }

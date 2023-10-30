@@ -38,6 +38,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('admin/dashboard', [AdminController::class, 'Admindashboard'])->name('admindashboard');
 
+    Route::get('admin/attendance', [AdminController::class, 'attendance'])->name('attendance');
+
     Route::get('admin/viewEmployee', [AdminController::class, 'viewEmployee'])->name('viewEmployee');
     Route::get('admin/createEmployee', [AdminController::class, 'createEmployee'])->name('createEmployee');
     Route::post('admin/addEmployee', [AdminController::class, 'addEmployee'])->name('addEmployee');
@@ -89,6 +91,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('admin/otApproval', [AdminController::class, 'otApproval'])->name('otApproval');
     Route::post('admin/updateOtApproval/{id}', [AdminController::class, 'updateOtApproval'])->name('updateOtApproval');
     Route::delete('admin/deleteOtApproval/{id}', [AdminController::class, 'deleteOtApproval'])->name('deleteOtApproval');
+
+    Route::get('admin/payroll', [AdminController::class, 'payroll'])->name('payroll');
+    Route::get('admin/editPayroll/{id}', [AdminController::class, 'editPayroll'])->name('editPayroll');
+    Route::post('admin/updatePayroll/{id}', [AdminController::class, 'updatePayroll'])->name('updatePayroll');
+    Route::delete('admin/deletePayroll/{id}', [AdminController::class, 'deletePayroll'])->name('deletePayroll');
 
     // User
 

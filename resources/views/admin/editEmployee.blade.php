@@ -15,7 +15,7 @@
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
-                                @if ($errors->any())
+                                {{-- @if ($errors->any())
                                     <div class="alert alert-danger">
                                         <ul>
                                             @foreach ($errors->all() as $error)
@@ -23,13 +23,13 @@
                                             @endforeach
                                         </ul>
                                     </div>
-                                @endif
+                                @endif --}}
 
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Employee ID</label>
-                                    <input type="text" class="theme-input-style" id="employee_id" name="employee_id" autocomplete="off" value="{{$user->employee_id}}">
-                                        @error('employee_id')
+                                    <input type="text" class="theme-input-style" id="employee_id" name="employee_id" autocomplete="off" value="{{$user->employee_id}}" readonly>
+                                    @error('employee_id')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -245,7 +245,7 @@
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
-                                @if ($errors->any())
+                                {{-- @if ($errors->any())
                                     <div class="alert alert-danger">
                                         <ul>
                                             @foreach ($errors->all() as $error)
@@ -253,7 +253,8 @@
                                             @endforeach
                                         </ul>
                                     </div>
-                                @endif
+                                @endif --}}
+
 
                                 <!-- Form Group -->
                                 <div class="form-group mb-4">

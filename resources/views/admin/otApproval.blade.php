@@ -68,6 +68,7 @@
                                         <th>Date</th>
                                         <th>Time</th>
                                         <th>Status</th>
+                                        <th>OT (in hours)</th>
                                         <th style="text-align: center;">Action</th>
                                     </tr>
                                 </thead>
@@ -75,14 +76,14 @@
                                     @foreach ($punchRecords as $punchRecord)
                                         @if (!empty($punchRecord->ot_approval))
                                             <tr class="{{ $punchRecord->ot_approval }}">
-                                            {{-- <tr> --}}
-                                                <td>{{ $punchRecord->employee_id }}</td>
+                                                <td>{{ $punchRecord->user->employee_id }}</td>
                                                 <td>{{ $punchRecord->user->full_name }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($punchRecord->created_at)->format('d M Y') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($punchRecord->created_at)->format('H:i:s') }}</td>
                                                 <td style="{{ $punchRecord->ot_approval === 'Pending' ? 'color: orange; font-weight: bold;' : ($punchRecord->ot_approval === 'Approved' ? 'color: #84f542; font-weight: bold;' : 'color: red; font-weight: bold;') }}">
                                                     {{ $punchRecord->ot_approval }}
-                                                </td>                                            
+                                                </td>
+                                                <td>{{ $punchRecord->ot_hours }}</td>                                            
                                                 <td>
                                                     <form action="{{ route('updateOtApproval', $punchRecord->id) }}" method="POST" style="display: flex; justify-content: space-between; margin-top: 15px;"  id="reject-form-{{$punchRecord->id}}">
                                                         @csrf
@@ -235,12 +236,33 @@
         });
     });
 
+    function getCurrentFormattedDate() {
+        const currentDate = new Date();
+        const day = currentDate.getDate();
+        const monthNames = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        const month = monthNames[currentDate.getMonth()];
+        const year = currentDate.getFullYear();
+        return `${day}${month}${year}`;
+    }
+
     function exportFilteredDataToExcel() {
         // Get the table element by its class or ID
         const table = document.querySelector('.dh-table');
 
         // Define an array to store the filtered table data
         const filteredData = [];
+
+        // Get the table header (column names)
+        const headerRow = table.querySelector('thead tr');
+        const headerData = [];
+        const headerCells = headerRow.cells;
+        for (let i = 0; i < headerCells.length; i++) {
+            headerData.push(headerCells[i].textContent.trim());
+        }
+        filteredData.push(headerData);
 
         // Iterate through table rows and cells to collect filtered data
         const tableRows = table.querySelectorAll('tbody tr');
@@ -262,8 +284,9 @@
         // Add the worksheet to the workbook
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
 
-        // Generate the Excel file and trigger a download
-        XLSX.writeFile(workbook, 'exported_data.xlsx');
+        // Generate the Excel file and trigger a download with the current date in the filename
+        const currentFormattedDate = getCurrentFormattedDate();
+        XLSX.writeFile(workbook, `${currentFormattedDate}-OT-Approval.xlsx`);
     }
 </script>
 

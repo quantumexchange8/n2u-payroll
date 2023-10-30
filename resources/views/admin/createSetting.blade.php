@@ -19,13 +19,19 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Setting Name</label>
                                     <input type="text" class="theme-input-style" id="setting_name" name="setting_name" autocomplete="off" placeholder="Setting Name" value="{{ old('setting_name') }}">
+                                    @error('setting_name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Value (in minutes)</label>
-                                    <input type="text" class="theme-input-style" id="value" name="value" autocomplete="off" placeholder="Value (in minutes)" value="{{ old('value') }}">
+                                    <label class="font-14 bold mb-2">Value</label>
+                                    <input type="text" class="theme-input-style" id="value" name="value" autocomplete="off" placeholder="Value" value="{{ old('value') }}">
+                                    @error('value')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
                             </div>

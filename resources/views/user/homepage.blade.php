@@ -99,15 +99,19 @@
                               $recordDate = Carbon\Carbon::parse($punchRecord->created_at)->toDateString();
                               $currentDate = now()->toDateString();
                             @endphp
+
+
                       
-                            @if ($recordDate == $currentDate && $punchRecord->user->id === $user_id)
-                              <tr>
-                                <td>{{ $punchRecord->user->full_name }}</td>
-                                <td>{{ $recordDate }}</td>
-                                <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('g:i A') }}</td>
-                                <td>{{ $punchRecord->in }}</td>
-                                <td>{{ $punchRecord->out }}</td>
-                              </tr>
+                            @if ($recordDate == $currentDate)
+                                @if ($punchRecord->user->id === $user_id) 
+                                    <tr>
+                                        <td>{{ $punchRecord->user->full_name }}</td>
+                                        <td>{{ $recordDate }}</td>
+                                        <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('g:i A') }}</td>
+                                        <td>{{ $punchRecord->in }}</td>
+                                        <td>{{ $punchRecord->out }}</td>
+                                    </tr>
+                                @endif
                             @endif
                           @endforeach
                         </tbody>

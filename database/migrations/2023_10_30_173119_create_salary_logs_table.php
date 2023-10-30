@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('punch_records', function (Blueprint $table) {
+        Schema::create('salary_logs', function (Blueprint $table) {
             $table->id();
             $table->string('employee_id');
-            $table->string('in')->nullable();
-            $table->string('out')->nullable();
-            $table->string('status')->nullable();
-            $table->string('ot_approval')->nullable();
-            $table->string('ot_hours')->nullable();
-            $table->string('remarks')->nullable();
+            $table->string('basic_salary');
+            $table->string('total_ot_hour');
+            $table->string('total_ot_pay');
+            $table->string('total_payout');
+            $table->string('month');
+            $table->string('year');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('punch_records');
+        Schema::dropIfExists('salary_logs');
     }
 };

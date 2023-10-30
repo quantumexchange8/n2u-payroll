@@ -19,6 +19,9 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Department</label>
                                     <input type="text" class="theme-input-style" id="department_name" name="department_name" autocomplete="off" placeholder="Department Name" value="{{ old('department_name') }}">
+                                    @error('department_name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <!-- End Form Group -->
                             </div>
