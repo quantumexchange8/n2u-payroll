@@ -7,6 +7,7 @@ use App\Models\PunchRecord;
 use App\Models\Setting;
 use App\Models\Shift;
 use App\Models\Schedule;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
@@ -14,34 +15,14 @@ class RecordController extends Controller
 {
     //
 
-    // public function clock_in(Request $request){
-    //     $user = Auth::user();
-       
-    //     // Determine whether the user is clocking in or out based on the button text.
-    //     $status = $request->input('status'); // Assuming 'status' corresponds to the button text.
-    
-    //     $recordData = [
-    //         'employee_id' => $user->employee_id,
-    //         'in' => $status === 'Clock In' ? 'Clock In' : null,
-    //         'out' => $status === 'Clock Out' ? 'Clock Out' : null,
-    //         'status' =>  null,
-    //         'ot_approval' => null,
-    //     ];
 
-    //     $record = PunchRecord::create($recordData);
-
-    //     return redirect()->route('homepage');
-    // }
 
     public function clock_in(Request $request) {
-        $user = Auth::user();
-        // dd($request->all());
-    
+        $user = Auth::user(); 
 
         // Determine whether the user is clocking in or out based on the button text.
         $status = $request->input('status'); // Assuming 'status' corresponds to the button text
-
-        
+      
         $currentDate = now()->toDateString(); // Get the current date in the format 'YYYY-MM-DD'
         // Fetch the schedule information for the user.
         $schedule = DB::table('schedules')
@@ -57,8 +38,6 @@ class RecordController extends Controller
     
         // Fetch the "Overtime Calculation" setting value
         $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
-        
-    //    dd($schedule);
 
         $user = Auth::user();
 
@@ -115,23 +94,35 @@ class RecordController extends Controller
             // $user_status = User::update([
             //     'status' => '2'
             // ]);
+
+            // Count the number of clock-ins for the current date
+            $clockinCount = PunchRecord::where('employee_id', $user->id)
+            ->whereDate('created_at', $currentDate)
+            ->where('in', 'Clock In')
+            ->count();
        
     
             // Determine the 'status' based on the button text and clock-in/clock-out time.
             if ($status === 'Clock In') {
-                if ($recordData['in'] === 'Clock In' && $currentTime->greaterThan($shiftStartTime)) {
+
+                if($clockinCount != 1){
+                    if ($recordData['in'] === 'Clock In' && $currentTime->greaterThan($shiftStartTime)) {
                     
-                    // Calculate late threshold time
-                    $lateThresholdTime = $shiftStartTime->copy()->addMinutes($lateThreshold);
-    
-                    if ($currentTime->greaterThan($lateThresholdTime)) {
-                        $recordData['status'] = 'Late';
+                        // Calculate late threshold time
+                        $lateThresholdTime = $shiftStartTime->copy()->addMinutes($lateThreshold);
+        
+                        if ($currentTime->greaterThan($lateThresholdTime)) {
+                            $recordData['status'] = 'Late';
+                        } else {
+                            $recordData['status'] = 'On-Time';
+                        }
                     } else {
                         $recordData['status'] = 'On-Time';
                     }
-                } else {
+                } else{
                     $recordData['status'] = 'On-Time';
                 }
+
             }
             elseif ($status === 'Clock Out') {
                 if ($currentTime->lessThanOrEqualTo($shiftEndTime)) {
@@ -170,23 +161,6 @@ class RecordController extends Controller
     
             return redirect()->route('homepage')->with('error', 'Schedule information not found.');
         }
-        // else {
-        //     // Schedule information not found, insert "Clock In" and "Clock Out" records with null values
-        //     $recordData = [
-        //         'employee_id' => $user->id,
-        //         'in' => $status === 'Clock In' ? 'Clock In' : null,
-        //         'out' => $status === 'Clock Out' ? 'Clock Out' : null,
-        //         'ot_approval' => null,
-        //         'remarks' => null
-        //     ];
-    
-        //     $record = PunchRecord::create($recordData);
-    
-        //     return redirect()->route('homepage')->with('error', 'Schedule information not found.');
-        // }
-
-        return redirect()->route('homepage')->with('error', 'Schedule information not found.');
-
     }
     
     

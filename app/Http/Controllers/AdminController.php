@@ -32,6 +32,8 @@ class AdminController extends Controller
             $punchRecord->date = Carbon::parse($punchRecord->created_at)->toDateString();
             $punchRecord->time = Carbon::parse($punchRecord->created_at)->toTimeString();
         });
+
+        $pendingOTCount = PunchRecord::where('ot_approval', 'Pending')->count();
     
         // Retrieve all schedules, shifts, and settings
         $schedules = Schedule::all();
@@ -39,7 +41,7 @@ class AdminController extends Controller
         $settings = Setting::all();
     
         // Return the view with the punchRecords, schedules, shifts, and settings
-        return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings'));
+        return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings', 'pendingOTCount'));
     }
     
     public function viewEmployee() {
@@ -696,7 +698,7 @@ class AdminController extends Controller
         $settings = Setting::all();
     
         // Return the view with the punchRecords, schedules, shifts, and settings
-        return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings'));
+        return view('admin.attendance', compact('punchRecords', 'schedules', 'shifts', 'settings'));
     }
 
     public function salaryLogs(){
@@ -761,38 +763,5 @@ class AdminController extends Controller
         return view('admin.salaryLogs', compact('salaryLogs', 'users'));
     }
     
-    
-    
-    public function editSalaryLogs($id){
-        $salaryLog = SalaryLog::find($id);
-        
-        return view('admin.editSalaryLogs', ['salaryLog' => $salaryLog]);
-    }
 
-    public function updateSalaryLogs(Request $request, $id){
-
-        $data = SalaryLog::find($id);
-        // $user = User::where('full_name', $request->edit_employee_id)->first();
-
-        $data->update([
-            // 'employee_id' => $selectedUserId,
-            // 'shift_id' => $selectedShiftId,
-            // 'duty_id' => $selectedDutyId,
-            // 'date' => $request->input('date'),
-            // 'remarks' =>$request->input('remarks')
-        ]);
-
-        Alert::success('Done', 'Successfully Updated');
-        return redirect()->route('salaryLogs');
-    }
-
-    // public function deleteSalaryLogs($id){
-
-    //     $salary = Schedule::find($id);
-
-    //     $schedule->delete(); // Soft delete the employee
-
-    //     // Alert::success('Done', 'Successfully Deleted');
-    //     // return redirect()->route('schedule');
-    // }
 }

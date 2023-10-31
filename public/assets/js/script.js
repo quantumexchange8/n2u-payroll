@@ -380,7 +380,7 @@ $(function () {
             { Counter: percentageText },
             { duration: 2000,
                 step: function () {
-                    $progressCount.html( Math.ceil(this.Counter) + '<span>%</span>');
+                    $progressCount.html( Math.ceil(this.Counter));
                 }
             });
 

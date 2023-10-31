@@ -8,6 +8,49 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
+
+            <div class="col-xl-4 col-md-8">
+                <!-- Card -->
+                <div class="card mb-30">
+                   <div class="card-body" style="height: 290px;">
+                      <div class="d-flex align-items-center justify-content-between">
+                         <div class="increase">
+                            <h3 class="card-subtitle mb-2">Notice Board</h3>
+                            <p class="font-16">
+                                @if($settings->isNotEmpty() && $settings->where('setting_name', 'Notice Board')->isNotEmpty())
+                                    {{ $settings->where('setting_name', 'Notice Board')->first()->value }}
+                                @else
+                                    Have a nice day.
+                                @endif
+                            </p>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+                <!-- End Card -->
+            </div>
+
+            <div class="col-md-4 col-sm-6">
+                <!-- Card -->
+                <div class="card mb-30 progress_3">
+                   <div class="card-body">
+                      <h4 class="progress-title">Pending OT Approval</h4>
+
+                        <div class="ProgressBar-wrap position-relative mb-4">
+                            <div class="ProgressBar ProgressBar_1" data-progress="{{ $pendingOTCount }}">
+                                <svg class="ProgressBar-contentCircle" viewBox="0 0 200 200">
+                                <!-- on défini le l'angle et le centre de rotation du cercle -->
+                                <circle transform="rotate(135, 100, 100)" class="ProgressBar-background" cx="100" cy="100" r="8" />
+                                <circle transform="rotate(135, 100, 100)" class="ProgressBar-circle" cx="100" cy="100" r="85" />
+                                </svg>
+                                <span class="ProgressBar-percentage ProgressBar-percentage--count"></span>
+                            </div>
+                        </div>
+
+                   </div>
+                </div>
+                <!-- End Card -->
+            </div>
             
             <div class="col-12">
                 <div class="card mb-30">

@@ -29,5 +29,11 @@ class SettingSeeder extends Seeder
             'value' => 'RM6',
             'description' => 'RM6 per hour'
         ]);
+
+        Setting::create([
+            'setting_name' => 'Notice Board',
+            'value' => 'Good luck! Have fun!',
+            'description' => 'Motivation'
+        ]);
     }
 }

@@ -49,9 +49,6 @@
                                     <th>Total OT Hour</th>
                                     <th>Total OT Pay</th>
                                     <th>Total Payout (RM)</th>
-                                    {{-- <th>Month</th>
-                                    <th>Year</th> --}}
-                                    {{-- <th>Actions</th>  --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -63,20 +60,6 @@
                                         <td>{{ $salaryLog->total_ot_hour ?? null }}</td>
                                         <td>{{ $salaryLog->total_ot_pay ?? null }}</td>
                                         <td>{{ $salaryLog->total_payout ?? null }}</td>
-                                        {{-- <td>{{ $salaryLog->month ?? null }}</td>
-                                        <td>{{ $salaryLog->year ?? null }}</td> --}}
-                                        {{-- <td>
-                                            <a href="{{ route('editSalaryLogs', ['id' => $salaryLog->id]) }}" class="details-btn">
-                                                Edit <i class="icofont-arrow-right"></i>
-                                            </a>
-                                            <form action="{{ route('deleteSalaryLogs', ['id' => $salaryLog->id]) }}" method="POST" style="display: inline;">
-                                                @method('DELETE')
-                                                @csrf
-                                                <button type="submit" class="details-btn delete-btn" style="margin-left: 10px;">
-                                                    Delete <i class="icofont-trash"></i>
-                                                </button>
-                                            </form>
-                                        </td> --}}
                                     </tr>
                                 @endforeach
                             </tbody>

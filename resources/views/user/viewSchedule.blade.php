@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <div id="fullCalModal" class="modal fade">
+    {{-- <div id="fullCalModal" class="modal fade">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header flex-column border-bottom-0 pt-2 pb-0">
@@ -23,7 +23,7 @@
                         <span aria-hidden="true">×</span>
                         <span class="sr-only">close</span>
                     </button>
-                    {{-- <h6 id="modalTitle1">Details</h6> --}}
+                    <h6 id="modalTitle1">Details</h6>
                 </div>
                 <div class="modal-body">
                     <table class="table">
@@ -49,7 +49,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     
     
 </div>

@@ -40,8 +40,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('admin/dashboard', [AdminController::class, 'Admindashboard'])->name('admindashboard');
 
-    Route::get('admin/attendance', [AdminController::class, 'attendance'])->name('attendance');
-
     Route::get('admin/viewEmployee', [AdminController::class, 'viewEmployee'])->name('viewEmployee');
     Route::get('admin/createEmployee', [AdminController::class, 'createEmployee'])->name('createEmployee');
     Route::post('admin/addEmployee', [AdminController::class, 'addEmployee'])->name('addEmployee');
@@ -95,9 +93,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('admin/deleteOtApproval/{id}', [AdminController::class, 'deleteOtApproval'])->name('deleteOtApproval');
 
     Route::get('admin/salaryLogs', [AdminController::class, 'salaryLogs'])->name('salaryLogs');
-    Route::get('admin/editSalaryLogs/{id}', [AdminController::class, 'editSalaryLogs'])->name('editSalaryLogs');
-    Route::post('admin/updateSalaryLogs/{id}', [AdminController::class, 'updateSalaryLogs'])->name('updateSalaryLogs');
-    Route::delete('admin/deleteSalaryLogs/{id}', [AdminController::class, 'deleteSalaryLogs'])->name('deleteSalaryLogs');
+
+    Route::get('admin/attendance', [AdminController::class, 'attendance'])->name('attendance');
 
     // User
 

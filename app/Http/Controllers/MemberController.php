@@ -9,6 +9,7 @@ use App\Models\Shift;
 use App\Models\Duty;
 use App\Models\Position;
 use App\Models\PunchRecord;
+use App\Models\Setting;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -37,6 +38,8 @@ class MemberController extends Controller
 
         $duties = Duty::all();
 
+        $settings = Setting::all();
+
         $punchRecords = PunchRecord::with('user')->get();
         //dd($punchRecords);
 
@@ -53,7 +56,8 @@ class MemberController extends Controller
             'user' => $user,
             'duty' => $duties,
             'status' => $status,
-            'clock' => $clock
+            'clock' => $clock,
+            'settings' => $settings
         ]);
     }
 

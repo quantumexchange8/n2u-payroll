@@ -96,6 +96,27 @@
               </div>
             </div>
 
+            <div class="col-12">
+              <!-- Card -->
+              <div class="card mb-30">
+                 <div class="card-body" style="height: 290px;">
+                    <div class="d-flex align-items-center justify-content-between">
+                       <div class="increase">
+                          <h3 class="card-subtitle mb-2">Notice Board</h3>
+                          <p class="font-16">
+                              @if($settings->isNotEmpty() && $settings->where('setting_name', 'Notice Board')->isNotEmpty())
+                                  {{ $settings->where('setting_name', 'Notice Board')->first()->value }}
+                              @else
+                                  You've finished all of your tasks for this week.
+                              @endif
+                          </p>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+              <!-- End Card -->
+            </div>
+
             @php
               $user = Auth::user();
               $user_id = $user ? $user->id : null;
@@ -124,16 +145,13 @@
                             @php
                               $recordDate = Carbon\Carbon::parse($punchRecord->created_at)->toDateString();
                               $currentDate = now()->toDateString();
-                            @endphp
-
-
-                      
+                            @endphp        
                             @if ($recordDate == $currentDate)
                                 @if ($punchRecord->user->id === $user_id) 
                                     <tr>
                                         <td>{{ $punchRecord->user->full_name }}</td>
-                                        <td>{{ $recordDate }}</td>
-                                        <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('g:i A') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($recordDate)->format('d M Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($punchRecord->created_at)->format('g:i A') }}</td>
                                         <td>{{ $punchRecord->in }}</td>
                                         <td>{{ $punchRecord->out }}</td>
                                     </tr>
