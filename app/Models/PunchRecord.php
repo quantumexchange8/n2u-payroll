@@ -9,6 +9,12 @@ class PunchRecord extends Model
 {
     use HasFactory;
 
+    // status clock
+        // const 1 = 'clocked in';
+        // const 2 = 'clocked out';
+        // const 3 = 'clocked in lunch';
+        // const 4 = 'clocked out lunch';
+
     protected $fillable = [
         'employee_id',
         'in',
@@ -16,7 +22,8 @@ class PunchRecord extends Model
         'status',
         'ot_approval',
         'ot_hours',
-        'remarks'
+        'remarks',
+        'status_clock'
     ];
 
 

@@ -11,9 +11,32 @@
             <form action="{{ route('clock_in') }}" method="POST" id="clockForm">
               @csrf
               <input type="hidden" id="statusInput" name="status" value="Clock In">
-              <button type="button" id="clockButton" class="btn" style="width:100%">
-                Clock In
-              </button>
+              @php
+                $shift = App\Models\Schedule::where('employee_id', Auth::user()->id)
+                  ->whereDate('date', now()->toDateString()) // Filter by the current date
+                  ->get();
+                
+              @endphp
+              @if($shift->isEmpty())
+                  <button type="button" id="clockButton" class="btn" style="width:100%" disabled>
+                      {{$clock}}
+                  </button>
+              @else
+                  <button type="button" id="clockButton" class="btn" style="width:100%;
+                  @if ($status == 1)
+                      background-color: #6045E2;
+                      color: #FFFFFF;
+                      border: 2px solid #6045E2;
+                  @else
+                      background-color: #b04654;
+                      color: #FFFFFF;
+                      border: 2px solid #b04654;
+                  @endif
+                  ">
+                    {{ $status == 1 ? 'Clock In' : 'Clock Out' }}
+                  </button>
+              @endif
+              
             </form>
 
             <div class="col-12">
@@ -23,7 +46,8 @@
                   </div>
                   <div class="table-responsive">
                       <!-- Invoice List Table -->
-                      <table class="text-nowrap table-bordered dh-table">
+                      <div id="data-container">
+                        <table class="text-nowrap table-bordered dh-table">
                           <thead>
                               <tr style="text-align: center;">
                                   <th>Date</th>
@@ -64,7 +88,9 @@
                                   </tr>
                               @endforeach
                           </tbody>
-                      </table>
+                        </table>
+                      </div>
+                      
                       <!-- End Invoice List Table -->
                   </div>
               </div>
@@ -83,7 +109,7 @@
                   </div>
                   <div class="table-responsive">
                       <!-- Invoice List Table -->
-                      <table class="text-nowrap table-bordered dh-table">
+                      <table id="punchRecordsTable" class="text-nowrap table-bordered dh-table">
                         <thead>
                           <tr>
                             <th>Name</th>
@@ -127,6 +153,9 @@
 <!-- End Main Content -->
 
 {{-- Clock in --}}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
   // Get references to the button and form.
   const clockButton = document.getElementById('clockButton');
@@ -138,6 +167,8 @@
 
     // Get the current button text.
     const buttonText = clockButton.innerText;
+
+    const userStatus = clockButton.getAttribute('data-status');
 
     // Determine the new status value.
     const status = buttonText === 'Clock In' ? 'Clock In' : 'Clock Out';
@@ -158,6 +189,7 @@
         clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
 
         // Apply styles based on the status
+        console.log(status)
         if (status === 'Clock In') {
           clockButton.style.backgroundColor = '#b04654';
           clockButton.style.color = '#FFFFFF';
@@ -188,6 +220,49 @@
     }
   });
 </script>
+
+{{-- <script>
+  $(document).ready(function() {
+      // Function to fetch and update data
+      function fetchData() {
+          $.ajax({
+              url: '{{ route('getdata') }}', // Replace with your actual API endpoint
+              method: 'GET', // Use GET or POST as appropriate
+              dataType: 'json',
+              success: function(data) {
+                  // Clear the table body
+                  $('#punchRecordsTable tbody').empty();
+
+                  // Iterate through the fetched data and append rows to the table
+                  $.each(data, function(index, punchRecord) {
+                      var row = '<tr>' +
+                          '<td>' + punchRecord.user.full_name + '</td>' +
+                          '<td>' + punchRecord.date + '</td>' +
+                          '<td>' + punchRecord.time + '</td>' +
+                          '<td>' + punchRecord.in + '</td>' +
+                          '<td>' + punchRecord.out + '</td>' +
+                          '</tr>';
+                      $('#punchRecordsTable tbody').append(row);
+                  });
+              },
+              error: function() {
+                  console.log('Failed to fetch data.');
+              }
+          });
+      }
+
+      // Call fetchData function initially to load data on page load
+      fetchData();
+
+      // Set up a timer to refresh data every N seconds (e.g., every 30 seconds)
+      setInterval(fetchData, 30000); // 30,000 milliseconds = 30 seconds
+  });
+</script> --}}
+
+
+  
+  
+
 
 @endsection
 

@@ -35,7 +35,8 @@ class User extends Authenticatable
         'ic_photo',
         'offer_letter',
         'password',
-        'role'
+        'role',
+        'status'
     ];
     
     public function position() {

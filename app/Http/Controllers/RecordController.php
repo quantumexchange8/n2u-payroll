@@ -35,6 +35,7 @@ class RecordController extends Controller
 
     public function clock_in(Request $request) {
         $user = Auth::user();
+        // dd($request->all());
     
 
         // Determine whether the user is clocking in or out based on the button text.
@@ -58,6 +59,21 @@ class RecordController extends Controller
         $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
         
     //    dd($schedule);
+
+        $user = Auth::user();
+
+        $status = $request->input('status');
+        
+        if ($status === 'Clock In' && $user->status == 1) {
+            // dd();
+            // Perform clock in
+            // Update the user's status to 2 (clocked in)
+            $user->status = 2;
+            $user->save();
+        } elseif ($status === 'Clock Out' && $user->status == 2) {
+            $user->status = 1;
+            $user->save();
+        }
     
         if ($schedule) {
             // Get the current time.
@@ -77,6 +93,14 @@ class RecordController extends Controller
                     $shiftEndTime->addDay();
                 }
             }
+
+            if($status == 'Clock In')
+            {
+                $status_clock = 1;
+            } elseif($status == 'Clock Out')
+            {
+                $status_clock = 2;
+            }
     
             // Determine the 'in' and 'out' fields based on the button text.
             $recordData = [
@@ -84,8 +108,13 @@ class RecordController extends Controller
                 'in' => $status === 'Clock In' ? 'Clock In' : null,
                 'out' => $status === 'Clock Out' ? 'Clock Out' : null,
                 'ot_approval' => null, // Your other fields here
-                'remarks' => null
+                'remarks' => null,
+                'status_clock' => $status_clock
             ];
+
+            // $user_status = User::update([
+            //     'status' => '2'
+            // ]);
        
     
             // Determine the 'status' based on the button text and clock-in/clock-out time.
@@ -126,6 +155,20 @@ class RecordController extends Controller
             $record = PunchRecord::create($recordData);
     
             return redirect()->route('homepage');
+        }else {
+            // Schedule information not found, insert "Clock In" and "Clock Out" records with null values
+            $recordData = [
+                'employee_id' => $user->id,
+                'in' => $status === 'Clock In' ? 'Clock In' : null,
+                'out' => $status === 'Clock Out' ? 'Clock Out' : null,
+                'ot_approval' => null,
+                'remarks' => null,
+                'status_clock' => 1
+            ];
+    
+            $record = PunchRecord::create($recordData);
+    
+            return redirect()->route('homepage')->with('error', 'Schedule information not found.');
         }
         // else {
         //     // Schedule information not found, insert "Clock In" and "Clock Out" records with null values

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('in')->nullable();
             $table->string('out')->nullable();
             $table->string('status')->nullable();
+            $table->string('status_clock')->nullable();
             $table->string('ot_approval')->nullable();
             $table->string('ot_hours')->nullable();
             $table->string('remarks')->nullable();

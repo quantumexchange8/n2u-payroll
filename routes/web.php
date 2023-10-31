@@ -32,7 +32,9 @@ Route::post('/register_post', [LoginController::class, 'register_post'])->name('
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('dashboard', [MemberController::class, 'dashboard'])->name('homepage');
+    Route::get('get_tabledata', [MemberController::class, 'getdata'])->name('getdata');
     Route::post('/clock_in', [RecordController::class, 'clock_in'])->name('clock_in');
+    Route::post('/updateStatus', [RecordController::class, 'updateStatus'])->name('updateStatus');
     
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 

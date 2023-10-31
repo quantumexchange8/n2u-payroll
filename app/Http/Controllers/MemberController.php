@@ -19,6 +19,17 @@ class MemberController extends Controller
         
         // Assuming you are using Laravel's built-in authentication
         $user = auth()->user(); 
+        $status = Auth::user()->status;
+
+        if($status == 1){
+            $clock = 'Clock In';
+        } elseif($status == 2){
+            $clock = 'Clock Out';
+        } elseif($status == 3) {
+            $clock = 'Clock Out for lunch';
+        }elseif($status == 4) {
+            $clock = 'Clock In for lunch';
+        }
         // Retrieve schedules related to the logged-in user (employee)
         $schedules = Schedule::where('employee_id', $user->id)->orderBy('date')->get();
 
@@ -35,13 +46,14 @@ class MemberController extends Controller
             $punchRecord->time = Carbon::parse($punchRecord->created_at)->toTimeString();
         });
 
-
         return view('user.homepage', [
             'schedules' => $schedules,
             'shifts' => $shifts,
             'punchRecords' => $punchRecords,
             'user' => $user,
-            'duty' => $duties
+            'duty' => $duties,
+            'status' => $status,
+            'clock' => $clock
         ]);
     }
 
@@ -121,6 +133,20 @@ class MemberController extends Controller
         }
     
         return redirect()->route('viewProfile');
+    }
+
+    public function getdata()
+    {
+        $punchRecords = PunchRecord::with('user')->get();
+        //dd($punchRecords);
+
+        // Modify the date and time columns
+        $punchRecords->each(function ($punchRecord) {
+            $punchRecord->date = Carbon::parse($punchRecord->created_at)->toDateString();
+            $punchRecord->time = Carbon::parse($punchRecord->created_at)->toTimeString();
+        });
+
+        return $punchRecords;
     }
     
     
