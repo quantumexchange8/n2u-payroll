@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('address');
             $table->string('email')->nullable();
             $table->string('position_id')->nullable();
-            $table->string('employee_type');
+            $table->string('employee_type')->nullable();
             $table->integer('working_hour')->nullable();
             $table->integer('salary')->nullable();
             $table->string('employed_since')->nullable();

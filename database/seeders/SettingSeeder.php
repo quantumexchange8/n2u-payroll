@@ -23,5 +23,11 @@ class SettingSeeder extends Seeder
             'value' => '5 minutes',
             'description' => 'Allow late in 5 minutes'
         ]);
+
+        Setting::create([
+            'setting_name' => 'OT Allowance',
+            'value' => 'RM6',
+            'description' => 'RM6 per hour'
+        ]);
     }
 }

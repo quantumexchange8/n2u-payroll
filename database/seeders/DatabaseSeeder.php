@@ -17,7 +17,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             PositionSeeder::class,
             SettingSeeder::class,
-            DepartmentSeeder::class
+            DepartmentSeeder::class,
+            DutySeeder::class,
+            ShiftSeeder::class,
         ]);
     }
 }

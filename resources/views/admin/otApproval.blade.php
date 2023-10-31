@@ -68,7 +68,7 @@
                                         <th>Date</th>
                                         <th>Time</th>
                                         <th>Status</th>
-                                        <th>OT (in hours)</th>
+                                        <th>OT hours</th>
                                         <th style="text-align: center;">Action</th>
                                     </tr>
                                 </thead>
@@ -79,7 +79,7 @@
                                                 <td>{{ $punchRecord->user->employee_id }}</td>
                                                 <td>{{ $punchRecord->user->full_name }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($punchRecord->created_at)->format('d M Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($punchRecord->created_at)->format('H:i:s') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($punchRecord->created_at)->format('h:i:s A') }}</td>
                                                 <td style="{{ $punchRecord->ot_approval === 'Pending' ? 'color: orange; font-weight: bold;' : ($punchRecord->ot_approval === 'Approved' ? 'color: #84f542; font-weight: bold;' : 'color: red; font-weight: bold;') }}">
                                                     {{ $punchRecord->ot_approval }}
                                                 </td>

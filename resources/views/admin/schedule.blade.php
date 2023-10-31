@@ -54,7 +54,7 @@
                         <form>
 
                             <div class="calendar-modal-location m_style mt-10" style="width: 228px;">
-                                <label for="remark"><i class="icofont-tag"></i></label>
+                                <label for="remark"><i class="icofont-brush"></i></label>
                                 <select name="duty_id">
                                     @foreach ($duties as $duty)
                                         <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>  

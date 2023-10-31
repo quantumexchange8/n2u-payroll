@@ -48,7 +48,7 @@
             <!-- Logo -->
             <div class="logo">
                 <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-02.png" alt="" style="width: 160px; margin-left: 50px;"></a>
-                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="../../assets/img/logo-02.png"  alt="" style="width: 160px; margin-left: 50px;"></a>
+                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="../../assets/img/logo-03.png"  alt="" style="width: 160px; margin-left: 50px;"></a>
             </div>
             <!-- End Logo -->
 
@@ -221,15 +221,15 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('attendance') }}">
-                                    <i class="icofont-folder-open"></i>
-                                    <span class="link-title">Attendance</span>
-                                </a>
-                            </li>
-                            <li>
                                 <a href="{{ route('otApproval') }}">
                                     <i class="icofont-pencil"></i>
                                     <span class="link-title">OT Approval</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('attendance') }}">
+                                    <i class="icofont-folder-open"></i>
+                                    <span class="link-title">Attendance</span>
                                 </a>
                             </li>
                             <li>

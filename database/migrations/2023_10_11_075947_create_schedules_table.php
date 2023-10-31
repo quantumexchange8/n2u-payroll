@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->string('employee_id');
-            $table->string('shift_id');
+            $table->string('shift_id')->nullable();
             $table->string('duty_id')->nullable();
             $table->string('remarks')->nullable();
             $table->timestamps();

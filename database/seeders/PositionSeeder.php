@@ -16,7 +16,6 @@ class PositionSeeder extends Seeder
         //
         Position::create([
             'position_name' => 'Head',
-            'department_id' => '1'
         ]);
     }
 }

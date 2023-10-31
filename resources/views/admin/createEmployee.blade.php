@@ -135,7 +135,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Nationality</label>
-                                    <select class="theme-input-style" id="nation" name="nation" autocomplete="off" value="{{ old('nationality') }}">
+                                    <select class="theme-input-style" id="nation" name="nation" autocomplete="off" value="{{ old('nation') }}">
                                         <option value="">Select Nationality</option>
                                         <option value="Malaysia">Malaysia</option>
                                         <option value="Thailand">Thailand</option>
@@ -154,7 +154,7 @@
                                         <option value="Indonesia">Indonesia</option>
                                         <option value="Bangladesh">Bangladesh</option>                                                  
                                     </select>
-                                    @error('nationality')
+                                    @error('nation')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>

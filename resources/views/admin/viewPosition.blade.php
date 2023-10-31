@@ -27,7 +27,6 @@
                         <table class="text-nowrap hoverable dh-table">
                             <thead>
                                 <tr>
-                                    {{-- <th>Position ID</th> --}}
                                     <th>Position Name</th>
                                     <th>Department</th>
                                     <th>Actions</th>
@@ -36,7 +35,6 @@
                             <tbody>
                                 @foreach($positions as $position)
                                     <tr>
-                                        {{-- <td>{{ $position->position_id }}</td> --}}
                                         <td>{{ $position->position_name }}</td>
                                         <td>{{ $position->department->department_name }}</td>
                                         <td>

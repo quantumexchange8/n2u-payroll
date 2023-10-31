@@ -15,7 +15,7 @@ class Department extends Model
     ];
 
     public function positions(){
-        return $this->hasMany(Position::class, 'department_id');
+        return $this->hasMany(Position::class, 'department_id', 'id');
     }
 
 }

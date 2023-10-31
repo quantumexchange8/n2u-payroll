@@ -94,7 +94,7 @@ class EmployeeRequest extends FormRequest
             'employed_since' => 'nullable',
             'nation' => 'required',
             'bank_name' => 'nullable',
-            'bank_account' => ['nullable', 'numeric'],
+            'bank_account' => ['nullable'],
             'password' => 'required',
             'passport_size_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'ic_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',

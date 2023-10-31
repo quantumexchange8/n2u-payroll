@@ -2,21 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\Shift;
+use App\Models\Duty;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ShiftSeeder extends Seeder
+class DutySeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Shift::create([
-            'shift_name' => 'Opening',
-            'shift_start' => '10:30',
-            'shift_end' => '22:30',
+        Duty::create([
+            'duty_name' => 'Sweep & Mop'
         ]);
     }
 }

@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('salary_logs', function (Blueprint $table) {
             $table->id();
             $table->string('employee_id');
-            $table->string('total_ot_hour');
-            $table->string('total_ot_pay');
-            $table->string('total_payout');
-            $table->string('month');
-            $table->string('year');
+            $table->string('total_ot_hour')->nullable();
+            $table->string('total_ot_pay')->nullable();
+            $table->string('total_payout')->nullable();
+            $table->string('month')->nullable();
+            $table->string('year')->nullable();
             $table->timestamps();
         });
     }

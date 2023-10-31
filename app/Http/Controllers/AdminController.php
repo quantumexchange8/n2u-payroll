@@ -475,7 +475,7 @@ class AdminController extends Controller
             'date_start' => 'required|date',
             'date_end' => 'nullable|date|after_or_equal:date_start', // Ensure date_end is after or equal to date_start
             'employee_id' => 'required',
-            'shift_id' => 'required',
+            'shift_id' => 'nullable',
             'duty_id' => 'nullable',
             'remarks' => 'nullable'
         ]);
@@ -502,12 +502,13 @@ class AdminController extends Controller
             }
     
             Alert::success('Done', 'Successfully Inserted');
+            return redirect()->route('schedule');
         } else {
             
             return redirect()->back();
         }
 
-        return redirect()->route('schedule');
+        
     }
 
     public function updateSchedule(Request $request, $id){
@@ -701,49 +702,97 @@ class AdminController extends Controller
     public function salaryLogs(){
         // Fetch all users with their positions
         $users = User::where('role', 'member')->with('position')->get();
+
+        // Get the OT allowance value from the settings table
+        $otAllowanceSetting = Setting::where('setting_name', 'OT Allowance')->first();
+
+        if ($otAllowanceSetting) {
+            $otAllowanceValue = (float) preg_replace('/[^0-9.]/', '', $otAllowanceSetting->value);
+        } else {
+            // Default OT allowance value in case the setting is not found
+            $otAllowanceValue = 0;
+        }
     
-        // Initialize an empty array to store the salary logs
-        $salaryLogs = [];
-    
-        // Loop through each user to calculate their total OT hours
+        // Loop through each user to calculate their total OT hours and update/create records for each month
         foreach ($users as $user) {
             $employeeId = $user->id;
-            
-            // Query the punch_record table to sum OT hours by month for the current user
-            $otHoursByMonth = PunchRecord::selectRaw('MONTH(created_at) as month, SUM(ot_hours) as total_ot_hour')
-                ->where('employee_id', $employeeId)
-                ->groupBy('month')
-                ->get();
     
-            // Iterate through the result and calculate total OT pay and total payout
-            foreach ($otHoursByMonth as $otRecord) {
-                $month = $otRecord->month;
-                $totalOTHours = $otRecord->total_ot_hour;
+            // Loop through each month
+            for ($month = 1; $month <= 12; $month++) {
+                // Query the punch_record table to check if the user has records for the current month
+                $hasRecordsForMonth = PunchRecord::where('employee_id', $employeeId)
+                    ->whereMonth('created_at', $month)
+                    ->exists();
     
-                // You may need to fetch the employee's basic salary and ot_allowance from the settings table here
-                $basicSalary = $user->position->basic_salary;
-                $otAllowance = $user->position->ot_allowance;
+                // If the user has records for the current month, calculate total_ot_hour
+                if ($hasRecordsForMonth) {
+                    $otHoursForMonth = PunchRecord::selectRaw('SUM(ot_hours) as total_ot_hour')
+                        ->where('employee_id', $employeeId)
+                        ->whereMonth('created_at', $month)
+                        ->value('total_ot_hour');
     
-                $totalOTPay = $totalOTHours * $otAllowance;
-                $totalPayout = $basicSalary + $totalOTPay;
+
+                    $basicSalary = $user->salary;
     
-                // Create a SalaryLog entry and store it in the array
-                $salaryLogs[] = [
-                    'employee_id' => $employeeId,
-                    'total_ot_hour' => $totalOTHours,
-                    'total_ot_pay' => $totalOTPay,
-                    'total_payout' => $totalPayout,
-                    'month' => $month,
-                    'year' => date('Y'),  // You can adjust this as needed
-                ];
+                    $totalOTPay = $otHoursForMonth * $otAllowanceValue;
+
+                    $totalPayout = $basicSalary + $totalOTPay;
+
+                    // Find or create a SalaryLog entry for the user and month
+                    $salaryLog = SalaryLog::updateOrCreate(
+                        [
+                            'employee_id' => $employeeId,
+                            'month' => $month,
+                            'year' => date('Y'), // You can adjust this as needed
+                        ],
+                        [
+                            'total_ot_hour' => $otHoursForMonth,
+                            'total_ot_pay' => $totalOTPay,
+                            'total_payout' => $totalPayout,
+                        ]
+                    );
+                }
             }
         }
     
-        // Save the calculated salary logs to the database if needed
-        SalaryLog::insert($salaryLogs);
+        // Retrieve the updated records
+        $salaryLogs = SalaryLog::whereIn('employee_id', $users->pluck('id')->all())->get();
     
         return view('admin.salaryLogs', compact('salaryLogs', 'users'));
     }
     
     
+    
+    public function editSalaryLogs($id){
+        $salaryLog = SalaryLog::find($id);
+        
+        return view('admin.editSalaryLogs', ['salaryLog' => $salaryLog]);
+    }
+
+    public function updateSalaryLogs(Request $request, $id){
+
+        $data = SalaryLog::find($id);
+        // $user = User::where('full_name', $request->edit_employee_id)->first();
+
+        $data->update([
+            // 'employee_id' => $selectedUserId,
+            // 'shift_id' => $selectedShiftId,
+            // 'duty_id' => $selectedDutyId,
+            // 'date' => $request->input('date'),
+            // 'remarks' =>$request->input('remarks')
+        ]);
+
+        Alert::success('Done', 'Successfully Updated');
+        return redirect()->route('salaryLogs');
+    }
+
+    // public function deleteSalaryLogs($id){
+
+    //     $salary = Schedule::find($id);
+
+    //     $schedule->delete(); // Soft delete the employee
+
+    //     // Alert::success('Done', 'Successfully Deleted');
+    //     // return redirect()->route('schedule');
+    // }
 }

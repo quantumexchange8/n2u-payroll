@@ -5712,7 +5712,8 @@ table.invoice-list.style-two td.custom-radio:nth-child(5) [type="radio"]:not(:ch
   .header .logo {
     -ms-flex-preferred-size: 90px;
     flex-basis: 90px;
-    display: none !important;
+    /* display: none !important; */
+    display: block;
   }
   .header .logo .default-logo {
     display: none;
