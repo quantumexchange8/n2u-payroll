@@ -92,10 +92,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('admin/updateOtApproval/{id}', [AdminController::class, 'updateOtApproval'])->name('updateOtApproval');
     Route::delete('admin/deleteOtApproval/{id}', [AdminController::class, 'deleteOtApproval'])->name('deleteOtApproval');
 
-    Route::get('admin/payroll', [AdminController::class, 'payroll'])->name('payroll');
-    Route::get('admin/editPayroll/{id}', [AdminController::class, 'editPayroll'])->name('editPayroll');
-    Route::post('admin/updatePayroll/{id}', [AdminController::class, 'updatePayroll'])->name('updatePayroll');
-    Route::delete('admin/deletePayroll/{id}', [AdminController::class, 'deletePayroll'])->name('deletePayroll');
+    Route::get('admin/salaryLogs', [AdminController::class, 'salaryLogs'])->name('salaryLogs');
+    Route::get('admin/editSalaryLogs/{id}', [AdminController::class, 'editSalaryLogs'])->name('editSalaryLogs');
+    Route::post('admin/updateSalaryLogs/{id}', [AdminController::class, 'updateSalaryLogs'])->name('updateSalaryLogs');
+    Route::delete('admin/deleteSalaryLogs/{id}', [AdminController::class, 'deleteSalaryLogs'])->name('deleteSalaryLogs');
 
     // User
 

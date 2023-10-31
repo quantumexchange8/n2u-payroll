@@ -159,13 +159,13 @@
 
         // Apply styles based on the status
         if (status === 'Clock In') {
-          clockButton.style.backgroundColor = '#FFFFFF';
-          clockButton.style.color = '#6045E2';
-          clockButton.style.border = '2px solid #6045E2';
+          clockButton.style.backgroundColor = '#b04654';
+          clockButton.style.color = '#FFFFFF';
+          clockButton.style.border = '2px solid #b04654';
         } else {
           clockButton.style.backgroundColor = '#6045E2';
           clockButton.style.color = '#FFFFFF';
-          clockButton.style.border = 'none';
+          clockButton.style.border = '2px solid #6045E2';
         }
 
         // Display a success alert

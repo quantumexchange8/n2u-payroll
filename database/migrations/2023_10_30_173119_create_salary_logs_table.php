@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('salary_logs', function (Blueprint $table) {
             $table->id();
             $table->string('employee_id');
-            $table->string('basic_salary');
             $table->string('total_ot_hour');
             $table->string('total_ot_pay');
             $table->string('total_payout');

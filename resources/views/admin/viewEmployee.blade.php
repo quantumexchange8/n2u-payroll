@@ -39,8 +39,8 @@
                                     <tr>
                                         <td>{{ $user->employee_id }}</td>
                                         <td>{{ $user->full_name }}</td>
-                                        <td>{{ $user->employee_type }}</td>
-                                        <td>{{ $user->position->position_name }}</td>
+                                        <td>{{ $user->employee_type ?? null }}</td>
+                                        <td>{{ $user->position->position_name ?? null }}</td>
                                         <td>
                                             <a href="{{ route('editEmployee', ['id' => $user->id]) }}" class="details-btn">
                                                 Edit <i class="icofont-arrow-right"></i>

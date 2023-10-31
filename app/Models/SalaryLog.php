@@ -11,7 +11,6 @@ class SalaryLog extends Model
 
     protected $fillable = [
         'employee_id',
-        'basic_salary',
         'total_ot_hour',    //total_ot_hour = total ot hour in month
         'total_ot_pay',     //total_ot_pay = total_ot_hour * ot_allowance, ot_allowance set in table settings
         'total_payout',     //total_payout = basic_salary + total_ot_pay

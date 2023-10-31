@@ -233,9 +233,9 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('payroll') }}">
+                                <a href="{{ route('salaryLogs') }}">
                                     <i class="icofont-money"></i>
-                                    <span class="link-title">Payroll</span>
+                                    <span class="link-title">Salary Logs</span>
                                 </a>
                             </li>
                             <li>

@@ -83,7 +83,7 @@ class EmployeeRequest extends FormRequest
         $userId = $this->route('id'); // Assuming your route parameter is named 'user'
 
         $rules = [
-            'employee_id' => ['required', 'regex:/^[a-zA-Z\s\/\']+$/'],
+            'employee_id' => ['required'],
             'full_name' => 'required',
             'ic_number' => 'required',
             'address' => 'required',

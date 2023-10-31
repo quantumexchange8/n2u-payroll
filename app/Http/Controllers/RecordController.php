@@ -126,10 +126,20 @@ class RecordController extends Controller
             $record = PunchRecord::create($recordData);
     
             return redirect()->route('homepage');
-        }
+        }else {
+            // Schedule information not found, insert "Clock In" and "Clock Out" records with null values
+            $recordData = [
+                'employee_id' => $user->id,
+                'in' => $status === 'Clock In' ? 'Clock In' : null,
+                'out' => $status === 'Clock Out' ? 'Clock Out' : null,
+                'ot_approval' => null,
+                'remarks' => null
+            ];
     
-        // Handle the case where schedule information is not found.
-        return redirect()->route('homepage')->with('error', 'Schedule information not found.');
+            $record = PunchRecord::create($recordData);
+    
+            return redirect()->route('homepage')->with('error', 'Schedule information not found.');
+        }
     }
     
     

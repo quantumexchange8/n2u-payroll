@@ -698,11 +698,52 @@ class AdminController extends Controller
         return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings'));
     }
 
-    public function payroll(){
-        $salaryLogs = SalaryLog::all();
+    public function salaryLogs(){
+        // Fetch all users with their positions
         $users = User::where('role', 'member')->with('position')->get();
-
-        return view('admin.payroll', compact('salaryLogs', 'users'));
+    
+        // Initialize an empty array to store the salary logs
+        $salaryLogs = [];
+    
+        // Loop through each user to calculate their total OT hours
+        foreach ($users as $user) {
+            $employeeId = $user->id;
+            
+            // Query the punch_record table to sum OT hours by month for the current user
+            $otHoursByMonth = PunchRecord::selectRaw('MONTH(created_at) as month, SUM(ot_hours) as total_ot_hour')
+                ->where('employee_id', $employeeId)
+                ->groupBy('month')
+                ->get();
+    
+            // Iterate through the result and calculate total OT pay and total payout
+            foreach ($otHoursByMonth as $otRecord) {
+                $month = $otRecord->month;
+                $totalOTHours = $otRecord->total_ot_hour;
+    
+                // You may need to fetch the employee's basic salary and ot_allowance from the settings table here
+                $basicSalary = $user->position->basic_salary;
+                $otAllowance = $user->position->ot_allowance;
+    
+                $totalOTPay = $totalOTHours * $otAllowance;
+                $totalPayout = $basicSalary + $totalOTPay;
+    
+                // Create a SalaryLog entry and store it in the array
+                $salaryLogs[] = [
+                    'employee_id' => $employeeId,
+                    'total_ot_hour' => $totalOTHours,
+                    'total_ot_pay' => $totalOTPay,
+                    'total_payout' => $totalPayout,
+                    'month' => $month,
+                    'year' => date('Y'),  // You can adjust this as needed
+                ];
+            }
+        }
+    
+        // Save the calculated salary logs to the database if needed
+        SalaryLog::insert($salaryLogs);
+    
+        return view('admin.salaryLogs', compact('salaryLogs', 'users'));
     }
+    
     
 }

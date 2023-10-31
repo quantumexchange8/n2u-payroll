@@ -11,7 +11,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="card-body pt-20">
-                                <h4 class="font-20">Payroll</h4>
+                                <h4 class="font-20">Salary Logs</h4>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -29,23 +29,31 @@
                                 <tr>
                                     <th>Employee ID</th>
                                     <th>Full Name</th>
-                                    <th>Salary</th>
-                                    {{--  <th>Position</th> --}}
+                                    <th>Basic Salary</th>
+                                    <th>Total OT Hour</th>
+                                    <th>Total OT Pay</th>
+                                    <th>Total Payout</th>
+                                    <th>Month</th>
+                                    <th>Year</th>
                                     <th>Actions</th> 
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($users as $user)
+                                @foreach($salaryLogs as $salaryLog)
                                     <tr>
-                                        <td>{{ $user->employee_id }}</td>
-                                        <td>{{ $user->full_name }}</td>
-                                        <td>{{ $user->salary }}</td>
-                                        {{-- <td>{{ $user->position->position_name }}</td> --}}
+                                        <td>{{ $salaryLog->employee_id }}</td>
+                                        <td>{{ $salaryLog->user->full_name }}</td>
+                                        <td>{{ $salaryLog->user->salary }}</td>
+                                        <td>{{ $salaryLog->total_ot_hour }}</td>
+                                        <td>{{ $salaryLog->total_ot_pay }}</td>
+                                        <td>{{ $salaryLog->total_payout }}</td>
+                                        <td>{{ $salaryLog->month }}</td>
+                                        <td>{{ $salaryLog->year }}</td>
                                         <td>
-                                            <a href="{{ route('editPayroll', ['id' => $user->id]) }}" class="details-btn">
+                                            <a href="{{ route('editSalaryLogs', ['id' => $user->id]) }}" class="details-btn">
                                                 Edit <i class="icofont-arrow-right"></i>
                                             </a>
-                                            <form action="{{ route('deletePayroll', ['id' => $user->id]) }}" method="POST" style="display: inline;">
+                                            <form action="{{ route('deleteSalaryLogs', ['id' => $user->id]) }}" method="POST" style="display: inline;">
                                                 @method('DELETE')
                                                 @csrf
                                                 <button type="submit" class="details-btn delete-btn" style="margin-left: 10px;">
