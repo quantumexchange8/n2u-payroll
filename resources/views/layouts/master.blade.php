@@ -14,8 +14,10 @@
    <meta name="csrf-token" content="{{ csrf_token() }}">
 
    <!-- Favicon -->
-   <link rel="shortcut icon" href="../../assets/img/favicon.png">
-
+   <link rel="shortcut icon" href="assets/img/logoIcon.png">
+    <link rel="apple-touch-icon" href="assets/img/logoIcon.png">
+    <link rel="manifest" href="{{ route('laravelpwa.manifest') }}">
+    @laravelPWA
    <!-- Web Fonts -->
    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i&display=swap" rel="stylesheet">
    
@@ -48,7 +50,7 @@
             <!-- Logo -->
             <div class="logo">
                 <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-02.png" alt="" style="width: 160px; margin-left: 50px;"></a>
-                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="../../assets/img/logo-03.png"  alt="" style="width: 160px; margin-left: 50px;"></a>
+                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="../../assets/img/logo-03.png"  alt="" style="width: 10px; margin-left: 50px;"></a>
             </div>
             <!-- End Logo -->
 
@@ -335,6 +337,7 @@
         @endif
     @endif
 
+    
 </body>
 
 </html>

@@ -3,7 +3,7 @@
 
 <head>
     <!-- Page Title -->
-    <title>Dashmin - Multipurpose Bootstrap Dashboard Template</title>
+    <title>N2U Payroll - Login</title>
 
     <!-- Meta Data -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,7 +13,8 @@
     <meta name="keywords" content="">
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="../../../assets/img/favicon.png">
+    <link rel="shortcut icon" href="assets/img/logoIcon.png">
+    <link rel="apple-touch-icon" href="assets/img/logoIcon.png">
 
     <!-- Web Fonts -->
     <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i&display=swap" rel="stylesheet">

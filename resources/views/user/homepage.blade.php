@@ -205,6 +205,11 @@
           icon: 'success',
           title: 'Success',
           text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
+        }).then((result) => {
+            if (result.isConfirmed) {
+              // Refresh the page
+              location.reload(); // This will reload the current page
+            }
         });
 
       } else {
@@ -219,6 +224,47 @@
       console.error('Error:', error);
     }
   });
+
+  // $(document).ready(function() {
+  //       // Function to set the disabled state based on the status
+  //       function setButtonState() {
+  //           var status = $('#statusInput').val();
+
+  //           if (status == 1) {
+  //               // Clock In is allowed
+  //               $('#clockButton').prop('disabled', false);
+  //           } else {
+  //               // Clock Out is not allowed, disable for 5 minutes
+  //               $('#clockButton').prop('disabled', true);
+
+  //               // Enable the button after 5 minutes (300,000 milliseconds)
+  //               setTimeout(function() {
+  //                   $('#clockButton').prop('disabled', false);
+  //               }, 300000);
+  //           }
+  //       }
+
+  //       // Call the function to set the initial button state
+  //       setButtonState();
+
+  //       // Add an event listener for the button click
+  //       $('#clockButton').on('click', function() {
+  //           // Update the status to "Clock Out" (status 2) and send it to the server
+  //           // $('#statusInput').val(2);
+  //           // $('#clockForm').submit();
+
+  //           // Disable the button and update the server
+  //           $('#clockButton').prop('disabled', true);
+
+  //           // Enable the button after 5 minutes
+  //           setTimeout(function() {
+  //               $('#clockButton').prop('disabled', false);
+  //               // Update the status to "Clock In" (status 1) and send it to the server
+  //               // $('#statusInput').val(1);
+  //               // $('#clockForm').submit();
+  //           }, 300000);
+  //       });
+  //   });
 </script>
 
 {{-- <script>
