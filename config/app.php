@@ -169,7 +169,6 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         RealRashid\SweetAlert\SweetAlertServiceProvider::class,
-        Ladumor\LaravelPWA\PWAServiceProvider::class,
 
     ])->toArray(),
 
@@ -189,7 +188,6 @@ return [
         'Alert' => \RealRashid\SweetAlert\Facades\Alert::class,
         'DB' => Illuminate\Support\Facades\DB::class,
         'Log' => Illuminate\Support\Facades\Log::class,
-        'LaravelPwa' => \Ladumor\LaravelPwa\LaravelPwa::class,
     ])->toArray(),
 
 ];

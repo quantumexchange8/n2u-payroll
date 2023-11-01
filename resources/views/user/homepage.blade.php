@@ -83,7 +83,7 @@
                                   <tr>
                                       <td>{{ $currentDate->format('d F Y') }}</td>
                                       <td>{{ $shiftInfo }}</td>
-                                      <td>{{ $schedule->duty->duty_name }}</td>
+                                      <td>{{ $schedule->duty->duty_name ?? null }}</td>
                                       <td>{{ $schedule->remarks}}</td>
                                   </tr>
                               @endforeach

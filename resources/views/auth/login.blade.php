@@ -13,8 +13,8 @@
     <meta name="keywords" content="">
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="assets/img/logoIcon.png">
-    <link rel="apple-touch-icon" href="assets/img/logoIcon.png">
+    <link rel="shortcut icon" href="assets/img/logo-icon.png">
+    <link rel="apple-touch-icon" href="assets/img/logo-icon.png">
 
     <!-- Web Fonts -->
     <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i&display=swap" rel="stylesheet">
@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="../../../assets/css/style.css">
     <!-- ======= END MAIN STYLES ======= -->
 
+    @laravelPWA
 </head>
 
 <body>
@@ -40,13 +41,14 @@
             <!-- Card -->
             <div class="card justify-content-center auth-card" style="padding-top: 30px;">
                 <!-- Logo -->
-                <div class="logo">
-                    <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-02.png" alt="" style="margin-bottom: 20px; margin-left: 350px;"></a>
+                <div class="logo" style="display: flex;
+                justify-content: center;">
+                    <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-02.png" alt="" style="margin-bottom: 20px;"></a>
                 </div>
                 <!-- End Logo -->
                 <div class="row justify-content-center">
                     <div class="col-xl-7 col-lg-9">
-                        <h4 class="mb-5 font-20">Welcome To n2u-Payroll</h4>
+                        {{-- <h4 class="mb-5 font-20">Welcome To n2u-Payroll</h4> --}}
 
                         <form action="{{ route('login_post') }}" method="POST">
                             @csrf

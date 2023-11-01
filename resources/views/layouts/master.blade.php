@@ -14,10 +14,10 @@
    <meta name="csrf-token" content="{{ csrf_token() }}">
 
    <!-- Favicon -->
-   <link rel="shortcut icon" href="assets/img/logoIcon.png">
-    <link rel="apple-touch-icon" href="assets/img/logoIcon.png">
-    <link rel="manifest" href="{{ route('laravelpwa.manifest') }}">
-    @laravelPWA
+   <link rel="shortcut icon" href="assets/img/logo-icon.png">
+    <link rel="apple-touch-icon" href="assets/img/logo-icon.png">
+    {{-- <link rel="manifest" href="{{ route('laravelpwa.manifest') }}"> --}}
+    
    <!-- Web Fonts -->
    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i&display=swap" rel="stylesheet">
    
@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="../../assets/css/style.css">
     <!-- ======= END MAIN STYLES ======= -->
 
+    @laravelPWA
 </head>
 
 <body>
@@ -50,7 +51,7 @@
             <!-- Logo -->
             <div class="logo">
                 <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-02.png" alt="" style="width: 160px; margin-left: 50px;"></a>
-                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="../../assets/img/logo-03.png"  alt="" style="width: 10px; margin-left: 50px;"></a>
+                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="../../assets/img/logo-03.png"  alt="" style="width: auto;"></a>
             </div>
             <!-- End Logo -->
 
@@ -337,6 +338,18 @@
         @endif
     @endif
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+                    console.log('ServiceWorker registered with scope:', registration.scope);
+                }).catch(function (error) {
+                    console.error('ServiceWorker registration failed:', error);
+                });
+            });
+        }
+    </script>
+    
     
 </body>
 

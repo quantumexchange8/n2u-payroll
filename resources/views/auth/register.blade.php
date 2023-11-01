@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="../../../assets/css/style.css">
     <!-- ======= END MAIN STYLES ======= -->
 
+    @laravelPWA
 </head>
 
 <body>
