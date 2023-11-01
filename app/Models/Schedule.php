@@ -15,7 +15,8 @@ class Schedule extends Model
         'employee_id',
         'shift_id',
         'duty_id',
-        'remarks'
+        'remarks',
+        'off_day'
     ];
 
     public function user(){

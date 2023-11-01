@@ -90,11 +90,16 @@ class EmployeeRequest extends FormRequest
             'email' => 'nullable',
             'position_id' => 'nullable',
             'employee_type' => 'nullable',
+            'remarks' => 'nullable',
             'salary' => ['nullable', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'],
             'employed_since' => 'nullable',
             'nation' => 'required',
             'bank_name' => 'nullable',
-            'bank_account' => ['nullable'],
+            'bank_account' => 'nullable',
+            'account_type' => 'nullable',
+            'account_id' => 'nullable',
+            'account_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'other_image'=> 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password' => 'required',
             'passport_size_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'ic_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -120,6 +125,7 @@ class EmployeeRequest extends FormRequest
             'email' => 'Email',
             'position_id' => 'Position',
             'employee_type' => 'Employee Type',
+            'remarks' => 'Remarks',
             'salary' => 'Salary',
             'employed_since' => 'Employed Since',
             'nation' => 'Nationality',
@@ -130,6 +136,7 @@ class EmployeeRequest extends FormRequest
             'ic_photo' => 'IC Photo',
             'offer_letter' => 'Offer Letter',
             'role' => 'Role',
+            
         ];
     }
 

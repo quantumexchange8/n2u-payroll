@@ -23,12 +23,17 @@ return new class extends Migration
             $table->integer('working_hour')->nullable();
             $table->integer('salary')->nullable();
             $table->string('employed_since')->nullable();
+            $table->string('remarks')->nullable();
             $table->string('nation')->nullable();
             $table->string('bank_name')->nullable();
             $table->integer('bank_account')->nullable();
+            $table->string('account_type')->nullable();
+            $table->string('account_id')->nullable();
+            $table->string('account_pic')->nullable();
             $table->string('passport_size_photo')->nullable();
             $table->string('ic_photo')->nullable();
             $table->string('offer_letter')->nullable();
+            $table->string('other_image')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role')->default('member');

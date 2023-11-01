@@ -86,6 +86,24 @@ class AdminController extends Controller
             $file->move('uploads/employee/offerLetter/', $filename);
             $validatedData['offer_letter'] = $filename;
         }
+
+        // Handle account pic
+        if ($request->hasFile('account_pic')) {
+            $file = $request->file('account_pic');
+            $extension = $file->getClientOriginalExtension();
+            $filename = $validatedData['full_name'] . '_account_pic.' . $extension; // Modify the file name
+            $file->move('uploads/employee/accountPic/', $filename);
+            $validatedData['account_pic'] = $filename;
+        }
+
+        // Handle other image
+        if ($request->hasFile('other_image')) {
+            $file = $request->file('other_image');
+            $extension = $file->getClientOriginalExtension();
+            $filename = $validatedData['full_name'] . '_other_image.' . $extension; // Modify the file name
+            $file->move('uploads/employee/otherImage/', $filename);
+            $validatedData['other_image'] = $filename;
+        }
         
         // Create the user record with the validated and modified data
         User::create($validatedData);
@@ -98,7 +116,14 @@ class AdminController extends Controller
         $user = User::with('position')->find($id);
         $positions = Position::all(); // Fetch all positions
 
-        return view('admin.editEmployee', compact('user', 'positions'));
+        //Fetch passport size photo, ic photo and offer letter
+        $passport_size_photo = $user->passport_size_photo;
+        $ic_photo = $user->ic_photo;
+        $offer_letter = $user->offer_letter;
+        $account_pic = $user->account_pic;
+        $other_image = $user->other_image;
+
+        return view('admin.editEmployee', compact('user', 'positions', 'passport_size_photo', 'ic_photo', 'offer_letter', 'account_pic', 'other_image'));
     }
     
     public function updateEmployee(EmployeeRequest $request, $id) {
@@ -111,6 +136,7 @@ class AdminController extends Controller
         $photoPath = 'uploads/employee/passportSizePhoto/';
         $icPath = 'uploads/employee/icPhoto/';
         $offerLetterPath = 'uploads/employee/offerLetter/';
+        $accountPicPath = 'uploads/employee/accountPic/';
     
         // Handle passport size photo
         if ($request->hasFile('passport_size_photo')) {
@@ -173,6 +199,27 @@ class AdminController extends Controller
     
             // Update the database field with the new file name
             $validatedData['offer_letter'] = $offerLetterName;
+        }
+
+        // Handle account pic
+        if ($request->hasFile('account_pic')) {
+            $accountPic = $request->file('account_pic');
+            $accountPicExtension = $accountPic->getClientOriginalExtension();
+            $accountPicName = $data->full_name . '_account_pic.' . $accountPicExtension;
+    
+            // Delete all previous files with the same full name
+            $filesToDelete = glob($accountPicPath . $data->full_name . '_account_pic.*');
+            foreach ($filesToDelete as $fileToDelete) {
+                if (File::exists($fileToDelete)) {
+                    File::delete($fileToDelete);
+                }
+            }
+    
+            // Upload the new offer letter
+            $accountPic->move($accountPicPath, $accountPicName);
+    
+            // Update the database field with the new file name
+            $validatedData['account_pic'] = $accountPicName;
         }
     
         // Update the user's data based on the validated form input
@@ -300,7 +347,6 @@ class AdminController extends Controller
         return redirect()->route('viewDepartment');
     }
     
-
     public function editDepartment($id){
         $department = Department::find($id);
         
@@ -318,6 +364,7 @@ class AdminController extends Controller
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('viewDepartment');
     }
+
 
     public function deleteDepartment($id){
 
@@ -357,7 +404,6 @@ class AdminController extends Controller
         return redirect()->route('viewDuty');
     }
     
-
     public function editDuty($id){
         $duty = Duty::find($id);
         
@@ -410,7 +456,6 @@ class AdminController extends Controller
             $shift->shift_end = $data['shift_end'];
             $shift->save();
 
-
             Alert::success('Done', 'Successfully Inserted');
         } else {
             return redirect()->back();
@@ -453,10 +498,12 @@ class AdminController extends Controller
         // Check if the request wants JSON data
         if ($request->wantsJson()) {
             // Retrieve and return joined data for FullCalendar
-            $joinedData = Schedule::join('users', 'schedules.employee_id', '=', 'users.id')
-                ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+            $joinedData = Schedule::leftJoin('users', 'schedules.employee_id', '=', 'users.id')
+                ->leftJoin('shifts', 'schedules.shift_id', '=', 'shifts.id')
                 ->leftJoin('duties', 'schedules.duty_id', '=', 'duties.id')
-                ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date', 'duties.duty_name', 'schedules.remarks')
+                ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 
+                        'shifts.shift_start', 'shifts.shift_end', 'schedules.date', 
+                        'duties.duty_name', 'schedules.remarks', 'schedules.off_day')
                 ->get();
 
             return response()->json($joinedData);
@@ -479,7 +526,8 @@ class AdminController extends Controller
             'employee_id' => 'required',
             'shift_id' => 'nullable',
             'duty_id' => 'nullable',
-            'remarks' => 'nullable'
+            'remarks' => 'nullable',
+            'off_day' => 'nullable',
         ]);
 
         if($data){
@@ -487,19 +535,34 @@ class AdminController extends Controller
             $end = Carbon::parse($data['date_end']);
             $dates = [];
     
-            // Generate an array of dates between date_start and date_end
-            while ($start->lte($end)) {
+            if ($data['date_end'] === null) {
+                // If date_end is null, insert a single schedule
                 $dates[] = $start->toDateString();
-                $start->addDay();
+            } else {
+                // Generate an array of dates between date_start and date_end
+                while ($start->lte($end)) {
+                    $dates[] = $start->toDateString();
+                    $start->addDay();
+                }
             }
     
             foreach ($dates as $date) {
                 $schedule = new Schedule();
                 $schedule->date = $date;
                 $schedule->employee_id = $data['employee_id'];
-                $schedule->shift_id = $data['shift_id'];
-                $schedule->duty_id = $data['duty_id'];
-                $schedule->remarks = $data['remarks'];
+                if (isset($data['off_day']) && $data['off_day'] == 1) {
+                    // Handle as an off day
+                    $schedule->off_day = 1; // Set off_day to 1
+                    $schedule->shift_id = null;
+                    $schedule->duty_id = null;
+                    $schedule->remarks = null;
+                } else {
+                    // Handle as a regular working day
+                    $schedule->off_day = 0; // Set off_day to 0
+                    $schedule->shift_id = $data['shift_id'];
+                    $schedule->duty_id = $data['duty_id'];
+                    $schedule->remarks = $data['remarks'];
+                }
                 $schedule->save();
             }
     
@@ -509,8 +572,6 @@ class AdminController extends Controller
             
             return redirect()->back();
         }
-
-        
     }
 
     public function updateSchedule(Request $request, $id){
@@ -518,17 +579,23 @@ class AdminController extends Controller
         $data = Schedule::find($id);
         // $user = User::where('full_name', $request->edit_employee_id)->first();
 
+        // dd($request->off_day);
         $selectedUserId = $request->input('edit_employee_id');
         $selectedShiftId = $request->input('edit_shift_id');
         $selectedDutyId = $request->input('edit_duty_id');
+
+        // $request->merge(['off_day' => 0]);
 
         $data->update([
             'employee_id' => $selectedUserId,
             'shift_id' => $selectedShiftId,
             'duty_id' => $selectedDutyId,
             'date' => $request->input('date'),
-            'remarks' =>$request->input('remarks')
+            'remarks' =>$request->input('remarks'),
+            'off_day' => $request->off_day,
         ]);
+
+        // dd($request->all());
 
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('schedule');
@@ -622,7 +689,6 @@ class AdminController extends Controller
             'users' => $users
         ]);
     }
-
 
     public function updateOtApproval(Request $request, $id) {
         $punchRecord = PunchRecord::find($id);

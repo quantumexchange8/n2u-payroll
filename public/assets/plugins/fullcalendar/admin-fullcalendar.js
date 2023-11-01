@@ -38,6 +38,7 @@ $(function() {
             dataType: 'json',
             success: function(data) {
                 var events = data.map(function(event) {
+                    var backgroundColor = event.off_day === 1 ? '#e861a3' : '#9086cc';
                     return {
                         id: event.id,
                         title: event.full_name,
@@ -46,7 +47,8 @@ $(function() {
                         shiftStart: event.shift_start, // Include Shift Start in event properties
                         shiftEnd: event.shift_end,     // Include Shift End in event properties
                         dutyName: event.duty_name,
-                        remarks: event.remarks
+                        remarks: event.remarks,
+                        backgroundColor: backgroundColor,
                     };
                 });
                 callback(events);

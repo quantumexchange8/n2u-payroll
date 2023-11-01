@@ -31,6 +31,11 @@
                             </select>
                         </div>
 
+                        <div class="calendar-modal-off-day mt-10">
+                            <label for="off_day"><i class="icofont-calendar"></i></label>
+                            <input type="checkbox" name="off_day" value="1"> Off Day
+                        </div>
+                        
                         <div class="calendar-modal-title-wrap w-10 d-flex mt-10">
                             <div class="calendar-modal-title m_style flex-grow">
                                 <label for="shift_id"><i class="icofont-clock-time"></i></label>
@@ -149,6 +154,7 @@
             <form id="scheduleForm" action="{{ route('updateSchedule', ['id' => 0]) }}" method="POST" data-schedule-id="">
                 @csrf
                 <input type="hidden" id="editEventId" name="id" value="">
+                <input type="hidden"  name="off_day" value="0">
                 <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header pb-0 border-bottom-0 flex-column">

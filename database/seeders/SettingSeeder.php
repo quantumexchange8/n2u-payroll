@@ -32,7 +32,7 @@ class SettingSeeder extends Seeder
 
         Setting::create([
             'setting_name' => 'Notice Board',
-            'value' => 'Good luck! Have fun!',
+            'value' => 'Everyone should help each other if others needed help.',
             'description' => 'Motivation'
         ]);
     }

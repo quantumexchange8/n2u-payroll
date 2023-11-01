@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('shift_id')->nullable();
             $table->string('duty_id')->nullable();
             $table->string('remarks')->nullable();
+            $table->boolean('off_day')->default('0');
             $table->timestamps();
             $table->softDeletes();
         });

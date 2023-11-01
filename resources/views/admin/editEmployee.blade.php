@@ -4,7 +4,7 @@
 <!-- Main Content -->
 <div class="main-content">
     <div class="container-fluid">
-        <div class="row">
+        <div class="row"></div>
             <div class="col-lg-12">
                 <!-- Base Horizontal Form With Icons -->
                 <div class="form-element py-30 multiple-column">
@@ -64,6 +64,16 @@
                                     @enderror
                                 </div>
                                 <!-- End Form Group -->
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Email</label>
+                                    <input type="email" class="theme-input-style" id="email" name="email" autocomplete="off" placeholder="Email Address" value="{{$user->email}}">
+                                    @error('email')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <!-- End Form Group -->
                                 
                                 <!-- Form Group -->
                                 <div class="form-group">
@@ -85,6 +95,16 @@
                                         <option value="Full Time" {{ $user->employee_type === 'Full Time' ? 'selected' : '' }}>Full Time</option>
                                         <option value="Part Time" {{ $user->employee_type === 'Part Time' ? 'selected' : '' }}>Part Time</option>
                                     </select>                                                
+                                </div>                                            
+                                <!-- End Form Group -->
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Remarks</label>
+                                    <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" placeholder="Remarks" value="{{$user->remarks}}">
+                                    @error('remarks')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>                                            
                                 <!-- End Form Group -->
 
@@ -121,15 +141,6 @@
                             </div>
 
                             <div class="col-lg-6">
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Email</label>
-                                    <input type="email" class="theme-input-style" id="email" name="email" autocomplete="off" placeholder="Email Address" value="{{$user->email}}">
-                                    @error('email')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">
@@ -177,7 +188,8 @@
                                         <option value="Standard Chartered" {{ $user->bank_name === 'Standard Chartered' ? 'selected' : '' }}>Standard Chartered</option>
                                         <option value="MBSB Bank" {{ $user->bank_name === 'MBSB Bank' ? 'selected' : '' }}>MBSB Bank</option>
                                         <option value="BSN" {{ $user->bank_name === 'BSN' ? 'selected' : '' }}>BSN</option>
-                                        <option value="Bank Muamalat" {{ $user->bank_name === 'Bank Muamalat' ? 'selected' : '' }}>Bank Muamalat</option>                                                   
+                                        <option value="Bank Muamalat" {{ $user->bank_name === 'Bank Muamalat' ? 'selected' : '' }}>Bank Muamalat</option>
+                                        <option value="Other" {{ $user->bank_name === 'Other' ? 'selected' : '' }}>Other</option>                                                   
                                     </select>
                                 </div> 
                                 <!-- End Form Group -->
@@ -191,25 +203,72 @@
                                     @enderror
                                 </div>
                                 <!-- End Form Group -->
+
+                                <!-- Container for Account Type, Account ID, and Account PIC -->
+                                <div id="otherBankFields" style="display: none">
+                                    <!-- Form Group -->
+                                    <div class="form-group">
+                                        <label class="font-14 bold mb-2">Account Type</label>
+                                        <input type="number" class="theme-input-style" id="account_type" name="account_type" autocomplete="off" placeholder="Account Type" value="{{ $user->account_type}}">
+                                        @error('account_type')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <!-- End Form Group -->
+
+                                    <!-- Form Group -->
+                                    <div class="form-group">
+                                        <label class="font-14 bold mb-2">Account ID</label>
+                                        <input type="number" class="theme-input-style" id="account_id" name="account_id" autocomplete="off" placeholder="Account ID" value="{{ $user->account_id }}">
+                                        @error('account_id')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <!-- End Form Group -->
+
+                                    <!-- Form Group -->
+                                    <div class="form-group">
+                                        <label class="font-14 bold mb-2">Account PIC</label>
+                                        <input type="file" class="theme-input-style" id="account_pic" name="account_pic" style="background: #ffffff;">
+                                    </div>
+                                    <!-- End Form Group -->
+                                </div>
                                 
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Passport Size Photo</label>
-                                    <input type="file" class="theme-input-style" id="passport_size_photo" name="passport_size_photo" style="background: #ffffff;">
+                                    <div style="margin-bottom: 15px;">
+                                        <a href="{{ asset('uploads/employee/passportSizePhoto/' . $passport_size_photo) }}" id="passportSizePhotoLink" target="_blank">{{$passport_size_photo}}</a>
+                                    </div>
+                                    <div>
+                                        <input type="file" class="theme-input-style" name="passport_size_photo" id="passportSizePhotoFile" style="background: #ffffff;">
+                                    </div>
                                 </div>
                                 <!-- End Form Group -->
 
-                                <!-- Form Group -->
+                                <!-- Form Group for IC Photo -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">IC Photo</label>
-                                    <input type="file" class="theme-input-style" id="ic_photo" name="ic_photo" style="background: #ffffff;">
+                                    <div style="margin-bottom: 15px;">
+                                        <a href="{{ asset('uploads/employee/icPhoto/' . $ic_photo) }}" id="icPhotoLink" target="_blank">{{$ic_photo}}</a>
+                                    </div>
+                                    <div>
+                                        <input type="file" class="theme-input-style" name="ic_photo" id="icPhotoFile" style="background: #ffffff;">
+                                    </div>
                                 </div>
                                 <!-- End Form Group -->
                                 
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Offer Letter</label>
-                                    <input type="file" class="theme-input-style" id="offer_letter" name="offer_letter" placeholder="Office Letter" style="background: #ffffff;">
+                                    <div style="margin-bottom: 15px;">
+                                        <a href="{{ asset('uploads/employee/offerLetter/' . $offer_letter) }}" id="offerLetterLink" target="_blank">{{$offer_letter}}</a>
+                                    </div>
+                                    <div>
+                                        <input type="file" class="theme-input-style" name="offer_letter" id="offerLetterFile" style="background: #ffffff;">
+                                    </div>
+                                    {{-- <input type="file" class="theme-input-style" name="offer_letter" placeholder="Office Letter" style="background: #ffffff;" value="{{$offer_letter}}">
+                                    <input type="text" class="theme-input-style" name="offer_letter" placeholder="Office Letter" style="background: #ffffff;" value="{{$offer_letter}}"> --}}
                                 </div>
                                 <!-- End Form Group -->
 
@@ -287,3 +346,70 @@
 <!-- End Main Content -->
 
 @endsection
+
+<!-- Include jQuery if it's not already included -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Add a script to your edit form view -->
+<script>
+    $(document).ready(function() {
+        // Check the initial value of the bank_name field
+        var initialBankName = $("#bank_name").val();
+        
+        // Function to show the container and populate fields
+        function showContainerAndPopulateFields() {
+            $("#otherBankFields").show();
+            // You can make an AJAX request to get the database values
+            // Replace 'getDatabaseValues' with your actual route to retrieve database values
+            $.get('getDatabaseValues', { bank_name: initialBankName }, function(data) {
+                // Populate the fields with the retrieved data
+                $("#account_type").val(data.account_type);
+                $("#account_id").val(data.account_id);
+                // You can also populate other fields as needed
+            });
+        }
+
+        // Check if the initial value of bank_name is 'Other'
+        if (initialBankName === 'Other') {
+            showContainerAndPopulateFields();
+        }
+
+        // Add an event listener for changes in the bank_name field
+        $("#bank_name").change(function() {
+            if ($(this).val() === 'Other') {
+                showContainerAndPopulateFields();
+            } else {
+                $("#otherBankFields").hide();
+            }
+        });
+    });
+</script>
+
+{{-- Display files and images --}}
+<script>
+    // Passport Size Photo
+    const passportSizePhotoFile = document.getElementById('passportSizePhotoFile');;
+    const passportSizePhotoLink = document.getElementById('passportSizePhotoLink');
+
+    // IC Photo
+    const icPhotoFile = document.getElementById('icPhotoFile');;
+    const icPhotoLink = document.getElementById('icPhotoLink');
+
+    // Offer Letter
+    const offerLetterFile = document.getElementById('offerLetterFile');;
+    const offerLetterLink = document.getElementById('offerLetterLink');
+
+    passportSizePhotoFile.addEventListener('change', function () {
+        icPhotoLink.style.display = 'block';
+    });
+
+    icPhotoFile.addEventListener('change', function () {
+        icPhotoLink.style.display = 'block';
+    });
+
+    offerLetterFile.addEventListener('change', function () {
+        offerLetterLink.style.display = 'block';
+    });
+</script>
+
+

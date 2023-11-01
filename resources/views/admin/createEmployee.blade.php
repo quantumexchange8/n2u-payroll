@@ -58,6 +58,16 @@
                                 
                                 <!-- Form Group -->
                                 <div class="form-group">
+                                    <label class="font-14 bold mb-2">Email</label>
+                                    <input type="email" class="theme-input-style" id="email" name="email" autocomplete="off" placeholder="Email Address" value="{{ old('email') }}">
+                                    @error('email')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <!-- End Form Group -->
+
+                                <!-- Form Group -->
+                                <div class="form-group">
                                     <label class="font-14 bold mb-2">Position</label>
                                     <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off" value="{{ old('position_id') }}">
                                         <option value="">Select Position</option>
@@ -80,8 +90,18 @@
                                         <option value="Part Time">Part Time</option>
                                     </select>
                                     @error('employee_type')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>                                            
+                                <!-- End Form Group -->
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Remarks</label>
+                                    <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" placeholder="Remarks" value="{{ old('remarks') }}">
+                                    @error('remarks')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>                                            
                                 <!-- End Form Group -->
 
@@ -122,15 +142,6 @@
                             </div>
 
                             <div class="col-lg-6">
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Email</label>
-                                    <input type="email" class="theme-input-style" id="email" name="email" autocomplete="off" placeholder="Email Address" value="{{ old('email') }}">
-                                    @error('email')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">
@@ -181,7 +192,8 @@
                                         <option value="Standard Chartered">Standard Chartered</option>
                                         <option value="MBSB Bank">MBSB Bank</option>
                                         <option value="BSN">BSN</option>
-                                        <option value="Bank Muamalat">Bank Muamalat</option>                                                   
+                                        <option value="Bank Muamalat">Bank Muamalat</option>
+                                        <option value="Other">Other</option>                                                 
                                     </select>
                                 </div>                                         
                                 <!-- End Form Group -->
@@ -195,7 +207,37 @@
                                     @enderror
                                 </div>
                                 <!-- End Form Group -->
-                                
+
+                                <!-- Container for Account Type, Account ID, and Account PIC -->
+                                <div id="otherBankFields" style="display: none">
+                                    <!-- Form Group -->
+                                    <div class="form-group">
+                                        <label class="font-14 bold mb-2">Account Type</label>
+                                        <input type="number" class="theme-input-style" id="account_type" name="account_type" autocomplete="off" placeholder="Account Type" value="{{ old('account_type') }}">
+                                        @error('account_type')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <!-- End Form Group -->
+
+                                    <!-- Form Group -->
+                                    <div class="form-group">
+                                        <label class="font-14 bold mb-2">Account ID</label>
+                                        <input type="number" class="theme-input-style" id="account_id" name="account_id" autocomplete="off" placeholder="Account ID" value="{{ old('account_id') }}">
+                                        @error('account_id')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <!-- End Form Group -->
+
+                                    <!-- Form Group -->
+                                    <div class="form-group">
+                                        <label class="font-14 bold mb-2">Account PIC</label>
+                                        <input type="file" class="theme-input-style" id="account_pic" name="account_pic" style="background: #ffffff;">
+                                    </div>
+                                    <!-- End Form Group -->
+                                </div>
+     
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Passport Size Photo</label>
@@ -214,6 +256,13 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Offer Letter</label>
                                     <input type="file" class="theme-input-style" id="offer_letter" name="offer_letter" style="background: #ffffff;">
+                                </div>
+                                <!-- End Form Group -->
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Other Image</label>
+                                    <input type="file" class="theme-input-style" id="other_image" name="other_image" style="background: #ffffff;">
                                 </div>
                                 <!-- End Form Group -->
 
@@ -247,3 +296,21 @@
 <!-- End Main Content -->
 
 @endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get references to the Bank Name field and the container for Account Type, Account ID, and Account PIC
+        const bankNameSelect = document.getElementById('bank_name');
+        const otherBankFieldsContainer = document.getElementById('otherBankFields');
+
+        // Add an event listener to the Bank Name field to toggle the container's visibility
+        bankNameSelect.addEventListener('change', function () {
+            if (bankNameSelect.value === 'Other') {
+                otherBankFieldsContainer.style.display = 'block';
+            } else {
+                otherBankFieldsContainer.style.display = 'none';
+            }
+        });
+    });
+
+</script>
