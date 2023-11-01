@@ -14,8 +14,8 @@
    <meta name="csrf-token" content="{{ csrf_token() }}">
 
    <!-- Favicon -->
-   <link rel="shortcut icon" href="assets/img/logo-icon.png">
-    <link rel="apple-touch-icon" href="assets/img/logo-icon.png">
+   {{-- <link rel="shortcut icon" href="assets/img/logo-icon.png"> --}}
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/logo180.png">
     {{-- <link rel="manifest" href="{{ route('laravelpwa.manifest') }}"> --}}
     
    <!-- Web Fonts -->
