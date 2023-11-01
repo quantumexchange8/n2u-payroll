@@ -103,3 +103,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('user/viewProfile', [MemberController::class, 'viewProfile'])->name('viewProfile');
     Route::post('user/updateProfile', [MemberController::class, 'updateProfile'])->name('updateProfile');
 });
+
+Route::get('/offline', function () {
+
+    return view('modules/laravelpwa/offline');
+    
+    });
