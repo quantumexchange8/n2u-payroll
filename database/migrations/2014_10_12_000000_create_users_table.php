@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('remarks')->nullable();
             $table->string('nation')->nullable();
             $table->string('bank_name')->nullable();
-            $table->integer('bank_account')->nullable();
+            $table->bigInteger('bank_account')->nullable();
             $table->string('account_type')->nullable();
             $table->string('account_id')->nullable();
             $table->string('account_pic')->nullable();

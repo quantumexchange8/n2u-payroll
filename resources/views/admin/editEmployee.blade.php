@@ -239,6 +239,7 @@
                                     <label class="font-14 bold mb-2">Passport Size Photo</label>
                                     <div style="margin-bottom: 15px;">
                                         <a href="{{ asset('uploads/employee/passportSizePhoto/' . $passport_size_photo) }}" id="passportSizePhotoLink" target="_blank">{{$passport_size_photo}}</a>
+                                        {{-- <img src="{{ asset('uploads/employee/passportSizePhoto/Juliet_Battle_photo.jpg') }}"> --}}
                                     </div>
                                     <div>
                                         <input type="file" class="theme-input-style" name="passport_size_photo" id="passportSizePhotoFile" style="background: #ffffff;">
@@ -411,5 +412,3 @@
         offerLetterLink.style.display = 'block';
     });
 </script>
-
-

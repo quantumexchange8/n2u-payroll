@@ -60,11 +60,13 @@ class AdminController extends Controller
         // Validate the incoming request data
         $validatedData = $request->validated();
 
+        $full_name_with_underscores = str_replace(' ', '_', $full_name);
+
         // Handle passport size photo
         if ($request->hasFile('passport_size_photo')) {
             $file = $request->file('passport_size_photo');
             $extension = $file->getClientOriginalExtension();
-            $filename = $validatedData['full_name'] . '_photo.' . $extension; // Modify the file name
+            $filename = $full_name_with_underscores . '_photo.' . $extension; // Modify the file name
             $file->move('uploads/employee/passportSizePhoto/', $filename);
             $validatedData['passport_size_photo'] = $filename;
         }
@@ -73,7 +75,7 @@ class AdminController extends Controller
         if ($request->hasFile('ic_photo')) {
             $file = $request->file('ic_photo');
             $extension = $file->getClientOriginalExtension();
-            $filename = $validatedData['full_name'] . '_ic.' . $extension; // Modify the file name
+            $filename = $full_name_with_underscores . '_ic.' . $extension; // Modify the file name
             $file->move('uploads/employee/icPhoto/', $filename);
             $validatedData['ic_photo'] = $filename;
         }
@@ -82,7 +84,7 @@ class AdminController extends Controller
         if ($request->hasFile('offer_letter')) {
             $file = $request->file('offer_letter');
             $extension = $file->getClientOriginalExtension();
-            $filename = $validatedData['full_name'] . '_offer_letter.' . $extension; // Modify the file name
+            $filename = $full_name_with_underscores . '_offer_letter.' . $extension; // Modify the file name
             $file->move('uploads/employee/offerLetter/', $filename);
             $validatedData['offer_letter'] = $filename;
         }
