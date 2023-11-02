@@ -41,7 +41,7 @@ $(function() {
                     var backgroundColor = event.off_day === 1 ? '#e861a3' : '#9086cc';
                     return {
                         id: event.id,
-                        title: event.full_name,
+                        title: event.nickname,
                         start: event.date,
                         end: event.date, // Adjust the end date as needed
                         shiftStart: event.shift_start, // Include Shift Start in event properties

@@ -20,10 +20,12 @@ class PunchRecord extends Model
         'in',
         'out',
         'status',
+        'status_clock',
+        'total_work',
         'ot_approval',
         'ot_hours',
         'remarks',
-        'status_clock'
+
     ];
 
 
@@ -34,6 +36,7 @@ class PunchRecord extends Model
         //employee id refer to punch_records.employee_id
         //id refer to users.id
     }
+    
     
     public function schedule() {
         return $this->belongsTo(Schedule::class, 'employee_id', 'employee_id');

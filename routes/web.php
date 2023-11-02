@@ -96,6 +96,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('admin/attendance', [AdminController::class, 'attendance'])->name('attendance');
 
+    Route::get('admin/totalWork', [AdminController::class, 'totalWork'])->name('totalWork');
+    Route::post('admin/updateTotalWork/{id}', [AdminController::class, 'updateTotalWork'])->name('updateTotalWork');
     // User
 
     Route::get('user/viewSchedule', [MemberController::class, 'viewSchedule'])->name('viewSchedule');

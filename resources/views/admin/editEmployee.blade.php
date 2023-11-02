@@ -47,6 +47,16 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
+                                    <label class="font-14 bold mb-2">Nickname</label>
+                                    <input type="text" class="theme-input-style" id="nickname" name="nickname" autocomplete="off" placeholder="Nickname" value="{{$user->nickname}}">
+                                    @error('nickname')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <!-- End Form Group -->
+
+                                <!-- Form Group -->
+                                <div class="form-group">
                                     <label class="font-14 bold mb-2">IC Number / Passport</label>
                                     <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number" value="{{$user->ic_number}}">
                                     @error('ic_number')
@@ -229,7 +239,12 @@
                                     <!-- Form Group -->
                                     <div class="form-group">
                                         <label class="font-14 bold mb-2">Account PIC</label>
-                                        <input type="file" class="theme-input-style" id="account_pic" name="account_pic" style="background: #ffffff;">
+                                        <div style="margin-bottom: 15px;">
+                                            <a href="{{ asset('uploads/employee/accountPic/' . $account_pic) }}" class="file-modal-link">{{$account_pic}}</a>
+                                        </div>
+                                        <div>
+                                            <input type="file" class="theme-input-style" name="account_pic" id="accountPicFile" style="background: #ffffff;">
+                                        </div>
                                     </div>
                                     <!-- End Form Group -->
                                 </div>
@@ -238,7 +253,7 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Passport Size Photo</label>
                                     <div style="margin-bottom: 15px;">
-                                        <a href="{{ asset('uploads/employee/passportSizePhoto/' . $passport_size_photo) }}" id="passportSizePhotoLink" target="_blank">{{$passport_size_photo}}</a>
+                                        <a href="{{ asset('uploads/employee/passportSizePhoto/' . $passport_size_photo) }}" class="file-modal-link" >{{$passport_size_photo}}</a>
                                         {{-- <img src="{{ asset('uploads/employee/passportSizePhoto/Juliet_Battle_photo.jpg') }}"> --}}
                                     </div>
                                     <div>
@@ -251,7 +266,7 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">IC Photo</label>
                                     <div style="margin-bottom: 15px;">
-                                        <a href="{{ asset('uploads/employee/icPhoto/' . $ic_photo) }}" id="icPhotoLink" target="_blank">{{$ic_photo}}</a>
+                                        <a href="{{ asset('uploads/employee/icPhoto/' . $ic_photo) }}" class="file-modal-link">{{$ic_photo}}</a>
                                     </div>
                                     <div>
                                         <input type="file" class="theme-input-style" name="ic_photo" id="icPhotoFile" style="background: #ffffff;">
@@ -263,13 +278,23 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Offer Letter</label>
                                     <div style="margin-bottom: 15px;">
-                                        <a href="{{ asset('uploads/employee/offerLetter/' . $offer_letter) }}" id="offerLetterLink" target="_blank">{{$offer_letter}}</a>
-                                    </div>
+                                        <a href="{{ asset('uploads/employee/offerLetter/' . $offer_letter) }}" class="file-modal-link">{{$offer_letter}}</a>                                    </div>
                                     <div>
                                         <input type="file" class="theme-input-style" name="offer_letter" id="offerLetterFile" style="background: #ffffff;">
                                     </div>
-                                    {{-- <input type="file" class="theme-input-style" name="offer_letter" placeholder="Office Letter" style="background: #ffffff;" value="{{$offer_letter}}">
-                                    <input type="text" class="theme-input-style" name="offer_letter" placeholder="Office Letter" style="background: #ffffff;" value="{{$offer_letter}}"> --}}
+                                </div>
+                                <!-- End Form Group -->
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Other Image</label>
+                                    <div style="margin-bottom: 15px;">
+                                        <a href="{{ asset('uploads/employee/offerLetter/' . $offer_letter) }}" class="file-modal-link">{{$offer_letter}}</a>
+                                        <a href="{{ asset('uploads/employee/otherImage/' . $other_image) }}" class="file-modal-link">{{$other_image}}</a>
+                                    </div>
+                                    <div>
+                                        <input type="file" class="theme-input-style" name="other_image" id="otherImageFile" style="background: #ffffff;">
+                                    </div>
                                 </div>
                                 <!-- End Form Group -->
 
@@ -343,6 +368,27 @@
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fileModalLabel">File Preview</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img id="fileViewer" src="" alt="File Preview" style="max-width: 100%; max-height: 80vh;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </div>
 <!-- End Main Content -->
 
@@ -387,18 +433,26 @@
 </script>
 
 {{-- Display files and images --}}
-<script>
+{{-- <script>
     // Passport Size Photo
-    const passportSizePhotoFile = document.getElementById('passportSizePhotoFile');;
+    const passportSizePhotoFile = document.getElementById('passportSizePhotoFile');
     const passportSizePhotoLink = document.getElementById('passportSizePhotoLink');
 
     // IC Photo
-    const icPhotoFile = document.getElementById('icPhotoFile');;
+    const icPhotoFile = document.getElementById('icPhotoFile');
     const icPhotoLink = document.getElementById('icPhotoLink');
 
     // Offer Letter
-    const offerLetterFile = document.getElementById('offerLetterFile');;
+    const offerLetterFile = document.getElementById('offerLetterFile');
     const offerLetterLink = document.getElementById('offerLetterLink');
+
+    // Account Pic
+    const accountPicFile = document.getElementById('accountPicFile');
+    const accountPicLink = document.getElementById('accountPicLink');
+
+    // Other Image
+    const otherImageFile = document.getElementById('otherImageFile');
+    const otherImageLink = document.getElementById('otherImageLink');
 
     passportSizePhotoFile.addEventListener('change', function () {
         icPhotoLink.style.display = 'block';
@@ -411,4 +465,25 @@
     offerLetterFile.addEventListener('change', function () {
         offerLetterLink.style.display = 'block';
     });
+
+    accountPicFile.addEventListener('change', function () {
+        accountPicLink.style.display = 'block';
+    });
+
+    otherImageFile.addEventListener('change', function () {
+        otherImageLink.style.display = 'block';
+    });
+</script> --}}
+
+<!-- JavaScript code for modal -->
+<script>
+    $(document).ready(function() {
+        $('.file-modal-link').on('click', function(e) {
+            e.preventDefault();
+            var src = $(this).attr('href');
+            $('#fileViewer').attr('src', src);
+            $('#fileModal').modal('show');
+        });
+    });
 </script>
+

@@ -38,6 +38,16 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
+                                    <label class="font-14 bold mb-2">Nickname</label>
+                                    <input type="text" class="theme-input-style" id="nickname" name="nickname" autocomplete="off" placeholder="Nickname" value="{{ old('nickname') }}">
+                                    @error('nickname')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <!-- End Form Group -->
+
+                                <!-- Form Group -->
+                                <div class="form-group">
                                     <label class="font-14 bold mb-2">IC Number / Passport</label>
                                     <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number" value="{{ old('ic_number') }}">
                                     @error('ic_number')

@@ -83,8 +83,9 @@ class EmployeeRequest extends FormRequest
         $userId = $this->route('id'); // Assuming your route parameter is named 'user'
 
         $rules = [
-            'employee_id' => ['required'],
+            'employee_id' => 'required',
             'full_name' => 'required',
+            'nickname' => 'required',
             'ic_number' => 'required',
             'address' => 'required',
             'email' => 'nullable',
@@ -109,6 +110,9 @@ class EmployeeRequest extends FormRequest
 
         // If creating a new user, add the unique and required rules for 'employee_id'
         if (!$userId) {
+            // Initialize $rules['employee_id'] as an array
+            $rules['employee_id'] = [];
+
             $rules['employee_id'][] = Rule::unique('users', 'employee_id');
         }
 
@@ -120,6 +124,7 @@ class EmployeeRequest extends FormRequest
         return [
             'employee_id' => 'Employee ID',
             'full_name' => 'Full Name',
+            'nickname' => 'Nickname',
             'ic_number' => 'IC Number',
             'address' => 'Address',
             'email' => 'Email',

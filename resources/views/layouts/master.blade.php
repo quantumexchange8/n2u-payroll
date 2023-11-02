@@ -233,10 +233,21 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('attendance') }}">
+                                <a href="">
                                     <i class="icofont-folder-open"></i>
-                                    <span class="link-title">Attendance</span>
+                                    <span class="link-title">Attendance & Total Work</span>
                                 </a>
+
+                                 <!-- Sub Menu -->
+                                 <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('attendance') }}">Attendance</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('totalWork') }}">Total Work</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu -->
                             </li>
                             <li>
                                 <a href="{{ route('salaryLogs') }}">

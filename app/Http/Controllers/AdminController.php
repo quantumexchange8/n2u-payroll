@@ -60,7 +60,7 @@ class AdminController extends Controller
         // Validate the incoming request data
         $validatedData = $request->validated();
 
-        $full_name_with_underscores = str_replace(' ', '_', $full_name);
+        $full_name_with_underscores = str_replace(' ', '_', $validatedData['full_name']);
 
         // Handle passport size photo
         if ($request->hasFile('passport_size_photo')) {
@@ -93,7 +93,7 @@ class AdminController extends Controller
         if ($request->hasFile('account_pic')) {
             $file = $request->file('account_pic');
             $extension = $file->getClientOriginalExtension();
-            $filename = $validatedData['full_name'] . '_account_pic.' . $extension; // Modify the file name
+            $filename = $full_name_with_underscores . '_account_pic.' . $extension; // Modify the file name
             $file->move('uploads/employee/accountPic/', $filename);
             $validatedData['account_pic'] = $filename;
         }
@@ -102,7 +102,7 @@ class AdminController extends Controller
         if ($request->hasFile('other_image')) {
             $file = $request->file('other_image');
             $extension = $file->getClientOriginalExtension();
-            $filename = $validatedData['full_name'] . '_other_image.' . $extension; // Modify the file name
+            $filename = $full_name_with_underscores . '_other_image.' . $extension; // Modify the file name
             $file->move('uploads/employee/otherImage/', $filename);
             $validatedData['other_image'] = $filename;
         }
@@ -139,6 +139,7 @@ class AdminController extends Controller
         $icPath = 'uploads/employee/icPhoto/';
         $offerLetterPath = 'uploads/employee/offerLetter/';
         $accountPicPath = 'uploads/employee/accountPic/';
+        $otherImagePath = 'uploads/employee/otherImage/';
     
         // Handle passport size photo
         if ($request->hasFile('passport_size_photo')) {
@@ -223,12 +224,27 @@ class AdminController extends Controller
             // Update the database field with the new file name
             $validatedData['account_pic'] = $accountPicName;
         }
+
+        // Handle other image
+        if ($request->hasFile('other_image')) {
+            $otherImage = $request->file('other_image');
+            $otherImageExtension = $otherImage->getClientOriginalExtension();
+            $otherImageName = $data->full_name . '_other_image_' . time() . '.' . $otherImageExtension;
+
+            // Upload the new offer letter
+            $otherImage->move($otherImagePath, $otherImageName);
+
+            // Update the database field with the new file name
+            $validatedData['other_image'] = $otherImageName;
+        }
+
     
         // Update the user's data based on the validated form input
         $data->update($validatedData);
     
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('viewEmployee');
+
     }
 
     public function updateEmployeePassword(Request $request, $id){
@@ -505,7 +521,7 @@ class AdminController extends Controller
                 ->leftJoin('duties', 'schedules.duty_id', '=', 'duties.id')
                 ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 
                         'shifts.shift_start', 'shifts.shift_end', 'schedules.date', 
-                        'duties.duty_name', 'schedules.remarks', 'schedules.off_day')
+                        'duties.duty_name', 'schedules.remarks', 'schedules.off_day', 'users.nickname')
                 ->get();
 
             return response()->json($joinedData);
@@ -831,5 +847,43 @@ class AdminController extends Controller
         return view('admin.salaryLogs', compact('salaryLogs', 'users'));
     }
     
+    public function totalWork()
+    {
+        // Fetch punch records with user information
+        $punchRecords = PunchRecord::with('user')->get();
+    
+        // Fetch users and their positions
+        $users = User::where('role', 'member')->with('position')->get();
+    
+        // Fetch schedules with their shifts
+        $schedules = Schedule::join('punch_records', 'schedules.date', '=', DB::raw('DATE(punch_records.created_at)'))
+            ->join('users', 'schedules.employee_id', '=', 'users.id')
+            ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+            ->select('schedules.id', 'shifts.shift_start', 'shifts.shift_end', 'punch_records.id', 'users.id as employee_id', 'schedules.date', 'punch_records.remarks')
+            ->get();
+    
+        // Return the data to the view
+        return view('admin.totalWork', compact('punchRecords', 'users', 'schedules'));
+    }
+    
+    public function updateTotalWork(Request $request, $id){
+        // Validate the form data, including the remark
+        $request->validate([
+            'remark' => 'string', // Add any additional validation rules as needed
+        ]);  
+
+        // Find the record you want to update (e.g., PunchRecord)
+        $punchRecord = PunchRecord::find($id);
+
+        if (!$punchRecord) {
+            return redirect()->back()->with('error', 'Record not found.');
+        }
+
+        // Update the record with the new remark
+        $punchRecord->remarks = $request->input('remark');
+        $punchRecord->save();
+
+        return redirect()->back()->with('success', 'Remark updated successfully.');
+    }
 
 }

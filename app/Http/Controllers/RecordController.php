@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 class RecordController extends Controller
 {
     // public function clock_in(Request $request) {
@@ -150,12 +151,15 @@ class RecordController extends Controller
     // }
     
     public function clock_in(Request $request) {
+
         $user = Auth::user(); 
 
         // Determine whether the user is clocking in or out based on the button text.
-        $status = $request->input('status'); // Assuming 'status' corresponds to the button text
-      
-        $currentDate = now()->toDateString(); // Get the current date in the format 'YYYY-MM-DD'
+        // Assuming 'status' corresponds to the button text
+        $status = $request->input('status'); 
+
+        // Get the current date in the format 'YYYY-MM-DD'
+        $currentDate = now()->toDateString(); 
         // Fetch the schedule information for the user.
         $schedule = DB::table('schedules')
             ->join('users', 'schedules.employee_id', '=', 'users.id')
@@ -180,7 +184,6 @@ class RecordController extends Controller
             $user->status = 1;
             $user->save();
         }
-    
         if ($schedule) {
             // Get the current time.
             $currentTime = now();
@@ -233,7 +236,7 @@ class RecordController extends Controller
                 'out' => $status === 'Clock Out' ? 'Clock Out' : null,
                 'ot_approval' => null, // Your other fields here
                 'remarks' => null,
-                'status_clock' => $status_clock
+                'status_clock' => $status_clock,
             ];
        
     
@@ -277,7 +280,60 @@ class RecordController extends Controller
                     }
                 }
             }
-    
+
+            // Calculate total hours for the last clock out
+            if ($status === 'Clock Out' && $status_clock === 4) {
+                // Get the times for the first clock out, last clock out, first clock in, last clock in
+                $firstClockOutTime = PunchRecord::where('employee_id', $user->id)
+                    ->whereDate('created_at', $currentDate)
+                    ->where('out', 'Clock Out')
+                    ->orderBy('created_at', 'asc')
+                    ->first()
+                    ->created_at;
+                
+                $lastClockOutTime = PunchRecord::where('employee_id', $user->id)
+                    ->whereDate('created_at', $currentDate)
+                    ->where('out', 'Clock Out')
+                    ->orderBy('created_at', 'desc')
+                    ->first()
+                    ->created_at;
+
+                $firstClockInTime = PunchRecord::where('employee_id', $user->id)
+                    ->whereDate('created_at', $currentDate)
+                    ->where('in', 'Clock In')
+                    ->orderBy('created_at', 'asc')
+                    ->first()
+                    ->created_at;
+
+                $lastClockInTime = PunchRecord::where('employee_id', $user->id)
+                    ->whereDate('created_at', $currentDate)
+                    ->where('in', 'Clock In')
+                    ->orderBy('created_at', 'desc')
+                    ->first()
+                    ->created_at;
+
+                // Calculate total work based on the formula with the scenario
+                // if ($shiftEndTime > $lastClockOutTime) {
+                //     $totalWork = $firstClockOutTime->diffInMinutes($firstClockInTime) +
+                //                     $lastClockOutTime->diffInMinutes($lastClockInTime);
+                // } else {
+                //     $totalWork = $firstClockOutTime->diffInMinutes($firstClockInTime) +
+                //                     $shiftEndTime->diffInMinutes($lastClockInTime);
+                // }
+
+                if ($shiftEndTime > $lastClockOutTime) {
+                    $totalWork = $lastClockOutTime->diffInMinutes($firstClockInTime);
+                } else {
+                    $totalWork = $shiftEndTime->diffInMinutes($firstClockInTime);
+                }
+
+                // $totalWorkInHours = number_format($totalWork / 60, 2);
+                // $recordData['total_work'] = $totalWorkInHours;
+
+                $recordData['total_work'] = $totalWork;
+            }
+
+
             $record = PunchRecord::create($recordData);
     
             return redirect()->route('homepage');
