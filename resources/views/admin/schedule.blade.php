@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <div id="createEventModal" class="modal fade" style="margin-left: 80px;">
+    {{-- <div id="createEventModal" class="modal fade" style="margin-left: 80px;">
         <div class="modal-dialog modal-dialog-centered">
             <form action="{{route('addSchedule')}}" method="POST">
             @csrf
@@ -93,9 +93,9 @@
                 </div>
             </form>    
         </div>
-    </div>
+    </div> --}}
 
-    <div id="fullCalModal" class="modal fade">
+    {{-- <div id="fullCalModal" class="modal fade">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header flex-column border-bottom-0 pt-2 pb-0">
@@ -147,9 +147,9 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
-    <div id="editEventModal" class="modal fade" style="margin-left: 120px;">
+    {{-- <div id="editEventModal" class="modal fade" style="margin-left: 120px;">
         <div class="modal-dialog modal-dialog-centered">
             <form id="scheduleForm" action="{{ route('updateSchedule', ['id' => 0]) }}" method="POST" data-schedule-id="">
                 @csrf
@@ -237,7 +237,46 @@
                 </div>
             </form>
         </div>
-    </div>  
+    </div>  --}}
+
+    <!-- Button to trigger the modal -->
+    <button id="openModalButton" style="display: none;" data-toggle="modal" data-target="#scheduleModal"></button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scheduleModalLabel">Schedules for Selected Date</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Shift Start</th>
+                                <th>Shift End</th>
+                                <th>Duty Name</th>
+                                <th>Remarks</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduleTableBody">
+                            <!-- Schedule data will be displayed here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 <!-- End Main Content -->
@@ -372,6 +411,8 @@
     });
 
 </script>
+
+
 
 @endsection
 

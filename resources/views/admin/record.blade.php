@@ -87,7 +87,7 @@
                                         <tr class="status-{{ $punchRecord->status }}" data-date="{{ $recordDate }}">
                                             <td>{{$punchRecord->employee_id}}</td>
                                             <td>{{$punchRecord->user->full_name}}</td>
-                                            <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('d F Y') }}</td>
+                                            <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('d M Y') }}</td>
                                             <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('g:i A') }}</td>
                                             <td>{{$punchRecord->in}}</td>
                                             <td>{{$punchRecord->out}}</td>

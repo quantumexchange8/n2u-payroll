@@ -513,6 +513,7 @@ class AdminController extends Controller
     }
 
     public function schedule(Request $request){
+        $date = $request->input('date');
         // Check if the request wants JSON data
         if ($request->wantsJson()) {
             // Retrieve and return joined data for FullCalendar
@@ -535,61 +536,98 @@ class AdminController extends Controller
 
         return view('admin.schedule', compact('schedules', 'users', 'shifts', 'duties'));
     }
-  
-    public function addSchedule(Request $request){
 
+    public function getSchedule(Request $request) {
+        try {
+            $date = $request->input('date');
+        
+            $schedule = Schedule::Join('users', 'schedules.employee_id', '=', 'users.id')
+                ->Join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                ->Join('duties', 'schedules.duty_id', '=', 'duties.id')
+                ->select('schedules.id', 'schedules.employee_id', 'users.nickname', 
+                    'shifts.shift_start', 'shifts.shift_end', 'duties.duty_name', 'schedules.remarks')
+                ->where('schedules.date', $date)
+                ->get();
+
+            return response()->json($schedule);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+    
+    public function createSchedule(){
+        $schedules = Schedule::all();
+        $users = User::where('role', 'member')->with('position')->get();
+        $shifts = Shift::all();
+        $duties = Duty::all();
+
+        return view('admin.createSchedule', compact('schedules', 'users', 'shifts', 'duties'));
+    }
+
+    public function addSchedule(Request $request){
         $data = $request->validate([
             'date_start' => 'required|date',
-            'date_end' => 'nullable|date|after_or_equal:date_start', // Ensure date_end is after or equal to date_start
-            'employee_id' => 'required',
-            'shift_id' => 'nullable',
-            'duty_id' => 'nullable',
+            'date_end' => 'nullable|date|after_or_equal:date_start',
+            'shift_id' => 'required',
+            'duty_id' => 'required',
             'remarks' => 'nullable',
             'off_day' => 'nullable',
+            'selected_users' => 'required|array', // Validate that selected_users is an array
         ]);
-
-        if($data){
-            $start = Carbon::parse($data['date_start']);
-            $end = Carbon::parse($data['date_end']);
-            $dates = [];
     
-            if ($data['date_end'] === null) {
-                // If date_end is null, insert a single schedule
-                $dates[] = $start->toDateString();
-            } else {
-                // Generate an array of dates between date_start and date_end
-                while ($start->lte($end)) {
+        if ($data) {
+            // Process each selected user separately
+            foreach ($data['selected_users'] as $userId) {
+                $start = Carbon::parse($data['date_start']);
+                $end = Carbon::parse($data['date_end']);
+                $dates = [];
+    
+                if ($data['date_end'] === null) {
+                    // If date_end is null, insert a single schedule
                     $dates[] = $start->toDateString();
-                    $start->addDay();
-                }
-            }
-    
-            foreach ($dates as $date) {
-                $schedule = new Schedule();
-                $schedule->date = $date;
-                $schedule->employee_id = $data['employee_id'];
-                if (isset($data['off_day']) && $data['off_day'] == 1) {
-                    // Handle as an off day
-                    $schedule->off_day = 1; // Set off_day to 1
-                    $schedule->shift_id = null;
-                    $schedule->duty_id = null;
-                    $schedule->remarks = null;
                 } else {
-                    // Handle as a regular working day
-                    $schedule->off_day = 0; // Set off_day to 0
-                    $schedule->shift_id = $data['shift_id'];
-                    $schedule->duty_id = $data['duty_id'];
-                    $schedule->remarks = $data['remarks'];
+                    // Generate an array of dates between date_start and date_end
+                    while ($start->lte($end)) {
+                        $dates[] = $start->toDateString();
+                        $start->addDay();
+                    }
                 }
-                $schedule->save();
-            }
     
+                foreach ($dates as $date) {
+                    $schedule = new Schedule();
+                    $schedule->date = $date;
+                    $schedule->employee_id = $userId; // Use the selected user ID
+                    if (isset($data['off_day']) && $data['off_day'] == 1) {
+                        $schedule->off_day = 1;
+                        $schedule->shift_id = null;
+                        $schedule->duty_id = null;
+                        $schedule->remarks = null;
+                    } else {
+                        $schedule->off_day = 0;
+                        $schedule->shift_id = $data['shift_id'];
+                        $schedule->duty_id = $data['duty_id'];
+                        $schedule->remarks = $data['remarks'];
+                    }
+                    $schedule->save();
+                }
+            }
+            
             Alert::success('Done', 'Successfully Inserted');
             return redirect()->route('schedule');
         } else {
-            
             return redirect()->back();
         }
+    }
+    
+    public function editSchedule($id){
+        // $positions = Position::with('department')->find($id);
+        // $departments = Department::all();
+        $schedule = Schedule::find($id);
+        $users = User::where('role', 'member')->with('position')->get();
+        $shifts = Shift::all();
+        $duties = Duty::all();
+
+        return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'duties'));
     }
 
     public function updateSchedule(Request $request, $id){
@@ -597,7 +635,6 @@ class AdminController extends Controller
         $data = Schedule::find($id);
         // $user = User::where('full_name', $request->edit_employee_id)->first();
 
-        // dd($request->off_day);
         $selectedUserId = $request->input('edit_employee_id');
         $selectedShiftId = $request->input('edit_shift_id');
         $selectedDutyId = $request->input('edit_duty_id');
@@ -605,12 +642,12 @@ class AdminController extends Controller
         // $request->merge(['off_day' => 0]);
 
         $data->update([
-            'employee_id' => $selectedUserId,
-            'shift_id' => $selectedShiftId,
-            'duty_id' => $selectedDutyId,
+            'employee_id' => $request->input('employee_id'),
+            'shift_id' => $request->input('shift_id'),
+            'duty_id' => $request->input('duty_id'),
             'date' => $request->input('date'),
             'remarks' =>$request->input('remarks'),
-            'off_day' => $request->off_day,
+            // 'off_day' => $request->off_day,
         ]);
 
         // dd($request->all());
@@ -622,11 +659,12 @@ class AdminController extends Controller
     public function deleteSchedule($id){
 
         $schedule = Schedule::find($id);
-
-        $schedule->delete(); // Soft delete the employee
-
-        // Alert::success('Done', 'Successfully Deleted');
-        // return redirect()->route('schedule');
+        if ($schedule) {
+            $schedule->delete();
+            return response()->json(['message' => 'Schedule deleted successfully']);
+        } else {
+            return response()->json(['message' => 'Schedule not found'], 404);
+        }
     }
 
     public function viewSetting(){

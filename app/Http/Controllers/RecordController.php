@@ -263,6 +263,7 @@ class RecordController extends Controller
 
             }
             elseif ($status === 'Clock Out') {
+
                 if ($currentTime->lessThanOrEqualTo($shiftEndTime)) {
                     $recordData['status'] = 'On-Time';
                 } else {
@@ -283,24 +284,17 @@ class RecordController extends Controller
 
             // Calculate total hours for the last clock out
             if ($status === 'Clock Out' && $status_clock === 4) {
-                // Get the times for the first clock out, last clock out, first clock in, last clock in
-                $firstClockOutTime = PunchRecord::where('employee_id', $user->id)
-                    ->whereDate('created_at', $currentDate)
-                    ->where('out', 'Clock Out')
-                    ->orderBy('created_at', 'asc')
-                    ->first()
-                    ->created_at;
-                
-                $lastClockOutTime = PunchRecord::where('employee_id', $user->id)
-                    ->whereDate('created_at', $currentDate)
-                    ->where('out', 'Clock Out')
-                    ->orderBy('created_at', 'desc')
-                    ->first()
-                    ->created_at;
-
+                // Get the times for the first clock in, first clock out, last clock in, and last clock out
                 $firstClockInTime = PunchRecord::where('employee_id', $user->id)
                     ->whereDate('created_at', $currentDate)
                     ->where('in', 'Clock In')
+                    ->orderBy('created_at', 'asc')
+                    ->first()
+                    ->created_at;
+
+                $firstClockOutTime = PunchRecord::where('employee_id', $user->id)
+                    ->whereDate('created_at', $currentDate)
+                    ->where('out', 'Clock Out')
                     ->orderBy('created_at', 'asc')
                     ->first()
                     ->created_at;
@@ -312,6 +306,10 @@ class RecordController extends Controller
                     ->first()
                     ->created_at;
 
+                $lastClockOutTime = now();
+
+                $deadlineTime = $firstClockInTime->copy()->addDay()->setHour(3)->setMinute(0); // Deadline at 3:00 AM on the next day
+
                 // Calculate total work based on the formula with the scenario
                 // if ($shiftEndTime > $lastClockOutTime) {
                 //     $totalWork = $firstClockOutTime->diffInMinutes($firstClockInTime) +
@@ -321,18 +319,17 @@ class RecordController extends Controller
                 //                     $shiftEndTime->diffInMinutes($lastClockInTime);
                 // }
 
-                if ($shiftEndTime > $lastClockOutTime) {
+                if ($shiftEndTime > $lastClockOutTime || $shiftEndTime < $deadlineTime) {
                     $totalWork = $lastClockOutTime->diffInMinutes($firstClockInTime);
                 } else {
                     $totalWork = $shiftEndTime->diffInMinutes($firstClockInTime);
                 }
 
-                // $totalWorkInHours = number_format($totalWork / 60, 2);
-                // $recordData['total_work'] = $totalWorkInHours;
-
-                $recordData['total_work'] = $totalWork;
+                $totalWorkInHours = number_format($totalWork / 60, 2);
+                $recordData['total_work'] = $totalWorkInHours;
             }
 
+            
 
             $record = PunchRecord::create($recordData);
     
@@ -352,6 +349,8 @@ class RecordController extends Controller
     
             return redirect()->route('homepage')->with('error', 'Schedule information not found.');
         }
+
+       
     }
     
 }

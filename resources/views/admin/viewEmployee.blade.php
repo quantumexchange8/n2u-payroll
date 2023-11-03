@@ -29,8 +29,10 @@
                                 <tr>
                                     <th>Employee ID</th>
                                     <th>Full Name</th>
+                                    <th>Nickname</th>
                                     <th>Employee Type</th>
                                     <th>Position</th>
+                                    <th>Remarks</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -39,8 +41,10 @@
                                     <tr>
                                         <td>{{ $user->employee_id }}</td>
                                         <td>{{ $user->full_name }}</td>
+                                        <td>{{ $user->nickname ?? null}}</td>
                                         <td>{{ $user->employee_type ?? null }}</td>
                                         <td>{{ $user->position->position_name ?? null }}</td>
+                                        <td>{{ $user->remarks }}</td>
                                         <td>
                                             <a href="{{ route('editEmployee', ['id' => $user->id]) }}" class="details-btn">
                                                 Edit <i class="icofont-arrow-right"></i>

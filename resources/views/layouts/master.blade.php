@@ -221,10 +221,21 @@
                                 <!-- End Sub Menu -->
                             </li>
                             <li>
-                                <a href="{{ route('schedule') }}">
+                                <a href="">
                                     <i class="icofont-table"></i>
                                     <span class="link-title">Schedule</span>
                                 </a>
+
+                                <!-- Sub Menu -->
+                                <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('schedule') }}">View Schedule</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('createSchedule') }}">Create Schedule</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu -->
                             </li>
                             <li>
                                 <a href="{{ route('otApproval') }}">

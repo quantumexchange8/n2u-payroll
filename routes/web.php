@@ -77,7 +77,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('admin/deleteShift/{id}', [AdminController::class, 'deleteShift'])->name('deleteShift');
 
     Route::get('admin/schedule', [AdminController::class, 'schedule'])->name('schedule');
+    Route::get('admin/getSchedule', [AdminController::class, 'getSchedule'])->name('getSchedule');
+    Route::get('admin/createSchedule', [AdminController::class, 'createSchedule'])->name('createSchedule');
     Route::post('admin/addSchedule', [AdminController::class, 'addSchedule'])->name('addSchedule');
+    Route::get('admin/editSchedule/{id}', [AdminController::class, 'editSchedule'])->name('editSchedule');
     Route::post('admin/updateSchedule/{id}', [AdminController::class, 'updateSchedule'])->name('updateSchedule');
     Route::delete('admin/deleteSchedule/{id}', [AdminController::class, 'deleteSchedule'])->name('deleteSchedule');
 
@@ -98,8 +101,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('admin/totalWork', [AdminController::class, 'totalWork'])->name('totalWork');
     Route::post('admin/updateTotalWork/{id}', [AdminController::class, 'updateTotalWork'])->name('updateTotalWork');
-    // User
 
+    // User
     Route::get('user/viewSchedule', [MemberController::class, 'viewSchedule'])->name('viewSchedule');
 
     Route::get('user/viewProfile', [MemberController::class, 'viewProfile'])->name('viewProfile');

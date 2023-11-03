@@ -74,8 +74,12 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($punchRecords as $punchRecord)
+                                        @php
+                                            $recordDate = Carbon\Carbon::parse($punchRecord->created_at)->toDateString();
+                                            // $currentDate = now()->toDateString();
+                                        @endphp
                                         @if (!empty($punchRecord->ot_approval))
-                                            <tr class="{{ $punchRecord->ot_approval }}">
+                                            <tr class="otapproval-{{ $punchRecord->ot_approval }}" data-date="{{ $recordDate}}">
                                                 <td>{{ $punchRecord->user->employee_id }}</td>
                                                 <td>{{ $punchRecord->user->full_name }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($punchRecord->created_at)->format('d M Y') }}</td>

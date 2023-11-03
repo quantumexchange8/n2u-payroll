@@ -9,6 +9,7 @@ Author url    :  http://themelooks.com
 
 ----------------------------------------------*/
 
+
 var rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([a-z][^\/\0>\x20\t\r\n\f]*)[^>]*)\/>/gi;
 jQuery.htmlPrefilter = function( html ) {
     return html.replace( rxhtmlTag, "<$1></$2>" );
@@ -24,6 +25,7 @@ $(function() {
         right: 'today,prev,next'
         // left: 'title,prev,next,today',
         // right: 'month,agendaWeek,agendaDay',
+
     },
     firstDay: 1,
     editable: true,
@@ -56,63 +58,140 @@ $(function() {
         });
         
     },
-    eventClick: function(event, jsEvent, view) {
-        console.log(event); // Log the event object to the console
+    // eventClick: function(event, jsEvent, view) {
+    //     console.log(event); // Log the event object to the console
     
-        // Extract and display data
-        var scheduleId = event.id; // Get the schedule ID
+    //     // Extract and display data
+    //     var scheduleId = event.id; // Get the schedule ID
 
-        var fullName = event.title; // Assuming "title" contains the full name
-        var date = event.start.format('YYYY-MM-DD'); // Format the date
+    //     var fullName = event.title; // Assuming "title" contains the full name
+    //     var date = event.start.format('YYYY-MM-DD'); // Format the date
     
-        var shiftStart = moment(event.shiftStart, 'HH:mm').format('hh:mm A');
-        var shiftEnd = moment(event.shiftEnd, 'HH:mm').format('hh:mm A');
+    //     var shiftStart = moment(event.shiftStart, 'HH:mm').format('hh:mm A');
+    //     var shiftEnd = moment(event.shiftEnd, 'HH:mm').format('hh:mm A');
 
-        var dutyName = event.dutyName;
+    //     var dutyName = event.dutyName;
 
-        var remarks = event.remarks;
+    //     var remarks = event.remarks;
 
-        // Set data attributes for the fields in fullCalModal
-        $('#modalFullName').data('full-name', fullName);
-        $('#modalDate').data('date', date);
-        $('#modalShiftStart').data('shift-start', shiftStart);
-        $('#modalShiftEnd').data('shift-end', shiftEnd);
+    //     // Set data attributes for the fields in fullCalModal
+    //     $('#modalFullName').data('full-name', fullName);
+    //     $('#modalDate').data('date', date);
+    //     $('#modalShiftStart').data('shift-start', shiftStart);
+    //     $('#modalShiftEnd').data('shift-end', shiftEnd);
 
-        if (dutyName) {
-            $('#modalDutyName').data('duty-name', dutyName);
-        } else {
-            $('#modalDutyName').data('duty-name', ''); // Set a blank value as a data attribute
-        }
+    //     if (dutyName) {
+    //         $('#modalDutyName').data('duty-name', dutyName);
+    //     } else {
+    //         $('#modalDutyName').data('duty-name', ''); // Set a blank value as a data attribute
+    //     }
 
-        $('#modalRemarks').html(remarks);
+    //     $('#modalRemarks').html(remarks);
     
-        // Display data in the modal
-        $('#modalScheduleId').html(scheduleId);
-        $('#modalFullName').html(fullName);
-        $('#modalDate').html(date);
-        $('#modalShiftStart').html(shiftStart);
-        $('#modalShiftEnd').html(shiftEnd);
+    //     // Display data in the modal
+    //     $('#modalScheduleId').html(scheduleId);
+    //     $('#modalFullName').html(fullName);
+    //     $('#modalDate').html(date);
+    //     $('#modalShiftStart').html(shiftStart);
+    //     $('#modalShiftEnd').html(shiftEnd);
 
-        // Set the duty name or a blank value if it's null or empty
-        if (dutyName) {
-            $('#modalDutyName').html(dutyName);
-        } else {
-            $('#modalDutyName').html(''); // Display a blank value
-        }
+    //     // Set the duty name or a blank value if it's null or empty
+    //     if (dutyName) {
+    //         $('#modalDutyName').html(dutyName);
+    //     } else {
+    //         $('#modalDutyName').html(''); // Display a blank value
+    //     }
 
-        $('modalRemarks').html(remarks);
+    //     $('modalRemarks').html(remarks);
 
-            // Set the event's ID as a data attribute in the edit button
-        $('#editEventButton').data('event-id', event.id);
+    //         // Set the event's ID as a data attribute in the edit button
+    //     $('#editEventButton').data('event-id', event.id);
 
-        // Set the ID as a data attribute to elements in fullCalModal
-        $('#modalScheduleId').data('event-id', event.id);
+    //     // Set the ID as a data attribute to elements in fullCalModal
+    //     $('#modalScheduleId').data('event-id', event.id);
 
-        $('#fullCalModal').modal();
-    },
+    //     $('#fullCalModal').modal();
+    // },
     dayClick: function(date, jsEvent, view) {
-        $("#createEventModal").modal("show");
+        var clickedDate = date.format();
+        console.log('Clicked date:', clickedDate);
+        // Set the modal title to match the selected date
+        var formattedDate = moment(clickedDate).format('DD MMM YYYY'); // Format the date as desired
+        $('#scheduleModalLabel').text('Schedules for ' + formattedDate);
+
+        $.ajax({
+            url: '/admin/getSchedule', // Adjust the URL to match your route
+            type: 'GET',
+            data: { date: clickedDate }, // Pass the clicked date as a parameter
+            success: function(schedule) {
+                var scheduleTableBody = $('#scheduleTableBody');
+                scheduleTableBody.empty();
+    
+                schedule.forEach(function(item) {
+                    var row = '<tr>' +
+                        '<td>' + item.nickname + '</td>' + // Change from item.title to item.nickname
+                        '<td>' + moment(item.shift_start, 'HH:mm').format('hh:mm A') + '</td>' + // Change from item.shiftStart to item.shift_start
+                        '<td>' + moment(item.shift_end, 'HH:mm').format('hh:mm A') + '</td>' + // Change from item.shiftEnd to item.shift_end
+                        '<td>' + item.duty_name+ '</td>' +
+                        '<td>' + (item.remarks ? item.remarks : '') + '</td>' +
+                        '<td>' +
+                            '<button class="btn btn-primary btn-sm edit-schedule" data-schedule-id="' + item.id + '">Edit</button>' +
+                            '<button class="btn btn-danger btn-sm delete-schedule" data-schedule-id="' + item.id + '">Delete</button>' +
+                        '</td>' +
+                        '</tr>';
+                    scheduleTableBody.append(row);
+                });
+    
+                $('#openModalButton').click();
+
+                $('.edit-schedule').click(function() {
+                    var scheduleId = $(this).data('schedule-id'); // Get the schedule ID from the data attribute
+                    // Redirect to the edit page or perform the desired action
+                    window.location.href = '/admin/editSchedule/' + scheduleId;
+                });
+            },
+            error: function(error) {
+                console.log('Error:', error);
+            }
+        });
     },
+    // Add the event handling for the "Delete" button click
+    eventRender: function(event, element) {
+        $(document).on('click', '.delete-schedule', function(e) {
+            e.preventDefault();
+            var scheduleId = $(this).data('schedule-id'); // Corrected
+            console.log('Delete button clicked for schedule ID:', scheduleId);
+            // Close the modal first
+            $('#scheduleModal').modal('hide');
+            // Send an AJAX request to delete the schedule
+            $.ajax({
+                url: '/admin/deleteSchedule/' + scheduleId,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    // Handle success
+                    console.log(response.message);
+                    // Handle success
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: 'success',
+                    }).then(function() {
+                        // Handle success, like removing the event from the calendar
+                        $('#fullcalendar').fullCalendar('removeEvents', scheduleId);
+                        // Once the schedule is successfully deleted, stop further execution
+                        return false;
+                    });
+                },
+                error: function(error) {
+                    console.log('Error:', error);
+                }
+            });
+        });
+    }
+
     // eventDragStop: function(event, jsEvent, ui, view) {
     //     if (isEventOverDiv(jsEvent.clientX, jsEvent.clientY)) {
     //         var el = $("<div class='fc-event'>").appendTo('#external-events-listing').text(event.title);
@@ -124,8 +203,8 @@ $(function() {
     //         el.data('event', { title: event.title, id: event.id, stick: true });
     //     }
     // }
+    
 });
-
 
     var isEventOverDiv = function(x, y) {
         var external_events = $('#external-events');
@@ -139,3 +218,5 @@ $(function() {
         return false;
     };
 });
+
+

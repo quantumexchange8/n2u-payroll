@@ -92,15 +92,15 @@
                                         foreach ($records as $record) {
                                             if ($record->in === 'Clock In') {
                                                 if ($checkIn1 === null) {
-                                                    $checkIn1 = $record->created_at->format('g:i A');
+                                                    $checkIn1 = $record->created_at->format('h:i:s A');
                                                 } else {
-                                                    $checkIn2 = $record->created_at->format('g:i A');
+                                                    $checkIn2 = $record->created_at->format('h:i:s A');
                                                 }
                                             } else {
                                                 if ($checkOut1 === null) {
-                                                    $checkOut1 = $record->created_at->format('g:i A');
+                                                    $checkOut1 = $record->created_at->format('h:i:s A');
                                                 } else {
-                                                    $checkOut2 = $record->created_at->format('g:i A');
+                                                    $checkOut2 = $record->created_at->format('h:i:s A');
                                                     $totalWork = $record->total_work;
                                                     $remarks = $record->remarks;
                                                 }
@@ -142,9 +142,7 @@
                                     </tr>
                                 @endforeach
                             </tbody>
-                        </table>
-                        
-                        
+                        </table>                       
                         <!-- End Invoice List Table -->
                     </div>
                 </div>
@@ -161,7 +159,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const tableRows = document.querySelectorAll('.dh-table tbody tr');
-        const dropdownItems = document.querySelectorAll('.dropdown-item');
+        const dropdownItems = document.querySelectorAll('.dropdown-item[data-full-name]');
 
         dropdownItems.forEach(function(item) {
             item.addEventListener('click', filterTable);
@@ -251,7 +249,7 @@
             if (row.style.display !== 'none') {
                 const rowData = [];
                 const cells = row.cells;
-                for (let i = 0; i < cells.length; i++) {
+                for (let i = 0; i < cells.length - 1 ; i++) {
                     rowData.push(cells[i].textContent.trim());
                 }
                 filteredData.push(rowData);
@@ -270,68 +268,6 @@
         XLSX.writeFile(workbook, `${currentFormattedDate}-Total-Work.xlsx`);
     }
 </script>
-
-{{-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('exportButton').addEventListener('click', function() {
-            event.preventDefault();
-            exportFilteredDataToExcel();
-        });
-    });
-
-    function getCurrentFormattedDate() {
-        const currentDate = new Date();
-        const day = currentDate.getDate();
-        const monthNames = [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        ];
-        const month = monthNames[currentDate.getMonth()];
-        const year = currentDate.getFullYear();
-        return `${day}${month}${year}`;
-    }
-
-    function exportFilteredDataToExcel() {
-        // Get the table element by its class or ID
-        const table = document.querySelector('.dh-table');
-
-        // Define an array to store the filtered table data
-        const filteredData = [];
-
-        // Get the table header (column names)
-        const headerRow = table.querySelector('thead tr');
-        const headerData = [];
-        const headerCells = headerRow.cells;
-        for (let i = 0; i < headerCells.length; i++) {
-            headerData.push(headerCells[i].textContent.trim());
-        }
-        filteredData.push(headerData);
-
-        // Iterate through table rows and cells to collect filtered data
-        const tableRows = table.querySelectorAll('tbody tr');
-        tableRows.forEach(function (row) {
-            if (row.style.display !== 'none') { // Check visibility
-                const rowData = [];
-                const cells = row.cells;
-                for (let i = 0; i < cells.length; i++) {
-                    rowData.push(cells[i].textContent.trim());
-                }
-                filteredData.push(rowData);
-            }
-        });
-
-        // Create a new workbook and add a worksheet
-        const workbook = XLSX.utils.book_new();
-        const worksheet = XLSX.utils.aoa_to_sheet(filteredData);
-
-        // Add the worksheet to the workbook
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-
-        // Generate the Excel file and trigger a download with the current date in the filename
-        const currentFormattedDate = getCurrentFormattedDate();
-        XLSX.writeFile(workbook, `${currentFormattedDate}-Total-Work.xlsx`);
-    }
-</script> --}}
 
 <!-- JavaScript code for the SweetAlert -->
 <script>
