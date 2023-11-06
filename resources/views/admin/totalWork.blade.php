@@ -64,14 +64,14 @@
                             <thead>
                                 <tr>
                                     <th>Date</th>
-                                    <th>Employee ID</th>
+                                    {{-- <th>Employee ID</th> --}}
                                     <th>Name</th>
                                     <th>Shift</th>
                                     <th>Check In</th>
                                     <th>Check Out</th>
                                     <th>Check In 2</th>
                                     <th>Check Out 2</th>                                    
-                                    <th>Total Work</th>
+                                    <th>Total Hour</th>
                                     <th>Remarks</th>
                                     <th>Actions</th>
                                 </tr>
@@ -116,7 +116,7 @@
                                                 N/A
                                             @endif
                                         </td>                                                                                                                   
-                                        <td>{{ $employeeId ?? null }}</td>
+                                        {{-- <td>{{ $employeeId ?? null }}</td> --}}
                                         <td>{{ $employeeName ?? null }}</td>
                                         <td>
                                             @if ($shift ?? null)
@@ -171,7 +171,7 @@
             tableRows.forEach(function(row) {
                 const fullName = row.dataset.fullName;
 
-                if (!selectedFullName || fullName === selectedFullName) {
+                if (!selectedFullName || selectedFullName === 'All Users' || fullName === selectedFullName) {
                     row.style.display = ''; // Show the row
                 } else {
                     row.style.display = 'none'; // Hide the row

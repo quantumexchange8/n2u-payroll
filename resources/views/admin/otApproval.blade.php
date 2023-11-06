@@ -89,7 +89,13 @@
                                                 <td style="{{ $punchRecord->ot_approval === 'Pending' ? 'color: orange; font-weight: bold;' : ($punchRecord->ot_approval === 'Approved' ? 'color: #84f542; font-weight: bold;' : 'color: red; font-weight: bold;') }}">
                                                     {{ $punchRecord->ot_approval }}
                                                 </td>
-                                                <td>{{ $punchRecord->ot_hours }}</td>                                            
+                                                <td>
+                                                    @if($punchRecord->ot_hours !== null)
+                                                        {{ $punchRecord->ot_hours }}
+                                                    @else
+                                                        {{ $otHours }}
+                                                    @endif
+                                                </td>                                                                                            
                                                 <td>
                                                     <form action="{{ route('updateOtApproval', $punchRecord->id) }}" method="POST" style="display: flex; justify-content: space-between; margin-top: 15px;"  id="reject-form-{{$punchRecord->id}}">
                                                         @csrf

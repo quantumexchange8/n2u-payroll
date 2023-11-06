@@ -17,11 +17,6 @@ class Shift extends Model
         'shift_end'
     ];
 
-    // protected $casts = [
-    //     'shift_start' => 'datetime',
-    //     'shift_end' => 'datetime',
-    // ];
-
     public function schedules(){
         return $this->hasMany(Schedule::class);
     }

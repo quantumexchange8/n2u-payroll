@@ -733,8 +733,8 @@ class AdminController extends Controller
     public function otApproval() {
         $punchRecords = PunchRecord::all();
         $currentDate = now()->toDateString();
-        $users = User::all();
-    
+        $otHours = null;
+        
         // Fetch the schedule information for the user.
         $schedule = DB::table('schedules')
             ->join('users', 'schedules.employee_id', '=', 'users.id')
@@ -742,26 +742,67 @@ class AdminController extends Controller
             ->join('punch_records', 'punch_records.employee_id', '=', 'schedules.employee_id')
             ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end')
             ->whereDate('schedules.date', '=', $currentDate)
-            ->where('punch_records.ot_approval', 'Pending') // Add this line to filter based on ot_approval
-            ->whereDate('punch_records.created_at', '=', $currentDate) // Add this line to match created_at date
+            ->whereDate('punch_records.created_at', '=', $currentDate)
+            ->whereNotNull('punch_records.ot_approval') // Add this line to filter based on ot_approval not being null
             ->first();
     
+        // Check if $schedule is null
+        if ($schedule === null) {
+            $otStart = 'N/A';
+        } else {
+            // Fetch the "Overtime Calculation" setting value
+            $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
+            // Get the "Overtime Calculation" setting value
+            $overtimeCalculationMinutes = intval($overtimeCalculation);
+        
+            // Calculate the "OT Start" based on "Shift End" and overtime calculation
+            $otStart = Carbon::parse($schedule->shift_end)->addMinutes($overtimeCalculationMinutes); // Adjust the minutes based on your calculation 
+            // // Retrieve the associated user
+            // $user = User::where('id', $punchRecords->employee_id)->first();
 
-        // Fetch the "Overtime Calculation" setting value
-        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
-        // Get the "Overtime Calculation" setting value
-        $overtimeCalculationMinutes = intval($overtimeCalculation);
+            // // Check if the user exists and has schedules
+            // if ($user) {
+            //     $schedule = Schedule::where('employee_id', $user->id)
+            //         ->whereDate('date', $punchRecords->created_at->toDateString())
+            //         ->first();
     
-        // Calculate the "OT Start" based on "Shift End" and overtime calculation
-        $otStart = Carbon::parse($schedule->shift_end)->addMinutes($overtimeCalculationMinutes); // Adjust the minutes based on your calculation
+            //     if ($schedule) {
+            //         $shift = Shift::find($schedule->shift_id);
 
+            //         if ($shift) {
+            //             // Calculate the overtime hours based on the difference between created_at and shift end
+            //             $shiftEndTime = Carbon::createFromFormat('H:i', $shift->shift_end);
+            //             $createdTime = Carbon::parse($punchRecords->created_at);
+
+            //             // Fetch the "Overtime Calculation" setting value
+            //             $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
+            //             // Get the "Overtime Calculation" setting value
+            //             $overtimeCalculationMinutes = intval($overtimeCalculation);
+
+
+            //             // Calculate the difference in minutes between created_at and shift end
+            //             $minutesDifference = $createdTime->diffInMinutes($shiftEndTime);
+
+            //             // Subtract the overtime calculation minutes
+            //             $minutesDifference -= $overtimeCalculationMinutes;
+
+            //             // Convert the minutes to hours
+            //             $otHours = $minutesDifference / 60;
+
+            //             // Round otHours to 2 decimal places
+            //             $otHours = round($otHours, 2);
+            //             dd($otHours);
+            //         }
+            //     }
+            // } 
+        }
+        
         // dd($otStart);
-    
-        return view('admin.otApproval', ['punchRecords' => $punchRecords, 'otStart' => $otStart]);
+        
+        return view('admin.otApproval', ['punchRecords' => $punchRecords, 'otStart' => $otStart, 'otHours' => $otHours]);
     }
     
-    
- 
+
     public function editOtApproval($id){
         $punchRecords = PunchRecord::find($id);
         $users = User::all();
@@ -795,9 +836,18 @@ class AdminController extends Controller
                         $shiftEndTime = Carbon::createFromFormat('H:i', $shift->shift_end);
                         $createdTime = Carbon::parse($punchRecord->created_at);
 
+                        // Fetch the "Overtime Calculation" setting value
+                        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
+                        // Get the "Overtime Calculation" setting value
+                        $overtimeCalculationMinutes = intval($overtimeCalculation);
+
+
                         // Calculate the difference in minutes between created_at and shift end
                         $minutesDifference = $createdTime->diffInMinutes($shiftEndTime);
-    
+
+                        // Subtract the overtime calculation minutes
+                        $minutesDifference -= $overtimeCalculationMinutes;
+
                         // Convert the minutes to hours
                         $otHours = $minutesDifference / 60;
 

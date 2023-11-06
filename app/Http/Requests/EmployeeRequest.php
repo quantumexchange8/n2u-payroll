@@ -112,8 +112,10 @@ class EmployeeRequest extends FormRequest
         if (!$userId) {
             // Initialize $rules['employee_id'] as an array
             $rules['employee_id'] = [];
+            $rules['ic_number'] = [];
 
             $rules['employee_id'][] = Rule::unique('users', 'employee_id');
+            $rules['ic_number'][] = Rule::unique('users', 'ic_number');
         }
 
         return $rules;
@@ -149,7 +151,7 @@ class EmployeeRequest extends FormRequest
     {
         return [
             'employee_id.unique' => 'The provided Employee ID is already in use.',
-            // Other custom messages...
+            'ic_number.unique' => 'The provided IC Number / Passport is already in use.',
         ];
     }
 }
