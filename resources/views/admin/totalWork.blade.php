@@ -23,8 +23,8 @@
                             <div class="d-flex flex-wrap">
                                 <!-- Date Picker -->
                                 <div class="dashboard-date style--six mr-20 mt-3 mt-sm-0">
-                                     <input type="date" id="date-filter" value=""/>
-                                 </div>
+                                    <input type="month" id="month-year-filter" value=""/>
+                                </div>
                                 <!-- End Date Picker -->
     
     
@@ -184,7 +184,7 @@
 </script>
 
 {{-- Filter by date --}}
-<script>
+{{-- <script>
     document.addEventListener("DOMContentLoaded", function() {
         const dateFilter = document.getElementById('date-filter');
         const tableRows = document.querySelectorAll('.dh-table tbody tr');
@@ -198,6 +198,32 @@
                 const date = row.dataset.date;
 
                 if (!selectedDate || date === selectedDate) {
+                    row.style.display = ''; // Show the row
+                } else {
+                    row.style.display = 'none'; // Hide the row
+                }
+            });
+        }
+    });
+</script> --}}
+
+{{-- Filter by month --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const monthYearFilter = document.getElementById('month-year-filter');
+        const tableRows = document.querySelectorAll('.dh-table tbody tr');
+
+        monthYearFilter.addEventListener('input', filterTable);
+
+        function filterTable() {
+            const selectedMonthYear = monthYearFilter.value;
+
+            tableRows.forEach(function(row) {
+                const dateAttribute = row.getAttribute('data-date');
+                const date = new Date(dateAttribute);
+                const monthYear = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0'); // Convert date to "YYYY-MM" format
+
+                if (!selectedMonthYear || monthYear === selectedMonthYear) {
                     row.style.display = ''; // Show the row
                 } else {
                     row.style.display = 'none'; // Hide the row
@@ -238,7 +264,7 @@
         const headerRow = table.querySelector('thead tr');
         const headerData = [];
         const headerCells = headerRow.cells;
-        for (let i = 0; i < headerCells.length; i++) {
+        for (let i = 0; i < headerCells.length - 1; i++) {
             headerData.push(headerCells[i].textContent.trim());
         }
         filteredData.push(headerData);
@@ -249,7 +275,7 @@
             if (row.style.display !== 'none') {
                 const rowData = [];
                 const cells = row.cells;
-                for (let i = 0; i < cells.length - 1 ; i++) {
+                for (let i = 0; i < cells.length - 1; i++) {
                     rowData.push(cells[i].textContent.trim());
                 }
                 filteredData.push(rowData);

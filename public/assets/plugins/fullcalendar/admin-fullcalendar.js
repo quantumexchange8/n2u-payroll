@@ -129,10 +129,10 @@ $(function() {
     
                 schedule.forEach(function(item) {
                     var row = '<tr>' +
-                        '<td>' + item.nickname + '</td>' + // Change from item.title to item.nickname
-                        '<td>' + moment(item.shift_start, 'HH:mm').format('hh:mm A') + '</td>' + // Change from item.shiftStart to item.shift_start
-                        '<td>' + moment(item.shift_end, 'HH:mm').format('hh:mm A') + '</td>' + // Change from item.shiftEnd to item.shift_end
-                        '<td>' + item.duty_name+ '</td>' +
+                        '<td>' + item.nickname + '</td>' +
+                        '<td>' + (item.shift_start ? moment(item.shift_start, 'HH:mm').format('hh:mm A') : 'Off Day') + '</td>' +
+                        '<td>' + (item.shift_end ? moment(item.shift_end, 'HH:mm').format('hh:mm A') : 'Off Day') + '</td>' +
+                        '<td>' + (item.duty_name ? item.duty_name : 'Off Day') + '</td>' +
                         '<td>' + (item.remarks ? item.remarks : '') + '</td>' +
                         '<td>' +
                             '<button class="btn btn-primary btn-sm edit-schedule" data-schedule-id="' + item.id + '">Edit</button>' +

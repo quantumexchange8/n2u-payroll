@@ -246,7 +246,7 @@
                             <li>
                                 <a href="">
                                     <i class="icofont-folder-open"></i>
-                                    <span class="link-title">Attendance & Total Work</span>
+                                    <span class="link-title">Attendance & Report</span>
                                 </a>
 
                                  <!-- Sub Menu -->
@@ -255,7 +255,7 @@
                                         <a href="{{ route('attendance') }}">Attendance</a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('totalWork') }}">Total Work</a>
+                                        <a href="{{ route('totalWork') }}">Report</a>
                                     </li>
                                 </ul>
                                 <!-- End Sub Menu -->

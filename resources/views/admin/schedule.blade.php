@@ -256,7 +256,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Full Name</th>
+                                <th>Nickname</th>
                                 <th>Shift Start</th>
                                 <th>Shift End</th>
                                 <th>Duty Name</th>

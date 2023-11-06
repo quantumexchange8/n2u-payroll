@@ -31,7 +31,7 @@
 
                                                 <div class="d-flex align-items-center mb-3">
                                                     <!-- Custom Checkbox -->
-                                                    <label class="custom-checkbox bold position-relative mr-2">
+                                                    <label class="custom-checkbox solid position-relative mr-2">
                                                         <input type="checkbox" name="selected_users[]" value="{{ $user->id }}">
                                                         <span class="checkmark"></span>
                                                     </label>
@@ -77,7 +77,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Remarks</label>
-                                    <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" value="{{ old('remarks') }}">
+                                    <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" placeholder="Remarks" value="{{ old('remarks') }}">
                                     @error('date')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -112,7 +112,7 @@
 
                                 <div class="d-flex align-items-center mb-3" style="margin-top: 50px;">
                                     <!-- Custom Checkbox -->
-                                    <label class="custom-checkbox bold position-relative mr-2">
+                                    <label class="custom-checkbox solid position-relative mr-2">
                                         <input type="checkbox" name="off_day" value="1">
                                         <span class="checkmark"></span>
                                     </label>

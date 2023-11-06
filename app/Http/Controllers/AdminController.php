@@ -540,15 +540,15 @@ class AdminController extends Controller
     public function getSchedule(Request $request) {
         try {
             $date = $request->input('date');
-        
-            $schedule = Schedule::Join('users', 'schedules.employee_id', '=', 'users.id')
-                ->Join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-                ->Join('duties', 'schedules.duty_id', '=', 'duties.id')
-                ->select('schedules.id', 'schedules.employee_id', 'users.nickname', 
-                    'shifts.shift_start', 'shifts.shift_end', 'duties.duty_name', 'schedules.remarks')
-                ->where('schedules.date', $date)
-                ->get();
-
+           
+                $schedule = Schedule::leftJoin('users', 'schedules.employee_id', '=', 'users.id')
+                        ->leftJoin('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                        ->leftJoin('duties', 'schedules.duty_id', '=', 'duties.id')
+                        ->select('schedules.id', 'schedules.employee_id', 'users.nickname', 
+                            'shifts.shift_start', 'shifts.shift_end', 'duties.duty_name', 'schedules.remarks')
+                        ->where('schedules.date', $date)
+                        ->get();
+           
             return response()->json($schedule);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -735,7 +735,6 @@ class AdminController extends Controller
         return view('admin.otApproval', ['punchRecords' => $punchRecords]);
     }
  
-
     public function editOtApproval($id){
         $punchRecords = PunchRecord::find($id);
         $users = User::all();

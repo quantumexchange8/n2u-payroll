@@ -46,16 +46,18 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Duty</label>
                                     <select class="theme-input-style" id="duty_id" name="duty_id" autocomplete="off">
+                                        <option value="">Select Duty</option> 
                                         @foreach ($duties as $duty)
-                                        <option value="{{ $duty->id }}" {{ $schedule->duty->id === $duty->id ? 'selected' : ''}}>
-                                            {{ $duty->duty_name }}
-                                        </option>  
-                                    @endforeach
+                                            <option value="{{ $duty->id }}" {{ optional($schedule->duty)->id === $duty->id ? 'selected' : '' }}>
+                                                {{ $duty->duty_name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                     @error('duty_id')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
+                                
                                 <!-- End Form Group -->
 
                             </div>
@@ -66,8 +68,9 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Shift</label>
                                     <select class="theme-input-style" id="shift_id" name="shift_id" autocomplete="off">
+                                        <option value="">Select Shift</option> 
                                         @foreach ($shifts as $shift)
-                                            <option value="{{ $shift->id }}" {{ $schedule->shift->id === $shift->id ? 'selected' : ''}}>
+                                            <option value="{{ $shift->id }}" {{ optional($schedule->shift)->id === $shift->id ? 'selected' : ''}}>
                                                 {{ $shift->formatted_shift_time }}
                                             </option>  
                                         @endforeach
@@ -81,7 +84,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Remarks</label>
-                                    <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" value="{{ $schedule->remarks }}">
+                                    <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" placeholder="Remarks" value="{{ $schedule->remarks }}">
                                     @error('date')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
