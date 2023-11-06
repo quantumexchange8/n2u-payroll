@@ -730,10 +730,37 @@ class AdminController extends Controller
         return redirect()->route('viewSetting');
     }
 
-    public function otApproval(){
+    public function otApproval() {
         $punchRecords = PunchRecord::all();
-        return view('admin.otApproval', ['punchRecords' => $punchRecords]);
+        $currentDate = now()->toDateString();
+        $users = User::all();
+    
+        // Fetch the schedule information for the user.
+        $schedule = DB::table('schedules')
+            ->join('users', 'schedules.employee_id', '=', 'users.id')
+            ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+            ->join('punch_records', 'punch_records.employee_id', '=', 'schedules.employee_id')
+            ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end')
+            ->whereDate('schedules.date', '=', $currentDate)
+            ->where('punch_records.ot_approval', 'Pending') // Add this line to filter based on ot_approval
+            ->whereDate('punch_records.created_at', '=', $currentDate) // Add this line to match created_at date
+            ->first();
+    
+
+        // Fetch the "Overtime Calculation" setting value
+        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
+        // Get the "Overtime Calculation" setting value
+        $overtimeCalculationMinutes = intval($overtimeCalculation);
+    
+        // Calculate the "OT Start" based on "Shift End" and overtime calculation
+        $otStart = Carbon::parse($schedule->shift_end)->addMinutes($overtimeCalculationMinutes); // Adjust the minutes based on your calculation
+
+        // dd($otStart);
+    
+        return view('admin.otApproval', ['punchRecords' => $punchRecords, 'otStart' => $otStart]);
     }
+    
+    
  
     public function editOtApproval($id){
         $punchRecords = PunchRecord::find($id);

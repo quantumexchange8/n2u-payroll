@@ -18,7 +18,7 @@
 
                     <div class="card-body">
                         <div class="d-sm-flex justify-content-between align-items-center">
-                            <h4 class="font-20 ">Total Work</h4>
+                            <h4 class="font-20 ">Report</h4>
 
                             <div class="d-flex flex-wrap">
                                 <!-- Date Picker -->
@@ -120,7 +120,7 @@
                                         <td>{{ $employeeName ?? null }}</td>
                                         <td>
                                             @if ($shift ?? null)
-                                                {{ $shift->shift_start }} - {{ $shift->shift_end }}
+                                                {{ \Carbon\Carbon::parse($shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($shift->shift_end)->format('h:i A') }}
                                             @else
                                                 N/A
                                             @endif
