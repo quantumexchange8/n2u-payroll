@@ -66,49 +66,79 @@
                                         <th>Employee ID</th>
                                         <th>Name</th>
                                         <th>Date</th>
-                                        <th>OT Start</th>
-                                        <th>OT End</th>
-                                        <th>Status</th>
+                                        <th>Shift Start</th>
+                                        <th>Shift End</th>
+                                        <th>Clock out</th>
                                         <th>OT hours</th>
+                                        <th>Status</th>
+                                        {{-- @if($otapproval->remark != null) --}}
+                                        <th>Remark</th>
+                                        {{-- @endif --}}
                                         <th style="text-align: center;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($punchRecords as $punchRecord)
-                                        @php
+                                    @foreach ($otapproval as $otapproval)
+                                        {{-- @php
                                             $recordDate = Carbon\Carbon::parse($punchRecord->created_at)->toDateString();
-                                            // $currentDate = now()->toDateString();
-                                        @endphp
-                                        @if (!empty($punchRecord->ot_approval))
-                                            <tr class="otapproval-{{ $punchRecord->ot_approval }}" data-date="{{ $recordDate}}">
-                                                <td>{{ $punchRecord->user->employee_id }}</td>
-                                                <td>{{ $punchRecord->user->full_name }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($punchRecord->created_at)->format('d M Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($otStart)->format('h:i:s A') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($punchRecord->created_at)->format('h:i:s A') }}</td>
-                                                <td style="{{ $punchRecord->ot_approval === 'Pending' ? 'color: orange; font-weight: bold;' : ($punchRecord->ot_approval === 'Approved' ? 'color: #84f542; font-weight: bold;' : 'color: red; font-weight: bold;') }}">
-                                                    {{ $punchRecord->ot_approval }}
-                                                </td>
+                                            $currentDate = now()->toDateString();
+                                        @endphp --}}
+                                        @if (!empty($otapproval))
+                                            <tr class="otapproval-{{ $otapproval }}">
+                                                <td>{{ $otapproval->employee_id }}</td>
+                                                <td>{{ $otapproval->user->full_name }}</td>
+                                                <td>{{ $otapproval->date }}</td>
+                                                <td>{{ $otapproval->shift_start }}</td>
+                                                <td>{{ $otapproval->shift_end }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($otapproval->clock_out_time)->format('h:i') }}</td>
                                                 <td>
-                                                    @if($punchRecord->ot_hours !== null)
+                                                    {{-- @if($punchRecord->ot_hours !== null)
                                                         {{ $punchRecord->ot_hours }}
                                                     @else
                                                         {{ $otHours }}
+                                                    @endif --}}
+                                                    {{ $otapproval->ot_hour }}
+                                                </td>  
+                                                <td style="{{ $otapproval->status === 'Pending' ? 'color: orange; font-weight: bold;' : ($otapproval->status === 'Approved' ? 'color: #84f542; font-weight: bold;' : 'color: red; font-weight: bold;') }}">
+                                                    @if($otapproval->status == 'Pending')
+                                                        <button class="status-btn un_paid">
+                                                            {{ $otapproval->status }}
+                                                        </button>
+                                                    @elseif($otapproval->status == 'Rejected')
+                                                        <button class="status-btn un_paid">
+                                                            {{ $otapproval->status }}
+                                                        </button>
+                                                    @else
+                                                        <button class="status-btn completed">
+                                                            {{ $otapproval->status }}
+                                                        </button>
                                                     @endif
-                                                </td>                                                                                            
+                                                </td>
+                                                <td>{{ $otapproval->remark }}</td>                                                                                     
                                                 <td>
-                                                    <form action="{{ route('updateOtApproval', $punchRecord->id) }}" method="POST" style="display: flex; justify-content: space-between; margin-top: 15px;"  id="reject-form-{{$punchRecord->id}}">
+                                                    <form action="{{ route('updateOtApproval', $otapproval->id) }}" method="POST" style="display: flex; justify-content: center;gap: 10px; margin-top: 15px;"  id="reject-form-{{$otapproval->id}}">
                                                         @csrf
                                                         
-                                                        <button type="submit" name="ot_approval" value="Approved" class="details-btn approved-btn">
-                                                            Approved
-                                                        </button>
+                                                        @if($otapproval->status == 'Approved')
+                                                            <button type="submit" name="ot_approval" value="Approved" class="details-btn approved-btn" disabled style="color: #67CFA2">
+                                                                Approved
+                                                            </button>
+                                                        @elseif($otapproval->status == 'Rejected')
+                                                            <button type="button" name="ot_reject" value="Rejected" class="details-btn reject-button" data-punchrecord-id="{{ $otapproval->id }}" style="color: red" disabled>
+                                                                Rejected
+                                                            </button>
+                                                        @else
+                                                            <button type="submit" name="ot_approval" value="Approved" class="details-btn approved-btn" style="color: #67CFA2">
+                                                                Approved
+                                                            </button>
 
-                                                        <input type="hidden" name="remark" id="remark-{{ $punchRecord->id }}">
+                                                            <input type="hidden" name="remark" id="remark-{{ $otapproval->id }}">
 
-                                                        <button type="button" name="ot_reject" value="Rejected" class="details-btn reject-button" data-punchrecord-id="{{ $punchRecord->id }}">
-                                                            Rejected
-                                                        </button>
+                                                            <button type="button" name="ot_reject" value="Rejected" class="details-btn reject-button" data-punchrecord-id="{{ $otapproval->id }}" style="color: red">
+                                                                Rejected
+                                                            </button>
+                                                        @endif
+                                                        
                                                     </form>
                                                 </td>                                                
                                             </tr>

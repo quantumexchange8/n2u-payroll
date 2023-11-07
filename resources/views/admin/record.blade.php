@@ -37,7 +37,7 @@
                       <h4 class="progress-title">Pending OT Approval</h4>
 
                         <div class="ProgressBar-wrap position-relative mb-4">
-                            <div class="ProgressBar ProgressBar_1" data-progress="{{ $pendingOTCount }}">
+                            <div class="ProgressBar ProgressBar_1" data-progress="{{ $pendingOTCount2 }}">
                                 <svg class="ProgressBar-contentCircle" viewBox="0 0 200 200">
                                 <!-- on défini le l'angle et le centre de rotation du cercle -->
                                 <circle transform="rotate(135, 100, 100)" class="ProgressBar-background" cx="100" cy="100" r="8" />
@@ -66,8 +66,8 @@
                         <table class="text-nowrap hoverable dh-table">
                             <thead>
                                 <tr>
-                                    <th>Employee ID</th>
-                                    <th>Name</th>
+                                    {{-- <th>Employee ID</th> --}}
+                                    <th>Nickname</th>
                                     <th>Date</th>
                                     <th>Time</th>
                                     <th>In</th>
@@ -85,8 +85,8 @@
                                     @if ($recordDate == $currentDate)
                                     {{-- @if ($recordDate) --}}
                                         <tr class="status-{{ $punchRecord->status }}" data-date="{{ $recordDate }}">
-                                            <td>{{$punchRecord->employee_id}}</td>
-                                            <td>{{$punchRecord->user->full_name}}</td>
+                                            {{-- <td>{{$punchRecord->employee_id}}</td> --}}
+                                            <td>{{$punchRecord->user->nickname}}</td>
                                             <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('d M Y') }}</td>
                                             <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('g:i A') }}</td>
                                             <td>{{$punchRecord->in}}</td>

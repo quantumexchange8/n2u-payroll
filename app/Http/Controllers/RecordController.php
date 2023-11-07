@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Models\Shift;
 use App\Models\Schedule;
 use App\Models\User;
+use App\Models\OtApproval;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
@@ -160,6 +161,9 @@ class RecordController extends Controller
 
         // Get the current date in the format 'YYYY-MM-DD'
         $currentDate = now()->toDateString(); 
+
+        $currentDateTime = now();
+        $currentTimes = $currentDateTime->format('H:i:s');
         // Fetch the schedule information for the user.
         $schedule = DB::table('schedules')
             ->join('users', 'schedules.employee_id', '=', 'users.id')
@@ -276,6 +280,36 @@ class RecordController extends Controller
                     if ($currentTime->greaterThan($overtimeThresholdTime)) {
                         $recordData['status'] = 'Overtime';
                         $recordData['ot_approval'] = 'Pending';
+
+                        // $tt_ot = $currentTimes - $schedule->shift_end;
+                        $clockout = $currentTimes;
+                        $hourAndMinute = \Carbon\Carbon::parse($clockout)->format('H:i');
+
+                        $clockout = $hourAndMinute;
+                        $shiftEnd = $schedule->shift_end;
+
+                        $clockoutTime = \Carbon\Carbon::parse($clockout);
+                        $shiftEndTime = \Carbon\Carbon::parse($shiftEnd);
+
+                        $minutesDifference = $clockoutTime->diffInMinutes($shiftEndTime);
+
+                        // You can also get the hours and minutes separately if needed
+                        // $hours = floor($minutesDifference / 60);
+                        $totalHours = $minutesDifference / 60;
+
+                        $totalHoursRounded = number_format($totalHours, 2);
+
+                        // dd($shiftEnd);
+
+                        $newot = OtApproval::create([
+                            'employee_id' => Auth::user()->employee_id,
+                            'date' => $currentDate,
+                            'shift_start' => $schedule->shift_start,
+                            'shift_end' => $schedule->shift_end,
+                            'clock_out_time' => $currentTimes,
+                            'ot_hour' => $totalHoursRounded,
+                            'status' => 'Pending'
+                        ]);
                     } else {
                         $recordData['status'] = 'On-Time';
                     }

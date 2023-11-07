@@ -11,6 +11,7 @@ use App\Models\Schedule;
 use App\Models\Setting;
 use App\Models\Shift;
 use App\Models\User;
+use App\Models\OtApproval;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
@@ -34,6 +35,7 @@ class AdminController extends Controller
         });
 
         $pendingOTCount = PunchRecord::where('ot_approval', 'Pending')->count();
+        $pendingOTCount2 = OtApproval::where('status', 'Pending')->count();
     
         // Retrieve all schedules, shifts, and settings
         $schedules = Schedule::all();
@@ -41,7 +43,7 @@ class AdminController extends Controller
         $settings = Setting::all();
     
         // Return the view with the punchRecords, schedules, shifts, and settings
-        return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings', 'pendingOTCount'));
+        return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings', 'pendingOTCount', 'pendingOTCount2'));
     }
     
     public function viewEmployee() {
@@ -731,9 +733,11 @@ class AdminController extends Controller
     }
 
     public function otApproval() {
-        $punchRecords = PunchRecord::all();
+        // $punchRecords = PunchRecord::all();
         $currentDate = now()->toDateString();
         $otHours = null;
+
+        $punchRecords = PunchRecord::where('ot_approval', '!=', null)->get();
         
         // Fetch the schedule information for the user.
         $schedule = DB::table('schedules')
@@ -796,10 +800,17 @@ class AdminController extends Controller
             //     }
             // } 
         }
+
+        $otapproval = OtApproval::with(['user'])->get();
         
-        // dd($otStart);
+        // dd($otapproval);
         
-        return view('admin.otApproval', ['punchRecords' => $punchRecords, 'otStart' => $otStart, 'otHours' => $otHours]);
+        return view('admin.otApproval', [
+            // 'punchRecords' => $punchRecords, 
+            // 'otStart' => $otStart, 
+            // 'otHours' => $otHours,
+            'otapproval' => $otapproval,
+        ]);
     }
     
 
@@ -814,10 +825,31 @@ class AdminController extends Controller
     }
 
     public function updateOtApproval(Request $request, $id) {
+
         $punchRecord = PunchRecord::find($id);
-    
+        $otapproval = OtApproval::find($id);
+
+        $clockout = $otapproval->clock_out_time;
+        $hourAndMinute = \Carbon\Carbon::parse($clockout)->format('H:i');
+        
+        $clockout = $hourAndMinute;
+        $shiftEnd = $otapproval->shift_end;
+
+        $clockoutTime = \Carbon\Carbon::parse($clockout);
+        $shiftEndTime = \Carbon\Carbon::parse($shiftEnd);
+
+        $minutesDifference = $clockoutTime->diffInMinutes($shiftEndTime);
+
+        // You can also get the hours and minutes separately if needed
+        // $hours = floor($minutesDifference / 60);
+        $totalHours = $minutesDifference / 60;
+
+        $totalHoursRounded = number_format($totalHours, 2);
+        
         if ($request->remark == null) {
             $punchRecord->ot_approval = 'Approved';
+            $otapproval->status = 'Approved';
+            $otapproval->ot_hour = $totalHoursRounded;
     
             // Retrieve the associated user
             $user = User::where('id', $punchRecord->employee_id)->first();
@@ -855,15 +887,23 @@ class AdminController extends Controller
                         $otHours = round($otHours, 2);
     
                         $punchRecord->ot_hours = $otHours;
+
+                        // dd($otHours);
                     }
                 }
             }
-    
+            // dd($punchRecord);
             $punchRecord->save();
+            $otapproval->save();
         } else {
             $punchRecord->ot_approval = 'Rejected';
             $punchRecord->remarks = $request->remark;
+
+            $otapproval->status = 'Rejected';
+            $otapproval->remark = $request->remark;
+
             $punchRecord->save();
+            $otapproval->save();
         }
     
         Alert::success('Done', 'Successfully Updated');
