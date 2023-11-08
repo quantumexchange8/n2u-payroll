@@ -16,7 +16,6 @@
    <!-- Favicon -->
    {{-- <link rel="shortcut icon" href="assets/img/logo-icon.png"> --}}
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/logo180.png">
-    {{-- <link rel="manifest" href="{{ route('laravelpwa.manifest') }}"> --}}
     
    <!-- Web Fonts -->
    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i&display=swap" rel="stylesheet">
@@ -83,7 +82,7 @@
 
                                         <!-- User Info -->
                                         <div class="user-info">
-                                            <h4 class="user-name">{{ auth()->user()->full_name }}</h4>
+                                            <h4 class="user-name">{{ auth()->user()->nickname }}</h4>
                                             <p class="user-email">{{ auth()->user()->email }}</p>
                                         </div>
                                         <!-- End User Info -->
@@ -260,12 +259,12 @@
                                 </ul>
                                 <!-- End Sub Menu -->
                             </li>
-                            <li>
+                            {{-- <li>
                                 <a href="{{ route('salaryLogs') }}">
                                     <i class="icofont-money"></i>
                                     <span class="link-title">Salary Logs</span>
                                 </a>
-                            </li>
+                            </li> --}}
                             <li>
                                 <a href="{{ route('viewSetting') }}">
                                     <i class="icofont-ui-settings"></i>

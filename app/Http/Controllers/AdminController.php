@@ -571,7 +571,8 @@ class AdminController extends Controller
             'date_start' => 'required|date',
             'date_end' => 'nullable|date|after_or_equal:date_start',
             'shift_id' => 'required',
-            'duty_id' => 'required',
+            // 'duty_id' => 'required',
+            'duty_id' => 'nullable',
             'remarks' => 'nullable',
             'off_day' => 'nullable',
             'selected_users' => 'required|array', // Validate that selected_users is an array
@@ -607,7 +608,8 @@ class AdminController extends Controller
                     } else {
                         $schedule->off_day = 0;
                         $schedule->shift_id = $data['shift_id'];
-                        $schedule->duty_id = $data['duty_id'];
+                        // $schedule->duty_id = $data['duty_id'];
+                        $schedule->duty_id = null;
                         $schedule->remarks = $data['remarks'];
                     }
                     $schedule->save();

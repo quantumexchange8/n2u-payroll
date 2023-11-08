@@ -276,6 +276,8 @@ class RecordController extends Controller
     
                     // Calculate the overtime threshold time
                     $overtimeThresholdTime = $shiftEndTime->copy()->addMinutes($overtimeCalculationMinutes);
+
+                    // dd($overtimeCalculationMinutes, $overtimeThresholdTime);
     
                     if ($currentTime->greaterThan($overtimeThresholdTime)) {
                         $recordData['status'] = 'Overtime';
@@ -299,7 +301,7 @@ class RecordController extends Controller
 
                         $totalHoursRounded = number_format($totalHours, 2);
 
-                        // dd($shiftEnd);
+                        // dd($totalHoursRounded);
 
                         $newot = OtApproval::create([
                             'employee_id' => Auth::user()->employee_id,

@@ -14,8 +14,8 @@ class SettingSeeder extends Seeder
     {
         Setting::create([
             'setting_name' => 'Overtime Calculation',
-            'value' => '30 minutes',
-            'description' => 'OT start calculate after shift end 30 minutes'
+            'value' => '15 minutes',
+            'description' => 'OT start calculate after shift end 15 minutes'
         ]);
 
         Setting::create([

@@ -59,8 +59,8 @@
                         <table class="text-nowrap hoverable dh-table">
                             <thead>
                                 <tr>
-                                    <th>Employee ID</th>
-                                    <th>Name</th>
+                                    {{-- <th>Employee ID</th> --}}
+                                    <th>Nickname</th>
                                     <th>Date</th>
                                     <th>Time</th>
                                     <th>In</th>
@@ -78,7 +78,7 @@
                                     {{-- @if ($recordDate == $currentDate) --}}
                                     @if ($recordDate)
                                         <tr class="status-{{ $punchRecord->status }}" data-date="{{ $recordDate }}">
-                                            <td>{{$punchRecord->employee_id}}</td>
+                                            {{-- <td>{{$punchRecord->employee_id}}</td> --}}
                                             <td>{{$punchRecord->user->full_name}}</td>
                                             <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('d M Y') }}</td>
                                             <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('g:i A') }}</td>

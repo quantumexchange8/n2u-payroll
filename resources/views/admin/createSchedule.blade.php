@@ -55,7 +55,7 @@
                                     <select class="theme-input-style" id="shift_id" name="shift_id" autocomplete="off">
 
                                         @foreach ($shifts as $shift)
-                                            <option value="{{ $shift->id }}">{{ $shift->formatted_shift_time }}</option>  
+                                            <option value="{{ $shift->id }}">{{$shift->shift_name}} - {{ $shift->formatted_shift_time }}</option>  
                                         @endforeach
                                     </select>
                                     @error('shift_id')
@@ -75,12 +75,23 @@
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
-                                <div class="form-group">
+                                {{-- <div class="form-group">
                                     <label class="font-14 bold mb-2">Remarks</label>
                                     <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" placeholder="Remarks" value="{{ old('remarks') }}">
                                     @error('date')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
+                                    
+                                </div> --}}
+                                <div class="d-flex align-items-center mb-3" style="margin-top: 50px;">
+                                    <!-- Custom Checkbox -->
+                                    <label class="custom-checkbox solid position-relative mr-2">
+                                        <input type="checkbox" name="off_day" value="1">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <!-- End Custom Checkbox -->
+                                    
+                                    <label for="check26">Off Day</label>
                                 </div>
                                 <!-- End Form Group -->
                             </div>
@@ -88,13 +99,18 @@
                             <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Duty</label>
+                                    {{-- <label class="font-14 bold mb-2">Duty</label>
                                     <select class="theme-input-style" id="duty_id" name="duty_id" autocomplete="off">
                                         @foreach ($duties as $duty)
                                         <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>  
                                     @endforeach
                                     </select>
                                     @error('duty_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror --}}
+                                    <label class="font-14 bold mb-2">Remarks</label>
+                                    <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" placeholder="Remarks" value="{{ old('remarks') }}">
+                                    @error('date')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -112,13 +128,13 @@
 
                                 <div class="d-flex align-items-center mb-3" style="margin-top: 50px;">
                                     <!-- Custom Checkbox -->
-                                    <label class="custom-checkbox solid position-relative mr-2">
+                                    {{-- <label class="custom-checkbox solid position-relative mr-2">
                                         <input type="checkbox" name="off_day" value="1">
                                         <span class="checkmark"></span>
                                     </label>
                                     <!-- End Custom Checkbox -->
                                     
-                                    <label for="check26">Off Day</label>
+                                    <label for="check26">Off Day</label> --}}
                                 </div>
 
 

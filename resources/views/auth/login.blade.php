@@ -13,8 +13,8 @@
     <meta name="keywords" content="">
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="assets/img/logo-icon.png">
-    <link rel="apple-touch-icon" href="assets/img/logo-icon.png">
+    {{-- <link rel="shortcut icon" href="assets/img/logo-icon.png"> --}}
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/logo180.png">
 
     <!-- Web Fonts -->
     <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i&display=swap" rel="stylesheet">
