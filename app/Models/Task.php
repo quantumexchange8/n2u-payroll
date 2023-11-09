@@ -6,26 +6,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Schedule extends Model
+class Task extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'date',
         'employee_id',
-        'shift_id',
+        'task_name',
         'duty_id',
-        'remarks',
-        'off_day'
+        'start_time',
+        'end_time'
     ];
 
     public function user(){
         return $this->belongsTo(User::class, 'employee_id', 'id');
     }
 
-    public function shift(){
-        return $this->belongsTo(Shift::class, 'shift_id', 'id');
+    public function duty(){
+        return $this->belongsTo(Duty::class, 'duty_id', 'id');
     }
-
-
 }

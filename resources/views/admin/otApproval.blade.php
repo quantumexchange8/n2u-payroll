@@ -79,24 +79,19 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($otapproval as $otapproval)
-                                        {{-- @php
-                                            $recordDate = Carbon\Carbon::parse($punchRecord->created_at)->toDateString();
+                                        @php
+                                            $recordDate = Carbon\Carbon::parse($otapproval->created_at)->toDateString();
                                             $currentDate = now()->toDateString();
-                                        @endphp --}}
+                                        @endphp
                                         @if (!empty($otapproval))
-                                            <tr class="otapproval-{{ $otapproval }}">
+                                            <tr class="otapproval-{{ $otapproval }}" data-date="{{ $recordDate }}">
                                                 <td>{{ $otapproval->employee_id }}</td>
                                                 <td>{{ $otapproval->user->full_name }}</td>
-                                                <td>{{ $otapproval->date }}</td>
-                                                <td>{{ $otapproval->shift_start }}</td>
-                                                <td>{{ $otapproval->shift_end }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($otapproval->clock_out_time)->format('h:i') }}</td>
+                                                <td>{{ Carbon\Carbon::parse($otapproval->date)->format('d M Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($otapproval->shift_start)->format('g:i A') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($otapproval->shift_end)->format('g:i A') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($otapproval->clock_out_time)->format('g:i A') }}</td>
                                                 <td>
-                                                    {{-- @if($punchRecord->ot_hours !== null)
-                                                        {{ $punchRecord->ot_hours }}
-                                                    @else
-                                                        {{ $otHours }}
-                                                    @endif --}}
                                                     {{ $otapproval->ot_hour }}
                                                 </td>  
                                                 <td style="{{ $otapproval->status === 'Pending' ? 'color: orange; font-weight: bold;' : ($otapproval->status === 'Approved' ? 'color: #84f542; font-weight: bold;' : 'color: red; font-weight: bold;') }}">
@@ -239,7 +234,7 @@
 </script>
 
 {{-- Filter by date --}}
-<script>
+{{-- <script>
     document.addEventListener("DOMContentLoaded", function() {
         const filterDropdown = document.getElementById('filter-dropdown');
         const dateFilter = document.getElementById('date-filter');
@@ -260,7 +255,35 @@
                 const statusFilter = selectedStatus === 'all' || status === selectedStatus;
                 const dateFilter = !selectedDate || date === selectedDate;
 
+                console.log('Selected Date:', selectedDate);
+                console.log('Row Date:', date);
+
                 if (statusFilter && dateFilter) {
+                    row.style.display = ''; // Show the row
+                } else {
+                    row.style.display = 'none'; // Hide the row
+                }
+            });
+        }
+
+
+    });
+</script> --}}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const dateFilter = document.getElementById('date-filter');
+        const tableRows = document.querySelectorAll('.dh-table tbody tr');
+
+        dateFilter.addEventListener('input', filterTable);
+
+        function filterTable() {
+            const selectedDate = dateFilter.value;
+
+            tableRows.forEach(function(row) {
+                const date = row.dataset.date; // You'll need to set the data-date attribute in your table rows
+
+                if (!selectedDate || date === selectedDate) {
                     row.style.display = ''; // Show the row
                 } else {
                     row.style.display = 'none'; // Hide the row

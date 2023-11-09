@@ -8,10 +8,9 @@
             <div class="col-lg-12">
                 <!-- Base Horizontal Form With Icons -->
                 <div class="form-element py-30 multiple-column">
-                    <h4 class="font-20 mb-20">Create New Schedule</h4>
-
+                    <h4 class="font-20 mb-20">Create New Task</h4>
                     <!-- Form -->
-                    <form action="{{route('addSchedule')}}" method="POST" class="repeater-default">
+                    <form action="{{route('addTask')}}" method="POST" class="repeater-default">
                         @csrf
 
                         <!-- Color Options -->
@@ -48,98 +47,16 @@
                         <!-- End Color Options -->
 
                         <div class="row">
-                            <div class="col-lg-6">                                
+                            <div class="col-lg-6">                          
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Shift</label>
-                                    <select class="theme-input-style" id="shift_id" name="shift_id" autocomplete="off">
-
-                                        @foreach ($shifts as $shift)
-                                            <option value="{{ $shift->id }}">{{$shift->shift_name}} - {{ $shift->formatted_shift_time }}</option>  
-                                        @endforeach
-                                    </select>
-                                    @error('shift_id')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group --> 
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Date Start</label>
-                                    <input type="date" class="theme-input-style" id="date_start" name="date_start" autocomplete="off">
-                                    @error('date')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                {{-- <div class="form-group">
-                                    <label class="font-14 bold mb-2">Remarks</label>
-                                    <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" placeholder="Remarks" value="{{ old('remarks') }}">
-                                    @error('date')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                    
-                                </div> --}}
-                                <!-- End Form Group -->
-
-
-                                <div class="d-flex align-items-center mb-3" style="margin-top: 50px;">
-                                    <!-- Custom Checkbox -->
-                                    <label class="custom-checkbox solid position-relative mr-2">
-                                        <input type="checkbox" name="off_day" value="1">
-                                        <span class="checkmark"></span>
-                                    </label>
-                                    <!-- End Custom Checkbox -->
-                                    
-                                    <label for="check26">Off Day</label>
-                                </div>
-                                
-                            </div>
-
-                            <div class="col-lg-6">
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    {{-- <label class="font-14 bold mb-2">Duty</label>
-                                    <select class="theme-input-style" id="duty_id" name="duty_id" autocomplete="off">
-                                        @foreach ($duties as $duty)
-                                        <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>  
-                                    @endforeach
-                                    </select>
-                                    @error('duty_id')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror --}}
-
-                                    <label class="font-14 bold mb-2">Remarks</label>
-                                    <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" placeholder="Remarks" value="{{ old('remarks') }}">
-                                    @error('remarks')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
-                                
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Date End</label>
-                                    <input type="date" class="theme-input-style" id="date_end" name="date_end" autocomplete="off">
+                                    <label class="font-14 bold mb-2">Date</label>
+                                    <input type="date" class="theme-input-style" id="date" name="date" autocomplete="off">
                                     @error('date')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <!-- End Form Group --> 
-
-                                <div class="d-flex align-items-center mb-3" style="margin-top: 50px;">
-                                    <!-- Custom Checkbox -->
-                                    {{-- <label class="custom-checkbox solid position-relative mr-2">
-                                        <input type="checkbox" name="off_day" value="1">
-                                        <span class="checkmark"></span>
-                                    </label>
-                                    <!-- End Custom Checkbox -->
-                                    
-                                    <label for="check26">Off Day</label> --}}
-                                </div>
                             </div>
 
                             <div class="col-12">

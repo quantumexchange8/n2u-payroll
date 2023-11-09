@@ -10,6 +10,7 @@ use App\Models\Duty;
 use App\Models\Position;
 use App\Models\PunchRecord;
 use App\Models\Setting;
+use App\Models\Task;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -40,6 +41,8 @@ class MemberController extends Controller
 
         $settings = Setting::all();
 
+        $tasks = Task::where('employee_id', $user->id)->with('user')->get();
+
         $punchRecords = PunchRecord::with('user')->get();
         //dd($punchRecords);
 
@@ -57,7 +60,8 @@ class MemberController extends Controller
             'duty' => $duties,
             'status' => $status,
             'clock' => $clock,
-            'settings' => $settings
+            'settings' => $settings,
+            'tasks'=> $tasks
         ]);
     }
 

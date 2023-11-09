@@ -84,6 +84,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('admin/updateSchedule/{id}', [AdminController::class, 'updateSchedule'])->name('updateSchedule');
     Route::delete('admin/deleteSchedule/{id}', [AdminController::class, 'deleteSchedule'])->name('deleteSchedule');
 
+    Route::get('admin/viewTask', [AdminController::class, 'viewTask'])->name('viewTask');
+    Route::get('admin/createTask', [AdminController::class, 'createTask'])->name('createTask');
+    Route::post('admin/addTask', [AdminController::class, 'addTask'])->name('addTask');
+    Route::get('admin/editTask/{id}', [AdminController::class, 'editTask'])->name('editTask');
+    Route::post('admin/updateTask/{id}', [AdminController::class, 'updateTask'])->name('updateTask');
+    Route::delete('admin/deleteTask/{id}', [AdminController::class, 'deleteTask'])->name('deleteTask');
+
     Route::get('admin/viewSetting', [AdminController::class, 'viewSetting'])->name('viewSetting');
     Route::get('admin/createSetting', [AdminController::class, 'createSetting'])->name('createSetting');
     Route::post('admin/addSetting', [AdminController::class, 'addSetting'])->name('addSetting');

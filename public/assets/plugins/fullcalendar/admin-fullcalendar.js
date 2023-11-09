@@ -48,7 +48,6 @@ $(function() {
                         end: event.date, // Adjust the end date as needed
                         shiftStart: event.shift_start, // Include Shift Start in event properties
                         shiftEnd: event.shift_end,     // Include Shift End in event properties
-                        dutyName: event.duty_name,
                         remarks: event.remarks,
                         backgroundColor: backgroundColor,
                     };
@@ -132,7 +131,6 @@ $(function() {
                         '<td>' + item.nickname + '</td>' +
                         '<td>' + (item.shift_start ? moment(item.shift_start, 'HH:mm').format('hh:mm A') : 'Off Day') + '</td>' +
                         '<td>' + (item.shift_end ? moment(item.shift_end, 'HH:mm').format('hh:mm A') : 'Off Day') + '</td>' +
-                        '<td>' + (item.duty_name ? item.duty_name : 'Off Day') + '</td>' +
                         '<td>' + (item.remarks ? item.remarks : '') + '</td>' +
                         '<td>' +
                             '<button class="btn btn-primary btn-sm edit-schedule" data-schedule-id="' + item.id + '">Edit</button>' +

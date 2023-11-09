@@ -10,6 +10,7 @@ use App\Models\SalaryLog;
 use App\Models\Schedule;
 use App\Models\Setting;
 use App\Models\Shift;
+use App\Models\Task;
 use App\Models\User;
 use App\Models\OtApproval;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\EmployeeRequest;
 use Carbon\Carbon;
@@ -52,7 +54,6 @@ class AdminController extends Controller
         return view('admin.viewEmployee', compact('users', 'positions'));
     }
     
-
     public function createEmployee(){
         $positions = Position::all();
         return view('admin.createEmployee', compact('positions'));
@@ -317,6 +318,27 @@ class AdminController extends Controller
     }
 
     public function updatePosition(Request $request, $id){
+        // Define validation rules
+        $rules = [
+            'position_name' => 'required|max:255', 
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'position_name.required' => 'Position Name is required.',
+            'position_name.max' => 'Position Name should not exceed 255 characters.',
+        ];
+
+         // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $data = Position::find($id);
 
         //Update the user's data based on the form input
@@ -374,6 +396,27 @@ class AdminController extends Controller
     }
 
     public function updateDepartment(Request $request, $id){
+        // Define validation rules
+        $rules = [
+            'department_name' => 'required|max:255', 
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'department_name.required' => 'Department Name is required.',
+            'department_name.max' => 'Department Name should not exceed 255 characters.',
+        ];
+
+            // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $data = Department::find($id);
 
         //Update the user's data based on the form input
@@ -431,6 +474,27 @@ class AdminController extends Controller
     }
 
     public function updateDuty(Request $request, $id){
+        // Define validation rules
+        $rules = [
+            'duty_name' => 'required|max:255', 
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'duty_name.required' => 'Duty Name is required.',
+            'duty_name.max' => 'Duty Name should not exceed 255 characters.',
+        ];
+
+            // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $data = Duty::find($id);
 
         //Update the user's data based on the form input
@@ -491,6 +555,31 @@ class AdminController extends Controller
     }
 
     public function updateShift(Request $request, $id){
+        // Define validation rules
+        $rules = [
+            'shift_name' => 'required|max:255',
+            'shift_start' => 'required',
+            'shift_end' => 'required',
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'shift_name.required' => 'Shift Name is required.',
+            'shift_name.max' => 'Shift Name should not exceed 255 characters.',
+            'shift_start.required' => 'Shift Start is required.',
+            'shift_end.required' => 'Shift End is required.',
+        ];
+
+            // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $data = Shift::find($id);
 
         //Update the user's data based on the form input
@@ -521,10 +610,9 @@ class AdminController extends Controller
             // Retrieve and return joined data for FullCalendar
             $joinedData = Schedule::leftJoin('users', 'schedules.employee_id', '=', 'users.id')
                 ->leftJoin('shifts', 'schedules.shift_id', '=', 'shifts.id')
-                ->leftJoin('duties', 'schedules.duty_id', '=', 'duties.id')
                 ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 
                         'shifts.shift_start', 'shifts.shift_end', 'schedules.date', 
-                        'duties.duty_name', 'schedules.remarks', 'schedules.off_day', 'users.nickname')
+                        'schedules.remarks', 'schedules.off_day', 'users.nickname')
                 ->get();
 
             return response()->json($joinedData);
@@ -534,22 +622,20 @@ class AdminController extends Controller
         $schedules = Schedule::all();
         $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
-        $duties = Duty::all();
 
-        return view('admin.schedule', compact('schedules', 'users', 'shifts', 'duties'));
+        return view('admin.schedule', compact('schedules', 'users', 'shifts'));
     }
 
     public function getSchedule(Request $request) {
         try {
             $date = $request->input('date');
            
-                $schedule = Schedule::leftJoin('users', 'schedules.employee_id', '=', 'users.id')
-                        ->leftJoin('shifts', 'schedules.shift_id', '=', 'shifts.id')
-                        ->leftJoin('duties', 'schedules.duty_id', '=', 'duties.id')
-                        ->select('schedules.id', 'schedules.employee_id', 'users.nickname', 
-                            'shifts.shift_start', 'shifts.shift_end', 'duties.duty_name', 'schedules.remarks')
-                        ->where('schedules.date', $date)
-                        ->get();
+            $schedule = Schedule::leftJoin('users', 'schedules.employee_id', '=', 'users.id')
+                    ->leftJoin('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                    ->select('schedules.id', 'schedules.employee_id', 'users.nickname', 
+                        'shifts.shift_start', 'shifts.shift_end', 'schedules.remarks')
+                    ->where('schedules.date', $date)
+                    ->get();
            
             return response()->json($schedule);
         } catch (\Exception $e) {
@@ -566,30 +652,84 @@ class AdminController extends Controller
         return view('admin.createSchedule', compact('schedules', 'users', 'shifts', 'duties'));
     }
 
+    // public function addSchedule(Request $request){
+    //     $data = $request->validate([
+    //         'date_start' => 'required|date',
+    //         'date_end' => 'nullable|date|after_or_equal:date_start',
+    //         'shift_id' => 'required',
+    //         // 'duty_id' => 'required',
+    //         'duty_id' => 'nullable',
+    //         'remarks' => 'nullable',
+    //         'off_day' => 'nullable',
+    //         'selected_users' => 'required|array', // Validate that selected_users is an array
+    //     ]);
+    
+    //     if ($data) {
+    //         // Process each selected user separately
+    //         foreach ($data['selected_users'] as $userId) {
+    //             $start = Carbon::parse($data['date_start']);
+    //             $end = Carbon::parse($data['date_end']);
+    //             $dates = [];
+    
+    //             if ($data['date_end'] === null) {
+    //                 // If date_end is null, insert a single schedule
+    //                 $dates[] = $start->toDateString();
+    //             } else {
+    //                 // Generate an array of dates between date_start and date_end
+    //                 while ($start->lte($end)) {
+    //                     $dates[] = $start->toDateString();
+    //                     $start->addDay();
+    //                 }
+    //             }
+    
+    //             foreach ($dates as $date) {
+    //                 $schedule = new Schedule();
+    //                 $schedule->date = $date;
+    //                 $schedule->employee_id = $userId; // Use the selected user ID
+    //                 if (isset($data['off_day']) && $data['off_day'] == 1) {
+    //                     $schedule->off_day = 1;
+    //                     $schedule->shift_id = null;
+    //                     $schedule->duty_id = null;
+    //                     $schedule->remarks = null;
+    //                 } else {
+    //                     $schedule->off_day = 0;
+    //                     $schedule->shift_id = $data['shift_id'];
+    //                     // $schedule->duty_id = $data['duty_id'];
+    //                     $schedule->duty_id = null;
+    //                     $schedule->remarks = $data['remarks'];
+    //                 }
+    //                 $schedule->save();
+    //             }
+    //         }
+            
+    //         Alert::success('Done', 'Successfully Inserted');
+    //         return redirect()->route('schedule');
+    //     } else {
+    //         return redirect()->back();
+    //     }
+    // }
+
     public function addSchedule(Request $request){
+
+        // dd($request->all());
         $data = $request->validate([
             'date_start' => 'required|date',
             'date_end' => 'nullable|date|after_or_equal:date_start',
             'shift_id' => 'required',
-            // 'duty_id' => 'required',
-            'duty_id' => 'nullable',
             'remarks' => 'nullable',
             'off_day' => 'nullable',
             'selected_users' => 'required|array', // Validate that selected_users is an array
         ]);
     
         if ($data) {
-            // Process each selected user separately
             foreach ($data['selected_users'] as $userId) {
                 $start = Carbon::parse($data['date_start']);
                 $end = Carbon::parse($data['date_end']);
                 $dates = [];
     
                 if ($data['date_end'] === null) {
-                    // If date_end is null, insert a single schedule
                     $dates[] = $start->toDateString();
                 } else {
-                    // Generate an array of dates between date_start and date_end
                     while ($start->lte($end)) {
                         $dates[] = $start->toDateString();
                         $start->addDay();
@@ -599,23 +739,27 @@ class AdminController extends Controller
                 foreach ($dates as $date) {
                     $schedule = new Schedule();
                     $schedule->date = $date;
-                    $schedule->employee_id = $userId; // Use the selected user ID
+                    $schedule->employee_id = $userId;
+    
                     if (isset($data['off_day']) && $data['off_day'] == 1) {
                         $schedule->off_day = 1;
                         $schedule->shift_id = null;
-                        $schedule->duty_id = null;
                         $schedule->remarks = null;
                     } else {
                         $schedule->off_day = 0;
                         $schedule->shift_id = $data['shift_id'];
-                        // $schedule->duty_id = $data['duty_id'];
-                        $schedule->duty_id = null;
                         $schedule->remarks = $data['remarks'];
                     }
+    
                     $schedule->save();
                 }
             }
-            
+    
+            // Check if 'group-a' is present in the request, indicating task entries
+            if ($request->has('group-a')) {
+                $this->addTask($request, $dates);
+            }
+    
             Alert::success('Done', 'Successfully Inserted');
             return redirect()->route('schedule');
         } else {
@@ -624,37 +768,26 @@ class AdminController extends Controller
     }
     
     public function editSchedule($id){
-        // $positions = Position::with('department')->find($id);
-        // $departments = Department::all();
+
         $schedule = Schedule::find($id);
         $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
-        $duties = Duty::all();
 
-        return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'duties'));
+        return view('admin.editSchedule', compact('schedule', 'users', 'shifts'));
     }
 
     public function updateSchedule(Request $request, $id){
 
         $data = Schedule::find($id);
-        // $user = User::where('full_name', $request->edit_employee_id)->first();
-
-        $selectedUserId = $request->input('edit_employee_id');
-        $selectedShiftId = $request->input('edit_shift_id');
-        $selectedDutyId = $request->input('edit_duty_id');
-
-        // $request->merge(['off_day' => 0]);
 
         $data->update([
             'employee_id' => $request->input('employee_id'),
             'shift_id' => $request->input('shift_id'),
-            'duty_id' => $request->input('duty_id'),
             'date' => $request->input('date'),
             'remarks' =>$request->input('remarks'),
             // 'off_day' => $request->off_day,
         ]);
 
-        // dd($request->all());
 
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('schedule');
@@ -669,6 +802,152 @@ class AdminController extends Controller
         } else {
             return response()->json(['message' => 'Schedule not found'], 404);
         }
+    }
+
+    public function viewTask(){
+        $tasks = Task::orderBy('date', 'asc')->get();
+        $users = User::all();
+        $duty = Duty::all();
+
+        return view('admin.viewTask', [
+            'tasks' => $tasks,
+            'users' => $users,
+            'duty' => $duty,
+        ]);
+    }
+    
+    public function createTask(){
+        $users = User::where('role', 'member')->with('position')->get();
+        $duties = Duty::all();
+        return view('admin.createTask', compact('users', 'duties'));
+    }
+
+    public function addTask(Request $request, $dates = null, $selectedUsers = null) {
+
+        // dd($request->all());
+        // If $dates and $selectedUsers are not provided, use request input
+        if ($dates === null) {
+            $dates = $request->input('dates', []);
+        }
+        
+        if ($selectedUsers === null) {
+            $selectedUsers = $request->input('selected_users', []);
+        }
+
+        // If $dates is a string, convert it to an array
+        if (!is_array($dates)) {
+            $dates = explode(',', $dates);
+        }
+
+    
+        $request->validate([
+            'group-a' => 'required|array', // Ensure at least one task is submitted
+            'group-a.*.task_name' => 'required',
+            'group-a.*.start_time' => 'required',
+            'group-a.*.end_time' => 'required',
+            'group-a.*.duty_id' => 'required',
+            'selected_users' => 'required|array|min:1',
+            'selected_users.*' => 'exists:users,id',
+        ]);
+    
+        $tasks = $request->input('group-a', []);
+;
+        
+        // Loop through selected users and create tasks
+        foreach ($selectedUsers as $userId) {
+            foreach ($tasks as $taskData) {
+                foreach ($dates as $date) {
+                    $task = new Task();
+                    $task->task_name = $taskData['task_name'];
+                    $task->date = $date;
+                    $task->start_time = $taskData['start_time'];
+                    $task->end_time = $taskData['end_time'];
+                    $task->duty_id = $taskData['duty_id'];
+                    $task->employee_id = $userId;
+                    // Check if the task is saved successfully
+                    if (!$task->save()) {
+                        // Log the error
+                        Log::error('Failed to insert task:', ['data' => $taskData, 'error' => $task->getError()]);
+                        // If not, display an error message and redirect
+                        Alert::error('Error', 'Failed to insert tasks.')->autoClose(5000);
+                        return response()->json(['status' => 'error', 'message' => 'Failed to insert tasks.']);
+                    }
+                }
+            }
+        }
+    
+        Alert::success('Done', 'Successfully Inserted');
+        return redirect()->route('viewTask');
+        // return response()->json(['status' => 'success', 'message' => 'Successfully Inserted.']);
+
+    }
+    
+    
+    public function editTask($id){
+        $task = Task::find($id);
+        $users = User::all();
+        $duties = Duty::all();
+
+        return view('admin.editTask', [
+            'task' => $task,
+            'users' => $users,
+            'duties' => $duties,
+        ]);
+    }
+
+    public function updateTask(Request $request, $id){
+
+        // Define validation rules
+        $rules = [
+            'employee_id' => 'required',
+            'date' => 'required',
+            'start_time' => 'required',
+            'end_time' => 'required',
+            'duty_id' => 'required',
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'employee_id.required' => 'Nickname is required.',
+            'date.required' => 'Date is required.',
+            'start_time.required' => 'Start Time is required.',
+            'end_time.required' => 'End Time is required.',
+            'duty_id.required' => 'Duty Name is required.',
+        ];
+
+            // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $data = Task::find($id);
+
+        //Update the user's data based on the form input
+        $data->update([
+            'employee_id' => $request->input('employee_id'),
+            'date' => $request->input('date'),
+            'start_time' => $request->input('start_time'),
+            'end_time' => $request->input('end_time'),
+            'duty_id' => $request->input('duty_id'),
+        ]);
+
+        Alert::success('Done', 'Successfully Updated');
+        return redirect()->route('viewTask');
+    }
+
+    public function deleteTask($id){
+
+        $task = Task::find($id);
+
+        $task->delete(); // Soft delete the employee
+
+        Alert::success('Done', 'Successfully Deleted');
+        return redirect()->route('viewTask');
     }
 
     public function viewSetting(){
@@ -711,6 +990,27 @@ class AdminController extends Controller
     }
 
     public function updateSetting(Request $request, $id){
+
+        // Define validation rules
+        $rules = [
+            'value' => 'required',
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'value.required' => 'Value is required.',
+        ];
+
+            // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $data = Setting::find($id);
 
         //Update the user's data based on the form input
@@ -763,44 +1063,6 @@ class AdminController extends Controller
         
             // Calculate the "OT Start" based on "Shift End" and overtime calculation
             $otStart = Carbon::parse($schedule->shift_end)->addMinutes($overtimeCalculationMinutes); // Adjust the minutes based on your calculation 
-            // // Retrieve the associated user
-            // $user = User::where('id', $punchRecords->employee_id)->first();
-
-            // // Check if the user exists and has schedules
-            // if ($user) {
-            //     $schedule = Schedule::where('employee_id', $user->id)
-            //         ->whereDate('date', $punchRecords->created_at->toDateString())
-            //         ->first();
-    
-            //     if ($schedule) {
-            //         $shift = Shift::find($schedule->shift_id);
-
-            //         if ($shift) {
-            //             // Calculate the overtime hours based on the difference between created_at and shift end
-            //             $shiftEndTime = Carbon::createFromFormat('H:i', $shift->shift_end);
-            //             $createdTime = Carbon::parse($punchRecords->created_at);
-
-            //             // Fetch the "Overtime Calculation" setting value
-            //             $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
-            //             // Get the "Overtime Calculation" setting value
-            //             $overtimeCalculationMinutes = intval($overtimeCalculation);
-
-
-            //             // Calculate the difference in minutes between created_at and shift end
-            //             $minutesDifference = $createdTime->diffInMinutes($shiftEndTime);
-
-            //             // Subtract the overtime calculation minutes
-            //             $minutesDifference -= $overtimeCalculationMinutes;
-
-            //             // Convert the minutes to hours
-            //             $otHours = $minutesDifference / 60;
-
-            //             // Round otHours to 2 decimal places
-            //             $otHours = round($otHours, 2);
-            //             dd($otHours);
-            //         }
-            //     }
-            // } 
         }
 
         $otapproval = OtApproval::with(['user'])->get();
@@ -832,13 +1094,13 @@ class AdminController extends Controller
         $otapproval = OtApproval::find($id);
 
         $clockout = $otapproval->clock_out_time;
-        $hourAndMinute = \Carbon\Carbon::parse($clockout)->format('H:i');
+        $hourAndMinute = Carbon::parse($clockout)->format('H:i');
         
         $clockout = $hourAndMinute;
         $shiftEnd = $otapproval->shift_end;
 
-        $clockoutTime = \Carbon\Carbon::parse($clockout);
-        $shiftEndTime = \Carbon\Carbon::parse($shiftEnd);
+        $clockoutTime = Carbon::parse($clockout);
+        $shiftEndTime = Carbon::parse($shiftEnd);
 
         $minutesDifference = $clockoutTime->diffInMinutes($shiftEndTime);
 
@@ -875,7 +1137,6 @@ class AdminController extends Controller
                         // Get the "Overtime Calculation" setting value
                         $overtimeCalculationMinutes = intval($overtimeCalculation);
 
-
                         // Calculate the difference in minutes between created_at and shift end
                         $minutesDifference = $createdTime->diffInMinutes($shiftEndTime);
 
@@ -889,8 +1150,6 @@ class AdminController extends Controller
                         $otHours = round($otHours, 2);
     
                         $punchRecord->ot_hours = $otHours;
-
-                        // dd($otHours);
                     }
                 }
             }
@@ -1003,8 +1262,7 @@ class AdminController extends Controller
         return view('admin.salaryLogs', compact('salaryLogs', 'users'));
     }
     
-    public function totalWork()
-    {
+    public function totalWork(){
         // Fetch punch records with user information
         $punchRecords = PunchRecord::with('user')->get();
     

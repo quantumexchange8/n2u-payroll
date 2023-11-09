@@ -259,7 +259,6 @@
                                 <th>Nickname</th>
                                 <th>Shift Start</th>
                                 <th>Shift End</th>
-                                <th>Duty Name</th>
                                 <th>Remarks</th>
                                 <th>Actions</th>
                             </tr>

@@ -52,7 +52,6 @@
                               <tr style="text-align: center;">
                                   <th>Date</th>
                                   <th>Shift</th>
-                                  <th>Duty</th>
                                   <th>Remarks</th>
                               </tr>
                           </thead>
@@ -72,18 +71,17 @@
           
                               @foreach ($todaySchedules as $schedule)
                                   @php
-                                  $shiftInfo = null;
-                                  if ($schedule->shift && $schedule->shift->shift_start && $schedule->shift->shift_end) {
-                                      $shiftStart = new DateTime($schedule->shift->shift_start);
-                                      $shiftEnd = new DateTime($schedule->shift->shift_end);
-                                      $shiftInfo = $shiftStart->format('h:i A') . ' - ' . $shiftEnd->format('h:i A');
-                                  }
+                                    $shiftInfo = null;
+                                    if ($schedule->shift && $schedule->shift->shift_start && $schedule->shift->shift_end) {
+                                        $shiftStart = new DateTime($schedule->shift->shift_start);
+                                        $shiftEnd = new DateTime($schedule->shift->shift_end);
+                                        $shiftInfo = $shiftStart->format('h:i A') . ' - ' . $shiftEnd->format('h:i A');
+                                    }
                                   @endphp
           
                                   <tr>
                                       <td>{{ $currentDate->format('d M Y') }}</td>
                                       <td>{{ $shiftInfo }}</td>
-                                      <td>{{ $schedule->duty->duty_name ?? null }}</td>
                                       <td>{{ $schedule->remarks}}</td>
                                   </tr>
                               @endforeach
@@ -92,6 +90,51 @@
                       </div>
                       
                       <!-- End Invoice List Table -->
+                  </div>
+
+                  <div class="card-body pt-30">
+                    <h4 class="font-20">Today's Task</h4>
+                  </div>
+                  <div class="table-responsive">
+                    <!-- Invoice List Table -->
+                    <div id="data-container">
+                      <table class="text-nowrap table-bordered dh-table">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>Task</th>
+                                <th>Time</th>
+                                <th>Duty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          @php
+                              $todayTasks = $tasks->filter(function ($task) {
+                                  // Check if the task date is today
+                                  return \Carbon\Carbon::parse($task->date)->isToday();
+                              });
+                          @endphp
+        
+                            @foreach ($todayTasks as $task)
+                                @php
+                                  $time = null;
+                                  if ($task->start_time && $task->end_time) {
+                                      $startTime = new DateTime($task->start_time);
+                                      $endTime = new DateTime($task->end_time);
+                                      $time = $startTime->format('h:i A') . ' - ' . $endTime->format('h:i A');
+                                  }
+                                @endphp
+        
+                                <tr>
+                                    <td>{{ $task->task_name }}</td>
+                                    <td>{{ $time }}</td>
+                                    <td>{{ $task->duty->duty_name ?? null }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <!-- End Invoice List Table -->
                   </div>
               </div>
             </div>

@@ -115,9 +115,9 @@
                                     <!-- Main Header Time -->
                                     <div class="main-header-date-time text-right">
                                         <h3 class="time">
-                                            <span id="hours">21</span>
+                                            <span id="hours">10</span>
                                             <span id="point">:</span>
-                                            <span id="min">06</span>
+                                            <span id="min">00</span>
                                         </h3>
                                         <span class="date"><span id="date">Tue, 12 October 2019</span></span>
                                     </div>
@@ -208,7 +208,7 @@
                             <li>
                                 <a href="#">
                                     <i class="icofont-clock-time"></i>
-                                    <span class="link-title">Shift Management</span>
+                                    <span class="link-title">Shift</span>
                                 </a>
                             
                                 <!-- Sub Menu -->
@@ -232,6 +232,20 @@
                                     </li>
                                     <li>
                                         <a href="{{ route('createSchedule') }}">Create Schedule</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu -->
+                            </li>
+                            <li>
+                                <a href="">
+                                    <i class="icofont-instrument"></i>
+                                    <span class="link-title">Task</span>
+                                </a>
+
+                                <!-- Sub Menu -->
+                                <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('viewTask') }}">View Task</a>
                                     </li>
                                 </ul>
                                 <!-- End Sub Menu -->
@@ -352,6 +366,11 @@
     <script src="../../assets/plugins/moment/moment.min.js"></script>
     <script src="../../assets/plugins/fullcalendar/fullcalendar.min.js"></script>
     <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
+
+       <!-- ======= BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
+   <script src="../../assets/plugins/jquery-repeater/repeater.min.js"></script>
+   <script src="../../assets/plugins/jquery-repeater/custom-repeater.js"></script>
+   <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
 
 
     @if(Auth::check())
