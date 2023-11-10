@@ -274,8 +274,6 @@
             </div>
         </div>
     </div>
-
-
 </div>
 
 <!-- End Main Content -->
@@ -408,7 +406,6 @@
             });
         });
     });
-
 </script>
 
 

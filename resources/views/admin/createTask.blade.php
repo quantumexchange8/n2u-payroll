@@ -51,8 +51,8 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Date</label>
-                                    <input type="date" class="theme-input-style" id="date" name="date" autocomplete="off">
-                                    @error('date')
+                                    <input type="date" class="theme-input-style" id="date" name="dates" autocomplete="off">
+                                    @error('dates')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>

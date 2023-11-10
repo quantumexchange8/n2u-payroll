@@ -8,20 +8,22 @@
             
             <div class="col-12">
                 <div class="card mb-30">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="card-body pt-20">
-                                <h4 class="font-20">Shift Table</h4>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-row" style="margin-top: 12px; margin-right: 20px;">
-                                <div class="col-12 text-right">
-                                    <a href="{{Route('createShift')}}" class="btn long">Create</a>
+
+                    <div class="card-body">
+                        <div class="d-sm-flex justify-content-between align-items-center">
+                            <h4 class="font-20 ">Shift Table</h4>
+                            <div class="d-flex flex-wrap">
+                                <div class="col-md-4">
+                                    <div class="form-row">
+                                        <div class="col-12 text-right">
+                                            <a href="{{route('createShift')}}" class="btn long">Create</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
                         <table class="text-nowrap hoverable dh-table">

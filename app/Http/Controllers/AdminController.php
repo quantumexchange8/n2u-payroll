@@ -653,29 +653,26 @@ class AdminController extends Controller
     }
 
     // public function addSchedule(Request $request){
+    //     // dd($request->all());
+
     //     $data = $request->validate([
     //         'date_start' => 'required|date',
     //         'date_end' => 'nullable|date|after_or_equal:date_start',
     //         'shift_id' => 'required',
-    //         // 'duty_id' => 'required',
-    //         'duty_id' => 'nullable',
     //         'remarks' => 'nullable',
     //         'off_day' => 'nullable',
     //         'selected_users' => 'required|array', // Validate that selected_users is an array
     //     ]);
     
     //     if ($data) {
-    //         // Process each selected user separately
     //         foreach ($data['selected_users'] as $userId) {
     //             $start = Carbon::parse($data['date_start']);
     //             $end = Carbon::parse($data['date_end']);
     //             $dates = [];
     
     //             if ($data['date_end'] === null) {
-    //                 // If date_end is null, insert a single schedule
     //                 $dates[] = $start->toDateString();
     //             } else {
-    //                 // Generate an array of dates between date_start and date_end
     //                 while ($start->lte($end)) {
     //                     $dates[] = $start->toDateString();
     //                     $start->addDay();
@@ -685,86 +682,102 @@ class AdminController extends Controller
     //             foreach ($dates as $date) {
     //                 $schedule = new Schedule();
     //                 $schedule->date = $date;
-    //                 $schedule->employee_id = $userId; // Use the selected user ID
+    //                 $schedule->employee_id = $userId;
+    
     //                 if (isset($data['off_day']) && $data['off_day'] == 1) {
     //                     $schedule->off_day = 1;
     //                     $schedule->shift_id = null;
-    //                     $schedule->duty_id = null;
     //                     $schedule->remarks = null;
     //                 } else {
     //                     $schedule->off_day = 0;
     //                     $schedule->shift_id = $data['shift_id'];
-    //                     // $schedule->duty_id = $data['duty_id'];
-    //                     $schedule->duty_id = null;
     //                     $schedule->remarks = $data['remarks'];
     //                 }
+    
     //                 $schedule->save();
     //             }
     //         }
-            
+    
+    //         // Check if 'group-a' is present in the request, indicating task entries
+    //         if ($request->has('group-a')) {
+    //             $this->addTask($request, $dates);
+    //         }
+    
     //         Alert::success('Done', 'Successfully Inserted');
     //         return redirect()->route('schedule');
     //     } else {
     //         return redirect()->back();
     //     }
     // }
-
+    
     public function addSchedule(Request $request){
-
         // dd($request->all());
-        $data = $request->validate([
-            'date_start' => 'required|date',
-            'date_end' => 'nullable|date|after_or_equal:date_start',
-            'shift_id' => 'required',
-            'remarks' => 'nullable',
-            'off_day' => 'nullable',
-            'selected_users' => 'required|array', // Validate that selected_users is an array
-        ]);
     
-        if ($data) {
+        $data = $request->all();
+    
+        // Check if 'off_day' is set to 1
+        if (isset($data['off_day']) && $data['off_day'] == 1) {
+            // Perform actions for off_day being 1 (e.g., save to database)
             foreach ($data['selected_users'] as $userId) {
-                $start = Carbon::parse($data['date_start']);
-                $end = Carbon::parse($data['date_end']);
-                $dates = [];
-    
-                if ($data['date_end'] === null) {
-                    $dates[] = $start->toDateString();
-                } else {
-                    while ($start->lte($end)) {
-                        $dates[] = $start->toDateString();
-                        $start->addDay();
-                    }
-                }
-    
-                foreach ($dates as $date) {
-                    $schedule = new Schedule();
-                    $schedule->date = $date;
-                    $schedule->employee_id = $userId;
-    
-                    if (isset($data['off_day']) && $data['off_day'] == 1) {
-                        $schedule->off_day = 1;
-                        $schedule->shift_id = null;
-                        $schedule->remarks = null;
-                    } else {
-                        $schedule->off_day = 0;
-                        $schedule->shift_id = $data['shift_id'];
-                        $schedule->remarks = $data['remarks'];
-                    }
-    
-                    $schedule->save();
-                }
+                // Your logic for off_day being 1
+                $schedule = new Schedule();
+                $schedule->date = Carbon::parse($data['date_start'])->toDateString();
+                $schedule->employee_id = $userId;
+                $schedule->off_day = 1;
+                $schedule->shift_id = null;
+                $schedule->remarks = null;
+                $schedule->save();
             }
     
-            // Check if 'group-a' is present in the request, indicating task entries
-            if ($request->has('group-a')) {
-                $this->addTask($request, $dates);
-            }
-    
+            // Redirect to the schedule page
             Alert::success('Done', 'Successfully Inserted');
             return redirect()->route('schedule');
-        } else {
-            return redirect()->back();
         }
+
+        $validatedData = $request->validate([
+            'date_start' => 'required|date',
+            // 'date_end' => $data['off_day'] == 1 ? 'nullable|date|after_or_equal:date_start' : 'required|date|after_or_equal:date_start',
+            'date_end' => 'nullable|date|after_or_equal:date_start',
+            'shift_id' => 'nullable',
+            'remarks' => 'nullable',
+            'off_day' => 'nullable',
+            'selected_users' => 'required|array',
+        ]);
+    
+        
+        foreach ($validatedData['selected_users'] as $userId) {
+            // Your logic for off_day being 0
+            $start = Carbon::parse($validatedData['date_start']);
+            $end = Carbon::parse($validatedData['date_end']);
+            $dates = [];
+    
+            if ($validatedData['date_end'] === null) {
+                $dates[] = $start->toDateString();
+            } else {
+                while ($start->lte($end)) {
+                    $dates[] = $start->toDateString();
+                    $start->addDay();
+                }
+            }
+    
+            foreach ($dates as $date) {
+                $schedule = new Schedule();
+                $schedule->date = $date;
+                $schedule->employee_id = $userId;
+                $schedule->off_day = 0;
+                $schedule->shift_id = $validatedData['shift_id'];
+                $schedule->remarks = $validatedData['remarks'];
+                $schedule->save();
+            }
+        }
+    
+        // Check if 'group-a' is present in the request, indicating task entries
+        if ($request->has('group-a')) {
+            $this->addTask($request, $dates);
+        }
+    
+        Alert::success('Done', 'Successfully Inserted');
+        return redirect()->route('schedule');
     }
     
     public function editSchedule($id){
@@ -829,7 +842,7 @@ class AdminController extends Controller
         if ($dates === null) {
             $dates = $request->input('dates', []);
         }
-        
+
         if ($selectedUsers === null) {
             $selectedUsers = $request->input('selected_users', []);
         }
@@ -839,7 +852,6 @@ class AdminController extends Controller
             $dates = explode(',', $dates);
         }
 
-    
         $request->validate([
             'group-a' => 'required|array', // Ensure at least one task is submitted
             'group-a.*.task_name' => 'required',
@@ -1088,87 +1100,196 @@ class AdminController extends Controller
         ]);
     }
 
+    // public function updateOtApproval(Request $request, $id) {
+
+    //     $punchRecord = PunchRecord::find($id);
+    //     $otapproval = OtApproval::find($id);
+
+    //     $clockout = $otapproval->clock_out_time;
+    //     $hourAndMinute = Carbon::parse($clockout)->format('H:i');
+        
+    //     $clockout = $hourAndMinute;
+    //     $shiftEnd = $otapproval->shift_end;
+
+    //     $clockoutTime = Carbon::parse($clockout);
+    //     $shiftEndTime = Carbon::parse($shiftEnd);
+
+    //     $minutesDifference = $clockoutTime->diffInMinutes($shiftEndTime);
+
+    //     // You can also get the hours and minutes separately if needed
+    //     // $hours = floor($minutesDifference / 60);
+    //     $totalHours = $minutesDifference / 60;
+
+    //     $totalHoursRounded = number_format($totalHours, 2);
+        
+    //     if ($request->remark == null) {
+
+    //         $punchRecord->ot_approval = 'Approved';
+    //         $otapproval->status = 'Approved';
+    //         $otapproval->ot_hour = $totalHoursRounded;
+    
+    //         // Retrieve the associated user
+    //         $user = User::where('id', $punchRecord->employee_id)->first();
+    
+    //         // Check if the user exists and has schedules
+    //         if ($user) {
+    //             $schedule = Schedule::where('employee_id', $user->id)
+    //                 ->whereDate('date', $punchRecord->created_at->toDateString())
+    //                 ->first();
+    
+    //             if ($schedule) {
+    //                 $shift = Shift::find($schedule->shift_id);
+
+    //                 if ($shift) {
+    //                     // Calculate the overtime hours based on the difference between created_at and shift end
+    //                     $shiftEndTime = Carbon::createFromFormat('H:i', $shift->shift_end);
+    //                     $createdTime = Carbon::parse($punchRecord->created_at);
+
+    //                     // Fetch the "Overtime Calculation" setting value
+    //                     $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
+    //                     // Get the "Overtime Calculation" setting value
+    //                     $overtimeCalculationMinutes = intval($overtimeCalculation);
+
+    //                     // Calculate the difference in minutes between created_at and shift end
+    //                     $minutesDifference = $createdTime->diffInMinutes($shiftEndTime);
+
+    //                     // Subtract the overtime calculation minutes
+    //                     $minutesDifference -= $overtimeCalculationMinutes;
+
+    //                     // Convert the minutes to hours
+    //                     $otHours = $minutesDifference / 60;
+
+    //                     // Round otHours to 2 decimal places
+    //                     $otHours = round($otHours, 2);
+    
+    //                     $punchRecord->ot_hours = $otHours;
+    //                 }
+    //             }
+    //         }
+    //         // dd($punchRecord);
+    //         $punchRecord->save();
+    //         $otapproval->save();
+    //     } else {
+    //         $punchRecord->ot_approval = 'Rejected';
+    //         $punchRecord->remarks = $request->remark;
+
+    //         $otapproval->status = 'Rejected';
+    //         $otapproval->remark = $request->remark;
+
+    //         $punchRecord->save();
+    //         $otapproval->save();
+    //     }
+    
+    //     Alert::success('Done', 'Successfully Updated');
+    //     return redirect()->route('otApproval');
+    // }
+
     public function updateOtApproval(Request $request, $id) {
 
         $punchRecord = PunchRecord::find($id);
         $otapproval = OtApproval::find($id);
 
-        $clockout = $otapproval->clock_out_time;
-        $hourAndMinute = Carbon::parse($clockout)->format('H:i');
+        // Check if the OtApproval record is found
+        if ($otapproval) {
+            // Retrieve the associated punch record where ot_approval is 'Pending'
+            $punchRecord = PunchRecord::whereDate('created_at', '=', $otapproval->date)
+                ->where('ot_approval', 'Pending')
+                ->first();
+
+            // Check if the associated punch record is found
+            if ($punchRecord) {
+                $clockout = $otapproval->clock_out_time;
+                $hourAndMinute = Carbon::parse($clockout)->format('H:i');
+                
+                $clockout = $hourAndMinute;
+                $shiftEnd = $otapproval->shift_end;
         
-        $clockout = $hourAndMinute;
-        $shiftEnd = $otapproval->shift_end;
-
-        $clockoutTime = Carbon::parse($clockout);
-        $shiftEndTime = Carbon::parse($shiftEnd);
-
-        $minutesDifference = $clockoutTime->diffInMinutes($shiftEndTime);
-
-        // You can also get the hours and minutes separately if needed
-        // $hours = floor($minutesDifference / 60);
-        $totalHours = $minutesDifference / 60;
-
-        $totalHoursRounded = number_format($totalHours, 2);
+                $clockoutTime = Carbon::parse($clockout);
+                $shiftEndTime = Carbon::parse($shiftEnd);
         
-        if ($request->remark == null) {
-            $punchRecord->ot_approval = 'Approved';
-            $otapproval->status = 'Approved';
-            $otapproval->ot_hour = $totalHoursRounded;
-    
-            // Retrieve the associated user
-            $user = User::where('id', $punchRecord->employee_id)->first();
-    
-            // Check if the user exists and has schedules
-            if ($user) {
-                $schedule = Schedule::where('employee_id', $user->id)
-                    ->whereDate('date', $punchRecord->created_at->toDateString())
-                    ->first();
-    
-                if ($schedule) {
-                    $shift = Shift::find($schedule->shift_id);
+                $minutesDifference = $clockoutTime->diffInMinutes($shiftEndTime);
+        
+                // You can also get the hours and minutes separately if needed
+                // $hours = floor($minutesDifference / 60);
+                $totalHours = $minutesDifference / 60;
+        
+                $totalHoursRounded = number_format($totalHours, 2);
+                
+                if ($request->remark == null) {
+        
+                    $punchRecord->ot_approval = 'Approved';
+                    $otapproval->status = 'Approved';
+                    $otapproval->ot_hour = $totalHoursRounded;
+            
+                    // Retrieve the associated user
+                    // $user = User::where('id', $punchRecord->employee_id)->first();
+            
+                    // // Check if the user exists and has schedules
+                    // if ($user) {
+                    //     $schedule = Schedule::where('employee_id', $user->id)
+                    //         ->whereDate('date', $punchRecord->created_at->toDateString())
+                    //         ->first();
+            
+                    //     if ($schedule) {
+                    //         $shift = Shift::find($schedule->shift_id);
+        
+                    //         if ($shift) {
+                    //             // Calculate the overtime hours based on the difference between created_at and shift end
+                    //             $shiftEndTime = Carbon::createFromFormat('H:i', $shift->shift_end);
+                    //             $createdTime = Carbon::parse($punchRecord->created_at);
+        
+                    //             // Fetch the "Overtime Calculation" setting value
+                    //             $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
+                    //             // Get the "Overtime Calculation" setting value
+                    //             $overtimeCalculationMinutes = intval($overtimeCalculation);
+        
+                    //             // Calculate the difference in minutes between created_at and shift end
+                    //             $minutesDifference = $createdTime->diffInMinutes($shiftEndTime);
+        
+                    //             // Subtract the overtime calculation minutes
+                    //             $minutesDifference -= $overtimeCalculationMinutes;
+        
+                    //             // Convert the minutes to hours
+                    //             $otHours = $minutesDifference / 60;
+        
+                    //             // Round otHours to 2 decimal places
+                    //             $otHours = round($otHours, 2);
+            
+                    //             $punchRecord->ot_hours = $otHours;
+                    //         }
+                    //     }
+                    // }
 
-                    if ($shift) {
-                        // Calculate the overtime hours based on the difference between created_at and shift end
-                        $shiftEndTime = Carbon::createFromFormat('H:i', $shift->shift_end);
-                        $createdTime = Carbon::parse($punchRecord->created_at);
 
-                        // Fetch the "Overtime Calculation" setting value
-                        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
-                        // Get the "Overtime Calculation" setting value
-                        $overtimeCalculationMinutes = intval($overtimeCalculation);
-
-                        // Calculate the difference in minutes between created_at and shift end
-                        $minutesDifference = $createdTime->diffInMinutes($shiftEndTime);
-
-                        // Subtract the overtime calculation minutes
-                        $minutesDifference -= $overtimeCalculationMinutes;
-
-                        // Convert the minutes to hours
-                        $otHours = $minutesDifference / 60;
-
-                        // Round otHours to 2 decimal places
-                        $otHours = round($otHours, 2);
-    
-                        $punchRecord->ot_hours = $otHours;
-                    }
+                    $punchRecord->save();
+                    $otapproval->save();
+                } else {
+                    $punchRecord->ot_approval = 'Rejected';
+                    $punchRecord->remarks = $request->remark;
+        
+                    $otapproval->status = 'Rejected';
+                    $otapproval->remark = $request->remark;
+        
+                    $punchRecord->save();
+                    $otapproval->save();
                 }
+            
+                Alert::success('Done', 'Successfully Updated');
+                return redirect()->route('otApproval');
+            } else {
+                // Handle the case where the associated punch record is not found
+                Alert::error('Error', 'Associated Punch Record not found.');
+                return redirect()->route('otApproval');
             }
-            // dd($punchRecord);
-            $punchRecord->save();
-            $otapproval->save();
+
+
         } else {
-            $punchRecord->ot_approval = 'Rejected';
-            $punchRecord->remarks = $request->remark;
-
-            $otapproval->status = 'Rejected';
-            $otapproval->remark = $request->remark;
-
-            $punchRecord->save();
-            $otapproval->save();
+            // Handle the case where the OtApproval record is not found
+            Alert::error('Error', 'OtApproval Record not found.');
+            return redirect()->route('otApproval');
         }
-    
-        Alert::success('Done', 'Successfully Updated');
-        return redirect()->route('otApproval');
+
+        
     }
   
     public function deleteOtApproval($id){

@@ -21,7 +21,7 @@
                                 <!-- End Date Picker -->
 
                                 <div class="col-md-4">
-                                    <div class="form-row" style="margin-right: 10px;">
+                                    <div class="form-row">
                                         <div class="col-12 text-right">
                                             <a href="{{route('createTask')}}" class="btn long">Create</a>
                                         </div>
@@ -53,7 +53,7 @@
                                 <tr>
                                     <th>Date</th>
                                     <th>Nickname</th>
-                                    <th>Task Name</th>
+                                    <th>Period</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>
                                     <th>Duty</th>
@@ -70,8 +70,8 @@
                                         <td>{{ Carbon\Carbon::parse($task->date)->format('d M Y') }}</td>
                                         <td>{{ $task->user->nickname }}</td>
                                         <td>{{ $task->task_name }}</td>
-                                        <td>{{ $task->start_time }}</td>
-                                        <td>{{ $task->end_time }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($task->start_time )->format('g:i A') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($task->end_time)->format('g:i A') }}</td>
                                         <td>{{ $task->duty->duty_name }}</td>
                                         <td>
                                             <a href="{{ route('editTask', ['id' => $task->id]) }}" class="details-btn">

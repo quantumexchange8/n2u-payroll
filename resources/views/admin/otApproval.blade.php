@@ -84,7 +84,7 @@
                                             $currentDate = now()->toDateString();
                                         @endphp
                                         @if (!empty($otapproval))
-                                            <tr class="otapproval-{{ $otapproval }}" data-date="{{ $recordDate }}">
+                                            <tr class="status-{{ $otapproval }}" data-date="{{ $recordDate }}">
                                                 <td>{{ $otapproval->employee_id }}</td>
                                                 <td>{{ $otapproval->user->full_name }}</td>
                                                 <td>{{ Carbon\Carbon::parse($otapproval->date)->format('d M Y') }}</td>
@@ -94,9 +94,10 @@
                                                 <td>
                                                     {{ $otapproval->ot_hour }}
                                                 </td>  
-                                                <td style="{{ $otapproval->status === 'Pending' ? 'color: orange; font-weight: bold;' : ($otapproval->status === 'Approved' ? 'color: #84f542; font-weight: bold;' : 'color: red; font-weight: bold;') }}">
+                                                {{-- <td style="{{ $otapproval->status === 'Pending' ? 'color: orange; font-weight: bold;' : ($otapproval->status === 'Approved' ? 'color: #84f542; font-weight: bold;' : 'color: red; font-weight: bold;') }}"> --}}
+                                                <td>
                                                     @if($otapproval->status == 'Pending')
-                                                        <button class="status-btn un_paid">
+                                                        <button class="status-btn on_hold">
                                                             {{ $otapproval->status }}
                                                         </button>
                                                     @elseif($otapproval->status == 'Rejected')
@@ -207,7 +208,7 @@
         const filterItems = document.querySelectorAll('.dropdown-item[data-status');
         
         // Output the filterItems to the console to check if the selection is correct
-        console.log(filterItems);
+        console.log('filter items:',filterItems);
 
         // Add a click event listener to each filter item
         filterItems.forEach(function(item) {
@@ -217,11 +218,11 @@
                 const tableRows = document.querySelectorAll('.dh-table tbody tr');
 
                 // Output the selected status to the console to check if it's correct
-                console.log(selectedStatus);
+                console.log('selected status:',selectedStatus);
 
                 // Iterate through table rows and hide/show based on the selected filter
                 tableRows.forEach(function(row) {
-                    const status = row.classList[0]; // Get the status class of the row
+                    const status = row.querySelector('.status-btn').textContent.trim(); // Get the status class of the row
                     if (selectedStatus === 'all' || status === selectedStatus) {
                         row.style.display = ''; // Show the row
                     } else {

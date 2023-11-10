@@ -18,7 +18,7 @@
                         <div class="form-element color-options">
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <label class="bold mb-2">Nickname</label>
+                                    <label class="font-14 bold mb-2">Nickname</label>
                                 </div>
                         
                                 @php
@@ -53,7 +53,7 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Shift</label>
                                     <select class="theme-input-style" id="shift_id" name="shift_id" autocomplete="off">
-
+                                        <option value="">Select Shift</option>
                                         @foreach ($shifts as $shift)
                                             <option value="{{ $shift->id }}">{{$shift->shift_name}} - {{ $shift->formatted_shift_time }}</option>  
                                         @endforeach
@@ -155,9 +155,9 @@
 
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-3">
-                                                    <label for="inputName" class="bold mb-2">Task</label>
+                                                    <label for="inputName" class="bold mb-2">Period</label>
                                                     <select class="theme-input-style" id="task_name" name="task_name" value="{{ old('task_name') }}">
-                                                        <option value="">Select Task</option>
+                                                        <option value="">Select Period</option>
                                                         <option value="Opening">Opening</option>
                                                         <option value="Lunch">Lunch</option>
                                                         <option value="Dinner">Dinner</option>

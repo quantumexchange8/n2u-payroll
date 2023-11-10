@@ -140,11 +140,11 @@
             <nav class="sidebar" data-trigger="scrollbar">
                 <!-- Sidebar Header -->
                 <div class="sidebar-header d-none d-lg-block">
-                <!-- Sidebar Toggle Pin Button -->
-                <div class="sidebar-toogle-pin">
-                    <i class="icofont-tack-pin"></i>
-                </div>
-                <!-- End Sidebar Toggle Pin Button -->
+                    <!-- Sidebar Toggle Pin Button -->
+                    {{-- <div class="sidebar-toogle-pin">
+                        <i class="icofont-tack-pin"></i>
+                    </div> --}}
+                    <!-- End Sidebar Toggle Pin Button -->
                 </div>
                 <!-- End Sidebar Header -->
 
@@ -161,63 +161,34 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{ route('viewEmployee') }}">
                                     <i class="icofont-worker"></i>
                                     <span class="link-title">Employee</span>
                                 </a>
-                            
-                                <!-- Sub Menu -->
-                                <ul class="nav sub-menu">
-                                    <li>
-                                        <a href="{{ route('viewEmployee') }}">View Employee</a>
-                                    </li>
-                                </ul>
-                                <!-- End Sub Menu -->
                             </li>
                             <li>
-                                <a href="#">
-                                    <i class="icofont-briefcase"></i>
-                                    <span class="link-title">Department & Position</span>
+                                <a href="{{ route('viewDepartment') }}">
+                                    <i class="icofont-building"></i>
+                                    <span class="link-title">Department</span>
                                 </a>
-                            
-                                <!-- Sub Menu -->
-                                <ul class="nav sub-menu">
-                                    <li>
-                                        <a href="{{ route('viewDepartment') }}">View Department</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewPosition') }}">View Position</a>
-                                    </li>
-                                </ul>
-                                <!-- End Sub Menu -->
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{ route('viewPosition') }}">
+                                    <i class="icofont-briefcase"></i>
+                                    <span class="link-title">Position</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('viewDuty') }}">
                                     <i class="icofont-files-stack"></i>
                                     <span class="link-title">Duty</span>
                                 </a>
-                            
-                                <!-- Sub Menu -->
-                                <ul class="nav sub-menu">
-                                    <li>
-                                        <a href="{{ route('viewDuty') }}">View Duty</a>
-                                    </li>
-                                </ul>
-                                <!-- End Sub Menu -->
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{ route('viewShift') }}">
                                     <i class="icofont-clock-time"></i>
                                     <span class="link-title">Shift</span>
                                 </a>
-                            
-                                <!-- Sub Menu -->
-                                <ul class="nav sub-menu">
-                                    <li>
-                                        <a href="{{ route('viewShift') }}">View Shift</a>
-                                    </li>
-                                </ul>
-                                <!-- End Sub Menu -->
                             </li>
                             <li>
                                 <a href="">
@@ -237,18 +208,10 @@
                                 <!-- End Sub Menu -->
                             </li>
                             <li>
-                                <a href="">
+                                <a href="{{ route('viewTask') }}">
                                     <i class="icofont-instrument"></i>
                                     <span class="link-title">Task</span>
                                 </a>
-
-                                <!-- Sub Menu -->
-                                <ul class="nav sub-menu">
-                                    <li>
-                                        <a href="{{ route('viewTask') }}">View Task</a>
-                                    </li>
-                                </ul>
-                                <!-- End Sub Menu -->
                             </li>
                             <li>
                                 <a href="{{ route('otApproval') }}">
