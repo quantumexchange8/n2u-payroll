@@ -634,7 +634,7 @@ class AdminController extends Controller
         foreach ($schedules as $schedule) {
             // Retrieve tasks related to the current schedule
             $tasks = Task::where('date', $schedule->date)
-                    ->with('duty')
+                    ->with('duty') // Eager load the duty relationship
                     ->get();
     
             // Attach the tasks to the schedule object
@@ -732,25 +732,33 @@ class AdminController extends Controller
         // dd($request->all());
     
         $data = $request->all();
-    
-        // Check if 'off_day' is set to 1
+
         if (isset($data['off_day']) && $data['off_day'] == 1) {
             // Perform actions for off_day being 1 (e.g., save to database)
             foreach ($data['selected_users'] as $userId) {
-                // Your logic for off_day being 1
-                $schedule = new Schedule();
-                $schedule->date = Carbon::parse($data['date_start'])->toDateString();
-                $schedule->employee_id = $userId;
-                $schedule->off_day = 1;
-                $schedule->shift_id = null;
-                $schedule->remarks = null;
-                $schedule->save();
+                $start = Carbon::parse($data['date_start']);
+                $end = Carbon::parse($data['date_end']);
+                
+                // Loop through dates and save schedule for each date
+                while ($start->lte($end)) {
+                    $schedule = new Schedule();
+                    $schedule->employee_id = $userId;
+                    $schedule->date = $start->toDateString();
+                    $schedule->off_day = 1;
+                    $schedule->shift_id = null;
+                    $schedule->remarks = null;
+                    $schedule->save();
+                    
+                    $start->addDay();
+                }
             }
     
             // Redirect to the schedule page
             Alert::success('Done', 'Successfully Inserted');
             return redirect()->route('schedule');
         }
+
+        $validationPassed = true;
 
         $validatedData = $request->validate([
             'date_start' => 'required|date',
@@ -779,6 +787,22 @@ class AdminController extends Controller
             }
     
             foreach ($dates as $date) {
+                // Check if a record already exists for the user and date
+                $existingSchedule = Schedule::where('employee_id', $userId)
+                                    ->where('date', $date)
+                                    ->first();
+
+                // if ($existingSchedule) {
+                //     // Handle the case where a record already exists (skip or take appropriate action)
+                //     continue; // Skip to the next iteration of the loop
+                // }
+
+                if ($existingSchedule) {
+                    $userNickname = User::find($userId)->nickname; // Assuming User is the model for your user table
+                    Alert::error('Error', 'Record for ' . $date . ' already exists for user ' . $userNickname);
+                    return redirect()->route('schedule');
+                }
+
                 $schedule = new Schedule();
                 $schedule->date = $date;
                 $schedule->employee_id = $userId;
@@ -786,7 +810,20 @@ class AdminController extends Controller
                 $schedule->shift_id = $validatedData['shift_id'];
                 $schedule->remarks = $validatedData['remarks'];
                 $schedule->save();
+
+                // Check if the save operation was successful
+                if (!$schedule->exists) {
+                    $validationPassed = false;
+                    break;
+                }
+
             }
+        }
+
+        // Display success alert
+        if ($validationPassed) {
+            Alert::success('Done', 'Successfully Inserted');
+            return redirect()->route('schedule');
         }
     
         // Check if 'group-a' is present in the request, indicating task entries
@@ -794,8 +831,8 @@ class AdminController extends Controller
             $this->addTask($request, $dates);
         }
     
-        Alert::success('Done', 'Successfully Inserted');
-        return redirect()->route('schedule');
+        // Alert::success('Done', 'Successfully Inserted');
+        // return redirect()->route('schedule');
     }
     
     public function editSchedule($id){

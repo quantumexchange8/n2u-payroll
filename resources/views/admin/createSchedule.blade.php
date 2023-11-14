@@ -230,3 +230,34 @@
 <!-- End Main Content -->
 
 @endsection
+
+{{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Set the initial count to 1 since one row is already displayed by default
+        var rowCounter = 1;
+
+        // Add click event to the "Add" button
+        $('.repeater-add-btn').on('click', function () {
+            // Increment the row counter
+            rowCounter++;
+
+            // Clone the first repeater item and append it to the repeater list
+            var clonedItem = $('[data-repeater-item]:first').clone();
+            $('[data-repeater-list="group-a"]').append(clonedItem);
+
+            // Show or hide the "Add" button based on the row counter
+            if (rowCounter >= 2) {
+                $('.repeater-add-btn').hide();
+            }
+
+            // Optional: You can add logic here to handle the maximum limit if needed
+            // For example, you can disable form submission after the limit is reached
+            if (rowCounter >= 3) {
+                // Disable form submission or show a message
+                // You may add your logic here based on the specific requirements
+            }
+        });
+    });
+</script> --}}
