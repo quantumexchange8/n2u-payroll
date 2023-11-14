@@ -631,6 +631,16 @@ class AdminController extends Controller
         $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
 
+        foreach ($schedules as $schedule) {
+            // Retrieve tasks related to the current schedule
+            $tasks = Task::where('date', $schedule->date)
+                    ->with('duty')
+                    ->get();
+    
+            // Attach the tasks to the schedule object
+            $schedule->tasks = $tasks;
+        }
+
         return view('admin.scheduleReport', compact('schedules', 'users', 'shifts'));
     }
 
