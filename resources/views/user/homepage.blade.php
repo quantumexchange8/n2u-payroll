@@ -42,7 +42,7 @@
             <div class="col-12">
               <div class="card mb-30">
                   <div class="card-body pt-30">
-                      <h4 class="font-20">Today</h4>
+                      <h4 class="font-20">Today's Shift</h4>
                   </div>
                   <div class="table-responsive">
                       <!-- Invoice List Table -->

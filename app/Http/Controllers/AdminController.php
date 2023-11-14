@@ -626,6 +626,14 @@ class AdminController extends Controller
         return view('admin.schedule', compact('schedules', 'users', 'shifts'));
     }
 
+    public function scheduleReport(){
+        $schedules = Schedule::orderBy('date', 'asc')->get();
+        $users = User::where('role', 'member')->with('position')->get();
+        $shifts = Shift::all();
+
+        return view('admin.scheduleReport', compact('schedules', 'users', 'shifts'));
+    }
+
     public function getSchedule(Request $request) {
         try {
             $date = $request->input('date');
@@ -811,10 +819,21 @@ class AdminController extends Controller
         $schedule = Schedule::find($id);
         if ($schedule) {
             $schedule->delete();
+            Alert::success('Done', 'Successfully Deleted');
             return response()->json(['message' => 'Schedule deleted successfully']);
         } else {
             return response()->json(['message' => 'Schedule not found'], 404);
         }
+    }
+
+    public function deleteSchedule2($id){
+
+        $schedule = Schedule::find($id);
+
+        $schedule->delete();
+
+        Alert::success('Done', 'Successfully Deleted');
+        return redirect()->route('scheduleReport');
     }
 
     public function viewTask(){

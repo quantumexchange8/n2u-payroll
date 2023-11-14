@@ -38,6 +38,15 @@
 </head>
 
 <body>
+
+    <style>
+        .logo-align{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+
     @include('sweetalert::alert')
     <!-- Offcanval Overlay -->
     <div class="offcanvas-overlay"></div>
@@ -48,9 +57,9 @@
         <!-- Header -->
         <header class="header white-bg fixed-top d-flex align-content-center flex-wrap">
             <!-- Logo -->
-            <div class="logo">
+            <div class="logo logo-align" >
 
-                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="../../assets/img/logo-03.png"  alt="" style="width: 10px; margin-left: 50px;"></a>
+                <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-03.png"  alt=""></a>
 
                 <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="../../assets/img/logo-03.png"  alt="" style="width: auto;"></a>
 
@@ -203,6 +212,9 @@
                                     </li>
                                     <li>
                                         <a href="{{ route('createSchedule') }}">Create Schedule</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('scheduleReport') }}">Schedule Summary</a>
                                     </li>
                                 </ul>
                                 <!-- End Sub Menu -->

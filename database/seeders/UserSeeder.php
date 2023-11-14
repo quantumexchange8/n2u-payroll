@@ -17,10 +17,10 @@ class UserSeeder extends Seeder
         //
         User::create([
             'employee_id' => 'Admin123',
-            'full_name' => 'admin',
-            'address' => 'Test',
+            'full_name' => 'Admin',
+            'nickname' => 'Admin',
             'ic_number' => '123',
-            'address' => '123',
+            'address' => 'Test123',
             'email' => 'admin@admin.com',
             'working_hour' => '12',
             'employee_type' => 'admin',
