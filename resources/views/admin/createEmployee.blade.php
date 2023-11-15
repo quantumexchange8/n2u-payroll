@@ -254,7 +254,7 @@
                                     <input type="file" class="theme-input-style" id="passport_size_photo" name="passport_size_photo" style="background: #ffffff;">
                                 </div>
                                 <!-- End Form Group -->
-
+     
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">IC Photo</label>

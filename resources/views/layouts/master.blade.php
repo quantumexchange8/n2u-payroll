@@ -327,8 +327,6 @@
     </div>
     <!-- End wrapper -->
 
-
-
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
     <script src="../../assets/js/jquery.min.js"></script>
     <script src="../../assets/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -342,11 +340,10 @@
     <script src="../../assets/plugins/fullcalendar/fullcalendar.min.js"></script>
     <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
 
-       <!-- ======= BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
-   <script src="../../assets/plugins/jquery-repeater/repeater.min.js"></script>
-   <script src="../../assets/plugins/jquery-repeater/custom-repeater.js"></script>
-   <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
-
+    <!-- ======= BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
+    <script src="../../assets/plugins/jquery-repeater/repeater.min.js"></script>
+    <script src="../../assets/plugins/jquery-repeater/custom-repeater.js"></script>
+    <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
 
     @if(Auth::check())
         @if(Auth::user()->role === 'admin')

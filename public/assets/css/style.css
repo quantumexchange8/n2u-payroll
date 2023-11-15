@@ -5708,7 +5708,7 @@ table.invoice-list.style-two td.custom-radio:nth-child(5) [type="radio"]:not(:ch
   display: none;
 }
 
-@media only screen and (max-width: 1399px) {
+@media only screen and (max-width: 768px) {
   .header .logo {
     -ms-flex-preferred-size: 90px;
     flex-basis: 90px;
@@ -9536,7 +9536,7 @@ body.sidebar-folded .main-content {
 }
 
 .dropzone.style--two {
-  min-height: 345px;
+  min-height: 15px;
   width: 100%;
   max-width: 100%;
   border-color: #CAC6FB;

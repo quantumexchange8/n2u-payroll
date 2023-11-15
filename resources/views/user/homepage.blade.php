@@ -1,5 +1,6 @@
 @extends('layouts.master')
 @section('content')
+
 {{-- Sweet Alert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
@@ -238,6 +239,9 @@
     const statusInput = document.getElementById('statusInput');
     statusInput.value = status;
 
+     // Disable the button.
+    //  clockButton.disabled = true;
+
     // Use try-catch to handle form submission errors.
     try {
       const response = await fetch('{{ route('clock_in') }}', {
@@ -268,6 +272,7 @@
           text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
         }).then((result) => {
             if (result.isConfirmed) {
+
               // Refresh the page
               location.reload(); // This will reload the current page
             }
@@ -284,49 +289,64 @@
     } catch (error) {
       console.error('Error:', error);
     }
+
+    // Set a timeout to enable the button after 5 minutes.
+    // setTimeout(function () {
+    //     clockButton.disabled = false;
+    // }, 60000); // 300,000 milliseconds = 5 minutes
+
   });
 
-  // $(document).ready(function() {
-  //       // Function to set the disabled state based on the status
-  //       function setButtonState() {
-  //           var status = $('#statusInput').val();
 
-  //           if (status == 1) {
-  //               // Clock In is allowed
-  //               $('#clockButton').prop('disabled', false);
-  //           } else {
-  //               // Clock Out is not allowed, disable for 5 minutes
-  //               $('#clockButton').prop('disabled', true);
-
-  //               // Enable the button after 5 minutes (300,000 milliseconds)
-  //               setTimeout(function() {
-  //                   $('#clockButton').prop('disabled', false);
-  //               }, 300000);
-  //           }
-  //       }
-
-  //       // Call the function to set the initial button state
-  //       setButtonState();
-
-  //       // Add an event listener for the button click
-  //       $('#clockButton').on('click', function() {
-  //           // Update the status to "Clock Out" (status 2) and send it to the server
-  //           // $('#statusInput').val(2);
-  //           // $('#clockForm').submit();
-
-  //           // Disable the button and update the server
-  //           $('#clockButton').prop('disabled', true);
-
-  //           // Enable the button after 5 minutes
-  //           setTimeout(function() {
-  //               $('#clockButton').prop('disabled', false);
-  //               // Update the status to "Clock In" (status 1) and send it to the server
-  //               // $('#statusInput').val(1);
-  //               // $('#clockForm').submit();
-  //           }, 300000);
-  //       });
-  //   });
+  
 </script>
+
+
+{{-- <script>
+  $(document).ready(function() {
+        // Function to set the disabled state based on the status
+        function setButtonState() {
+            var status = $('#statusInput').val();
+            console.log('Initial Status:', status);
+
+            if (status == 1) {
+                // Clock In is allowed
+                $('#clockButton').prop('disabled', false);
+            } else {
+                // Clock Out is not allowed, disable for 5 minutes
+                $('#clockButton').prop('disabled', true);
+
+                // Enable the button after 5 minutes (300,000 milliseconds)
+                setTimeout(function() {
+                    $('#clockButton').prop('disabled', false);
+                    console.log('Button enabled.');
+                }, 300000);
+            }
+        }
+
+        // Call the function to set the initial button state
+        setButtonState();
+
+        // Add an event listener for the button click
+        $('#clockButton').on('click', function() {
+            // Update the status to "Clock Out" (status 2) and send it to the server
+            // $('#statusInput').val(2);
+            // $('#clockForm').submit();
+
+            // Disable the button and update the server
+            $('#clockButton').prop('disabled', true);
+
+            // Enable the button after 5 minutes
+            setTimeout(function() {
+                $('#clockButton').prop('disabled', false);
+                // Update the status to "Clock In" (status 1) and send it to the server
+                // $('#statusInput').val(1);
+                // $('#clockForm').submit();
+            }, 300000);
+        });
+  });
+</script> --}}
+
 
 {{-- <script>
   $(document).ready(function() {

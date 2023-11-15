@@ -835,14 +835,33 @@ class AdminController extends Controller
         // return redirect()->route('schedule');
     }
     
-    public function editSchedule($id){
-
+    public function editSchedule($id)
+    {
         $schedule = Schedule::find($id);
         $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
-
-        return view('admin.editSchedule', compact('schedule', 'users', 'shifts'));
+    
+        // Retrieve tasks and duties based on the schedule's employee ID and date
+        $tasksAndDuties = $this->getTasksAndDuties($schedule->employee_id, $schedule->date);
+    
+        return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'tasksAndDuties'));
     }
+    
+    // Function to get tasks and duties based on employee ID and date
+    private function getTasksAndDuties($employeeId, $date)
+    {
+        // Use the query to get tasks and duties
+        $tasksAndDuties = DB::table('tasks')
+            ->join('schedules', 'tasks.date', '=', 'schedules.date')
+            ->join('duties', 'tasks.duty_id', '=', 'duties.id')
+            ->select('tasks.task_name', 'tasks.start_time', 'tasks.end_time', 'schedules.date', 'duties.duty_name')
+            ->where('schedules.employee_id', $employeeId)
+            ->where('schedules.date', $date)
+            ->get();
+    
+        return $tasksAndDuties;
+    }
+    
 
     public function updateSchedule(Request $request, $id){
 
