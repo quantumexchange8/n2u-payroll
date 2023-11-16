@@ -26,4 +26,8 @@ class Task extends Model
     public function duty(){
         return $this->belongsTo(Duty::class, 'duty_id', 'id');
     }
+
+    public function schedule(){
+        return $this->belongsTo(Schedule::class, 'date', 'date');
+    }
 }

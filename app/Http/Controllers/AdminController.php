@@ -728,6 +728,7 @@ class AdminController extends Controller
     //     }
     // }
     
+
     public function addSchedule(Request $request){
         // dd($request->all());
     
@@ -827,7 +828,7 @@ class AdminController extends Controller
         }
     
         // Check if 'group-a' is present in the request, indicating task entries
-        if ($request->has('group-a')) {
+        if ($request->has('group-a') && !empty($request->input('group-a'))) {
             $this->addTask($request, $dates);
         }
     
@@ -835,16 +836,15 @@ class AdminController extends Controller
         // return redirect()->route('schedule');
     }
     
-    public function editSchedule($id)
-    {
+    public function editSchedule($id){
         $schedule = Schedule::find($id);
         $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
-    
+        $duties = Duty::all();
+        // dd($duties);
         // Retrieve tasks and duties based on the schedule's employee ID and date
         $tasksAndDuties = $this->getTasksAndDuties($schedule->employee_id, $schedule->date);
-    
-        return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'tasksAndDuties'));
+        return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'tasksAndDuties', 'duties'));
     }
     
     // Function to get tasks and duties based on employee ID and date
@@ -854,18 +854,20 @@ class AdminController extends Controller
         $tasksAndDuties = DB::table('tasks')
             ->join('schedules', 'tasks.date', '=', 'schedules.date')
             ->join('duties', 'tasks.duty_id', '=', 'duties.id')
-            ->select('tasks.task_name', 'tasks.start_time', 'tasks.end_time', 'schedules.date', 'duties.duty_name')
+            ->select('tasks.id','tasks.task_name', 'tasks.start_time', 'tasks.end_time', 'schedules.date', 'duties.duty_name')
             ->where('schedules.employee_id', $employeeId)
             ->where('schedules.date', $date)
             ->get();
-    
         return $tasksAndDuties;
     }
     
 
     public function updateSchedule(Request $request, $id){
-
-        $data = Schedule::find($id);
+        // dd($request->all());
+        // $data = Schedule::find($id);
+        
+        $data = Schedule::with('tasks') // Load the tasks relationship
+        ->find($id);
 
         $data->update([
             'employee_id' => $request->input('employee_id'),
@@ -875,6 +877,9 @@ class AdminController extends Controller
             // 'off_day' => $request->off_day,
         ]);
 
+        foreach ($data->tasks as $task) {
+            $this->updateTask($request, $task->id);
+        }
 
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('schedule');
@@ -978,8 +983,7 @@ class AdminController extends Controller
         // return response()->json(['status' => 'success', 'message' => 'Successfully Inserted.']);
 
     }
-    
-    
+      
     public function editTask($id){
         $task = Task::find($id);
         $users = User::all();
@@ -1026,6 +1030,7 @@ class AdminController extends Controller
 
         //Update the user's data based on the form input
         $data->update([
+            'task_name' => $request->input('task_name'),
             'employee_id' => $request->input('employee_id'),
             'date' => $request->input('date'),
             'start_time' => $request->input('start_time'),
