@@ -16,9 +16,9 @@ return new class extends Migration
             $table->date('date');
             $table->string('employee_id');
             $table->string('task_name');
-            $table->string('duty_id');
-            $table->string('start_time');
-            $table->string('end_time');
+            $table->string('duty_id')->nullable();
+            $table->string('start_time')->nullable();
+            $table->string('end_time')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

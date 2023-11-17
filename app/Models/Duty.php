@@ -14,8 +14,5 @@ class Duty extends Model
         'duty_name'
     ];
 
-    // public function duty(){
-    //     return $this->belongsTo(Duty::class, 'duty_id');
-    // }
 
 }
