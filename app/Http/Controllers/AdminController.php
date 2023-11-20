@@ -785,12 +785,13 @@ class AdminController extends Controller
         // dd($duties);
         // Retrieve tasks and duties based on the schedule's employee ID and date
         $tasksAndDuties = $this->getTasksAndDuties($schedule->employee_id, $schedule->date);
+
+        // dd($tasksAndDuties);
         return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'tasksAndDuties', 'duties'));
     }
     
     // Function to get tasks and duties based on employee ID and date
-    private function getTasksAndDuties($employeeId, $date)
-    {
+    private function getTasksAndDuties($employeeId, $date){
         // Use the query to get tasks and duties
         $tasksAndDuties = DB::table('tasks')
             ->join('schedules', 'tasks.date', '=', 'schedules.date')
@@ -803,29 +804,94 @@ class AdminController extends Controller
     }
     
 
-    public function updateSchedule(Request $request, $id){
-        // dd($request->all());
-        // $data = Schedule::find($id);
+    // public function updateSchedule(Request $request, $id){
+    //     // dd($request->all());
+    //     // $data = Schedule::find($id);
         
-        $data = Schedule::with('tasks') // Load the tasks relationship
-        ->find($id);
+    //     $data = Schedule::with('tasks') // Load the tasks relationship
+    //     ->find($id);
 
-        $data->update([
-            'employee_id' => $request->input('employee_id'),
-            'shift_id' => $request->input('shift_id'),
-            'date' => $request->input('date'),
-            'remarks' =>$request->input('remarks'),
-            // 'off_day' => $request->off_day,
+    //     $data->update([
+    //         'employee_id' => $request->input('employee_id'),
+    //         'shift_id' => $request->input('shift_id'),
+    //         'date' => $request->input('date'),
+    //         'remarks' =>$request->input('remarks'),
+    //         // 'off_day' => $request->off_day,
+    //     ]);
+
+    //     foreach ($data->tasks as $task) {
+    //         $this->updateTask($request, $task->id);
+    //     }
+
+    //     Alert::success('Done', 'Successfully Updated');
+    //     return redirect()->route('schedule');
+    // }
+
+    public function updateSchedule(Request $request, $id){
+
+        // Validate the request data
+        $request->validate([
+            // Validation rules for your form fields
         ]);
+    
+        // Find the schedule by ID
+        $schedule = Schedule::find($id);
+    
+        // Update schedule details
+        $schedule->employee_id = $request->input('employee_id');
+        $schedule->date = $request->input('date');
+        $schedule->shift_id = $request->input('shift_id');
+        $schedule->remarks = $request->input('remarks');
+    
+        // Save the updated schedule
+        $schedule->save();
+    
+        // Check if there are tasks and duties submitted in the request
+        $tasksAndDuties = $request->input('group-a', []);
+    
+        // If there are tasks and duties, update or insert them into the tasks table
+        if (!empty($tasksAndDuties)) {
+            foreach ($tasksAndDuties as $taskData) {
+                // Check if a task exists with the given conditions
+                $existingTask = Task::where([
+                    'date' => $schedule->date,
+                    'employee_id' => $schedule->employee_id,
+                    'task_name' => $taskData['task_name'],
+                ])->first();
+    
 
-        foreach ($data->tasks as $task) {
-            $this->updateTask($request, $task->id);
+                if ($existingTask) {
+                    // Print debug information
+                    // dd('Task exists. Update it:', $existingTask->toArray());
+    
+                    // Update existing task
+                    $existingTask->update([
+                        'start_time' => $taskData['start_time'],
+                        'end_time' => $taskData['end_time'],
+                        'duty_id' => $taskData['duty_id'],
+                    ]);
+                } else {
+                    // Find or create a task based on date, employee_id, and task_name
+                    $task = Task::Create(
+                        [
+                            'date' => $schedule->date,
+                            'employee_id' => $schedule->employee_id,
+                            'task_name' => $taskData['task_name'],
+                            'start_time' => $taskData['start_time'],
+                            'end_time' => $taskData['end_time'],
+                            'duty_id' => $taskData['duty_id'],
+                        ]
+                    );
+                }
+            }
         }
-
+    
+        // Redirect with success message
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('schedule');
     }
-
+    
+    
     public function deleteSchedule($id){
 
         $schedule = Schedule::find($id);
@@ -938,7 +1004,6 @@ class AdminController extends Controller
     }
 
     public function updateTask(Request $request, $id){
-
         // Define validation rules
         $rules = [
             'employee_id' => 'required',
@@ -983,6 +1048,67 @@ class AdminController extends Controller
         return redirect()->route('viewTask');
     }
 
+    // public function updateTask(Request $request, $id){
+
+    //     // Define validation rules
+    //     $rules = [
+    //         'employee_id' => 'required',
+    //         'date' => 'required',
+    //         'start_time' => 'required',
+    //         'end_time' => 'required',
+    //         'duty_id' => 'required',
+    //     ];
+    
+    //     // Define custom error messages (optional)
+    //     $messages = [
+    //         'employee_id.required' => 'Nickname is required.',
+    //         'date.required' => 'Date is required.',
+    //         'start_time.required' => 'Start Time is required.',
+    //         'end_time.required' => 'End Time is required.',
+    //         'duty_id.required' => 'Duty Name is required.',
+    //     ];
+    
+    //     // Validate the request data
+    //     $validator = Validator::make($request->all(), $rules, $messages);
+    
+    //     if ($validator->fails()) {
+    //         return redirect()
+    //             ->back()
+    //             ->withErrors($validator)
+    //             ->withInput();
+    //     }
+    
+    //     // Find the task by ID
+    //     $task = Task::find($id);
+    
+    //     if ($task) {
+    //         // Update existing task
+    //         $task->update([
+    //             'task_name' => $request->input('task_name'),
+    //             'employee_id' => $request->input('employee_id'),
+    //             'date' => $request->input('date'),
+    //             'start_time' => $request->input('start_time'),
+    //             'end_time' => $request->input('end_time'),
+    //             'duty_id' => $request->input('duty_id'),
+    //         ]);
+    //     } else {
+    //         // Insert new task
+    //         $newTask = new Task([
+    //             'task_name' => $request->input('task_name'),
+    //             'employee_id' => $request->input('employee_id'),
+    //             'date' => $request->input('date'),
+    //             'start_time' => $request->input('start_time'),
+    //             'end_time' => $request->input('end_time'),
+    //             'duty_id' => $request->input('duty_id'),
+    //         ]);
+    
+    //         $newTask->save();
+    //     }
+    
+    //     Alert::success('Done', 'Successfully Updated');
+    //     return redirect()->route('viewTask');
+    // }
+    
     public function deleteTask($id){
 
         $task = Task::find($id);

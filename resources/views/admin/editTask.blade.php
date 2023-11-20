@@ -44,15 +44,15 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Duty</label>
-                                    <select class="theme-input-style" id="duty_id" name="duty_id" autocomplete="off">
-                                        @foreach ($duties as $duty)
-                                            <option value="{{ $duty->id }}" {{ $task->duty->id === $duty->id ? 'selected' : '' }}>
-                                                {{ $duty->duty_name }}
-                                            </option>  
-                                        @endforeach
+                                    <label class="font-14 bold mb-2">Period</label>
+                                    <label for="inputName" class="bold mb-2">Task</label>
+                                    <select class="theme-input-style" id="task_name" name="task_name" value="{{ old('task_name') }}">
+                                        <option value="">Select Task</option>
+                                        <option value="Opening" {{ $task->task_name === 'Opening' ? 'selected' : '' }}>Opening</option>
+                                        <option value="Lunch" {{ $task->task_name === 'Lunch' ? 'selected' : '' }}>Lunch</option>
+                                        <option value="Dinner" {{ $task->task_name === 'Dinner' ? 'selected' : '' }}>Dinner</option>
                                     </select>
-                                    @error('duty_id')
+                                    @error('task_name')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -81,6 +81,22 @@
                                     @enderror
                                 </div>
                                 <!-- End Form Group --> 
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Duty</label>
+                                    <select class="theme-input-style" id="duty_id" name="duty_id" autocomplete="off">
+                                        @foreach ($duties as $duty)
+                                            <option value="{{ $duty->id }}" {{ $task->duty->id === $duty->id ? 'selected' : '' }}>
+                                                {{ $duty->duty_name }}
+                                            </option>  
+                                        @endforeach
+                                    </select>
+                                    @error('duty_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <!-- End Form Group -->
                             </div>
                         </div>
 

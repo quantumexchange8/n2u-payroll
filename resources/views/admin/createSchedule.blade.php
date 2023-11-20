@@ -1,6 +1,9 @@
 @extends('layouts.master')
 @section('content')
 
+<!-- Include SweetAlert library from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <!-- Main Content -->
 <div class="main-content">
     <div class="container-fluid">
@@ -169,14 +172,14 @@
                                                 <!-- End Form Group -->
 
                                                 <!-- Form Group -->
-                                                <div class="form-group col-lg-3">
+                                                <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">Start</label>
                                                     <input type="time" class="form-control" id="start_time" name="start_time">
                                                 </div>
                                                 <!-- End Form Group -->
 
                                                 <!-- Form Group -->
-                                                <div class="form-group col-lg-3">
+                                                <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">End</label>
                                                     <input type="time" class="form-control" id="end_time" name="end_time">
                                                 </div>
@@ -196,6 +199,13 @@
                                                     @enderror
                                                 </div>
                                                 <!-- End Form Group -->
+
+                                                <!-- Repeater Remove Btn -->
+                                                <div class="repeater-remove-btn col-lg-1">
+                                                    <button data-repeater-delete class="remove-btn">
+                                                        <img src="../../assets/img/svg/remove.svg" alt="" class="svg">
+                                                    </button>
+                                                </div>
 
                                             </div>
                                             <hr />
@@ -231,33 +241,5 @@
 
 @endsection
 
-{{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+ {{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> --}}
 
-<script>
-    $(document).ready(function () {
-        // Set the initial count to 1 since one row is already displayed by default
-        var rowCounter = 1;
-
-        // Add click event to the "Add" button
-        $('.repeater-add-btn').on('click', function () {
-            // Increment the row counter
-            rowCounter++;
-
-            // Clone the first repeater item and append it to the repeater list
-            var clonedItem = $('[data-repeater-item]:first').clone();
-            $('[data-repeater-list="group-a"]').append(clonedItem);
-
-            // Show or hide the "Add" button based on the row counter
-            if (rowCounter >= 2) {
-                $('.repeater-add-btn').hide();
-            }
-
-            // Optional: You can add logic here to handle the maximum limit if needed
-            // For example, you can disable form submission after the limit is reached
-            if (rowCounter >= 3) {
-                // Disable form submission or show a message
-                // You may add your logic here based on the specific requirements
-            }
-        });
-    });
-</script> --}}

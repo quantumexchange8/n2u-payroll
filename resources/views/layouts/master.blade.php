@@ -34,6 +34,9 @@
     <link rel="stylesheet" href="../../assets/css/style.css">
     <!-- ======= END MAIN STYLES ======= -->
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.3/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.3/dist/sweetalert2.all.min.js"></script>
+
     @laravelPWA
 </head>
 
@@ -344,6 +347,8 @@
     <script src="../../assets/plugins/jquery-repeater/repeater.min.js"></script>
     <script src="../../assets/plugins/jquery-repeater/custom-repeater.js"></script>
     <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
+
+    
 
     @if(Auth::check())
         @if(Auth::user()->role === 'admin')
