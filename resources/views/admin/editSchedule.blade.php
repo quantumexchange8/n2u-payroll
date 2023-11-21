@@ -83,13 +83,14 @@
                                     <div data-repeater-list="group-a">
                                         @forelse ($tasksAndDuties ?? [] as $task)
                                             <!-- Repeater Items -->
-                                            <div data-repeater-item>
+                                            <div data-repeater-item data-task-id="{{ $task->id }}">
                                                 <!-- Repeater Content -->
                                                 <div class="item-content align-items-center row">
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputName" class="bold mb-2">Period</label>
                                                         <select class="theme-input-style" name="task_name" required>
+                                                            <option value="">Select Period</option>
                                                             <option value="Opening" {{ $task->task_name === 'Opening' ? 'selected' : '' }}>Opening</option>
                                                             <option value="Lunch" {{ $task->task_name === 'Lunch' ? 'selected' : '' }}>Lunch</option>
                                                             <option value="Dinner" {{ $task->task_name === 'Dinner' ? 'selected' : '' }}>Dinner</option>
@@ -100,13 +101,13 @@
                                                     </div>
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
-                                                    <div class="form-group col-lg-3">
+                                                    <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">Start</label>
                                                         <input type="time" class="form-control" name="start_time" value="{{ $task->start_time }}">
                                                     </div>
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
-                                                    <div class="form-group col-lg-3">
+                                                    <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">End</label>
                                                         <input type="time" class="form-control" name="end_time" value="{{ $task->end_time }}">
                                                     </div>
@@ -115,6 +116,7 @@
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputCompany" class="bold mb-2">Duty</label>
                                                         <select class="theme-input-style" name="duty_id" required>
+                                                            <option value="">Select Duty</option>
                                                             @foreach($duties as $duty)
                                                                 <option value="{{ $duty->id }}" {{ $task->duty_name === $duty->duty_name ? 'selected' : '' }}>
                                                                     {{ $duty->duty_name }}
@@ -126,6 +128,13 @@
                                                         @enderror
                                                     </div>
                                                     <!-- End Form Group -->
+
+                                                    <!-- Repeater Remove Btn -->
+                                                    <div class="repeater-remove-btn col-lg-1">
+                                                        <button data-repeater-delete class="remove-btn" data-task-id="{{ $task->id }}">
+                                                            <img src="../../assets/img/svg/remove.svg" alt="" class="svg">
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <hr />
                                             </div>
@@ -149,13 +158,13 @@
                                                     </div>
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
-                                                    <div class="form-group col-lg-3">
+                                                    <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">Start</label>
                                                         <input type="time" class="form-control" name="start_time" value="">
                                                     </div>
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
-                                                    <div class="form-group col-lg-3">
+                                                    <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">End</label>
                                                         <input type="time" class="form-control" name="end_time" value="">
                                                     </div>
@@ -173,6 +182,14 @@
                                                         @enderror
                                                     </div>
                                                     <!-- End Form Group -->
+
+                                                    <!-- Repeater Remove Btn -->
+                                                    <div class="repeater-remove-btn col-lg-1">
+                                                        <button data-repeater-delete class="remove-btn">
+                                                            <img src="../../assets/img/svg/remove.svg" alt="" class="svg">
+                                                        </button>
+                                                    </div>
+
                                                 </div>
                                                 <hr />
                                             </div>
@@ -182,9 +199,7 @@
                                     <button data-repeater-create type="button" class="repeater-add-btn btn-circle"> 
                                         <img src="../../assets/img/svg/plus_white.svg" alt="" class="svg">    
                                     </button>
-                                </div>
-                                
-                                
+                                </div>                          
                                                            
                                 <!-- End Form Element -->
                             </div>
@@ -241,3 +256,40 @@
     });
 </script> --}}
 
+<!-- Include jQuery (you can include it from a CDN) -->
+{{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    // Wait for the document to be ready
+    $(document).ready(function () {
+        // Handle click event on the remove button
+        $('[data-repeater-list="group-a"]').on('click', '[data-repeater-delete]', function () {
+            // Get the task ID from the data attribute
+            var taskId = $(this).data('task-id');
+            
+            // Confirm deletion
+            if (confirm("Are you sure you want to delete this task?")) {
+                // Send an AJAX request to delete the task
+                $.ajax({
+                    url: '/admin/deleteTask/' + taskId,
+                    type: 'DELETE',
+                    success: function (data) {
+                        // Remove the repeater item on successful deletion
+                        $('[data-task-id="' + taskId + '"]').remove();
+                        // You can add additional logic here based on the server response
+                        alert('Task deleted successfully');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                        alert('Failed to delete task. Please try again.');
+                    }
+                });
+            }
+        });
+    });
+</script> --}}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    var csrfToken = "{{ csrf_token() }}";
+</script>

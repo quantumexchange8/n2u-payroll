@@ -14,6 +14,7 @@ use App\Models\Task;
 use App\Models\User;
 use App\Models\OtApproval;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
@@ -782,11 +783,10 @@ class AdminController extends Controller
         $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
         $duties = Duty::all();
-        // dd($duties);
+
         // Retrieve tasks and duties based on the schedule's employee ID and date
         $tasksAndDuties = $this->getTasksAndDuties($schedule->employee_id, $schedule->date);
 
-        // dd($tasksAndDuties);
         return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'tasksAndDuties', 'duties'));
     }
     
@@ -799,7 +799,10 @@ class AdminController extends Controller
             ->select('tasks.id','tasks.task_name', 'tasks.start_time', 'tasks.end_time', 'schedules.date', 'duties.duty_name')
             ->where('schedules.employee_id', $employeeId)
             ->where('schedules.date', $date)
+            ->whereNull('tasks.deleted_at')
             ->get();
+
+            // dd($tasksAndDuties);
         return $tasksAndDuties;
     }
     
@@ -828,6 +831,8 @@ class AdminController extends Controller
     // }
 
     public function updateSchedule(Request $request, $id){
+
+        // dd($request->all());
 
         // Validate the request data
         $request->validate([
@@ -1113,10 +1118,16 @@ class AdminController extends Controller
 
         $task = Task::find($id);
 
-        $task->delete(); // Soft delete the employee
+        if (!$task) {
+            return response()->json(['message' => 'Task not found'], 404);
+        }
+    
+        $task->delete();
+    
+        return response()->json(['message' => 'Task deleted successfully']);
 
-        Alert::success('Done', 'Successfully Deleted');
-        return redirect()->route('viewTask');
+        // Alert::success('Done', 'Successfully Deleted');
+        // return redirect()->route('viewTask');
     }
 
     public function viewSetting(){

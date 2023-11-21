@@ -108,7 +108,7 @@
 
                                         }
                                     @endphp
-                                    <tr data-date="{{ \Carbon\Carbon::parse($shift->date)->format('Y-m-d') }}" data-full-name="{{ $employeeName }}">
+                                    <tr data-date="{{ \Carbon\Carbon::parse($shift->date ?? null )->format('Y-m-d') }}" data-full-name="{{ $employeeName }}">
                                         <td>
                                             @if ($shift)
                                                 {{ \Carbon\Carbon::parse($shift->date)->format('d M Y') }}
