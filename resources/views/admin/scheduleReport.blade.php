@@ -65,7 +65,7 @@
 
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
-                        <table class="text-nowrap hoverable dh-table">
+                        <table class="text-nowrap table-bordered dh-table">
                             <thead>
                                 <tr>   
                                     <th>Date</th>

@@ -60,7 +60,7 @@
        
                         <div class="table-responsive">
                             <!-- Attendance Table -->
-                            <table class="text-nowrap hoverable dh-table">
+                            <table class="text-nowrap table-bordered dh-table">
                                 <thead>
                                     <tr>
                                         <th>Employee ID</th>
