@@ -14,21 +14,22 @@ class LoginController extends Controller
 {
     //
 
-    public function login()
-    {
-        return view('auth.login');
+    public function login(){
+        $users = User::where('role', 'member')->with('position')->get();
+        return view('auth.login', compact('users'));
     }
 
-    public function login_post(Request $request)
-    {
+    public function adminLogin(){
+        return view('auth.adminLogin');
+    }
 
-        // dd($request->all());
+    public function login_post(Request $request){
 
         $validator = Validator::make($request->all(), [
-            'e_id' => 'required',
+            'employee_id' => 'required',
             'password' => 'required',
         ], [
-            'e_id.required' => 'Employee ID is required.',
+            'employee_id.required' => 'Employee ID is required.',
             'password.required' => 'Password is required.',
         ]);
     
@@ -41,7 +42,7 @@ class LoginController extends Controller
     
         // Attempt to authenticate the user
         $credentials = [
-            'employee_id' => $request->input('e_id'),
+            'employee_id' => $request->input('employee_id'),
             'password' => $request->input('password'),
         ];
     
@@ -63,15 +64,11 @@ class LoginController extends Controller
         }
     }
 
-    public function register()
-    {
+    public function register(){
         return view('auth.register');
     }
 
-    public function register_post(Request $request)
-    {
-
-        // dd($request->all());
+    public function register_post(Request $request){
         
         $user = User::create([
             'name' => $request->f_name,
@@ -83,15 +80,12 @@ class LoginController extends Controller
         return redirect('login');
     }
 
-    protected function authenticated(Request $request, $user)
-    {
+    protected function authenticated(Request $request, $user){
         return redirect()->to('dashboard');
     }
 
-    public function logout()
-    {
+    public function logout(){
         Session::flush();
-
         Auth::logout();
 
         return redirect('login');

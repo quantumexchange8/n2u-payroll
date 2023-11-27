@@ -55,13 +55,7 @@
                             <!-- Form Group -->
                             <div class="form-group mb-20">
                                 <label for="e_id" class="mb-2 font-14 bold black">Employee ID</label>
-                                {{-- <input type="string" id="employee_id" name="employee_id" class="theme-input-style" placeholder="Employee ID"> --}}
-                                <select class="theme-input-style" id="employee_id" name="employee_id" autocomplete="off">
-                                    <option value="">Select Employee ID</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->employee_id }}">{{ $user->employee_id }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="string" id="employee_id" name="employee_id" class="theme-input-style" placeholder="Employee ID">
                                 @error('employee_id')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror

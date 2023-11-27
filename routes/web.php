@@ -17,18 +17,17 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-Route::get('/', function () {
-    return view('auth.login');
-});
+// Route::get('/', function () {
+//     return view('auth.login');
+// });
 
+Route::get('/', [LoginController::class, 'login']);
 Route::get('/login', [LoginController::class, 'login'])->name('login');
+Route::get('/adminLogin', [LoginController::class, 'adminLogin'])->name('adminLogin');
 Route::post('/login_post', [LoginController::class, 'login_post'])->name('login_post');
 
 Route::get('/register', [LoginController::class, 'register'])->name('register');
 Route::post('/register_post', [LoginController::class, 'register_post'])->name('register_post');
-
-
-
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('dashboard', [MemberController::class, 'dashboard'])->name('homepage');
@@ -93,8 +92,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('admin/editTask/{id}', [AdminController::class, 'editTask'])->name('editTask');
     Route::post('admin/updateTask/{id}', [AdminController::class, 'updateTask'])->name('updateTask');
     Route::delete('admin/deleteTask/{id}', [AdminController::class, 'deleteTask'])->name('deleteTask');
-    // Route::delete('/admin/deleteTask/{id}', [AdminController::class, 'deleteTask'])->name('deleteTask')->middleware('web');
-
 
     Route::get('admin/viewSetting', [AdminController::class, 'viewSetting'])->name('viewSetting');
     Route::get('admin/createSetting', [AdminController::class, 'createSetting'])->name('createSetting');

@@ -18,7 +18,7 @@
                 <div class="card mb-30">
 
                     <div class="card-body">
-                        <div class="d-sm-flex justify-content-between align-items-center">
+                        <div class="d-sm-flex justify-content-between align-items-center" style="margin-bottom: 15px;">
                             <h4 class="font-20">OT Approval</h4>
     
                             <div class="d-flex flex-wrap">
