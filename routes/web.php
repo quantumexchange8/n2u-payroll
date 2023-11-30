@@ -93,6 +93,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('admin/updateTask/{id}', [AdminController::class, 'updateTask'])->name('updateTask');
     Route::delete('admin/deleteTask/{id}', [AdminController::class, 'deleteTask'])->name('deleteTask');
 
+    Route::get('admin/viewPeriod', [AdminController::class, 'viewPeriod'])->name('viewPeriod');
+    Route::get('admin/createPeriod', [AdminController::class, 'createPeriod'])->name('createPeriod');
+    Route::post('admin/addPeriod', [AdminController::class, 'addPeriod'])->name('addPeriod');
+    Route::get('admin/editPeriod/{id}', [AdminController::class, 'editPeriod'])->name('editPeriod');
+    Route::post('admin/updatePeriod/{id}', [AdminController::class, 'updatePeriod'])->name('updatePeriod');
+    Route::delete('admin/deletePeriod/{id}', [AdminController::class, 'deletePeriod'])->name('deletePeriod');
+
     Route::get('admin/viewSetting', [AdminController::class, 'viewSetting'])->name('viewSetting');
     Route::get('admin/createSetting', [AdminController::class, 'createSetting'])->name('createSetting');
     Route::post('admin/addSetting', [AdminController::class, 'addSetting'])->name('addSetting');

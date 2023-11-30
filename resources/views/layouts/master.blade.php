@@ -223,10 +223,21 @@
                                 <!-- End Sub Menu -->
                             </li>
                             <li>
-                                <a href="{{ route('viewTask') }}">
+                                <a href="#">
                                     <i class="icofont-instrument"></i>
-                                    <span class="link-title">Task</span>
+                                    <span class="link-title">Task & Period</span>
                                 </a>
+
+                                <!-- Sub Menu -->
+                                <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('viewTask') }}">Task</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewPeriod') }}">Period</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu -->
                             </li>
                             <li>
                                 <a href="{{ route('otApproval') }}">

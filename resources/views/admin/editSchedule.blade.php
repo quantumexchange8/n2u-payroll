@@ -89,13 +89,15 @@
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputName" class="bold mb-2">Period</label>
-                                                        <select class="theme-input-style" name="task_name" required>
+                                                        <select class="theme-input-style" name="period_id" required>
                                                             <option value="">Select Period</option>
-                                                            <option value="Opening" {{ $task->task_name === 'Opening' ? 'selected' : '' }}>Opening</option>
-                                                            <option value="Lunch" {{ $task->task_name === 'Lunch' ? 'selected' : '' }}>Lunch</option>
-                                                            <option value="Dinner" {{ $task->task_name === 'Dinner' ? 'selected' : '' }}>Dinner</option>
+                                                            @foreach ($periods as $period)
+                                                                <option value="{{ $period->id }}" {{ $task->period_name === $period->period_name ? 'selected' : ''}}>
+                                                                    {{ $period->period_name }}
+                                                                </option>
+                                                            @endforeach
                                                         </select>
-                                                        @error('task_name')
+                                                        @error('period_id')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -147,12 +149,13 @@
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputName" class="bold mb-2">Period</label>
-                                                        <select class="theme-input-style" name="task_name" required>
-                                                            <option value="Opening">Opening</option>
-                                                            <option value="Lunch">Lunch</option>
-                                                            <option value="Dinner">Dinner</option>
+                                                        <select class="theme-input-style" id="period_id" name="period_id" value="{{ old('period_id') }}">
+                                                            <option value="">Select Period</option>
+                                                            @foreach ($periods as $period)
+                                                                <option value="{{ $period->id }}">{{ $period->period_name }}</option>
+                                                            @endforeach
                                                         </select>
-                                                        @error('task_name')
+                                                        @error('period_id')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -225,69 +228,6 @@
 
 @endsection
 
-{{-- <script>
-    $(document).ready(function() {
-        // Handle "Edit" button click
-        $('.edit-schedule').on('click', function() {
-            var scheduleId = $(this).data('schedule-id');
-            // Use the scheduleId to make an Ajax request to retrieve schedule details
-            console.log(scheduleId);
-            // Example: Ajax request
-            $.ajax({
-                url: '/admin/getScheduleDetails/' + scheduleId, // Adjust the URL
-                type: 'GET',
-                success: function(schedule) {
-                    // Populate the form fields with schedule details
-                    $('#employee_id').val(schedule.employee_id);
-                    $('#date_start').val(schedule.date_start);
-                    $('#duty_id').val(schedule.duty_id);
-                    $('#shift_id').val(schedule.shift_id);
-                    $('#date_end').val(schedule.date_end);
-                    $('#remarks').val(schedule.remarks);
-
-                    // Display the "Edit Schedule" modal
-                    $('#editScheduleModal').modal('show');
-                },
-                error: function(error) {
-                    console.log('Error:', error);
-                }
-            });
-        });
-    });
-</script> --}}
-
-<!-- Include jQuery (you can include it from a CDN) -->
-{{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-<script>
-    // Wait for the document to be ready
-    $(document).ready(function () {
-        // Handle click event on the remove button
-        $('[data-repeater-list="group-a"]').on('click', '[data-repeater-delete]', function () {
-            // Get the task ID from the data attribute
-            var taskId = $(this).data('task-id');
-            
-            // Confirm deletion
-            if (confirm("Are you sure you want to delete this task?")) {
-                // Send an AJAX request to delete the task
-                $.ajax({
-                    url: '/admin/deleteTask/' + taskId,
-                    type: 'DELETE',
-                    success: function (data) {
-                        // Remove the repeater item on successful deletion
-                        $('[data-task-id="' + taskId + '"]').remove();
-                        // You can add additional logic here based on the server response
-                        alert('Task deleted successfully');
-                    },
-                    error: function (xhr, status, error) {
-                        console.error(error);
-                        alert('Failed to delete task. Please try again.');
-                    }
-                });
-            }
-        });
-    });
-</script> --}}
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <script>

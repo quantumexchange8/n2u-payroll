@@ -12,6 +12,7 @@ use App\Models\Setting;
 use App\Models\Shift;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Period;
 use App\Models\OtApproval;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -429,7 +430,6 @@ class AdminController extends Controller
         return redirect()->route('viewDepartment');
     }
 
-
     public function deleteDepartment($id){
 
         $department = Department::find($id);
@@ -635,7 +635,8 @@ class AdminController extends Controller
         foreach ($schedules as $schedule) {
             // Retrieve tasks related to the current schedule
             $tasks = Task::where('date', $schedule->date)
-                    ->with('duty') // Eager load the duty relationship
+                    ->with('duty')
+                    ->with('period') // Eager load the duty relationship
                     ->get();
     
             // Attach the tasks to the schedule object
@@ -667,8 +668,9 @@ class AdminController extends Controller
         $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
         $duties = Duty::all();
+        $periods = Period::all();
 
-        return view('admin.createSchedule', compact('schedules', 'users', 'shifts', 'duties'));
+        return view('admin.createSchedule', compact('schedules', 'users', 'shifts', 'duties', 'periods'));
     }
 
     public function addSchedule(Request $request){
@@ -783,11 +785,14 @@ class AdminController extends Controller
         $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
         $duties = Duty::all();
+        $periods = Period::all();
 
         // Retrieve tasks and duties based on the schedule's employee ID and date
         $tasksAndDuties = $this->getTasksAndDuties($schedule->employee_id, $schedule->date);
 
-        return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'tasksAndDuties', 'duties'));
+        // dd($tasksAndDuties);
+
+        return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'tasksAndDuties', 'duties', 'periods'));
     }
     
     // Function to get tasks and duties based on employee ID and date
@@ -796,7 +801,8 @@ class AdminController extends Controller
         $tasksAndDuties = DB::table('tasks')
             ->join('schedules', 'tasks.date', '=', 'schedules.date')
             ->join('duties', 'tasks.duty_id', '=', 'duties.id')
-            ->select('tasks.id','tasks.task_name', 'tasks.start_time', 'tasks.end_time', 'schedules.date', 'duties.duty_name')
+            ->join('periods', 'tasks.period_id', '=', 'periods.id')
+            ->select('tasks.id','tasks.period_id', 'tasks.start_time', 'tasks.end_time', 'schedules.date', 'duties.duty_name', 'periods.period_name')
             ->where('schedules.employee_id', $employeeId)
             ->where('schedules.date', $date)
             ->whereNull('tasks.deleted_at')
@@ -861,7 +867,7 @@ class AdminController extends Controller
                 $existingTask = Task::where([
                     'date' => $schedule->date,
                     'employee_id' => $schedule->employee_id,
-                    'task_name' => $taskData['task_name'],
+                    'period_id' => $taskData['period_id'],
                 ])->first();
     
 
@@ -881,7 +887,7 @@ class AdminController extends Controller
                         [
                             'date' => $schedule->date,
                             'employee_id' => $schedule->employee_id,
-                            'task_name' => $taskData['task_name'],
+                            'period_id' => $taskData['period_id'],
                             'start_time' => $taskData['start_time'],
                             'end_time' => $taskData['end_time'],
                             'duty_id' => $taskData['duty_id'],
@@ -895,8 +901,7 @@ class AdminController extends Controller
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('schedule');
     }
-    
-    
+       
     public function deleteSchedule($id){
 
         $schedule = Schedule::find($id);
@@ -919,22 +924,102 @@ class AdminController extends Controller
         return redirect()->route('scheduleReport');
     }
 
+    public function viewPeriod(){
+        $periods = Period::all();
+  
+        return view('admin.viewPeriod', ['periods' => $periods]);
+    }
+    
+    public function createPeriod(){
+        return view('admin.createPeriod');
+    }
+
+    public function addPeriod(Request $request){
+        $data = $request->validate([
+            'period_name' => 'required'
+        ]);
+    
+        if($data){
+            $period = new Period();
+            $period->period_name = $data['period_name'];
+            $period->save();
+    
+            Alert::success('Done', 'Successfully Inserted');
+        } else {
+            return redirect()->back();
+        }
+    
+        return redirect()->route('viewPeriod');
+    }
+    
+    public function editPeriod($id){
+        $period = Period::find($id);
+        
+        return view('admin.editPeriod', ['period' => $period]);
+    }
+
+    public function updatePeriod(Request $request, $id){
+        // Define validation rules
+        $rules = [
+            'period_name' => 'required|max:255', 
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'period_name.required' => 'Period Name is required.',
+            'period_name.max' => 'Period Name should not exceed 255 characters.',
+        ];
+
+            // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $data = Period::find($id);
+
+        //Update the user's data based on the form input
+        $data->update([
+            'period_name' => $request->input('period_name')
+        ]);
+
+        Alert::success('Done', 'Successfully Updated');
+        return redirect()->route('viewPeriod');
+    }
+
+    public function deletePeriod($id){
+
+        $period = Period::find($id);
+
+        $period->delete(); // Soft delete the employee
+
+        Alert::success('Done', 'Successfully Deleted');
+        return redirect()->route('viewPeriod');
+    }
+
     public function viewTask(){
         $tasks = Task::orderBy('date', 'asc')->get();
         $users = User::all();
         $duty = Duty::all();
+        $periods = Period::all();
 
         return view('admin.viewTask', [
             'tasks' => $tasks,
             'users' => $users,
             'duty' => $duty,
+            'periods' => $periods,
         ]);
     }
     
     public function createTask(){
         $users = User::where('role', 'member')->with('position')->get();
         $duties = Duty::all();
-        return view('admin.createTask', compact('users', 'duties'));
+        $periods = Period::all();
+        return view('admin.createTask', compact('users', 'duties', 'periods'));
     }
 
     public function addTask(Request $request, $dates = null, $selectedUsers = null) {
@@ -956,7 +1041,7 @@ class AdminController extends Controller
 
         $request->validate([
             'group-a' => 'required|array', // Ensure at least one task is submitted
-            'group-a.*.task_name' => 'required',
+            'group-a.*.period_id' => 'required',
             'group-a.*.start_time' => 'required',
             'group-a.*.end_time' => 'required',
             'group-a.*.duty_id' => 'required',
@@ -972,7 +1057,7 @@ class AdminController extends Controller
             foreach ($tasks as $taskData) {
                 foreach ($dates as $date) {
                     $task = new Task();
-                    $task->task_name = $taskData['task_name'];
+                    $task->period_id = $taskData['period_id'];
                     $task->date = $date;
                     $task->start_time = $taskData['start_time'];
                     $task->end_time = $taskData['end_time'];
@@ -1000,11 +1085,13 @@ class AdminController extends Controller
         $task = Task::find($id);
         $users = User::all();
         $duties = Duty::all();
+        $periods = Period::all();
 
         return view('admin.editTask', [
             'task' => $task,
             'users' => $users,
             'duties' => $duties,
+            'periods' => $periods,
         ]);
     }
 
@@ -1016,6 +1103,7 @@ class AdminController extends Controller
             'start_time' => 'required',
             'end_time' => 'required',
             'duty_id' => 'required',
+            'period_id' => 'required',
         ];
 
         // Define custom error messages (optional)
@@ -1025,6 +1113,7 @@ class AdminController extends Controller
             'start_time.required' => 'Start Time is required.',
             'end_time.required' => 'End Time is required.',
             'duty_id.required' => 'Duty Name is required.',
+            'period_id.required' => 'Period Name is required.',
         ];
 
             // Validate the request data
@@ -1047,6 +1136,7 @@ class AdminController extends Controller
             'start_time' => $request->input('start_time'),
             'end_time' => $request->input('end_time'),
             'duty_id' => $request->input('duty_id'),
+            'period_id' => $request->input('period_id'),
         ]);
 
         Alert::success('Done', 'Successfully Updated');

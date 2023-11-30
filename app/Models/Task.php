@@ -13,7 +13,7 @@ class Task extends Model
     protected $fillable = [
         'date',
         'employee_id',
-        'task_name',
+        'period_id',
         'duty_id',
         'start_time',
         'end_time'
@@ -29,5 +29,9 @@ class Task extends Model
 
     public function schedule(){
         return $this->belongsTo(Schedule::class, 'date', 'date');
+    }
+
+    public function period(){
+        return $this->belongsTo(Period::class, 'period_id', 'id');
     }
 }

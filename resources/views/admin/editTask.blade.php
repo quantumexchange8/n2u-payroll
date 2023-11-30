@@ -44,15 +44,19 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Period</label>
-                                    <label for="inputName" class="bold mb-2">Task</label>
-                                    <select class="theme-input-style" id="task_name" name="task_name" value="{{ old('task_name') }}">
-                                        <option value="">Select Task</option>
-                                        <option value="Opening" {{ $task->task_name === 'Opening' ? 'selected' : '' }}>Opening</option>
+                                    <label class="bold mb-2">Period</label>
+                                    <select class="theme-input-style" id="period_id" name="period_id" value="{{ old('period_id') }}">
+                                        <option value="">Select Period</option>
+                                        @foreach ($periods as $period)
+                                            <option value="{{ $period->id }}" {{ $task->period->period_id === $period->id ? 'selected' : ''}}>
+                                                {{ $period->period_name }}
+                                            </option>
+                                        @endforeach
+                                        {{-- <option value="Opening" {{ $task->task_name === 'Opening' ? 'selected' : '' }}>Opening</option>
                                         <option value="Lunch" {{ $task->task_name === 'Lunch' ? 'selected' : '' }}>Lunch</option>
-                                        <option value="Dinner" {{ $task->task_name === 'Dinner' ? 'selected' : '' }}>Dinner</option>
+                                        <option value="Dinner" {{ $task->task_name === 'Dinner' ? 'selected' : '' }}>Dinner</option> --}}
                                     </select>
-                                    @error('task_name')
+                                    @error('period_id')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>

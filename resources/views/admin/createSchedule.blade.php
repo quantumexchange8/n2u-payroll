@@ -159,13 +159,13 @@
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-3">
                                                     <label for="inputName" class="bold mb-2">Period</label>
-                                                    <select class="theme-input-style" id="task_name" name="task_name" value="{{ old('task_name') }}">
+                                                    <select class="theme-input-style" id="period_id" name="period_id" value="{{ old('period_id') }}">
                                                         <option value="">Select Period</option>
-                                                        <option value="Opening">Opening</option>
-                                                        <option value="Lunch">Lunch</option>
-                                                        <option value="Dinner">Dinner</option>
+                                                        @foreach ($periods as $period)
+                                                            <option value="{{ $period->id }}">{{ $period->period_name }}</option>
+                                                        @endforeach
                                                     </select>
-                                                    @error('task_name')
+                                                    @error('period_id')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
@@ -241,5 +241,4 @@
 
 @endsection
 
- {{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> --}}
 

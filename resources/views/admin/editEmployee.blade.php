@@ -432,48 +432,6 @@
     });
 </script>
 
-{{-- Display files and images --}}
-{{-- <script>
-    // Passport Size Photo
-    const passportSizePhotoFile = document.getElementById('passportSizePhotoFile');
-    const passportSizePhotoLink = document.getElementById('passportSizePhotoLink');
-
-    // IC Photo
-    const icPhotoFile = document.getElementById('icPhotoFile');
-    const icPhotoLink = document.getElementById('icPhotoLink');
-
-    // Offer Letter
-    const offerLetterFile = document.getElementById('offerLetterFile');
-    const offerLetterLink = document.getElementById('offerLetterLink');
-
-    // Account Pic
-    const accountPicFile = document.getElementById('accountPicFile');
-    const accountPicLink = document.getElementById('accountPicLink');
-
-    // Other Image
-    const otherImageFile = document.getElementById('otherImageFile');
-    const otherImageLink = document.getElementById('otherImageLink');
-
-    passportSizePhotoFile.addEventListener('change', function () {
-        icPhotoLink.style.display = 'block';
-    });
-
-    icPhotoFile.addEventListener('change', function () {
-        icPhotoLink.style.display = 'block';
-    });
-
-    offerLetterFile.addEventListener('change', function () {
-        offerLetterLink.style.display = 'block';
-    });
-
-    accountPicFile.addEventListener('change', function () {
-        accountPicLink.style.display = 'block';
-    });
-
-    otherImageFile.addEventListener('change', function () {
-        otherImageLink.style.display = 'block';
-    });
-</script> --}}
 
 <!-- JavaScript code for modal -->
 <script>

@@ -69,7 +69,7 @@
                                     <tr data-date="{{ $recordDate }}">
                                         <td>{{ Carbon\Carbon::parse($task->date)->format('d M Y') }}</td>
                                         <td>{{ $task->user->nickname }}</td>
-                                        <td>{{ $task->task_name }}</td>
+                                        <td>{{ $task->period->period_name }}</td>
                                         <td>{{ \Carbon\Carbon::parse($task->start_time )->format('g:i A') }}</td>
                                         <td>{{ \Carbon\Carbon::parse($task->end_time)->format('g:i A') }}</td>
                                         <td>{{ $task->duty->duty_name }}</td>
