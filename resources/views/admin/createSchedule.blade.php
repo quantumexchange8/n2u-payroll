@@ -23,11 +23,11 @@
                                 <div class="col-lg-12">
                                     <label class="font-14 bold mb-2">Nickname</label>
                                 </div>
-                        
+
                                 @php
                                     $usersChunked = $users->chunk(ceil($users->count() / 4));
                                 @endphp
-                        
+
                                 @foreach ($usersChunked as $userChunk)
                                     <div class="col-lg-3 col-sm-6 mb-30 mb-lg-0">
                                         @foreach ($userChunk as $user)
@@ -39,39 +39,42 @@
                                                         <span class="checkmark"></span>
                                                     </label>
                                                     <!-- End Custom Checkbox -->
-                                                    
+
                                                     <label for="check{{ $user->id }}">{{ $user->nickname }}</label>
                                                 </div>
- 
+
                                         @endforeach
                                     </div>
                                 @endforeach
                             </div>
-                        </div>                       
+                            @error('selected_users')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
                         <!-- End Color Options -->
 
                         <div class="row">
-                            <div class="col-lg-6">                                
+                            <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Shift</label>
                                     <select class="theme-input-style" id="shift_id" name="shift_id" autocomplete="off">
                                         <option value="">Select Shift</option>
                                         @foreach ($shifts as $shift)
-                                            <option value="{{ $shift->id }}">{{$shift->shift_name}} - {{ $shift->formatted_shift_time }}</option>  
+                                            <option value="{{ $shift->id }}">{{$shift->shift_name}} - {{ $shift->formatted_shift_time }}</option>
                                         @endforeach
                                     </select>
                                     @error('shift_id')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <!-- End Form Group --> 
+                                <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Date Start</label>
                                     <input type="date" class="theme-input-style" id="date_start" name="date_start" autocomplete="off">
-                                    @error('date')
+                                    @error('date_start')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -84,7 +87,7 @@
                                     @error('date')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
-                                    
+
                                 </div> --}}
                                 <!-- End Form Group -->
 
@@ -96,10 +99,10 @@
                                         <span class="checkmark"></span>
                                     </label>
                                     <!-- End Custom Checkbox -->
-                                    
+
                                     <label for="check26">Off Day</label>
                                 </div>
-                                
+
                             </div>
 
                             <div class="col-lg-6">
@@ -108,7 +111,7 @@
                                     {{-- <label class="font-14 bold mb-2">Duty</label>
                                     <select class="theme-input-style" id="duty_id" name="duty_id" autocomplete="off">
                                         @foreach ($duties as $duty)
-                                        <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>  
+                                        <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>
                                     @endforeach
                                     </select>
                                     @error('duty_id')
@@ -122,16 +125,16 @@
                                     @enderror
                                 </div>
                                 <!-- End Form Group -->
-                                
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Date End</label>
                                     <input type="date" class="theme-input-style" id="date_end" name="date_end" autocomplete="off">
-                                    @error('date')
+                                    @error('date_end')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <!-- End Form Group --> 
+                                <!-- End Form Group -->
 
                                 <div class="d-flex align-items-center mb-3" style="margin-top: 50px;">
                                     <!-- Custom Checkbox -->
@@ -140,14 +143,14 @@
                                         <span class="checkmark"></span>
                                     </label>
                                     <!-- End Custom Checkbox -->
-                                    
+
                                     <label for="check26">Off Day</label> --}}
                                 </div>
                             </div>
 
                             <div class="col-12">
                                 <!-- Form Element -->
-                                <div class="form-element py-30 mb-30">   
+                                <div class="form-element py-30 mb-30">
                                     <!-- Repeater Html Start -->
                                     <div data-repeater-list="group-a">
 
@@ -165,9 +168,7 @@
                                                             <option value="{{ $period->id }}">{{ $period->period_name }}</option>
                                                         @endforeach
                                                     </select>
-                                                    @error('period_id')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
+                                                  
                                                 </div>
                                                 <!-- End Form Group -->
 
@@ -175,6 +176,7 @@
                                                 <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">Start</label>
                                                     <input type="time" class="form-control" id="start_time" name="start_time">
+
                                                 </div>
                                                 <!-- End Form Group -->
 
@@ -182,6 +184,7 @@
                                                 <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">End</label>
                                                     <input type="time" class="form-control" id="end_time" name="end_time">
+
                                                 </div>
                                                 <!-- End Form Group -->
 
@@ -191,7 +194,7 @@
                                                     <select class="theme-input-style" id="duty_id" name="duty_id" autocomplete="off" value="{{ old('duty_id') }}">
                                                         <option value="">Select Duty</option>
                                                         @foreach ($duties as $duty)
-                                                        <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>  
+                                                        <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>
                                                     @endforeach
                                                     </select>
                                                     @error('duty_id')
@@ -214,8 +217,8 @@
 
                                     </div>
                                     <!-- Repeater End -->
-                                    <button data-repeater-create type="button" class="repeater-add-btn btn-circle"> 
-                                        <img src="../../assets/img/svg/plus_white.svg" alt="" class="svg">    
+                                    <button data-repeater-create type="button" class="repeater-add-btn btn-circle">
+                                        <img src="../../assets/img/svg/plus_white.svg" alt="" class="svg">
                                     </button>
                                 </div>
                                 <!-- End Form Element -->

@@ -21,17 +21,18 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\EmployeeRequest;
 use Carbon\Carbon;
 
 class AdminController extends Controller
 {
-    
+
     public function Admindashboard(){
         // Retrieve all punch records with associated user information
         $punchRecords = PunchRecord::with('user')->get();
-    
+
         // Modify the date and time columns in each punch record
         $punchRecords->each(function ($punchRecord) {
             $punchRecord->date = Carbon::parse($punchRecord->created_at)->toDateString();
@@ -40,85 +41,92 @@ class AdminController extends Controller
 
         $pendingOTCount = PunchRecord::where('ot_approval', 'Pending')->count();
         $pendingOTCount2 = OtApproval::where('status', 'Pending')->count();
-    
+
         // Retrieve all schedules, shifts, and settings
         $schedules = Schedule::all();
         $shifts = Shift::all();
         $settings = Setting::all();
-    
+
         // Return the view with the punchRecords, schedules, shifts, and settings
         return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings', 'pendingOTCount', 'pendingOTCount2'));
     }
-    
+
     public function viewEmployee() {
         $users = User::where('role', 'member')->with('position')->get(); // Eager load the positions
         $positions = Position::all(); // Fetch all positions
         return view('admin.viewEmployee', compact('users', 'positions'));
     }
-    
+
     public function createEmployee(){
         $positions = Position::all();
         return view('admin.createEmployee', compact('positions'));
     }
 
-    public function addEmployee(EmployeeRequest $request){        
-        // Validate the incoming request data
-        $validatedData = $request->validated();
+    public function addEmployee(EmployeeRequest $request){
 
-        $full_name_with_underscores = str_replace(' ', '_', $validatedData['full_name']);
+        try{
+            // Validate the incoming request data
+            $validatedData = $request->validated();
 
-        // Handle passport size photo
-        if ($request->hasFile('passport_size_photo')) {
-            $file = $request->file('passport_size_photo');
-            $extension = $file->getClientOriginalExtension();
-            $filename = $full_name_with_underscores . '_photo.' . $extension; // Modify the file name
-            $file->move('uploads/employee/passportSizePhoto/', $filename);
-            $validatedData['passport_size_photo'] = $filename;
+            $full_name_with_underscores = str_replace(' ', '_', $validatedData['full_name']);
+
+            // Handle passport size photo
+            if ($request->hasFile('passport_size_photo')) {
+                $file = $request->file('passport_size_photo');
+                $extension = $file->getClientOriginalExtension();
+                $filename = $full_name_with_underscores . '_photo.' . $extension; // Modify the file name
+                $file->move('uploads/employee/passportSizePhoto/', $filename);
+                $validatedData['passport_size_photo'] = $filename;
+            }
+
+            // Handle IC photo
+            if ($request->hasFile('ic_photo')) {
+                $file = $request->file('ic_photo');
+                $extension = $file->getClientOriginalExtension();
+                $filename = $full_name_with_underscores . '_ic.' . $extension; // Modify the file name
+                $file->move('uploads/employee/icPhoto/', $filename);
+                $validatedData['ic_photo'] = $filename;
+            }
+
+            // Handle offer letter
+            if ($request->hasFile('offer_letter')) {
+                $file = $request->file('offer_letter');
+                $extension = $file->getClientOriginalExtension();
+                $filename = $full_name_with_underscores . '_offer_letter.' . $extension; // Modify the file name
+                $file->move('uploads/employee/offerLetter/', $filename);
+                $validatedData['offer_letter'] = $filename;
+            }
+
+            // Handle account pic
+            if ($request->hasFile('account_pic')) {
+                $file = $request->file('account_pic');
+                $extension = $file->getClientOriginalExtension();
+                $filename = $full_name_with_underscores . '_account_pic.' . $extension; // Modify the file name
+                $file->move('uploads/employee/accountPic/', $filename);
+                $validatedData['account_pic'] = $filename;
+            }
+
+            // Handle other image
+            if ($request->hasFile('other_image')) {
+                $file = $request->file('other_image');
+                $extension = $file->getClientOriginalExtension();
+                $filename = $full_name_with_underscores . '_other_image.' . $extension; // Modify the file name
+                $file->move('uploads/employee/otherImage/', $filename);
+                $validatedData['other_image'] = $filename;
+            }
+
+            // Create the user record with the validated and modified data
+            User::create($validatedData);
+
+            Alert::success('Done', 'Successfully Registered');
+            return redirect()->route('viewEmployee');
+        }catch(ValidationException $e){
+            // If a validation exception occurs, redirect back with errors and input
+            return redirect()->back()->withErrors($e->validator)->withInput();
         }
 
-        // Handle IC photo
-        if ($request->hasFile('ic_photo')) {
-            $file = $request->file('ic_photo');
-            $extension = $file->getClientOriginalExtension();
-            $filename = $full_name_with_underscores . '_ic.' . $extension; // Modify the file name
-            $file->move('uploads/employee/icPhoto/', $filename);
-            $validatedData['ic_photo'] = $filename;
-        }
-
-        // Handle offer letter
-        if ($request->hasFile('offer_letter')) {
-            $file = $request->file('offer_letter');
-            $extension = $file->getClientOriginalExtension();
-            $filename = $full_name_with_underscores . '_offer_letter.' . $extension; // Modify the file name
-            $file->move('uploads/employee/offerLetter/', $filename);
-            $validatedData['offer_letter'] = $filename;
-        }
-
-        // Handle account pic
-        if ($request->hasFile('account_pic')) {
-            $file = $request->file('account_pic');
-            $extension = $file->getClientOriginalExtension();
-            $filename = $full_name_with_underscores . '_account_pic.' . $extension; // Modify the file name
-            $file->move('uploads/employee/accountPic/', $filename);
-            $validatedData['account_pic'] = $filename;
-        }
-
-        // Handle other image
-        if ($request->hasFile('other_image')) {
-            $file = $request->file('other_image');
-            $extension = $file->getClientOriginalExtension();
-            $filename = $full_name_with_underscores . '_other_image.' . $extension; // Modify the file name
-            $file->move('uploads/employee/otherImage/', $filename);
-            $validatedData['other_image'] = $filename;
-        }
-        
-        // Create the user record with the validated and modified data
-        User::create($validatedData);
-
-        Alert::success('Done', 'Successfully Registered');
-        return redirect()->route('viewEmployee'); 
     }
-   
+
     public function editEmployee($id) {
         $user = User::with('position')->find($id);
         $positions = Position::all(); // Fetch all positions
@@ -132,26 +140,26 @@ class AdminController extends Controller
 
         return view('admin.editEmployee', compact('user', 'positions', 'passport_size_photo', 'ic_photo', 'offer_letter', 'account_pic', 'other_image'));
     }
-    
+
     public function updateEmployee(EmployeeRequest $request, $id) {
         $data = User::find($id);
-    
+
         // Validate the incoming request data
         $validatedData = $request->validated();
-    
+
         // Handle file uploads if necessary
         $photoPath = 'uploads/employee/passportSizePhoto/';
         $icPath = 'uploads/employee/icPhoto/';
         $offerLetterPath = 'uploads/employee/offerLetter/';
         $accountPicPath = 'uploads/employee/accountPic/';
         $otherImagePath = 'uploads/employee/otherImage/';
-    
+
         // Handle passport size photo
         if ($request->hasFile('passport_size_photo')) {
             $photo = $request->file('passport_size_photo');
             $photoExtension = $photo->getClientOriginalExtension();
             $photoName = $data->full_name . '_photo.' . $photoExtension;
-    
+
             // Delete all previous files with the same full name
             $filesToDelete = glob($photoPath . $data->full_name . '_photo.*');
             foreach ($filesToDelete as $fileToDelete) {
@@ -159,20 +167,20 @@ class AdminController extends Controller
                     File::delete($fileToDelete);
                 }
             }
-    
+
             // Upload the new passport size photo
             $photo->move($photoPath, $photoName);
-    
+
             // Update the database field with the new file name
             $validatedData['passport_size_photo'] = $photoName;
         }
-    
+
         // Handle IC photo
         if ($request->hasFile('ic_photo')) {
             $icPhoto = $request->file('ic_photo');
             $icExtension = $icPhoto->getClientOriginalExtension();
             $icName = $data->full_name . '_ic.' . $icExtension;
-    
+
             // Delete all previous files with the same full name
             $filesToDelete = glob($icPath . $data->full_name . '_ic.*');
             foreach ($filesToDelete as $fileToDelete) {
@@ -180,20 +188,20 @@ class AdminController extends Controller
                     File::delete($fileToDelete);
                 }
             }
-    
+
             // Upload the new IC photo
             $icPhoto->move($icPath, $icName);
-    
+
             // Update the database field with the new file name
             $validatedData['ic_photo'] = $icName;
         }
-    
+
         // Handle offer letter
         if ($request->hasFile('offer_letter')) {
             $offerLetter = $request->file('offer_letter');
             $offerLetterExtension = $offerLetter->getClientOriginalExtension();
             $offerLetterName = $data->full_name . '_offer_letter.' . $offerLetterExtension;
-    
+
             // Delete all previous files with the same full name
             $filesToDelete = glob($offerLetterPath . $data->full_name . '_offer_letter.*');
             foreach ($filesToDelete as $fileToDelete) {
@@ -201,10 +209,10 @@ class AdminController extends Controller
                     File::delete($fileToDelete);
                 }
             }
-    
+
             // Upload the new offer letter
             $offerLetter->move($offerLetterPath, $offerLetterName);
-    
+
             // Update the database field with the new file name
             $validatedData['offer_letter'] = $offerLetterName;
         }
@@ -214,7 +222,7 @@ class AdminController extends Controller
             $accountPic = $request->file('account_pic');
             $accountPicExtension = $accountPic->getClientOriginalExtension();
             $accountPicName = $data->full_name . '_account_pic.' . $accountPicExtension;
-    
+
             // Delete all previous files with the same full name
             $filesToDelete = glob($accountPicPath . $data->full_name . '_account_pic.*');
             foreach ($filesToDelete as $fileToDelete) {
@@ -222,10 +230,10 @@ class AdminController extends Controller
                     File::delete($fileToDelete);
                 }
             }
-    
+
             // Upload the new offer letter
             $accountPic->move($accountPicPath, $accountPicName);
-    
+
             // Update the database field with the new file name
             $validatedData['account_pic'] = $accountPicName;
         }
@@ -243,10 +251,10 @@ class AdminController extends Controller
             $validatedData['other_image'] = $otherImageName;
         }
 
-    
+
         // Update the user's data based on the validated form input
         $data->update($validatedData);
-    
+
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('viewEmployee');
 
@@ -257,21 +265,20 @@ class AdminController extends Controller
         $request->validate([
             'new_password' => ['required'],
         ]);
-    
+
         // Find the user by ID
         $user = User::find($id);
-    
+
         // Hash the new password
         $hashedPassword = Hash::make($request->input('new_password'));
-    
+
         // Update the user's password
         $user->password = $hashedPassword;
         $user->save();
-    
+
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('viewEmployee');
     }
-    
 
     public function deleteEmployee($id){
 
@@ -287,32 +294,45 @@ class AdminController extends Controller
         $departments = Department::all();
         return view('admin.viewPosition', compact('positions', 'departments'));
     }
-    
+
     public function createPosition(){
         $departments = Department::all();
         return view('admin.createPosition', compact('departments'));
     }
 
     public function addPosition(Request $request){
-        $data = $request->validate([
-            'position_name' => 'required',
+
+        // Define validation rules
+        $rules = [
+            'position_name' => 'required|max:255',
             'department_id' => 'required'
-        ]);
-    
-        if ($data) {
-            $position = new Position();
-            $position->position_name = $data['position_name'];
-            $position->department_id = $data['department_id'];
-            $position->save();
-    
-            Alert::success('Done', 'Successfully Inserted');
-        } else {
-            return redirect()->back();
+        ];
+
+        $messages = [
+            'position_name.required' => 'The Position Name field is required.',
+            'position_name.max' => 'The Position Name should not exceed 255 characters.',
+            'department_id.required' => 'The Department Name field is required.'
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
         }
-    
+
+        // Validation passed, proceed to save the new position
+        $position = new Position();
+        $position->position_name = $request->input('position_name');
+        $position->department_id = $request->input('department_id');
+        $position->save();
+
+        Alert::success('Done', 'Successfully Inserted');
         return redirect()->route('viewPosition');
     }
-    
+
     public function editPosition($id){
         $positions = Position::with('department')->find($id);
         $departments = Department::all();
@@ -322,13 +342,13 @@ class AdminController extends Controller
     public function updatePosition(Request $request, $id){
         // Define validation rules
         $rules = [
-            'position_name' => 'required|max:255', 
+            'position_name' => 'required|max:255',
         ];
 
         // Define custom error messages (optional)
         $messages = [
-            'position_name.required' => 'Position Name is required.',
-            'position_name.max' => 'Position Name should not exceed 255 characters.',
+            'position_name.required' => 'The Position Name field is required.',
+            'position_name.max' => 'The Position Name should not exceed 255 characters.',
         ];
 
          // Validate the request data
@@ -365,48 +385,82 @@ class AdminController extends Controller
 
     public function viewDepartment(){
         $departments = Department::all();
-  
+
         return view('admin.viewDepartment', ['departments' => $departments]);
     }
-    
+
     public function createDepartment(){
         return view('admin.createDepartment');
     }
 
+    // public function addDepartment(Request $request){
+
+    //     $data = $request->validate([
+    //         'department_name' => 'required'
+    //     ]);
+
+    //     if($data){
+    //         $department = new Department();
+    //         $department->department_name = $data['department_name'];
+    //         $department->save();
+
+    //         Alert::success('Done', 'Successfully Inserted');
+    //     } else {
+    //         return redirect()->back();
+    //     }
+
+    //     return redirect()->route('viewDepartment');
+    // }
+
     public function addDepartment(Request $request){
-        $data = $request->validate([
-            'department_name' => 'required'
-        ]);
-    
-        if($data){
-            $department = new Department();
-            $department->department_name = $data['department_name'];
-            $department->save();
-    
-            Alert::success('Done', 'Successfully Inserted');
-        } else {
-            return redirect()->back();
+        // Define validation rules
+        $rules = [
+            'department_name' => 'required|max:255',
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'department_name.required' => 'The Department Name field is required.',
+            'department_name.max' => 'The Department Name should not exceed 255 characters.',
+        ];
+
+        // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
         }
-    
+
+        // Validation passed, proceed to save the new department
+        $department = new Department();
+        $department->department_name = $request->input('department_name');
+        $department->save();
+
+        // Flash a success message for the next request
+        Alert::success('Done', 'Successfully Inserted');
+
         return redirect()->route('viewDepartment');
     }
-    
+
     public function editDepartment($id){
         $department = Department::find($id);
-        
+
         return view('admin.editDepartment', ['department' => $department]);
     }
 
     public function updateDepartment(Request $request, $id){
         // Define validation rules
         $rules = [
-            'department_name' => 'required|max:255', 
+            'department_name' => 'required|max:255',
         ];
 
         // Define custom error messages (optional)
         $messages = [
-            'department_name.required' => 'Department Name is required.',
-            'department_name.max' => 'Department Name should not exceed 255 characters.',
+            'department_name.required' => 'The Department Name field is required.',
+            'department_name.max' => 'The Department Name should not exceed 255 characters.',
         ];
 
             // Validate the request data
@@ -442,48 +496,61 @@ class AdminController extends Controller
 
     public function viewDuty(){
         $duties = Duty::all();
-  
+
         return view('admin.viewDuty', ['duties' => $duties]);
     }
-    
+
     public function createDuty(){
         return view('admin.createDuty');
     }
 
     public function addDuty(Request $request){
-        $data = $request->validate([
-            'duty_name' => 'required'
-        ]);
-    
-        if($data){
-            $duty = new Duty();
-            $duty->duty_name = $data['duty_name'];
-            $duty->save();
-    
-            Alert::success('Done', 'Successfully Inserted');
-        } else {
-            return redirect()->back();
+
+        // Define validation rules
+        $rules = [
+            'duty_name' => 'required|max:255',
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'duty_name.required' => 'The Duty Name field is required.',
+            'duty_name.max' => 'The Duty Name should not exceed 255 characters.',
+        ];
+
+        // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
         }
-    
+
+        $duty = new Duty();
+        $duty->duty_name = $request->input('duty_name');
+        $duty->save();
+
+        Alert::success('Done', 'Successfully Inserted');
         return redirect()->route('viewDuty');
     }
-    
+
     public function editDuty($id){
         $duty = Duty::find($id);
-        
+
         return view('admin.editDuty', ['duty' => $duty]);
     }
 
     public function updateDuty(Request $request, $id){
         // Define validation rules
         $rules = [
-            'duty_name' => 'required|max:255', 
+            'duty_name' => 'required|max:255',
         ];
 
         // Define custom error messages (optional)
         $messages = [
-            'duty_name.required' => 'Duty Name is required.',
-            'duty_name.max' => 'Duty Name should not exceed 255 characters.',
+            'duty_name.required' => 'The Duty Name field is required.',
+            'duty_name.max' => 'The Duty Name should not exceed 255 characters.',
         ];
 
             // Validate the request data
@@ -521,37 +588,51 @@ class AdminController extends Controller
         $shifts = Shift::all();
         return view('admin.viewShift', ['shifts' => $shifts]);
     }
-    
+
     public function createShift(){
         return view('admin.createShift');
     }
 
     public function addShift(Request $request){
 
-        $data = $request->validate([
-            'shift_name' => 'required',
+        // Define validation rules
+        $rules = [
+            'shift_name' => 'required|max:255',
             'shift_start' => 'required',
             'shift_end' => 'required'
-        ]);
+        ];
 
-        if($data){
-            $shift = new Shift();
-            $shift->shift_name = $data['shift_name'];
-            $shift->shift_start = $data['shift_start'];
-            $shift->shift_end = $data['shift_end'];
-            $shift->save();
+        // Define custom error messages (optional)
+        $messages = [
+            'shift_name.required' => 'The Shift Name field is required.',
+            'shift_name.max' => 'The Shift Name should not exceed 255 characters.',
+            'shift_start.required' => 'The Shift Start field is required.',
+            'shift_end.required' => 'The Shift End field is required.',
+        ];
 
-            Alert::success('Done', 'Successfully Inserted');
-        } else {
-            return redirect()->back();
+        // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
+        $shift = new Shift();
+        $shift->shift_name = $request->input('shift_name');
+        $shift->shift_start = $request->input('shift_start');
+        $shift->shift_end = $request->input('shift_end');
+        $shift->save();
+
+        Alert::success('Done', 'Successfully Inserted');
         return redirect()->route('viewShift');
     }
 
     public function editShift($id){
         $shift = Shift::find($id);
-        
+
         return view('admin.editShift', ['shift' => $shift]);
     }
 
@@ -565,10 +646,10 @@ class AdminController extends Controller
 
         // Define custom error messages (optional)
         $messages = [
-            'shift_name.required' => 'Shift Name is required.',
-            'shift_name.max' => 'Shift Name should not exceed 255 characters.',
-            'shift_start.required' => 'Shift Start is required.',
-            'shift_end.required' => 'Shift End is required.',
+            'shift_name.required' => 'The Shift Name field is required.',
+            'shift_name.max' => 'The Shift Name should not exceed 255 characters.',
+            'shift_start.required' => 'The Shift Start is required.',
+            'shift_end.required' => 'The Shift End is required.',
         ];
 
             // Validate the request data
@@ -611,8 +692,8 @@ class AdminController extends Controller
             // Retrieve and return joined data for FullCalendar
             $joinedData = Schedule::leftJoin('users', 'schedules.employee_id', '=', 'users.id')
                 ->leftJoin('shifts', 'schedules.shift_id', '=', 'shifts.id')
-                ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 
-                        'shifts.shift_start', 'shifts.shift_end', 'schedules.date', 
+                ->select('schedules.id', 'schedules.employee_id', 'users.full_name',
+                        'shifts.shift_start', 'shifts.shift_end', 'schedules.date',
                         'schedules.remarks', 'schedules.off_day', 'users.nickname')
                 ->get();
 
@@ -631,6 +712,7 @@ class AdminController extends Controller
         $schedules = Schedule::orderBy('date', 'asc')->get();
         $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
+        $periods = Period::all();
 
         foreach ($schedules as $schedule) {
             // Retrieve tasks related to the current schedule
@@ -638,31 +720,31 @@ class AdminController extends Controller
                     ->with('duty')
                     ->with('period') // Eager load the duty relationship
                     ->get();
-    
+
             // Attach the tasks to the schedule object
             $schedule->tasks = $tasks;
         }
 
-        return view('admin.scheduleReport', compact('schedules', 'users', 'shifts'));
+        return view('admin.scheduleReport', compact('schedules', 'users', 'shifts', 'periods'));
     }
 
     public function getSchedule(Request $request) {
         try {
             $date = $request->input('date');
-           
+
             $schedule = Schedule::leftJoin('users', 'schedules.employee_id', '=', 'users.id')
                     ->leftJoin('shifts', 'schedules.shift_id', '=', 'shifts.id')
-                    ->select('schedules.id', 'schedules.employee_id', 'users.nickname', 
+                    ->select('schedules.id', 'schedules.employee_id', 'users.nickname',
                         'shifts.shift_start', 'shifts.shift_end', 'schedules.remarks')
                     ->where('schedules.date', $date)
                     ->get();
-           
+
             return response()->json($schedule);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    
+
     public function createSchedule(){
         $schedules = Schedule::all();
         $users = User::where('role', 'member')->with('position')->get();
@@ -674,8 +756,7 @@ class AdminController extends Controller
     }
 
     public function addSchedule(Request $request){
-        // dd($request->all());
-    
+
         $data = $request->all();
 
         if (isset($data['off_day']) && $data['off_day'] == 1) {
@@ -683,7 +764,7 @@ class AdminController extends Controller
             foreach ($data['selected_users'] as $userId) {
                 $start = Carbon::parse($data['date_start']);
                 $end = Carbon::parse($data['date_end']);
-                
+
                 // Loop through dates and save schedule for each date
                 while ($start->lte($end)) {
                     $schedule = new Schedule();
@@ -693,11 +774,11 @@ class AdminController extends Controller
                     $schedule->shift_id = null;
                     $schedule->remarks = null;
                     $schedule->save();
-                    
+
                     $start->addDay();
                 }
             }
-    
+
             // Redirect to the schedule page
             Alert::success('Done', 'Successfully Inserted');
             return redirect()->route('schedule');
@@ -705,24 +786,48 @@ class AdminController extends Controller
 
         $validationPassed = true;
 
-        $validatedData = $request->validate([
+        // $validatedData = $request->validate([
+        //     'date_start' => 'required|date',
+        //     // 'date_end' => $data['off_day'] == 1 ? 'nullable|date|after_or_equal:date_start' : 'required|date|after_or_equal:date_start',
+        //     'date_end' => 'nullable|date|after_or_equal:date_start',
+        //     'shift_id' => 'nullable',
+        //     'remarks' => 'nullable',
+        //     'off_day' => 'nullable',
+        //     'selected_users' => 'required|array',
+        //     'period_id' => 'required|array',
+        // ]);
+
+        // Validation
+        $validator = Validator::make($data, [
             'date_start' => 'required|date',
-            // 'date_end' => $data['off_day'] == 1 ? 'nullable|date|after_or_equal:date_start' : 'required|date|after_or_equal:date_start',
             'date_end' => 'nullable|date|after_or_equal:date_start',
             'shift_id' => 'nullable',
             'remarks' => 'nullable',
             'off_day' => 'nullable',
             'selected_users' => 'required|array',
+        ], [
+            'date_start.required' => 'The start date is required.',
+            'date_start.date' => 'The start date must be a valid date.',
+            'date_end.date' => 'The end date must be a valid date.',
+            'date_end.after_or_equal' => 'The end date must be after or equal to the start date.',
+            'shift_id.nullable' => 'The shift ID can be nullable.',
+            'selected_users.required' => 'Please select at least one user.',
         ]);
-    
-        
-        foreach ($validatedData['selected_users'] as $userId) {
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+
+        foreach ($data['selected_users'] as $key => $userId) {
             // Your logic for off_day being 0
-            $start = Carbon::parse($validatedData['date_start']);
-            $end = Carbon::parse($validatedData['date_end']);
+            $start = Carbon::parse($data['date_start']);
+            $end = Carbon::parse($data['date_end']);
             $dates = [];
-    
-            if ($validatedData['date_end'] === null) {
+
+            if ($data['date_end'] === null) {
                 $dates[] = $start->toDateString();
             } else {
                 while ($start->lte($end)) {
@@ -730,12 +835,17 @@ class AdminController extends Controller
                     $start->addDay();
                 }
             }
-    
+
             foreach ($dates as $date) {
                 // Check if a record already exists for the user and date
                 $existingSchedule = Schedule::where('employee_id', $userId)
                                     ->where('date', $date)
                                     ->first();
+
+                if (isset($data['period_id'][$key]) && !$this->validateDuplicatePeriodIds($userId, $date, $data['period_id'][$key])) {
+                    Alert::error('Error', 'One employee cannot have duplicate period IDs in a day.');
+                    return redirect()->route('schedule');
+                }
 
                 // if ($existingSchedule) {
                 //     // Handle the case where a record already exists (skip or take appropriate action)
@@ -752,8 +862,8 @@ class AdminController extends Controller
                 $schedule->date = $date;
                 $schedule->employee_id = $userId;
                 $schedule->off_day = 0;
-                $schedule->shift_id = $validatedData['shift_id'];
-                $schedule->remarks = $validatedData['remarks'];
+                $schedule->shift_id = $data['shift_id'];
+                $schedule->remarks = $data['remarks'];
                 $schedule->save();
 
                 // Check if the save operation was successful
@@ -770,16 +880,16 @@ class AdminController extends Controller
             Alert::success('Done', 'Successfully Inserted');
             return redirect()->route('schedule');
         }
-    
+
         // Check if 'group-a' is present in the request, indicating task entries
         if ($request->has('group-a') && !empty($request->input('group-a'))) {
             $this->addTask($request, $dates);
         }
-    
+
         // Alert::success('Done', 'Successfully Inserted');
         // return redirect()->route('schedule');
     }
-    
+
     public function editSchedule($id){
         $schedule = Schedule::find($id);
         $users = User::where('role', 'member')->with('position')->get();
@@ -794,7 +904,7 @@ class AdminController extends Controller
 
         return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'tasksAndDuties', 'duties', 'periods'));
     }
-    
+
     // Function to get tasks and duties based on employee ID and date
     private function getTasksAndDuties($employeeId, $date){
         // Use the query to get tasks and duties
@@ -811,12 +921,12 @@ class AdminController extends Controller
             // dd($tasksAndDuties);
         return $tasksAndDuties;
     }
-    
+
 
     // public function updateSchedule(Request $request, $id){
     //     // dd($request->all());
     //     // $data = Schedule::find($id);
-        
+
     //     $data = Schedule::with('tasks') // Load the tasks relationship
     //     ->find($id);
 
@@ -838,28 +948,26 @@ class AdminController extends Controller
 
     public function updateSchedule(Request $request, $id){
 
-        // dd($request->all());
-
         // Validate the request data
         $request->validate([
             // Validation rules for your form fields
         ]);
-    
+
         // Find the schedule by ID
         $schedule = Schedule::find($id);
-    
+
         // Update schedule details
         $schedule->employee_id = $request->input('employee_id');
         $schedule->date = $request->input('date');
         $schedule->shift_id = $request->input('shift_id');
         $schedule->remarks = $request->input('remarks');
-    
+
         // Save the updated schedule
         $schedule->save();
-    
+
         // Check if there are tasks and duties submitted in the request
         $tasksAndDuties = $request->input('group-a', []);
-    
+
         // If there are tasks and duties, update or insert them into the tasks table
         if (!empty($tasksAndDuties)) {
             foreach ($tasksAndDuties as $taskData) {
@@ -869,12 +977,12 @@ class AdminController extends Controller
                     'employee_id' => $schedule->employee_id,
                     'period_id' => $taskData['period_id'],
                 ])->first();
-    
+
 
                 if ($existingTask) {
                     // Print debug information
                     // dd('Task exists. Update it:', $existingTask->toArray());
-    
+
                     // Update existing task
                     $existingTask->update([
                         'start_time' => $taskData['start_time'],
@@ -896,12 +1004,12 @@ class AdminController extends Controller
                 }
             }
         }
-    
+
         // Redirect with success message
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('schedule');
     }
-       
+
     public function deleteSchedule($id){
 
         $schedule = Schedule::find($id);
@@ -926,48 +1034,61 @@ class AdminController extends Controller
 
     public function viewPeriod(){
         $periods = Period::all();
-  
+
         return view('admin.viewPeriod', ['periods' => $periods]);
     }
-    
+
     public function createPeriod(){
         return view('admin.createPeriod');
     }
 
     public function addPeriod(Request $request){
-        $data = $request->validate([
-            'period_name' => 'required'
-        ]);
-    
-        if($data){
-            $period = new Period();
-            $period->period_name = $data['period_name'];
-            $period->save();
-    
-            Alert::success('Done', 'Successfully Inserted');
-        } else {
-            return redirect()->back();
+
+        // Define validation rules
+        $rules = [
+            'period_name' => 'required|max:255',
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'period_name.required' => 'The Period Name field is required.',
+            'period_name.max' => 'The Period Name should not exceed 255 characters.',
+        ];
+
+        // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
         }
-    
+
+        $period = new Period();
+        $period->period_name = $request->input('period_name');
+        $period->save();
+
+        Alert::success('Done', 'Successfully Inserted');
         return redirect()->route('viewPeriod');
     }
-    
+
     public function editPeriod($id){
         $period = Period::find($id);
-        
+
         return view('admin.editPeriod', ['period' => $period]);
     }
 
     public function updatePeriod(Request $request, $id){
         // Define validation rules
         $rules = [
-            'period_name' => 'required|max:255', 
+            'period_name' => 'required|max:255',
         ];
 
         // Define custom error messages (optional)
         $messages = [
-            'period_name.required' => 'Period Name is required.',
-            'period_name.max' => 'Period Name should not exceed 255 characters.',
+            'period_name.required' => 'The Period Name field is required.',
+            'period_name.max' => 'The Period Name should not exceed 255 characters.',
         ];
 
             // Validate the request data
@@ -1014,7 +1135,7 @@ class AdminController extends Controller
             'periods' => $periods,
         ]);
     }
-    
+
     public function createTask(){
         $users = User::where('role', 'member')->with('position')->get();
         $duties = Duty::all();
@@ -1022,9 +1143,15 @@ class AdminController extends Controller
         return view('admin.createTask', compact('users', 'duties', 'periods'));
     }
 
+    private function taskExists($userId, $date, $periodId){
+        return Task::where('employee_id', $userId)
+                    ->where('date', $date)
+                    ->where('period_id', $periodId)
+                    ->exists();
+    }
+
     public function addTask(Request $request, $dates = null, $selectedUsers = null) {
 
-        // dd($request->all());
         // If $dates and $selectedUsers are not provided, use request input
         if ($dates === null) {
             $dates = $request->input('dates', []);
@@ -1039,7 +1166,8 @@ class AdminController extends Controller
             $dates = explode(',', $dates);
         }
 
-        $request->validate([
+        // Define validation rules
+        $rules = [
             'group-a' => 'required|array', // Ensure at least one task is submitted
             'group-a.*.period_id' => 'required',
             'group-a.*.start_time' => 'required',
@@ -1047,15 +1175,55 @@ class AdminController extends Controller
             'group-a.*.duty_id' => 'required',
             'selected_users' => 'required|array|min:1',
             'selected_users.*' => 'exists:users,id',
-        ]);
-    
+            'dates' => 'required',
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'group-a.*.period_id.required' => 'The Period Name field is required.',
+            'group-a.*.start_time.required' => 'The Start Time field is required.',
+            'group-a.*.end_time.required' => 'The End Time field is required.',
+            'group-a.*.duty_id.required' => 'The Duty Name field is required.',
+            'selected_users.required' => 'Please select at least one user.',
+            'selected_users.*.exists' => 'Invalid user selected.',
+            'dates.required' => 'Please select one date.',
+        ];
+
+        // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // $request->validate([
+        //     'group-a' => 'required|array', // Ensure at least one task is submitted
+        //     'group-a.*.period_id' => 'required',
+        //     'group-a.*.start_time' => 'required',
+        //     'group-a.*.end_time' => 'required',
+        //     'group-a.*.duty_id' => 'required',
+        //     'selected_users' => 'required|array|min:1',
+        //     'selected_users.*' => 'exists:users,id',
+        // ]);
+
         $tasks = $request->input('group-a', []);
-;
-        
+
         // Loop through selected users and create tasks
         foreach ($selectedUsers as $userId) {
             foreach ($tasks as $taskData) {
                 foreach ($dates as $date) {
+
+                    $periodId = $taskData['period_id'];
+
+                    // Check if the task already exists
+                    if ($this->taskExists($userId, $date, $periodId)) {
+                        Alert::error('Failed', 'Task already exists for this user, date, and period.');
+                        return redirect()->route('viewTask');
+                    }
+
                     $task = new Task();
                     $task->period_id = $taskData['period_id'];
                     $task->date = $date;
@@ -1074,13 +1242,13 @@ class AdminController extends Controller
                 }
             }
         }
-    
+
         Alert::success('Done', 'Successfully Inserted');
         return redirect()->route('viewTask');
         // return response()->json(['status' => 'success', 'message' => 'Successfully Inserted.']);
 
     }
-      
+
     public function editTask($id){
         $task = Task::find($id);
         $users = User::all();
@@ -1153,7 +1321,7 @@ class AdminController extends Controller
     //         'end_time' => 'required',
     //         'duty_id' => 'required',
     //     ];
-    
+
     //     // Define custom error messages (optional)
     //     $messages = [
     //         'employee_id.required' => 'Nickname is required.',
@@ -1162,20 +1330,20 @@ class AdminController extends Controller
     //         'end_time.required' => 'End Time is required.',
     //         'duty_id.required' => 'Duty Name is required.',
     //     ];
-    
+
     //     // Validate the request data
     //     $validator = Validator::make($request->all(), $rules, $messages);
-    
+
     //     if ($validator->fails()) {
     //         return redirect()
     //             ->back()
     //             ->withErrors($validator)
     //             ->withInput();
     //     }
-    
+
     //     // Find the task by ID
     //     $task = Task::find($id);
-    
+
     //     if ($task) {
     //         // Update existing task
     //         $task->update([
@@ -1196,14 +1364,14 @@ class AdminController extends Controller
     //             'end_time' => $request->input('end_time'),
     //             'duty_id' => $request->input('duty_id'),
     //         ]);
-    
+
     //         $newTask->save();
     //     }
-    
+
     //     Alert::success('Done', 'Successfully Updated');
     //     return redirect()->route('viewTask');
     // }
-    
+
     public function deleteTask($id){
 
         $task = Task::find($id);
@@ -1211,51 +1379,64 @@ class AdminController extends Controller
         if (!$task) {
             return response()->json(['message' => 'Task not found'], 404);
         }
-    
-        $task->delete();
-    
-        return response()->json(['message' => 'Task deleted successfully']);
 
-        // Alert::success('Done', 'Successfully Deleted');
-        // return redirect()->route('viewTask');
+        $task->delete();
+
+        // return response()->json(['message' => 'Task deleted successfully']);
+
+        Alert::success('Done', 'Successfully Deleted');
+        return redirect()->route('viewTask');
     }
 
     public function viewSetting(){
         $settings = Setting::all();
         return view('admin.viewSetting', ['settings' => $settings]);
     }
-    
+
     public function createSetting(){
         return view('admin.createSetting');
     }
 
     public function addSetting(Request $request){
 
-        $data = $request->validate([
-            'setting_name' => 'required',
+        // Define validation rules
+        $rules = [
+            'setting_name' => 'required|max:255',
             'value' => 'required',
             'description' => 'nullable'
-        ]);
+        ];
 
-        if($data){
-            $setting = new Setting();
-            $setting->setting_name = $data['setting_name'];
-            $setting->value = $data['value'];
-            $setting->description = $data['description'];
-            $setting->save();
+        // Define custom error messages (optional)
+        $messages = [
+            'setting_name.required' => 'The Setting Name field is required.',
+            'setting_name.max' => 'The Setting Name should not exceed 255 characters.',
+            'value.required' => 'The Value field is required.',
+        ];
 
+        // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
 
-            Alert::success('Done', 'Successfully Inserted');
-        } else {
-            return redirect()->back();
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
+
+        $setting = new Setting();
+        $setting->setting_name = $request->input('setting_name');
+        $setting->value = $request->input('value');
+        $setting->description = $request->input('description');
+        $setting->save();
+
+        Alert::success('Done', 'Successfully Inserted');
         return redirect()->route('viewSetting');
     }
 
     public function editSetting($id){
         $setting = Setting::find($id);
-        
+
         return view('admin.editSetting', ['setting' => $setting]);
     }
 
@@ -1268,7 +1449,7 @@ class AdminController extends Controller
 
         // Define custom error messages (optional)
         $messages = [
-            'value.required' => 'Value is required.',
+            'value.required' => 'The Value field is required.',
         ];
 
             // Validate the request data
@@ -1310,7 +1491,7 @@ class AdminController extends Controller
         $otHours = null;
 
         $punchRecords = PunchRecord::where('ot_approval', '!=', null)->get();
-        
+
         // Fetch the schedule information for the user.
         $schedule = DB::table('schedules')
             ->join('users', 'schedules.employee_id', '=', 'users.id')
@@ -1321,7 +1502,7 @@ class AdminController extends Controller
             ->whereDate('punch_records.created_at', '=', $currentDate)
             ->whereNotNull('punch_records.ot_approval') // Add this line to filter based on ot_approval not being null
             ->first();
-    
+
         // Check if $schedule is null
         if ($schedule === null) {
             $otStart = 'N/A';
@@ -1330,28 +1511,27 @@ class AdminController extends Controller
             $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
             // Get the "Overtime Calculation" setting value
             $overtimeCalculationMinutes = intval($overtimeCalculation);
-        
+
             // Calculate the "OT Start" based on "Shift End" and overtime calculation
-            $otStart = Carbon::parse($schedule->shift_end)->addMinutes($overtimeCalculationMinutes); // Adjust the minutes based on your calculation 
+            $otStart = Carbon::parse($schedule->shift_end)->addMinutes($overtimeCalculationMinutes); // Adjust the minutes based on your calculation
         }
 
         $otapproval = OtApproval::with(['user'])->get();
-        
+
         // dd($otapproval);
-        
+
         return view('admin.otApproval', [
-            // 'punchRecords' => $punchRecords, 
-            // 'otStart' => $otStart, 
+            // 'punchRecords' => $punchRecords,
+            // 'otStart' => $otStart,
             // 'otHours' => $otHours,
             'otapproval' => $otapproval,
         ]);
     }
-    
 
     public function editOtApproval($id){
         $punchRecords = PunchRecord::find($id);
         $users = User::all();
-        
+
         return view('admin.editOtApproval', [
             'punchRecords' => $punchRecords,
             'users' => $users
@@ -1374,61 +1554,61 @@ class AdminController extends Controller
             if ($punchRecord) {
                 $clockout = $otapproval->clock_out_time;
                 $hourAndMinute = Carbon::parse($clockout)->format('H:i');
-                
+
                 $clockout = $hourAndMinute;
                 $shiftEnd = $otapproval->shift_end;
-        
+
                 $clockoutTime = Carbon::parse($clockout);
                 $shiftEndTime = Carbon::parse($shiftEnd);
-        
+
                 $minutesDifference = $clockoutTime->diffInMinutes($shiftEndTime);
-        
+
                 // You can also get the hours and minutes separately if needed
                 // $hours = floor($minutesDifference / 60);
                 $totalHours = $minutesDifference / 60;
-        
+
                 $totalHoursRounded = number_format($totalHours, 2);
-                
+
                 if ($request->remark == null) {
-        
+
                     $punchRecord->ot_approval = 'Approved';
                     $otapproval->status = 'Approved';
                     $otapproval->ot_hour = $totalHoursRounded;
-            
+
                     // Retrieve the associated user
                     // $user = User::where('id', $punchRecord->employee_id)->first();
-            
+
                     // // Check if the user exists and has schedules
                     // if ($user) {
                     //     $schedule = Schedule::where('employee_id', $user->id)
                     //         ->whereDate('date', $punchRecord->created_at->toDateString())
                     //         ->first();
-            
+
                     //     if ($schedule) {
                     //         $shift = Shift::find($schedule->shift_id);
-        
+
                     //         if ($shift) {
                     //             // Calculate the overtime hours based on the difference between created_at and shift end
                     //             $shiftEndTime = Carbon::createFromFormat('H:i', $shift->shift_end);
                     //             $createdTime = Carbon::parse($punchRecord->created_at);
-        
+
                     //             // Fetch the "Overtime Calculation" setting value
                     //             $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
                     //             // Get the "Overtime Calculation" setting value
                     //             $overtimeCalculationMinutes = intval($overtimeCalculation);
-        
+
                     //             // Calculate the difference in minutes between created_at and shift end
                     //             $minutesDifference = $createdTime->diffInMinutes($shiftEndTime);
-        
+
                     //             // Subtract the overtime calculation minutes
                     //             $minutesDifference -= $overtimeCalculationMinutes;
-        
+
                     //             // Convert the minutes to hours
                     //             $otHours = $minutesDifference / 60;
-        
+
                     //             // Round otHours to 2 decimal places
                     //             $otHours = round($otHours, 2);
-            
+
                     //             $punchRecord->ot_hours = $otHours;
                     //         }
                     //     }
@@ -1440,14 +1620,14 @@ class AdminController extends Controller
                 } else {
                     $punchRecord->ot_approval = 'Rejected';
                     $punchRecord->remarks = $request->remark;
-        
+
                     $otapproval->status = 'Rejected';
                     $otapproval->remark = $request->remark;
-        
+
                     $punchRecord->save();
                     $otapproval->save();
                 }
-            
+
                 Alert::success('Done', 'Successfully Updated');
                 return redirect()->route('otApproval');
             } else {
@@ -1463,9 +1643,9 @@ class AdminController extends Controller
             return redirect()->route('otApproval');
         }
 
-        
+
     }
-  
+
     public function deleteOtApproval($id){
 
         $punchRecords = PunchRecord::find($id);
@@ -1479,18 +1659,18 @@ class AdminController extends Controller
     public function attendance(){
         // Retrieve all punch records with associated user information
         $punchRecords = PunchRecord::with('user')->get();
-    
+
         // Modify the date and time columns in each punch record
         $punchRecords->each(function ($punchRecord) {
             $punchRecord->date = Carbon::parse($punchRecord->created_at)->toDateString();
             $punchRecord->time = Carbon::parse($punchRecord->created_at)->toTimeString();
         });
-    
+
         // Retrieve all schedules, shifts, and settings
         $schedules = Schedule::all();
         $shifts = Shift::all();
         $settings = Setting::all();
-    
+
         // Return the view with the punchRecords, schedules, shifts, and settings
         return view('admin.attendance', compact('punchRecords', 'schedules', 'shifts', 'settings'));
     }
@@ -1508,28 +1688,28 @@ class AdminController extends Controller
             // Default OT allowance value in case the setting is not found
             $otAllowanceValue = 0;
         }
-    
+
         // Loop through each user to calculate their total OT hours and update/create records for each month
         foreach ($users as $user) {
             $employeeId = $user->id;
-    
+
             // Loop through each month
             for ($month = 1; $month <= 12; $month++) {
                 // Query the punch_record table to check if the user has records for the current month
                 $hasRecordsForMonth = PunchRecord::where('employee_id', $employeeId)
                     ->whereMonth('created_at', $month)
                     ->exists();
-    
+
                 // If the user has records for the current month, calculate total_ot_hour
                 if ($hasRecordsForMonth) {
                     $otHoursForMonth = PunchRecord::selectRaw('SUM(ot_hours) as total_ot_hour')
                         ->where('employee_id', $employeeId)
                         ->whereMonth('created_at', $month)
                         ->value('total_ot_hour');
-    
+
 
                     $basicSalary = $user->salary;
-    
+
                     $totalOTPay = $otHoursForMonth * $otAllowanceValue;
 
                     $totalPayout = $basicSalary + $totalOTPay;
@@ -1550,36 +1730,36 @@ class AdminController extends Controller
                 }
             }
         }
-    
+
         // Retrieve the updated records
         $salaryLogs = SalaryLog::whereIn('employee_id', $users->pluck('id')->all())->get();
-    
+
         return view('admin.salaryLogs', compact('salaryLogs', 'users'));
     }
-    
+
     public function totalWork(){
         // Fetch punch records with user information
         $punchRecords = PunchRecord::with('user')->get();
-    
+
         // Fetch users and their positions
         $users = User::where('role', 'member')->with('position')->get();
-    
+
         // Fetch schedules with their shifts
         $schedules = Schedule::join('punch_records', 'schedules.date', '=', DB::raw('DATE(punch_records.created_at)'))
             ->join('users', 'schedules.employee_id', '=', 'users.id')
             ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
             ->select('schedules.id', 'shifts.shift_start', 'shifts.shift_end', 'punch_records.id', 'users.id as employee_id', 'schedules.date', 'punch_records.remarks')
             ->get();
-    
+
         // Return the data to the view
         return view('admin.totalWork', compact('punchRecords', 'users', 'schedules'));
     }
-    
+
     public function updateTotalWork(Request $request, $id){
         // Validate the form data, including the remark
         $request->validate([
             'remark' => 'string', // Add any additional validation rules as needed
-        ]);  
+        ]);
 
         // Find the record you want to update (e.g., PunchRecord)
         $punchRecord = PunchRecord::find($id);

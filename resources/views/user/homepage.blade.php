@@ -16,7 +16,7 @@
                 $shift = App\Models\Schedule::where('employee_id', Auth::user()->id)
                   ->whereDate('date', now()->toDateString()) // Filter by the current date
                   ->get();
-                
+
               @endphp
               @if($shift->isEmpty())
                   <button type="button" id="clockButton" class="btn" style="width:100%" disabled>
@@ -37,7 +37,7 @@
                     {{ $status == 1 ? 'Clock In' : 'Clock Out' }}
                   </button>
               @endif
-              
+
             </form>
 
             <div class="col-12">
@@ -60,16 +60,16 @@
                               @php
                                 // Get the current date
                                 $currentDate = \Carbon\Carbon::now();
-                                
+
                                 // Filter schedules for today
                                 $todaySchedules = $schedules->filter(function ($schedule) use ($currentDate) {
                                     $scheduleDate = \Carbon\Carbon::createFromFormat('Y-m-d', $schedule->date);
-                                    
+
                                     // Filter out schedules that match the current date
                                     return $scheduleDate->isSameDay($currentDate);
                                 });
                               @endphp
-          
+
                               @foreach ($todaySchedules as $schedule)
                                   @php
                                     $shiftInfo = null;
@@ -79,7 +79,7 @@
                                         $shiftInfo = $shiftStart->format('h:i A') . ' - ' . $shiftEnd->format('h:i A');
                                     }
                                   @endphp
-          
+
                                   <tr>
                                       <td>{{ $currentDate->format('d M Y') }}</td>
                                       <td>{{ $shiftInfo }}</td>
@@ -89,7 +89,7 @@
                           </tbody>
                         </table>
                       </div>
-                      
+
                       <!-- End Invoice List Table -->
                   </div>
 
@@ -114,7 +114,7 @@
                                   return \Carbon\Carbon::parse($task->date)->isToday();
                               });
                           @endphp
-        
+
                             @foreach ($todayTasks as $task)
                                 @php
                                   $time = null;
@@ -124,9 +124,9 @@
                                       $time = $startTime->format('h:i A') . ' - ' . $endTime->format('h:i A');
                                   }
                                 @endphp
-        
+
                                 <tr>
-                                    <td>{{ $task->task_name }}</td>
+                                    <td>{{ $task->period->period_name }}</td>
                                     <td>{{ $time }}</td>
                                     <td>{{ $task->duty->duty_name ?? null }}</td>
                                 </tr>
@@ -134,7 +134,7 @@
                         </tbody>
                       </table>
                     </div>
-                    
+
                     <!-- End Invoice List Table -->
                   </div>
               </div>
@@ -166,7 +166,7 @@
               $user_id = $user ? $user->id : null;
               $currentDate = now()->toDateString();
             @endphp
-         
+
             <div class="col-12">
               <div class="card mb-30">
                   <div class="card-body pt-30">
@@ -189,9 +189,9 @@
                             @php
                               $recordDate = Carbon\Carbon::parse($punchRecord->created_at)->toDateString();
                               $currentDate = now()->toDateString();
-                            @endphp        
+                            @endphp
                             @if ($recordDate == $currentDate)
-                                @if ($punchRecord->user->id === $user_id) 
+                                @if ($punchRecord->user->id === $user_id)
                                     <tr>
                                         <td>{{ $punchRecord->user->full_name }}</td>
                                         <td>{{ \Carbon\Carbon::parse($recordDate)->format('d M Y') }}</td>
@@ -203,10 +203,10 @@
                             @endif
                           @endforeach
                         </tbody>
-                      </table>                                                            
+                      </table>
                       <!-- End Invoice List Table -->
                   </div>
-              </div>    
+              </div>
             </div>
 
           </div>
@@ -298,7 +298,7 @@
   });
 
 
-  
+
 </script>
 
 

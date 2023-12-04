@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 class EmployeeRequest extends FormRequest
 {
-  
+
 
 
     /**
@@ -27,10 +27,10 @@ class EmployeeRequest extends FormRequest
         $userId = $this->route('id'); // Assuming your route parameter is named 'user'
 
         $rules = [
-            'employee_id' => 'required',
+            'employee_id' => 'required|unique:users,employee_id,' . $userId,
             'full_name' => 'required',
             'nickname' => 'required',
-            'ic_number' => 'required',
+            'ic_number' => 'required|unique:users,ic_number,' . $userId,
             'address' => 'required',
             'email' => 'nullable',
             'position_id' => 'nullable',
@@ -53,14 +53,14 @@ class EmployeeRequest extends FormRequest
         ];
 
         // If creating a new user, add the unique and required rules for 'employee_id'
-        if (!$userId) {
-            // Initialize $rules['employee_id'] as an array
-            $rules['employee_id'] = [];
-            $rules['ic_number'] = [];
+        // if (!$userId) {
+        //     // Initialize $rules['employee_id'] as an array
+        //     $rules['employee_id'] = [];
+        //     $rules['ic_number'] = [];
 
-            $rules['employee_id'][] = Rule::unique('users', 'employee_id');
-            $rules['ic_number'][] = Rule::unique('users', 'ic_number');
-        }
+        //     $rules['employee_id'][] = Rule::unique('users', 'employee_id');
+        //     $rules['ic_number'][] = Rule::unique('users', 'ic_number');
+        // }
 
         return $rules;
     }
@@ -87,15 +87,15 @@ class EmployeeRequest extends FormRequest
             'ic_photo' => 'IC Photo',
             'offer_letter' => 'Offer Letter',
             'role' => 'Role',
-            
+
         ];
     }
 
-    public function messages()
-    {
-        return [
-            'employee_id.unique' => 'The provided Employee ID is already in use.',
-            'ic_number.unique' => 'The provided IC Number / Passport is already in use.',
-        ];
-    }
+    // public function messages()
+    // {
+    //     return [
+    //         'employee_id.unique' => 'The provided Employee ID is already in use.',
+    //         'ic_number.unique' => 'The provided IC Number / Passport is already in use.',
+    //     ];
+    // }
 }

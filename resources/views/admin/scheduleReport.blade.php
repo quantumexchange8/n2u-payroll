@@ -8,7 +8,7 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            
+
             <div class="col-12">
                 <div class="card mb-30">
 
@@ -22,21 +22,21 @@
                                      <input type="date" id="date-filter" value=""/>
                                  </div>
                                 <!-- End Date Picker -->
-    
-    
+
+
                                 <!-- Dropdown Button -->
                                 <div class="dropdown-button mt-3 mt-sm-0">
                                     <button class="btn style--two orange" type="button" id="user-filter-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         All Users <i class="icofont-simple-down"></i>
                                     </button>
-                                
+
                                     <div class="dropdown-menu" aria-labelledby="user-filter-dropdown">
                                         <a class="dropdown-item" href="#" data-user-filter="all" data-full-name="All Users">All Users</a>
                                         @foreach ($users as $user)
                                             <a class="dropdown-item" href="#" data-user-filter="{{ $user->id }}" data-full-name="{{ $user->nickname }}">{{ $user->nickname }}</a>
                                         @endforeach
                                     </div>
-                                </div>                                
+                                </div>
                                 <!-- End Dropdown Button -->
 
                                 <!-- Dropdown Button -->
@@ -67,7 +67,7 @@
                         <!-- Invoice List Table -->
                         <table class="text-nowrap table-bordered dh-table">
                             <thead>
-                                <tr>   
+                                <tr>
                                     <th>Date</th>
                                     <th>Nickname</th>
                                     <th>Shift Start</th>
@@ -77,12 +77,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($schedules as $schedule)                                
+                                @foreach ($schedules as $schedule)
                                     @php
                                         $recordDate = Carbon\Carbon::parse($schedule->date)->toDateString();
                                         $employeeName = $schedule->user->nickname
                                     @endphp
-                        
+
                                     @if ($recordDate)
                                         <tr data-date="{{ $recordDate }}" data-full-name="{{ $employeeName }}">
                                             <td>{{ Carbon\Carbon::parse($schedule->date)->format('d M Y') }}</td>
@@ -100,10 +100,10 @@
                                                 @if ($schedule->shift && $schedule->shift->shift_end)
                                                     {{ Carbon\Carbon::parse($schedule->shift->shift_end)->format('g:i A') }}
                                                 @else
-                                                     
+
                                                 @endif
-                                            </td>                                          
-                                            <td>{{ $schedule->remarks }}</td>                                         
+                                            </td>
+                                            <td>{{ $schedule->remarks }}</td>
                                             <td>
                                                 <button class="details-btn view-btn" data-toggle="modal" data-target="#viewModal{{ $schedule->id }}">
                                                     View <i class="icofont-eye"></i>
@@ -132,7 +132,7 @@
                                                                     <tbody>
                                                                         @foreach ($schedule->tasks as $task)
                                                                             <tr>
-                                                                                <td>{{ $task->task_name }}</td>
+                                                                                <td>{{ $task->period->period_name }}</td>
                                                                                 <td>{{ Carbon\Carbon::parse($task->start_time)->format('g:i A') }}</td>
                                                                                 <td>{{ Carbon\Carbon::parse($task->end_time)->format('g:i A') }}</td>
                                                                                 <td>{{ $task->duty->duty_name ?? null}}</td>
@@ -166,7 +166,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        
+
                         <!-- End Invoice List Table -->
                     </div>
                 </div>

@@ -12,6 +12,15 @@
                     <!-- Form -->
                     <form action="{{route('addTask')}}" method="POST" class="repeater-default">
                         @csrf
+                        {{-- @if($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif --}}
 
                         <!-- Color Options -->
                         <div class="form-element color-options">
@@ -19,11 +28,11 @@
                                 <div class="col-lg-12">
                                     <label class="bold mb-2">Nickname</label>
                                 </div>
-                        
+
                                 @php
                                     $usersChunked = $users->chunk(ceil($users->count() / 4));
                                 @endphp
-                        
+
                                 @foreach ($usersChunked as $userChunk)
                                     <div class="col-lg-3 col-sm-6 mb-30 mb-lg-0">
                                         @foreach ($userChunk as $user)
@@ -35,19 +44,22 @@
                                                         <span class="checkmark"></span>
                                                     </label>
                                                     <!-- End Custom Checkbox -->
-                                                    
+
                                                     <label for="check{{ $user->id }}">{{ $user->nickname }}</label>
                                                 </div>
- 
+
                                         @endforeach
                                     </div>
                                 @endforeach
                             </div>
-                        </div>                       
+                            @error('selected_users')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
                         <!-- End Color Options -->
 
                         <div class="row">
-                            <div class="col-lg-6">                          
+                            <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Date</label>
@@ -56,12 +68,12 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <!-- End Form Group --> 
+                                <!-- End Form Group -->
                             </div>
 
                             <div class="col-12">
                                 <!-- Form Element -->
-                                <div class="form-element py-30 mb-30">   
+                                <div class="form-element py-30 mb-30">
                                     <!-- Repeater Html Start -->
                                     <div data-repeater-list="group-a">
 
@@ -73,46 +85,59 @@
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-3">
                                                     <label for="inputName" class="bold mb-2">Period</label>
-                                                    <select class="theme-input-style" id="period_id" name="period_id" value="{{ old('period_id') }}">
+                                                    <select class="theme-input-style" id="period_id" name="group-a[0][period_id]" value="{{ old('period_id') }}">
                                                         <option value="">Select Period</option>
                                                         @foreach ($periods as $period)
                                                             <option value="{{ $period->id }}">{{ $period->period_name }}</option>
                                                         @endforeach
                                                     </select>
-                                                    @error('period_id')
+                                                    @error('group-a.0.period_id')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
                                                 <!-- End Form Group -->
 
                                                 <!-- Form Group -->
-                                                <div class="form-group col-lg-3">
+                                                <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">Start</label>
-                                                    <input type="time" class="form-control" id="start_time" name="start_time">
+                                                    <input type="time" class="form-control" id="start_time" name="group-a[0][start_time]">
+                                                    @error('group-a.0.start_time')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                                 <!-- End Form Group -->
 
                                                 <!-- Form Group -->
-                                                <div class="form-group col-lg-3">
+                                                <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">End</label>
-                                                    <input type="time" class="form-control" id="end_time" name="end_time">
+                                                    <input type="time" class="form-control" id="end_time" name="group-a[0][end_time]">
+                                                    @error('group-a.0.end_time')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                                 <!-- End Form Group -->
 
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-3">
                                                     <label for="inputCompany" class="bold mb-2">Duty</label>
-                                                    <select class="theme-input-style" id="duty_id" name="duty_id" autocomplete="off" value="{{ old('duty_id') }}">
+                                                    <select class="theme-input-style" id="duty_id" name="group-a[0][duty_id]" autocomplete="off" value="{{ old('duty_id') }}">
                                                         <option value="">Select Duty</option>
                                                         @foreach ($duties as $duty)
-                                                        <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>  
+                                                        <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>
                                                     @endforeach
                                                     </select>
-                                                    @error('duty_id')
+                                                    @error('group-a.0.duty_id')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
                                                 <!-- End Form Group -->
+
+                                                <!-- Repeater Remove Btn -->
+                                                <div class="repeater-remove-btn col-lg-1">
+                                                    <button data-repeater-delete class="remove-btn">
+                                                        <img src="../../assets/img/svg/remove.svg" alt="" class="svg">
+                                                    </button>
+                                                </div>
 
                                             </div>
                                             <hr />
@@ -121,8 +146,8 @@
 
                                     </div>
                                     <!-- Repeater End -->
-                                    <button data-repeater-create type="button" class="repeater-add-btn btn-circle"> 
-                                        <img src="../../assets/img/svg/plus_white.svg" alt="" class="svg">    
+                                    <button data-repeater-create type="button" class="repeater-add-btn btn-circle">
+                                        <img src="../../assets/img/svg/plus_white.svg" alt="" class="svg">
                                     </button>
                                 </div>
                                 <!-- End Form Element -->

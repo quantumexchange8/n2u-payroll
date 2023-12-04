@@ -23,7 +23,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                
+
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
@@ -65,7 +65,7 @@
                                     @enderror
                                 </div>
                                 <!-- End Form Group -->
-                                
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Email</label>
@@ -88,7 +88,7 @@
                                     @error('position_id')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
-                                </div>                                            
+                                </div>
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
@@ -102,7 +102,7 @@
                                     @error('employee_type')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
-                                </div>                                            
+                                </div>
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
@@ -112,7 +112,7 @@
                                     @error('remarks')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
-                                </div>                                            
+                                </div>
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
@@ -134,7 +134,7 @@
                                     @enderror
                                 </div>
                                 <!-- End Form Group -->
-                                
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Role</label>
@@ -147,7 +147,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <!-- End Form Group --> 
+                                <!-- End Form Group -->
 
                             </div>
 
@@ -173,7 +173,7 @@
                                         <option value="Kazakhstan">Kazakhstan</option>
                                         <option value="India">India</option>
                                         <option value="Indonesia">Indonesia</option>
-                                        <option value="Bangladesh">Bangladesh</option>                                                  
+                                        <option value="Bangladesh">Bangladesh</option>
                                     </select>
                                     @error('nation')
                                         <span class="text-danger">{{ $message }}</span>
@@ -203,11 +203,11 @@
                                         <option value="MBSB Bank">MBSB Bank</option>
                                         <option value="BSN">BSN</option>
                                         <option value="Bank Muamalat">Bank Muamalat</option>
-                                        <option value="Other">Other</option>                                                 
+                                        <option value="Other">Other</option>
                                     </select>
-                                </div>                                         
+                                </div>
                                 <!-- End Form Group -->
-                                
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Bank Account</label>
@@ -223,7 +223,7 @@
                                     <!-- Form Group -->
                                     <div class="form-group">
                                         <label class="font-14 bold mb-2">Account Type</label>
-                                        <input type="number" class="theme-input-style" id="account_type" name="account_type" autocomplete="off" placeholder="Account Type" value="{{ old('account_type') }}">
+                                        <input type="text" class="theme-input-style" id="account_type" name="account_type" autocomplete="off" placeholder="Account Type" value="{{ old('account_type') }}">
                                         @error('account_type')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -247,21 +247,21 @@
                                     </div>
                                     <!-- End Form Group -->
                                 </div>
-     
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Passport Size Photo</label>
                                     <input type="file" class="theme-input-style" id="passport_size_photo" name="passport_size_photo" style="background: #ffffff;">
                                 </div>
                                 <!-- End Form Group -->
-     
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">IC Photo</label>
                                     <input type="file" class="theme-input-style" id="ic_photo" name="ic_photo" style="background: #ffffff;">
                                 </div>
                                 <!-- End Form Group -->
-                                
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Offer Letter</label>

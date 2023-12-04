@@ -14,7 +14,7 @@
                     <form action="{{ route('updateTask', $task->id) }}" method="POST">
                         @csrf
                         <div class="row">
-                            <div class="col-lg-6">   
+                            <div class="col-lg-6">
 
                                 <!-- Form Group -->
                                 <div class="form-group">
@@ -23,14 +23,14 @@
                                         @foreach ($users as $user)
                                             <option value="{{ $user->id }}" {{ $task->user->id === $user->id ? 'selected' : '' }}>
                                                 {{ $user->nickname }}
-                                            </option>  
+                                            </option>
                                         @endforeach
                                     </select>
                                     @error('employee_id')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <!-- End Form Group --> 
+                                <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">
@@ -48,7 +48,7 @@
                                     <select class="theme-input-style" id="period_id" name="period_id" value="{{ old('period_id') }}">
                                         <option value="">Select Period</option>
                                         @foreach ($periods as $period)
-                                            <option value="{{ $period->id }}" {{ $task->period->period_id === $period->id ? 'selected' : ''}}>
+                                            <option value="{{ $period->id }}" {{ $task->period->id === $period->id ? 'selected' : ''}}>
                                                 {{ $period->period_name }}
                                             </option>
                                         @endforeach
@@ -75,7 +75,7 @@
                                     @enderror
                                 </div>
                                 <!-- End Form Group -->
-                                
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">End Time</label>
@@ -84,7 +84,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <!-- End Form Group --> 
+                                <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">
@@ -93,7 +93,7 @@
                                         @foreach ($duties as $duty)
                                             <option value="{{ $duty->id }}" {{ $task->duty->id === $duty->id ? 'selected' : '' }}>
                                                 {{ $duty->duty_name }}
-                                            </option>  
+                                            </option>
                                         @endforeach
                                     </select>
                                     @error('duty_id')

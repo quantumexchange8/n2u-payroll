@@ -11,6 +11,7 @@ use App\Models\Position;
 use App\Models\PunchRecord;
 use App\Models\Setting;
 use App\Models\Task;
+use App\Models\Period;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -18,9 +19,9 @@ use Carbon\Carbon;
 class MemberController extends Controller
 {
     public function dashboard(){
-        
+
         // Assuming you are using Laravel's built-in authentication
-        $user = auth()->user(); 
+        $user = auth()->user();
         $status = Auth::user()->status;
 
         if($status == 1){
@@ -43,6 +44,8 @@ class MemberController extends Controller
 
         $tasks = Task::where('employee_id', $user->id)->with('user')->get();
 
+        $periods = Period::all();
+
         $punchRecords = PunchRecord::with('user')->get();
         //dd($punchRecords);
 
@@ -61,14 +64,15 @@ class MemberController extends Controller
             'status' => $status,
             'clock' => $clock,
             'settings' => $settings,
-            'tasks'=> $tasks
+            'tasks' => $tasks,
+            'periods' => $periods
         ]);
     }
 
     public function viewSchedule(Request $request) {
         // Check if the request wants JSON data
         if ($request->wantsJson()) {
-    
+
             $userId = $request->input('user_id');
             // Retrieve and return joined data for FullCalendar
             $joinedData = Schedule::join('users', 'schedules.employee_id', '=', 'users.id')
@@ -83,15 +87,15 @@ class MemberController extends Controller
                     'schedules.date'
                 )
                 ->get();
-    
+
             return response()->json($joinedData);
         }
-    
+
         $user = User::where('id', '=', Auth::user()->id)->first();
-    
+
         $schedules = Schedule::all();
         $shifts = Shift::all();
-    
+
         return view('user.viewSchedule', compact('schedules', 'user', 'shifts'));
     }
 
@@ -104,22 +108,22 @@ class MemberController extends Controller
     public function updateProfile(Request $request) {
         // Use the currently authenticated user
         $user = User::where('id', '=', Auth::user()->id)->first();
-        
+
         // Validate the input
         $request->validate([
             'full_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'email' => 'required|email|max:255',
         ]);
-    
+
         // Update the user's data
         $user->full_name = $request->input('full_name');
         $user->address = $request->input('address');
         $user->email = $request->input('email');
-    
+
         // Save the changes
         $user->save();
-    
+
         // Check if the user wants to update their password
         if ($request->filled('old-pass') && $request->filled('new-pass') && $request->filled('retype-pass')) {
             // Check if the old password matches the user's current password
@@ -139,7 +143,7 @@ class MemberController extends Controller
         } else {
             Alert::success('Done', 'Successfully Updated');
         }
-    
+
         return redirect()->route('viewProfile');
     }
 
@@ -156,8 +160,8 @@ class MemberController extends Controller
 
         return $punchRecords;
     }
-    
-    
-    
-    
+
+
+
+
 }
