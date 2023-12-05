@@ -73,6 +73,6 @@ return [
         //         'url' => '/shortcutlink2'
         //     ]
         // ],
-
+        'custom' => []
     ]
 ];
