@@ -35,9 +35,9 @@
 <body>
 
     <div class="mn-vh-100 d-flex align-items-center">
-        
+
         <div class="container">
-            
+
             <!-- Card -->
             <div class="card justify-content-center auth-card" style="padding-top: 30px;">
                 <!-- Logo -->
@@ -67,7 +67,7 @@
                                 @enderror
                             </div>
                             <!-- End Form Group -->
-                            
+
                             <!-- Form Group -->
                             <div class="form-group mb-20">
                                 <label for="password" class="mb-2 font-14 bold black">Password</label>
@@ -86,7 +86,7 @@
                                         <span class="checkmark"></span>
                                     </label> --}}
                                     <!-- End Custom Checkbox -->
-                                    
+
                                     {{-- <label for="checkbox" class="font-14">Remember Me</label> --}}
                                 </div>
 
@@ -103,7 +103,7 @@
                                 {{-- <span class="font-12 d-block"><a href="register.html" class="bold">Sign Up</a>,If you have no account.</span> --}}
                             </div>
                         </form>
-                    </div>                                    
+                    </div>
                 </div>
             </div>
             <!-- End Card -->
@@ -122,6 +122,19 @@
     <script src="../../../assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="../../../assets/js/script.js"></script>
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
+
+    <script>
+        var currentUrl = window.location.href;
+        var isAdminLogin = currentUrl.includes('/adminLogin');
+        var manifestUrl = isAdminLogin ? '/assets/js/adminLoginManifest.json' : '/manifest.json';
+        console.log('test');
+        // Set the dynamic manifest
+        var link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = manifestUrl;
+        document.head.appendChild(link);
+    </script>
+    
 </body>
 
 </html>
