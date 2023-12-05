@@ -60,34 +60,77 @@ $(function() {
             }
         });
     },
-    eventClick: function(event, jsEvent, view) {
-        console.log(event); // Log the event object to the console
-    
-        // Extract and display data
-        var scheduleId = event.id; // Get the schedule ID
+    // eventClick: function(event, jsEvent, view) {
+    //     console.log(event); // Log the event object to the console
 
-        var fullName = event.title; // Assuming "title" contains the full name
-        var date = event.start.format('YYYY-MM-DD'); // Format the date
-    
-        var shiftStart = event.shiftStart;
-        var shiftEnd = event.shiftEnd;
+    //     // Extract and display data
+    //     var scheduleId = event.id; // Get the schedule ID
 
-        
-    
-        // Display data in the modal
-        $('#modalScheduleId').html(scheduleId);
-        $('#modalFullName').html(fullName);
-        $('#modalDate').html(date);
-        $('#modalShiftStart').html(shiftStart);
-        $('#modalShiftEnd').html(shiftEnd);
+    //     var fullName = event.title; // Assuming "title" contains the full name
+    //     var date = event.start.format('YYYY-MM-DD'); // Format the date
 
-    
-        $('#fullCalModal').modal();
-    }
-    ,
+    //     var shiftStart = event.shiftStart;
+    //     var shiftEnd = event.shiftEnd;
+
+
+
+    //     // Display data in the modal
+    //     $('#modalScheduleId').html(scheduleId);
+    //     $('#modalFullName').html(fullName);
+    //     $('#modalDate').html(date);
+    //     $('#modalShiftStart').html(shiftStart);
+    //     $('#modalShiftEnd').html(shiftEnd);
+
+
+    //     $('#fullCalModal').modal();
+    // }
+    // ,
     dayClick: function(date, jsEvent, view) {
-        $("#createEventModal").modal("show");
-    },
+        var clickedDate = date.format();
+        console.log('Clicked date:', clickedDate);
+
+        // Set the modal title to match the selected date
+        var formattedDate = moment(clickedDate).format('DD MMM YYYY');
+        $('#scheduleModalLabel').text('Tasks for ' + formattedDate);
+
+        $.ajax({
+            url: '/user/getTasks',
+            type: 'GET',
+            data: { date: clickedDate, user_id: userId },
+            success: function(schedule) {
+                console.log('Success:', schedule);
+
+                var scheduleTableBody = $('#scheduleTableBody');
+                scheduleTableBody.empty();
+
+                schedule.forEach(function(item) {
+                    // Format the time using moment.js
+                    var startTimeFormatted = moment(item.start_time, 'HH:mm').format('hh:mm A');
+                    var endTimeFormatted = moment(item.end_time, 'HH:mm').format('hh:mm A');
+
+                    var row = '<tr>' +
+                        '<td>' + item.period_name + '</td>' +
+                        '<td>' + startTimeFormatted + '</td>' +
+                        '<td>' + endTimeFormatted + '</td>' +
+                        '</tr>';
+                    scheduleTableBody.append(row);
+                });
+
+                $('#openModalButton').click();
+            },
+            error: function(error) {
+                console.log('Error:', error);
+
+                // If you want to display the error in the modal, you can add this:
+                var errorMessage = 'Error fetching data. Please try again.';
+                $('#scheduleTableBody').html('<tr><td colspan="3">' + errorMessage + '</td></tr>');
+
+                // Alternatively, you can alert the error message
+                // alert('Error fetching data: ' + error.statusText);
+            }
+        });
+    }
+
     // eventDragStop: function(event, jsEvent, ui, view) {
     //     if (isEventOverDiv(jsEvent.clientX, jsEvent.clientY)) {
     //         var el = $("<div class='fc-event'>").appendTo('#external-events-listing').text(event.title);

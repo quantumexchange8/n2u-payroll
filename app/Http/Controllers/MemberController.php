@@ -15,6 +15,8 @@ use App\Models\Period;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 class MemberController extends Controller
 {
@@ -147,8 +149,8 @@ class MemberController extends Controller
         return redirect()->route('viewProfile');
     }
 
-    public function getdata()
-    {
+    public function getdata(){
+
         $punchRecords = PunchRecord::with('user')->get();
         //dd($punchRecords);
 
@@ -159,6 +161,23 @@ class MemberController extends Controller
         });
 
         return $punchRecords;
+    }
+
+    public function getTasks(Request $request) {
+        try {
+            $date = $request->input('date');
+            $userId = $request->input('user_id');
+
+            $tasks = Task::join('periods', 'tasks.period_id', '=', 'periods.id')
+                ->select('periods.period_name', 'tasks.start_time', 'tasks.end_time')
+                ->where('tasks.date', $date)
+                ->where('tasks.employee_id', $userId)
+                ->get();
+
+            return response()->json($tasks);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
 

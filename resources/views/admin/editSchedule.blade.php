@@ -14,8 +14,8 @@
                     <form action="{{ route('updateSchedule', $schedule->id) }}" method="POST" class="repeater-default">
                         @csrf
                         <div class="row">
-                            <div class="col-lg-6">   
-                                
+                            <div class="col-lg-6">
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Nickname</label>
@@ -23,14 +23,14 @@
                                         @foreach ($users as $user)
                                             <option value="{{ $user->id }}" {{ $schedule->user->id === $user->id ? 'selected' : '' }}>
                                                 {{ $user->nickname }}
-                                            </option>  
+                                            </option>
                                         @endforeach
                                     </select>
                                     @error('employee_id')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <!-- End Form Group --> 
+                                <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">
@@ -50,11 +50,11 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Shift</label>
                                     <select class="theme-input-style" id="shift_id" name="shift_id" autocomplete="off">
-                                        <option value="">Select Shift</option> 
+                                        <option value="">Select Shift</option>
                                         @foreach ($shifts as $shift)
                                             <option value="{{ $shift->id }}" {{ optional($schedule->shift)->id === $shift->id ? 'selected' : ''}}>
                                                 {{ $shift->formatted_shift_time }}
-                                            </option>  
+                                            </option>
                                         @endforeach
                                     </select>
                                     @error('shift_id')
@@ -176,6 +176,7 @@
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputCompany" class="bold mb-2">Duty</label>
                                                         <select class="theme-input-style" name="duty_id" required>
+                                                            <option value="">Select Duty</option>
                                                             @foreach($duties as $duty)
                                                                 <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>
                                                             @endforeach
@@ -199,11 +200,11 @@
                                         @endforelse
                                     </div>
                                     <!-- Repeater End -->
-                                    <button data-repeater-create type="button" class="repeater-add-btn btn-circle"> 
-                                        <img src="../../assets/img/svg/plus_white.svg" alt="" class="svg">    
+                                    <button data-repeater-create type="button" class="repeater-add-btn btn-circle">
+                                        <img src="../../assets/img/svg/plus_white.svg" alt="" class="svg">
                                     </button>
-                                </div>                          
-                                                           
+                                </div>
+
                                 <!-- End Form Element -->
                             </div>
 

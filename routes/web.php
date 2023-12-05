@@ -34,7 +34,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get_tabledata', [MemberController::class, 'getdata'])->name('getdata');
     Route::post('/clock_in', [RecordController::class, 'clock_in'])->name('clock_in');
     Route::post('/updateStatus', [RecordController::class, 'updateStatus'])->name('updateStatus');
-    
+
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::get('admin/dashboard', [AdminController::class, 'Admindashboard'])->name('admindashboard');
@@ -120,6 +120,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // User
     Route::get('user/viewSchedule', [MemberController::class, 'viewSchedule'])->name('viewSchedule');
+    Route::get('user/getTasks', [MemberController::class, 'getTasks'])->name('getTasks');
 
     Route::get('user/viewProfile', [MemberController::class, 'viewProfile'])->name('viewProfile');
     Route::post('user/updateProfile', [MemberController::class, 'updateProfile'])->name('updateProfile');
@@ -128,5 +129,5 @@ Route::group(['middleware' => 'auth'], function () {
 Route::get('/offline', function () {
 
     return view('modules/laravelpwa/offline');
-    
+
     });
