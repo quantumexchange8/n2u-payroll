@@ -5,19 +5,15 @@ return [
     'manifest' => [
         'name' => 'N2U Payroll',
         'short_name' => 'N2U',
-        'main_pwa' => [
-            'start_url' => '/',
-        ],
-        // Admin PWA configuration
-        'admin_pwa' => [
-            'start_url' => '/adminLogin',
-        ],
+        'start_url' => '/',
         'background_color' => '#ffffff',
         'theme_color' => '#000000',
         'display' => 'standalone',
         'orientation'=> 'any',
         'status_bar'=> 'black',
-
+        'custom' => [
+            'adminLogin' => '/public/assets/js/adminLoginManifest.json',
+        ],
         'icons' => [
             '72x72' => [
                 'path' => '/images/icons/icon-72x72.png',
@@ -80,10 +76,6 @@ return [
         //         'url' => '/shortcutlink2'
         //     ]
         // ],
-        // 'custom' => [
-        //     'adminLogin' => '/public/assets/js/adminLoginManifest.json',
-        // ],
+
     ]
-
-
 ];
