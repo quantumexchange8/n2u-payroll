@@ -16,10 +16,10 @@
    <!-- Favicon -->
    {{-- <link rel="shortcut icon" href="assets/img/logo-icon.png"> --}}
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/logo180.png">
-    
+
    <!-- Web Fonts -->
    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i&display=swap" rel="stylesheet">
-   
+
    <!-- ======= BEGIN GLOBAL MANDATORY STYLES ======= -->
    <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap.min.css">
    <link rel="stylesheet" href="../../assets/fonts/icofont/icofont.min.css">
@@ -37,6 +37,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.3/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.3/dist/sweetalert2.all.min.js"></script>
 
+    <link rel="manifest" href="/manifest.json">
     @laravelPWA
 </head>
 
@@ -280,7 +281,7 @@
                                 <i class="icofont-magic-alt"></i>
                                 <span class="link-title">Logout</span>
                                 </a>
-        
+
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                                 </form>
@@ -312,14 +313,14 @@
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="icofont-magic-alt"></i>
                                     <span class="link-title">Logout</span>
-                                </a>            
+                                </a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                     @csrf
                                 </form>
                             </li>
                         </ul>
                     @endif
-                
+
                     <!-- End Nav -->
                 </div>
                 <!-- End Sidebar Body -->
@@ -329,7 +330,7 @@
             <!-- Main Content -->
                 @yield('content')
             <!-- End Main Content -->
-            
+
         </div>
         <!-- End Main Wrapper -->
 
@@ -359,7 +360,7 @@
     <script src="../../assets/plugins/jquery-repeater/custom-repeater.js"></script>
     <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
 
-    
+
 
     @if(Auth::check())
         @if(Auth::user()->role === 'admin')
@@ -380,8 +381,20 @@
             });
         }
     </script>
-    
-    
+
+    <script>
+        var currentUrl = window.location.href;
+        var isAdminLogin = currentUrl.includes('/adminLogin');
+        var manifestUrl = isAdminLogin ? '/assets/js/adminLoginManifest.json' : '/manifest.json';
+
+        // Set the dynamic manifest
+        var link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = manifestUrl;
+        document.head.appendChild(link);
+    </script>
+
+
 </body>
 
 </html>

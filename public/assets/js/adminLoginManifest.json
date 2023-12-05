@@ -1,0 +1,8 @@
+{
+    "name": "Admin N2U Payroll",
+    "short_name": "Admin N2U",
+    "start_url": "/adminLogin",
+    "background_color": "#ffffff",
+    "theme_color": "#000000"
+
+  }
