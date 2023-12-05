@@ -31,16 +31,26 @@
 <meta name="msapplication-TileImage" content="{{ data_get(end($config['icons']), 'src') }}">
 
 <script type="text/javascript">
-    // Initialize the service worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/serviceworker.js', {
-            scope: '.'
+        navigator.serviceWorker.register('/user-service-worker.js', {
+            scope: '/'
         }).then(function (registration) {
-            // Registration was successful
-            console.log('Laravel PWA: ServiceWorker registration successful with scope: ', registration.scope);
-        }, function (err) {
-            // registration failed :(
-            console.log('Laravel PWA: ServiceWorker registration failed: ', err);
+            console.log('User PWA: ServiceWorker registration successful with scope:', registration.scope);
+        }).catch(function (err) {
+            console.error('User PWA: ServiceWorker registration failed:', err);
+        });
+    }
+</script>
+
+<!-- Admin PWA Service Worker Registration -->
+<script type="text/javascript">
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/admin-service-worker.js', {
+            scope: '/adminLogin/'
+        }).then(function (registration) {
+            console.log('Admin PWA: ServiceWorker registration successful with scope:', registration.scope);
+        }).catch(function (err) {
+            console.error('Admin PWA: ServiceWorker registration failed:', err);
         });
     }
 </script>

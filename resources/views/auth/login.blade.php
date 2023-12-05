@@ -123,18 +123,8 @@
     <script src="../../../assets/js/script.js"></script>
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
 
-    <script>
-        var currentUrl = window.location.href;
-        var isAdminLogin = currentUrl.includes('/adminLogin');
-        var manifestUrl = isAdminLogin ? '/assets/js/adminLoginManifest.json' : '/manifest.json';
-        console.log('test');
-        // Set the dynamic manifest
-        var link = document.createElement('link');
-        link.rel = 'manifest';
-        link.href = manifestUrl;
-        document.head.appendChild(link);
-    </script>
-    
+
+
 </body>
 
 </html>

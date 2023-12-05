@@ -11,9 +11,6 @@ return [
         'display' => 'standalone',
         'orientation'=> 'any',
         'status_bar'=> 'black',
-        'custom' => [
-            'adminLogin' => '/public/assets/js/adminLoginManifest.json',
-        ],
         'icons' => [
             '72x72' => [
                 'path' => '/images/icons/icon-72x72.png',

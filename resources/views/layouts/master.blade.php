@@ -37,6 +37,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.3/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.3/dist/sweetalert2.all.min.js"></script>
 
+    <link rel="manifest" href="/manifest.json">
     @laravelPWA
 </head>
 
@@ -379,18 +380,6 @@
                 });
             });
         }
-    </script>
-
-    <script>
-        var currentUrl = window.location.href;
-        var isAdminLogin = currentUrl.includes('/adminLogin');
-        var manifestUrl = isAdminLogin ? '/assets/js/adminLoginManifest.json' : '/manifest.json';
-        console.log('test');
-        // Set the dynamic manifest
-        var link = document.createElement('link');
-        link.rel = 'manifest';
-        link.href = manifestUrl;
-        document.head.appendChild(link);
     </script>
 
 
