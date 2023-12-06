@@ -66,7 +66,7 @@ $(function () {
     /* If has class sub-menu-opened */
     function preloadFunc() {
         if( $('.sidebar .sidebar-body').find(".has-sub-item").hasClass("sub-menu-opened")) {
-            $('.sidebar .sidebar-body').find(".sub-menu-opened a").siblings("ul").addClass('open').show();    
+            $('.sidebar .sidebar-body').find(".sub-menu-opened a").siblings("ul").addClass('open').show();
         }
     }
     window.onpaint = preloadFunc();
@@ -78,7 +78,7 @@ $(function () {
         $(".offcanvas-overlay").toggleClass("active");
         //body.find(".sidebar-body .has-sub-item a").siblings('ul').removeClass('open').slideUp('fast');
     });
-    
+
 
     /* Holded Sidebar on Mouseenter */
     $(window).resize(function() {
@@ -139,7 +139,7 @@ $(function () {
 
             $(this).toggleClass('collapsed');
             $(target).slideToggle();
-            
+
             e.preventDefault();
         });
     }
@@ -158,7 +158,7 @@ $(function () {
     });
 
     /*==================================
-    05: Changing svg 
+    05: Changing svg
     ====================================*/
     jQuery('img.svg').each(function () {
         var $img = jQuery(this);
@@ -222,7 +222,7 @@ $(function () {
             }
         });
     }
-    
+
     /* Todo list & Invoice Check box */
     if( $( '.custom-checkbox input[type="checkbox"]' ).length ) {
 
@@ -263,11 +263,11 @@ $(function () {
     let customCheckboxes = $('.project-header, .project-box, .file-header, .file').find('.custom-checkbox');
     if(customCheckboxes.length) {
         customCheckboxes.hide();
-        
+
         customCheckboxes.find('input[type="checkbox"]').change(function(){
             if (customCheckboxes.find('input[type="checkbox"]:checked').length == 0) {
                 customCheckboxes.hide();
-            } 
+            }
         });
 
         $('.project-box, .file').find('.dropdown-button .select').on('click', function(e) {
@@ -295,7 +295,7 @@ $(function () {
     $('.dropdown-menu.checkbox > div').on('click', function(e) {
         $(this).siblings('.item-list').children('.custom-checkbox').children('input[type=checkbox]').prop('checked', false);
     })
-    
+
     /*============================================
     07: To Do List Parent border bottom
     ==============================================*/
@@ -343,14 +343,14 @@ $(function () {
         }, options);
 
         var $this = $(this);
-        
+
         var $progressBar = $this;
         var $progressCount = $progressBar.find('.ProgressBar-percentage--count');
         var $circle = $progressBar.find('.ProgressBar-circle');
         var percentageProgress = $progressBar.attr('data-progress');
         var percentageRemaining = (100 - percentageProgress);
         var percentageText = $progressCount.parent().attr('data-progress');
-        
+
         //Calculate circonférence circle
         var radius = $circle.attr('r');
         var diameter = radius * 2;
@@ -363,7 +363,7 @@ $(function () {
             'stroke-dasharray' : circumference,
             'stroke-dashoffset' : percentage,
         });
-        
+
         //Animation progress
         if(options.animate === true){
             $circle.css({
@@ -372,10 +372,10 @@ $(function () {
             'stroke-dashoffset' : percentage
             }, 2000 );
         }
-        
+
         //Animation2 text (percentage)
         if(options.animateText == true){
-    
+
             $({ Counter: 0 }).animate(
             { Counter: percentageText },
             { duration: 2000,
@@ -387,7 +387,7 @@ $(function () {
         } else {
             $progressCount.html( percentageText + '<span>k</span>');
         }
-        
+
     };
     $('.ProgressBar_1').bekeyProgressbar();
     $('.ProgressBar_2').bekeyProgressbar();
@@ -421,9 +421,9 @@ $(function () {
         function processControl() {
             processBarWrapper.each(function () {
                 var processBarOffset = $(this).offset().top - $(window).height(),
-                    processTime = '2.25s', 
+                    processTime = '2.25s',
                     processBarWidth = $(this).children('[data-process-width]').data('process-width');
-                
+
                 if ($(window).scrollTop() > processBarOffset) {
                     if (processBarWidth > 100) {
                         $(this).children('.process-bar').css({
@@ -439,9 +439,9 @@ $(function () {
                 }
             })
         }
-        
+
         processControl();
-        
+
         $(window).on('scroll', function () {
             processControl();
         });
@@ -452,33 +452,33 @@ $(function () {
     ==============================================*/
     $(document).ready(function() {
         // Create two variable with the names of the months and days in an array
-        var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ]; 
+        var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
         var dayNames= ["Sun,","Mon,","Tue,","Wed,","Thu,","Fri,","Sat,"];
-        
+
         // Create a newDate() object
         var newDate = new Date();
         // Extract the current date from Date object
         newDate.setDate(newDate.getDate());
-        // Output the day, date, month and year    
+        // Output the day, date, month and year
         $('#date').html(dayNames[newDate.getDay()] + " " + newDate.getDate() + ' ' + monthNames[newDate.getMonth()] + ' ' + newDate.getFullYear());
 
         //Output the date & month for Project Management Add new Card.
         $('.add-card').find('.date-text').html(newDate.getDate() + ' ' + monthNames[newDate.getMonth()]);
-            
+
         setInterval( function() {
             // Create a newDate() object and extract the minutes of the current time on the visitor's
             var minutes = new Date().getMinutes();
             // Add a leading zero to the minutes value
             $("#min").html(( minutes < 10 ? "0" : "" ) + minutes);
         },1000);
-            
+
         setInterval( function() {
             // Create a newDate() object and extract the hours of the current time on the visitor's
             var hours = new Date().getHours();
             // Add a leading zero to the hours value
             $("#hours").html(( hours < 10 ? "0" : "" ) + hours);
         }, 1000);
-            
+
     });
 
     /*============================================
@@ -506,7 +506,7 @@ $(function () {
         $('#search-tab').on('click', function() {
             $('#search-box').slideDown(150);
         });
-        
+
         $('.search-box-close').on('click', function(e) {
             e.stopPropagation();
             $('#search-box').slideUp(150);
@@ -536,7 +536,7 @@ $(function () {
             reader.onload = function (e) {
                 $('.profile-avatar').attr('src', e.target.result);
             }
-    
+
             reader.readAsDataURL(this.files[0]);
         }
     });
@@ -553,7 +553,7 @@ $(function () {
     if( allSpans.length ) {
         allSpans.on('click', function() {
             var colorCode = $(this).css('backgroundColor');
-            
+
             $(this).parents().filter('.project-box').css('backgroundColor', colorCode);
         });
     }
@@ -598,7 +598,7 @@ $(function () {
     $('.file').find('.dropdown-button .detete').on('click', function() {
         $(this).parents('.file').parent('[class^="col-"]').remove();
     });
-    
+
     /*============================================
     20: Textarea Word Count
     ==============================================*/
@@ -860,7 +860,7 @@ $(function () {
         month = current.parents('.work-content').find('.month').text(),
         year = current.parents('.work-content').find('.year').text(),
         desc = current.parents('.work-content').find('.desc').text();
-        
+
         name ? current.parents('.work-content').siblings('.work-update-form').find('[name="company"]').val(name) : null;
         position ? current.parents('.work-content').siblings('.work-update-form').find('[name="position"]').val(position) : null;
         city ? current.parents('.work-content').siblings('.work-update-form').find('[name="city"]').val(city) : null;

@@ -270,6 +270,12 @@
                                 </a>
                             </li> --}}
                             <li>
+                                <a href="{{ route('viewAdmin') }}">
+                                    <i class="icofont-users"></i>
+                                    <span class="link-title">Admin</span>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{{ route('viewSetting') }}">
                                     <i class="icofont-ui-settings"></i>
                                     <span class="link-title">Setting</span>

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Mail;
 
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -26,5 +27,6 @@ class AppServiceProvider extends ServiceProvider
         } else {
             Mail::alwaysTo('developer@currenttech.pro');
         }
+
     }
 }

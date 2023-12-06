@@ -5,7 +5,7 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            
+
             <div class="col-12">
                 <div class="card mb-30">
 
@@ -69,10 +69,10 @@
                                     <tr data-date="{{ $recordDate }}">
                                         <td>{{ Carbon\Carbon::parse($task->date)->format('d M Y') }}</td>
                                         <td>{{ $task->user->nickname }}</td>
-                                        <td>{{ $task->period->period_name }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($task->start_time )->format('g:i A') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($task->end_time)->format('g:i A') }}</td>
-                                        <td>{{ $task->duty->duty_name }}</td>
+                                        <td>{{ $task->period->period_name ?? null }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($task->start_time )->format('g:i A') ?? null }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($task->end_time)->format('g:i A') ?? null }}</td>
+                                        <td>{{ $task->duty->duty_name ?? null }}</td>
                                         <td>
                                             <a href="{{ route('editTask', ['id' => $task->id]) }}" class="details-btn">
                                                 Edit <i class="icofont-arrow-right"></i>

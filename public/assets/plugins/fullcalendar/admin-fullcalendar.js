@@ -55,17 +55,17 @@ $(function() {
                     callback(events);
                 }
             });
-            
+
         },
         // eventClick: function(event, jsEvent, view) {
         //     console.log(event); // Log the event object to the console
-        
+
         //     // Extract and display data
         //     var scheduleId = event.id; // Get the schedule ID
 
         //     var fullName = event.title; // Assuming "title" contains the full name
         //     var date = event.start.format('YYYY-MM-DD'); // Format the date
-        
+
         //     var shiftStart = moment(event.shiftStart, 'HH:mm').format('hh:mm A');
         //     var shiftEnd = moment(event.shiftEnd, 'HH:mm').format('hh:mm A');
 
@@ -86,7 +86,7 @@ $(function() {
         //     }
 
         //     $('#modalRemarks').html(remarks);
-        
+
         //     // Display data in the modal
         //     $('#modalScheduleId').html(scheduleId);
         //     $('#modalFullName').html(fullName);
@@ -119,13 +119,13 @@ $(function() {
             $('#scheduleModalLabel').text('Schedules for ' + formattedDate);
 
             $.ajax({
-                url: '/admin/getSchedule', // Adjust the URL to match your route
+                url: '/admin/get-schedule', // Adjust the URL to match your route
                 type: 'GET',
                 data: { date: clickedDate }, // Pass the clicked date as a parameter
                 success: function(schedule) {
                     var scheduleTableBody = $('#scheduleTableBody');
                     scheduleTableBody.empty();
-        
+
                     schedule.forEach(function(item) {
                         var row = '<tr>' +
                             '<td>' + item.nickname + '</td>' +
@@ -139,13 +139,13 @@ $(function() {
                             '</tr>';
                         scheduleTableBody.append(row);
                     });
-        
+
                     $('#openModalButton').click();
 
                     $('.edit-schedule').click(function() {
                         var scheduleId = $(this).data('schedule-id'); // Get the schedule ID from the data attribute
                         // Redirect to the edit page or perform the desired action
-                        window.location.href = '/admin/editSchedule/' + scheduleId;
+                        window.location.href = '/admin/edit-schedule/' + scheduleId;
                     });
                 },
                 error: function(error) {
@@ -163,7 +163,7 @@ $(function() {
                 $('#scheduleModal').modal('hide');
                 // Send an AJAX request to delete the schedule
                 $.ajax({
-                    url: '/admin/deleteSchedule/' + scheduleId,
+                    url: '/admin/delete-schedule/' + scheduleId,
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -201,7 +201,7 @@ $(function() {
         //         el.data('event', { title: event.title, id: event.id, stick: true });
         //     }
         // }
-        
+
     });
 
     // var isEventOverDiv = function(x, y) {

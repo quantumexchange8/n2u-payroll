@@ -1,15 +1,20 @@
 @extends('layouts.master')
 @section('content')
+<!-- Include SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+
+<!-- Include SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Main Content -->
 <div class="main-content">
-    
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
 
                 <div class="mx-2 mx-lg-4 mx-xl-5">
-                 
+
                     <!-- Form -->
                     <form action="{{ route('updateProfile') }}" method="POST">
                         @csrf
@@ -18,7 +23,7 @@
                                 <!-- Card -->
                                 <div class="card">
                                     <div class="card-body p-30">
-                                        
+
                                         <!-- Edit Personal Info -->
                                         <div class="edit-personal-info mb-5">
                                             <div class="row">
@@ -72,14 +77,14 @@
                                             <!-- End Form Group -->
 
                                             <!-- Form Group -->
-                                            <div class="form-group row align-items-center">
+                                            {{-- <div class="form-group row align-items-center">
                                                 <div class="col-3">
                                                     <label for="edit-address">Salary</label>
                                                 </div>
                                                 <div class="col-9">
                                                     <input type="text" id="salary" class="form-control" value="{{$user->salary}}" readonly>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <!-- End Form Group -->
 
                                         </div>
@@ -103,6 +108,9 @@
                                                 <label for="old-pass" class="bold font-14 mb-2 black">Old Password</label>
                                                 <input type="password" class="theme-input-style" id="old-pass" name="old-pass" placeholder="********">
                                             </div>
+                                            @error('old-pass')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                             <!-- End Form Group -->
 
                                             <!-- Form Group -->
@@ -110,6 +118,9 @@
                                                 <label for="new-pass" class="bold font-14 mb-2 black">New Password</label>
                                                 <input type="password" class="theme-input-style" id="new-pass" name="new-pass" placeholder="********">
                                             </div>
+                                            @error('new-pass')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                             <!-- End Form Group -->
 
                                             <!-- Form Group -->
@@ -117,6 +128,9 @@
                                                 <label for="retype-pass" class="bold font-14 mb-2 black">Retype Password</label>
                                                 <input type="password" class="theme-input-style" id="retype-pass" name="retype-pass" placeholder="********">
                                             </div>
+                                            @error('retype-pass')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                             <!-- End Form Group -->
 
                                         </div>
@@ -139,11 +153,11 @@
                     <!-- End Form -->
 
                 </div>
-               
+
             </div>
         </div>
-    </div>            
-            
+    </div>
+
 </div>
 <!-- End Main Content -->
 

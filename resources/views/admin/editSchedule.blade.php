@@ -105,13 +105,13 @@
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">Start</label>
-                                                        <input type="time" class="form-control" name="start_time" value="{{ $task->start_time }}">
+                                                        <input type="time" class="form-control" name="start_time" value="{{ $task->start_time }}" required>
                                                     </div>
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">End</label>
-                                                        <input type="time" class="form-control" name="end_time" value="{{ $task->end_time }}">
+                                                        <input type="time" class="form-control" name="end_time" value="{{ $task->end_time }}" required>
                                                     </div>
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
@@ -149,7 +149,7 @@
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputName" class="bold mb-2">Period</label>
-                                                        <select class="theme-input-style" id="period_id" name="period_id" value="{{ old('period_id') }}">
+                                                        <select class="theme-input-style" id="period_id" name="period_id" value="{{ old('period_id') }}" required>
                                                             <option value="">Select Period</option>
                                                             @foreach ($periods as $period)
                                                                 <option value="{{ $period->id }}">{{ $period->period_name }}</option>
@@ -163,13 +163,13 @@
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">Start</label>
-                                                        <input type="time" class="form-control" name="start_time" value="">
+                                                        <input type="time" class="form-control" name="start_time" value="" required>
                                                     </div>
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">End</label>
-                                                        <input type="time" class="form-control" name="end_time" value="">
+                                                        <input type="time" class="form-control" name="end_time" value="" required>
                                                     </div>
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->

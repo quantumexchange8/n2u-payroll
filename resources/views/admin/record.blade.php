@@ -9,40 +9,13 @@
     <div class="container-fluid">
         <div class="row">
 
-            <div class="col-xl-4 col-md-8">
-                <!-- Card -->
-                <div class="card mb-30">
-                   <div class="card-body" style="height: 290px;">
-                      <div class="d-flex align-items-center justify-content-between">
-                         <div class="increase">
-                            <h3 class="card-subtitle mb-2">Notice Board</h3>
-                            <p class="font-16">
-                                @if($settings->isNotEmpty() && $settings->where('setting_name', 'Notice Board')->isNotEmpty())
-                                    {{ $settings->where('setting_name', 'Notice Board')->first()->value }}
-                                @else
-                                    Have a nice day.
-                                @endif
-                            </p>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-                <!-- End Card -->
-            </div>
-
-            <div class="col-md-4 col-sm-6">
+            {{-- <div class="col-md-6 col-sm-6">
                 <!-- Card -->
                 <div class="card mb-30 progress_3">
                    <div class="card-body">
                       <h4 class="progress-title">Pending OT Approval</h4>
-
                         <div class="ProgressBar-wrap position-relative mb-4">
-                            <div class="ProgressBar ProgressBar_1" data-progress="{{ $pendingOTCount2 }}">
-                                <svg class="ProgressBar-contentCircle" viewBox="0 0 200 200">
-                                <!-- on défini le l'angle et le centre de rotation du cercle -->
-                                <circle transform="rotate(135, 100, 100)" class="ProgressBar-background" cx="100" cy="100" r="8" />
-                                <circle transform="rotate(135, 100, 100)" class="ProgressBar-circle" cx="100" cy="100" r="85" />
-                                </svg>
+                            <div class="ProgressBar ProgressBar_1" id="progressBar" data-progress="{{ $pendingOTCount2 }}">
                                 <span class="ProgressBar-percentage ProgressBar-percentage--count"></span>
                             </div>
                         </div>
@@ -51,7 +24,53 @@
                 </div>
                 <!-- End Card -->
             </div>
-            
+
+            <div class="col-md-6 col-sm-6">
+                <!-- Card -->
+                <div class="card mb-30 progress_1">
+                   <div class="card-body">
+                      <h4 class="progress-title">Total Employees Working Today</h4>
+                      <div class="ProgressBar-wrap position-relative mb-4">
+                         <div class="ProgressBar ProgressBar_1" data-progress="{{ $totalEmployeesCount }}">
+                            {{$totalEmployeesCount}}
+                            <span class="ProgressBar-percentage ProgressBar-percentage--count"></span>
+                         </div>
+                      </div>
+
+                   </div>
+                </div>
+                <!-- End Card -->
+             </div> --}}
+
+            <div class="col-md-6 col-sm-6">
+                <!-- Card -->
+                <div class="card mb-30" style="background-color: #cce5ff; border-color: #b8daff;">
+                    <div class="card-body">
+                        <h4 class="progress-title">Pending OT Approval</h4>
+                        <div class="mb-4">
+                            <p style="font-size: 30px; color: #004085; font-weight: bold; display: flex; flex-direction: column; align-items: center; justify-content: center;">{{ $pendingOTCount2 }}</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Card -->
+            </div>
+
+
+            <div class="col-md-6 col-sm-6">
+                <!-- Card -->
+                <div class="card mb-30" style="background-color: #d4edda; border-color: #c3e6cb;">
+                    <div class="card-body">
+                        <h4 class="progress-title">Total Employees Working Today</h4>
+                        <div class="mb-4">
+                            <p style="font-size: 30px; color: #155724; font-weight: bold; display: flex; flex-direction: column; align-items: center; justify-content: center;">{{ $totalEmployeesCount }}</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Card -->
+            </div>
+
+
+
             <div class="col-12">
                 <div class="card mb-30">
 
@@ -80,7 +99,7 @@
                                         $recordDate = Carbon\Carbon::parse($punchRecord->created_at)->toDateString();
                                         $currentDate = now()->toDateString();
                                     @endphp
-                        
+
                                     @if ($recordDate == $currentDate)
                                     {{-- @if ($recordDate) --}}
                                         <tr class="status-{{ $punchRecord->status }}" data-date="{{ $recordDate }}">
@@ -97,7 +116,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        
+
                         <!-- End Invoice List Table -->
                     </div>
                 </div>
@@ -109,3 +128,30 @@
 <!-- End Main Content -->
 
 @endsection
+
+{{-- <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Get the progress bar element
+        var progressBar = document.getElementById('progressBar');
+
+        if (progressBar) {
+            // Add a click event listener to the progress bar
+            progressBar.addEventListener('click', function() {
+                // Get the value of the data-progress attribute
+                var progressValue = progressBar.getAttribute('data-progress');
+
+                // Log a message to the console
+                console.log('Progress bar clicked!');
+
+                // Log the value of the data-progress attribute to the console
+                console.log('Progress value:', progressValue);
+
+                // Redirect to otApproval.blade.php
+                window.location.href = 'otApproval';
+            });
+        } else {
+            console.error('Element with id "progressBar" not found.');
+        }
+    });
+</script> --}}

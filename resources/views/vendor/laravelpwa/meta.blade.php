@@ -46,7 +46,7 @@
 <script type="text/javascript">
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/admin-service-worker.js', {
-            scope: '/adminLogin/'
+            scope: '/admin-login/'
         }).then(function (registration) {
             console.log('Admin PWA: ServiceWorker registration successful with scope:', registration.scope);
         }).catch(function (err) {

@@ -12,7 +12,7 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            
+
             <div class="col-12">
                 <div class="card mb-30">
 
@@ -26,21 +26,21 @@
                                     <input type="month" id="month-year-filter" value=""/>
                                 </div>
                                 <!-- End Date Picker -->
-    
-    
+
+
                                 <!-- Dropdown Button -->
                                 <div class="dropdown-button mt-3 mt-sm-0">
                                     <button class="btn style--two orange" type="button" id="user-filter-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         All Users <i class="icofont-simple-down"></i>
                                     </button>
-                                
+
                                     <div class="dropdown-menu" aria-labelledby="user-filter-dropdown">
                                         <a class="dropdown-item" href="#" data-user-filter="all" data-full-name="All Users">All Users</a>
                                         @foreach ($users as $user)
                                             <a class="dropdown-item" href="#" data-user-filter="{{ $user->id }}" data-full-name="{{ $user->full_name }}">{{ $user->full_name }}</a>
                                         @endforeach
                                     </div>
-                                </div>                                
+                                </div>
                                 <!-- End Dropdown Button -->
 
                                 <!-- Dropdown Button -->
@@ -70,7 +70,7 @@
                                     <th>Check In</th>
                                     <th>Check Out</th>
                                     <th>Check In 2</th>
-                                    <th>Check Out 2</th>                                    
+                                    <th>Check Out 2</th>
                                     <th>Total Hour</th>
                                     <th>Remarks</th>
                                     <th>Actions</th>
@@ -78,7 +78,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($punchRecords->groupBy('employee_id') as $employeeId => $records)
-
+{{-- {{$punchRecords}} --}}
                                     @php
                                         $employeeName = $records[0]->user->full_name;
                                         $checkIn1 = null;
@@ -88,7 +88,7 @@
                                         $totalWork = null;
                                         $shift = $schedules->where('employee_id', $employeeId)->first();
                                         $remarks = null;
-                        
+
                                         foreach ($records as $record) {
                                             if ($record->in === 'Clock In') {
                                                 if ($checkIn1 === null) {
@@ -115,7 +115,7 @@
                                             @else
                                                 N/A
                                             @endif
-                                        </td>                                                                                                                   
+                                        </td>
                                         {{-- <td>{{ $employeeId ?? null }}</td> --}}
                                         <td>{{ $employeeName ?? null }}</td>
                                         <td>
@@ -130,7 +130,7 @@
                                         <td>{{ $checkIn2 ?? null}}</td>
                                         <td>{{ $checkOut2 ?? null}}</td>
                                         <td>{{ $totalWork ?? null}}</td>
-                                        <td>{{ $remarks ?? null}}</td>                
+                                        <td>{{ $remarks ?? null}}</td>
                                         <td>
                                             <form action="{{ route('updateTotalWork', $record->id) }}" method="POST" style="display: flex; justify-content: space-between; margin-top: 15px;" id="update-form-{{$record->id}}">
                                                 @csrf
@@ -142,7 +142,7 @@
                                     </tr>
                                 @endforeach
                             </tbody>
-                        </table>                       
+                        </table>
                         <!-- End Invoice List Table -->
                     </div>
                 </div>

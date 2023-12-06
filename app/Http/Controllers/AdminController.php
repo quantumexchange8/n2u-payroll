@@ -42,13 +42,20 @@ class AdminController extends Controller
         $pendingOTCount = PunchRecord::where('ot_approval', 'Pending')->count();
         $pendingOTCount2 = OtApproval::where('status', 'Pending')->count();
 
+        // Get the current date
+        $currentDate = Carbon::now()->toDateString();
+
+        // Count total employees working for the current date
+        $totalEmployeesCount = Schedule::whereDate('date', $currentDate)->count();
+
+        // dd($totalEmployeesCount);
         // Retrieve all schedules, shifts, and settings
         $schedules = Schedule::all();
         $shifts = Shift::all();
         $settings = Setting::all();
 
         // Return the view with the punchRecords, schedules, shifts, and settings
-        return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings', 'pendingOTCount', 'pendingOTCount2'));
+        return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings', 'pendingOTCount', 'pendingOTCount2', 'totalEmployeesCount'));
     }
 
     public function viewEmployee() {
@@ -68,7 +75,7 @@ class AdminController extends Controller
             // Validate the incoming request data
             $validatedData = $request->validated();
 
-            $full_name_with_underscores = str_replace(' ', '_', $validatedData['full_name']);
+            $full_name_with_underscores = str_replace(' ', '_', $validatedData['employee_id']);
 
             // Handle passport size photo
             if ($request->hasFile('passport_size_photo')) {
@@ -392,25 +399,6 @@ class AdminController extends Controller
     public function createDepartment(){
         return view('admin.createDepartment');
     }
-
-    // public function addDepartment(Request $request){
-
-    //     $data = $request->validate([
-    //         'department_name' => 'required'
-    //     ]);
-
-    //     if($data){
-    //         $department = new Department();
-    //         $department->department_name = $data['department_name'];
-    //         $department->save();
-
-    //         Alert::success('Done', 'Successfully Inserted');
-    //     } else {
-    //         return redirect()->back();
-    //     }
-
-    //     return redirect()->route('viewDepartment');
-    // }
 
     public function addDepartment(Request $request){
         // Define validation rules
@@ -786,17 +774,6 @@ class AdminController extends Controller
 
         $validationPassed = true;
 
-        // $validatedData = $request->validate([
-        //     'date_start' => 'required|date',
-        //     // 'date_end' => $data['off_day'] == 1 ? 'nullable|date|after_or_equal:date_start' : 'required|date|after_or_equal:date_start',
-        //     'date_end' => 'nullable|date|after_or_equal:date_start',
-        //     'shift_id' => 'nullable',
-        //     'remarks' => 'nullable',
-        //     'off_day' => 'nullable',
-        //     'selected_users' => 'required|array',
-        //     'period_id' => 'required|array',
-        // ]);
-
         // Validation
         $validator = Validator::make($data, [
             'date_start' => 'required|date',
@@ -820,6 +797,58 @@ class AdminController extends Controller
                 ->withInput();
         }
 
+        // foreach ($data['selected_users'] as $key => $userId) {
+        //     // Your logic for off_day being 0
+        //     $start = Carbon::parse($data['date_start']);
+        //     $end = Carbon::parse($data['date_end']);
+        //     $dates = [];
+
+        //     if ($data['date_end'] === null) {
+        //         $dates[] = $start->toDateString();
+        //     } else {
+        //         while ($start->lte($end)) {
+        //             $dates[] = $start->toDateString();
+        //             $start->addDay();
+        //         }
+        //     }
+
+        //     foreach ($dates as $date) {
+        //         // Check if a record already exists for the user and date
+        //         $existingSchedule = Schedule::where('employee_id', $userId)
+        //                             ->where('date', $date)
+        //                             ->first();
+
+        //         if (isset($data['period_id'][$key]) && !$this->validateDuplicatePeriodIds($userId, $date, $data['period_id'][$key])) {
+        //             Alert::error('Error', 'One employee cannot have duplicate period IDs in a day.');
+        //             return redirect()->route('schedule');
+        //         }
+
+        //         if ($existingSchedule) {
+        //             $userNickname = User::find($userId)->nickname; // Assuming User is the model for your user table
+        //             Alert::error('Error', 'Record for ' . $date . ' already exists for user ' . $userNickname);
+        //             return redirect()->route('schedule');
+        //         }
+
+        //         $schedule = new Schedule();
+        //         $schedule->date = $date;
+        //         $schedule->employee_id = $userId;
+        //         $schedule->off_day = 0;
+        //         $schedule->shift_id = $data['shift_id'];
+        //         $schedule->remarks = $data['remarks'];
+        //         $schedule->save();
+
+        //         // Check if the save operation was successful
+        //         if (!$schedule->exists) {
+        //             $validationPassed = false;
+        //             break;
+        //         }
+
+        //     }
+        // }
+
+        // Display success alert
+
+        $failedInsertions = [];
 
         foreach ($data['selected_users'] as $key => $userId) {
             // Your logic for off_day being 0
@@ -839,23 +868,18 @@ class AdminController extends Controller
             foreach ($dates as $date) {
                 // Check if a record already exists for the user and date
                 $existingSchedule = Schedule::where('employee_id', $userId)
-                                    ->where('date', $date)
-                                    ->first();
+                    ->where('date', $date)
+                    ->first();
 
                 if (isset($data['period_id'][$key]) && !$this->validateDuplicatePeriodIds($userId, $date, $data['period_id'][$key])) {
                     Alert::error('Error', 'One employee cannot have duplicate period IDs in a day.');
                     return redirect()->route('schedule');
                 }
 
-                // if ($existingSchedule) {
-                //     // Handle the case where a record already exists (skip or take appropriate action)
-                //     continue; // Skip to the next iteration of the loop
-                // }
-
                 if ($existingSchedule) {
                     $userNickname = User::find($userId)->nickname; // Assuming User is the model for your user table
-                    Alert::error('Error', 'Record for ' . $date . ' already exists for user ' . $userNickname);
-                    return redirect()->route('schedule');
+                    $failedInsertions[] = "Record for $userNickname on $date already exists.";
+                    continue; // Skip to the next iteration if a record already exists for the current date
                 }
 
                 $schedule = new Schedule();
@@ -869,25 +893,29 @@ class AdminController extends Controller
                 // Check if the save operation was successful
                 if (!$schedule->exists) {
                     $validationPassed = false;
+                    $failedInsertions[] = "Failed to insert record for user $userId on $date.";
                     break;
                 }
-
             }
         }
 
-        // Display success alert
+        // Display success alert or failure message
         if ($validationPassed) {
             Alert::success('Done', 'Successfully Inserted');
-            return redirect()->route('schedule');
+        } else {
+            Alert::error('Error', 'Some insertions failed. See details below.');
+            foreach ($failedInsertions as $message) {
+                Alert::error('Error Detail', $message);
+            }
         }
+
+        return redirect()->route('schedule');
+
 
         // Check if 'group-a' is present in the request, indicating task entries
         if ($request->has('group-a') && !empty($request->input('group-a'))) {
             $this->addTask($request, $dates);
         }
-
-        // Alert::success('Done', 'Successfully Inserted');
-        // return redirect()->route('schedule');
     }
 
     public function editSchedule($id){
@@ -1388,6 +1416,83 @@ class AdminController extends Controller
         return redirect()->route('viewTask');
     }
 
+    public function viewAdmin() {
+        $users = User::where('role', 'admin')->with('position')->get(); // Eager load the positions
+
+        return view('admin.viewAdmin', compact('users'));
+    }
+
+    public function createAdmin(){
+
+        return view('admin.createAdmin');
+    }
+
+    public function addAdmin(EmployeeRequest $request){
+
+        try{
+            // Validate the incoming request data
+            $validatedData = $request->validated();
+
+            // Create the user record with the validated and modified data
+            User::create($validatedData);
+
+            Alert::success('Done', 'Successfully Registered');
+            return redirect()->route('viewAdmin');
+        }catch(ValidationException $e){
+            // If a validation exception occurs, redirect back with errors and input
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        }
+    }
+
+    public function editAdmin($id) {
+        $user = User::find($id);
+
+        return view('admin.editAdmin', compact('user'));
+    }
+
+    public function updateAdmin(EmployeeRequest $request, $id) {
+        // dd($request->all());
+        $data = User::find($id);
+
+        // Validate the incoming request data
+        $validatedData = $request->validated();
+
+        // Update the user's data based on the validated form input
+        $data->update($validatedData);
+
+        Alert::success('Done', 'Successfully Updated');
+        return redirect()->route('viewAdmin');
+    }
+
+    public function updateAdminPassword(Request $request, $id){
+        // Validate the input
+        $request->validate([
+            'new_password' => ['required'],
+        ]);
+
+        // Find the user by ID
+        $user = User::find($id);
+
+        // Hash the new password
+        $hashedPassword = Hash::make($request->input('new_password'));
+
+        // Update the user's password
+        $user->password = $hashedPassword;
+        $user->save();
+
+        Alert::success('Done', 'Successfully Updated');
+        return redirect()->route('viewAdmin');
+    }
+
+    public function deleteAdmin($id){
+
+        $employee = User::find($id);
+
+        $employee->delete(); // Soft delete the employee
+        Alert::success('Done', 'Successfully Deleted');
+        return redirect()->route('viewAdmin');
+    }
+
     public function viewSetting(){
         $settings = Setting::all();
         return view('admin.viewSetting', ['settings' => $settings]);
@@ -1756,6 +1861,8 @@ class AdminController extends Controller
     }
 
     public function updateTotalWork(Request $request, $id){
+
+        // dd($request->all());
         // Validate the form data, including the remark
         $request->validate([
             'remark' => 'string', // Add any additional validation rules as needed

@@ -108,14 +108,26 @@ class MemberController extends Controller
     }
 
     public function updateProfile(Request $request) {
+
+        // dd($request->all());
         // Use the currently authenticated user
         $user = User::where('id', '=', Auth::user()->id)->first();
+
+        // Validate the input
+        // $request->validate([
+        //     'full_name' => 'required|string|max:255',
+        //     'address' => 'required|string|max:255',
+        //     'email' => 'required|email|max:255',
+        // ]);
 
         // Validate the input
         $request->validate([
             'full_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'old-pass' => 'required_with:new-pass',
+            'new-pass' => 'nullable|required_with:old-pass|different:old-pass',
+            'retype-pass' => 'nullable|required_with:new-pass|same:new-pass',
         ]);
 
         // Update the user's data
@@ -137,13 +149,13 @@ class MemberController extends Controller
                     $user->save();
                     Alert::success('Password Updated', 'Your password has been updated.');
                 } else {
-                    Alert::error('Password Mismatch', 'New and retyped passwords do not match.');
+                    Alert::error('Password Mismatch', 'New and retyped passwords do not match.')->persistent(true, false);
                 }
             } else {
-                Alert::error('Incorrect Password', 'Your old password is incorrect.');
+                Alert::error('Incorrect Password', 'Your old password is incorrect.')->persistent(true, false);
             }
         } else {
-            Alert::success('Done', 'Successfully Updated');
+            Alert::success('Done', 'Successfully Updated')->persistent(true, false);
         }
 
         return redirect()->route('viewProfile');

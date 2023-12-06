@@ -136,11 +136,10 @@
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
-                                <div class="form-group">
+                                <div class="form-group" style="display: none;">
                                     <label class="font-14 bold mb-2">Role</label>
                                     <select class="theme-input-style" id="role" name="role" value="{{ old('role') }}">
-                                        <option value="">Select Role</option>
-                                        <option value="admin">Admin</option>
+                                        {{-- <option value="admin">Admin</option> --}}
                                         <option value="member">Member</option>
                                     </select>
                                     @error('role')

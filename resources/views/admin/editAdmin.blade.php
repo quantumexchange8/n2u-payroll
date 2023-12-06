@@ -11,7 +11,7 @@
                     <h4 class="font-20 mb-20">Edit Employee</h4>
 
                     <!-- Form -->
-                    <form action="{{ route('updateEmployee', $user->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('updateAdmin', $user->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
@@ -60,59 +60,6 @@
                                     <label class="font-14 bold mb-2">IC Number / Passport</label>
                                     <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number" value="{{$user->ic_number}}">
                                     @error('ic_number')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Address</label>
-                                    <input type="text" class="theme-input-style" id="address" name="address" autocomplete="off" placeholder="Address" value="{{$user->address}}">
-                                    @error('address')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Email</label>
-                                    <input type="email" class="theme-input-style" id="email" name="email" autocomplete="off" placeholder="Email Address" value="{{$user->email}}">
-                                    @error('email')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Position</label>
-                                    <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off">
-                                        @foreach($positions as $position)
-                                            <option value="{{ $position->id }}" {{ $user->position->id === $position->id ? 'selected' : '' }}>
-                                                {{ $position->position_name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Employee Type</label>
-                                    <select class="theme-input-style" id="employee_type" name="employee_type">
-                                        <option value="Full Time" {{ $user->employee_type === 'Full Time' ? 'selected' : '' }}>Full Time</option>
-                                        <option value="Part Time" {{ $user->employee_type === 'Part Time' ? 'selected' : '' }}>Part Time</option>
-                                    </select>
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Remarks</label>
-                                    <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" placeholder="Remarks" value="{{$user->remarks}}">
-                                    @error('remarks')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -236,67 +183,10 @@
                                     </div>
                                     <!-- End Form Group -->
 
-                                    <!-- Form Group -->
-                                    <div class="form-group">
-                                        <label class="font-14 bold mb-2">Account PIC</label>
-                                        <div style="margin-bottom: 15px;">
-                                            <a href="{{ asset('uploads/employee/accountPic/' . $account_pic) }}" class="file-modal-link">{{$account_pic}}</a>
-                                        </div>
-                                        <div>
-                                            <input type="file" class="theme-input-style" name="account_pic" id="accountPicFile" style="background: #ffffff;">
-                                        </div>
-                                    </div>
-                                    <!-- End Form Group -->
+
                                 </div>
 
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Passport Size Photo</label>
-                                    <div style="margin-bottom: 15px;">
-                                        <a href="{{ asset('uploads/employee/passportSizePhoto/' . $passport_size_photo) }}" class="file-modal-link" >{{$passport_size_photo}}</a>
-                                        {{-- <img src="{{ asset('uploads/employee/passportSizePhoto/Juliet_Battle_photo.jpg') }}"> --}}
-                                    </div>
-                                    <div>
-                                        <input type="file" class="theme-input-style" name="passport_size_photo" id="passportSizePhotoFile" style="background: #ffffff;">
-                                    </div>
-                                </div>
-                                <!-- End Form Group -->
 
-                                <!-- Form Group for IC Photo -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">IC Photo</label>
-                                    <div style="margin-bottom: 15px;">
-                                        <a href="{{ asset('uploads/employee/icPhoto/' . $ic_photo) }}" class="file-modal-link">{{$ic_photo}}</a>
-                                    </div>
-                                    <div>
-                                        <input type="file" class="theme-input-style" name="ic_photo" id="icPhotoFile" style="background: #ffffff;">
-                                    </div>
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Offer Letter</label>
-                                    <div style="margin-bottom: 15px;">
-                                        <a href="{{ asset('uploads/employee/offerLetter/' . $offer_letter) }}" class="file-modal-link">{{$offer_letter}}</a>                                    </div>
-                                    <div>
-                                        <input type="file" class="theme-input-style" name="offer_letter" id="offerLetterFile" style="background: #ffffff;">
-                                    </div>
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Other Image</label>
-                                    <div style="margin-bottom: 15px;">
-                                        <a href="{{ asset('uploads/employee/offerLetter/' . $offer_letter) }}" class="file-modal-link">{{$offer_letter}}</a>
-                                        <a href="{{ asset('uploads/employee/otherImage/' . $other_image) }}" class="file-modal-link">{{$other_image}}</a>
-                                    </div>
-                                    <div>
-                                        <input type="file" class="theme-input-style" name="other_image" id="otherImageFile" style="background: #ffffff;">
-                                    </div>
-                                </div>
-                                <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group" style="display: none;">

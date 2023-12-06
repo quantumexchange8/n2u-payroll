@@ -31,7 +31,7 @@ class EmployeeRequest extends FormRequest
             'full_name' => 'required',
             'nickname' => 'required',
             'ic_number' => 'required|unique:users,ic_number,' . $userId,
-            'address' => 'required',
+            'address' => 'nullable',
             'email' => 'nullable',
             'position_id' => 'nullable',
             'employee_type' => 'nullable',
