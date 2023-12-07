@@ -126,8 +126,8 @@
                                 @endphp
 
                                 <tr>
-                                    <td>{{ $task->period->period_name }}</td>
-                                    <td>{{ $time }}</td>
+                                    <td>{{ $task->period->period_name ?? null }}</td>
+                                    <td>{{ $time ?? null }}</td>
                                     <td>{{ $task->duty->duty_name ?? null }}</td>
                                 </tr>
                             @endforeach
@@ -189,28 +189,6 @@
                   </div>
               </div>
             </div>
-
-            {{-- <div class="col-12">
-                <!-- Card -->
-                <div class="card mb-30">
-                   <div class="card-body" style="height: 290px;">
-                      <div class="d-flex align-items-center justify-content-between">
-                         <div class="increase">
-                            <h3 class="card-subtitle mb-2">Notice Board</h3>
-                            <p class="font-16">
-                                @if($settings->isNotEmpty() && $settings->where('setting_name', 'Notice Board')->isNotEmpty())
-                                    {{ $settings->where('setting_name', 'Notice Board')->first()->value }}
-                                @else
-                                    You've finished all of your tasks for this week.
-                                @endif
-                            </p>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-                <!-- End Card -->
-            </div> --}}
-
           </div>
     </div>
   </div>

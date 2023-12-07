@@ -13,22 +13,22 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            
+
             <div class="col-12">
                 <div class="card mb-30">
 
                     <div class="card-body">
                         <div class="d-sm-flex justify-content-between align-items-center" style="margin-bottom: 15px;">
                             <h4 class="font-20">OT Approval</h4>
-    
+
                             <div class="d-flex flex-wrap">
                                 <!-- Date Picker -->
                                 <div class="dashboard-date style--six mr-20 mt-3 mt-sm-0">
                                      <input type="date" id="date-filter" value=""/>
                                  </div>
                                 <!-- End Date Picker -->
-    
-    
+
+
                                 <!-- Dropdown Button -->
                                 <div class="dropdown-button mt-3 mt-sm-0">
                                     <button class="btn style--two orange" type="button" id="filter-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -57,7 +57,7 @@
                                 <!-- End Dropdown Button -->
                             </div>
                         </div>
-       
+
                         <div class="table-responsive">
                             <!-- Attendance Table -->
                             <table class="text-nowrap table-bordered dh-table">
@@ -93,7 +93,7 @@
                                                 <td>{{ \Carbon\Carbon::parse($otapproval->clock_out_time)->format('g:i A') }}</td>
                                                 <td>
                                                     {{ $otapproval->ot_hour }}
-                                                </td>  
+                                                </td>
                                                 {{-- <td style="{{ $otapproval->status === 'Pending' ? 'color: orange; font-weight: bold;' : ($otapproval->status === 'Approved' ? 'color: #84f542; font-weight: bold;' : 'color: red; font-weight: bold;') }}"> --}}
                                                 <td>
                                                     @if($otapproval->status == 'Pending')
@@ -110,11 +110,11 @@
                                                         </button>
                                                     @endif
                                                 </td>
-                                                <td>{{ $otapproval->remark }}</td>                                                                                     
+                                                <td>{{ $otapproval->remark }}</td>
                                                 <td>
                                                     <form action="{{ route('updateOtApproval', $otapproval->id) }}" method="POST" style="display: flex; justify-content: center;gap: 10px; margin-top: 15px;"  id="reject-form-{{$otapproval->id}}">
                                                         @csrf
-                                                        
+
                                                         @if($otapproval->status == 'Approved')
                                                             <button type="submit" name="ot_approval" value="Approved" class="details-btn approved-btn" disabled style="color: #67CFA2">
                                                                 Approved
@@ -134,9 +134,9 @@
                                                                 Rejected
                                                             </button>
                                                         @endif
-                                                        
+
                                                     </form>
-                                                </td>                                                
+                                                </td>
                                             </tr>
                                         @endif
                                     @endforeach
@@ -198,7 +198,7 @@
                 }
             });
         });
-    });  
+    });
 </script>
 
 {{-- Filter by status --}}
@@ -206,7 +206,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         // Get the filter dropdown items
         const filterItems = document.querySelectorAll('.dropdown-item[data-status');
-        
+
         // Output the filterItems to the console to check if the selection is correct
         console.log('filter items:',filterItems);
 
@@ -358,4 +358,4 @@
 
 
 
-  
+

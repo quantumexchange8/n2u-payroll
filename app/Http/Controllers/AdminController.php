@@ -743,36 +743,316 @@ class AdminController extends Controller
         return view('admin.createSchedule', compact('schedules', 'users', 'shifts', 'duties', 'periods'));
     }
 
+    // public function addSchedule(Request $request){
+
+    //     $data = $request->all();
+
+    //     if (isset($data['off_day']) && $data['off_day'] == 1) {
+    //         // Perform actions for off_day being 1 (e.g., save to database)
+    //         foreach ($data['selected_users'] as $userId) {
+    //             $start = Carbon::parse($data['date_start']);
+    //             $end = Carbon::parse($data['date_end']);
+
+    //             // Loop through dates and save schedule for each date
+    //             while ($start->lte($end)) {
+    //                 $schedule = new Schedule();
+    //                 $schedule->employee_id = $userId;
+    //                 $schedule->date = $start->toDateString();
+    //                 $schedule->off_day = 1;
+    //                 $schedule->shift_id = null;
+    //                 $schedule->remarks = null;
+    //                 $schedule->save();
+
+    //                 $start->addDay();
+    //             }
+    //         }
+
+    //         // Redirect to the schedule page
+    //         Alert::success('Done', 'Successfully Inserted');
+    //         return redirect()->route('schedule');
+    //     }
+
+    //     $validationPassed = true;
+
+    //     // Validation
+    //     $validator = Validator::make($data, [
+    //         'date_start' => 'required|date',
+    //         'date_end' => 'nullable|date|after_or_equal:date_start',
+    //         'shift_id' => 'nullable',
+    //         'remarks' => 'nullable',
+    //         'off_day' => 'nullable',
+    //         'selected_users' => 'required|array',
+    //     ], [
+    //         'date_start.required' => 'The start date is required.',
+    //         'date_start.date' => 'The start date must be a valid date.',
+    //         'date_end.date' => 'The end date must be a valid date.',
+    //         'date_end.after_or_equal' => 'The end date must be after or equal to the start date.',
+    //         'shift_id.nullable' => 'The shift ID can be nullable.',
+    //         'selected_users.required' => 'Please select at least one user.',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return redirect()->back()
+    //             ->withErrors($validator)
+    //             ->withInput();
+    //     }
+
+    //     foreach ($data['selected_users'] as $key => $userId) {
+    //         // Your logic for off_day being 0
+    //         $start = Carbon::parse($data['date_start']);
+    //         $end = Carbon::parse($data['date_end']);
+    //         $dates = [];
+
+    //         if ($data['date_end'] === null) {
+    //             $dates[] = $start->toDateString();
+    //         } else {
+    //             while ($start->lte($end)) {
+    //                 $dates[] = $start->toDateString();
+    //                 $start->addDay();
+    //             }
+    //         }
+
+    //         foreach ($dates as $date) {
+    //             // Check if a record already exists for the user and date
+    //             $existingSchedule = Schedule::where('employee_id', $userId)
+    //                                 ->where('date', $date)
+    //                                 ->first();
+
+    //             if (isset($data['period_id'][$key]) && !$this->validateDuplicatePeriodIds($userId, $date, $data['period_id'][$key])) {
+    //                 Alert::error('Error', 'One employee cannot have duplicate period IDs in a day.');
+    //                 return redirect()->route('schedule');
+    //             }
+
+    //             if ($existingSchedule) {
+    //                 $userNickname = User::find($userId)->nickname; // Assuming User is the model for your user table
+    //                 Alert::error('Error', 'Record for ' . $date . ' already exists for user ' . $userNickname);
+    //                 return redirect()->route('schedule');
+    //             }
+
+    //             $schedule = new Schedule();
+    //             $schedule->date = $date;
+    //             $schedule->employee_id = $userId;
+    //             $schedule->off_day = 0;
+    //             $schedule->shift_id = $data['shift_id'];
+    //             $schedule->remarks = $data['remarks'];
+    //             $schedule->save();
+
+    //             // Check if the save operation was successful
+    //             if (!$schedule->exists) {
+    //                 $validationPassed = false;
+    //                 break;
+    //             }
+
+    //         }
+    //     }
+
+    //     // Display success alert
+    //     if ($validationPassed) {
+    //         Alert::success('Done', 'Successfully Inserted');
+    //         return redirect()->route('schedule');
+    //     }
+
+    //     // Check if 'group-a' is present in the request, indicating task entries
+    //     if ($request->has('group-a') && !empty($request->input('group-a'))) {
+    //         $this->addTask($request, $dates);
+    //     }
+    // }
+
+    // public function addSchedule(Request $request){
+
+    //     $data = $request->all();
+
+    //     if (isset($data['off_day']) && $data['off_day'] == 1) {
+    //         // Perform actions for off_day being 1 (e.g., save to database)
+    //         foreach ($data['selected_users'] as $userId) {
+    //             $start = Carbon::parse($data['date_start']);
+    //             $end = Carbon::parse($data['date_end']);
+
+    //             // Loop through dates and save schedule for each date
+    //             while ($start->lte($end)) {
+    //                 $schedule = new Schedule();
+    //                 $schedule->employee_id = $userId;
+    //                 $schedule->date = $start->toDateString();
+    //                 $schedule->off_day = 1;
+    //                 $schedule->shift_id = null;
+    //                 $schedule->remarks = null;
+    //                 $schedule->save();
+
+    //                 $start->addDay();
+    //             }
+    //         }
+
+    //         // Redirect to the schedule page
+    //         Alert::success('Done', 'Successfully Inserted');
+    //         return redirect()->route('schedule');
+    //     }
+
+    //     $validationPassed = true;
+
+    //     // Validation
+    //     $validator = Validator::make($data, [
+    //         'date_start' => 'required|date',
+    //         'date_end' => 'nullable|date|after_or_equal:date_start',
+    //         'shift_id' => 'nullable',
+    //         'remarks' => 'nullable',
+    //         'off_day' => 'nullable',
+    //         'selected_users' => 'required|array',
+    //     ], [
+    //         'date_start.required' => 'The start date is required.',
+    //         'date_start.date' => 'The start date must be a valid date.',
+    //         'date_end.date' => 'The end date must be a valid date.',
+    //         'date_end.after_or_equal' => 'The end date must be after or equal to the start date.',
+    //         'shift_id.nullable' => 'The shift ID can be nullable.',
+    //         'selected_users.required' => 'Please select at least one user.',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return redirect()->back()
+    //             ->withErrors($validator)
+    //             ->withInput();
+    //     }
+
+    //     // foreach ($data['selected_users'] as $key => $userId) {
+    //     //     // Your logic for off_day being 0
+    //     //     $start = Carbon::parse($data['date_start']);
+    //     //     $end = Carbon::parse($data['date_end']);
+    //     //     $dates = [];
+
+    //     //     if ($data['date_end'] === null) {
+    //     //         $dates[] = $start->toDateString();
+    //     //     } else {
+    //     //         while ($start->lte($end)) {
+    //     //             $dates[] = $start->toDateString();
+    //     //             $start->addDay();
+    //     //         }
+    //     //     }
+
+    //     //     foreach ($dates as $date) {
+    //     //         // Check if a record already exists for the user and date
+    //     //         $existingSchedule = Schedule::where('employee_id', $userId)
+    //     //                             ->where('date', $date)
+    //     //                             ->first();
+
+    //     //         if (isset($data['period_id'][$key]) && !$this->validateDuplicatePeriodIds($userId, $date, $data['period_id'][$key])) {
+    //     //             Alert::error('Error', 'One employee cannot have duplicate period IDs in a day.');
+    //     //             return redirect()->route('schedule');
+    //     //         }
+
+    //     //         if ($existingSchedule) {
+    //     //             $userNickname = User::find($userId)->nickname; // Assuming User is the model for your user table
+    //     //             Alert::error('Error', 'Record for ' . $date . ' already exists for user ' . $userNickname);
+    //     //             return redirect()->route('schedule');
+    //     //         }
+
+    //     //         $schedule = new Schedule();
+    //     //         $schedule->date = $date;
+    //     //         $schedule->employee_id = $userId;
+    //     //         $schedule->off_day = 0;
+    //     //         $schedule->shift_id = $data['shift_id'];
+    //     //         $schedule->remarks = $data['remarks'];
+    //     //         $schedule->save();
+
+    //     //         // Check if the save operation was successful
+    //     //         if (!$schedule->exists) {
+    //     //             $validationPassed = false;
+    //     //             break;
+    //     //         }
+
+    //     //     }
+    //     // }
+
+    //     // Display success alert
+
+
+    //     $successMessages = [];
+    //     $failedMessages = [];
+
+    //     foreach ($data['selected_users'] as $key => $userId) {
+    //         // Your logic for off_day being 0
+    //         $start = Carbon::parse($data['date_start']);
+    //         $end = Carbon::parse($data['date_end']);
+    //         $dates = [];
+
+    //         if ($data['date_end'] === null) {
+    //             $dates[] = $start->toDateString();
+    //         } else {
+    //             while ($start->lte($end)) {
+    //                 $dates[] = $start->toDateString();
+    //                 $start->addDay();
+    //             }
+    //         }
+
+    //         $successInsertedDates = [];
+    //         foreach ($dates as $date) {
+
+
+    //             // Check if a record already exists for the user and date
+    //             $existingSchedule = Schedule::where('employee_id', $userId)
+    //                 ->where('date', $date)
+    //                 ->first();
+
+    //             $userNickname = User::find($userId)->nickname;
+
+    //             if (isset($data['period_id'][$key]) && !$this->validateDuplicatePeriodIds($userId, $date, $data['period_id'][$key])) {
+    //                 Alert::error('Error', 'One employee cannot have duplicate period IDs in a day.');
+    //                 return redirect()->route('schedule');
+    //             }
+
+    //             if ($existingSchedule) {
+    //                 $failedMessages[] = "Fail to insert $date for user $userNickname due to existing.";
+    //                 continue; // Skip to the next iteration if a record already exists for the current date
+    //             }
+
+    //             $schedule = new Schedule();
+    //             $schedule->date = $date;
+    //             $schedule->employee_id = $userId;
+    //             $schedule->off_day = 0;
+    //             $schedule->shift_id = $data['shift_id'];
+    //             $schedule->remarks = $data['remarks'];
+    //             $schedule->save();
+
+
+
+    //             // Check if the save operation was successful
+    //             if ($schedule->exists) {
+    //                 $successInsertedDates[] = $date;
+    //             } else {
+    //                 $validationPassed = false;
+    //                 $failedMessages[] = "Failed to insert record for user $userId on $date.";
+    //             }
+    //         }
+
+    //         if (!empty($successInsertedDates)) {
+    //             $successMessages[] = "Record for $userNickname on " . implode(' and ', $successInsertedDates) . " successfully inserted.";
+    //         }
+    //     }
+
+    //     // Display success alert or failure message
+    //     if ($validationPassed) {
+    //         Alert::success('Done', 'Successfully Inserted');
+    //     } else {
+    //         Alert::error('Error', 'Some insertions failed. See details below.');
+    //         foreach ($failedMessages as $message) {
+    //             Alert::error('Error Detail', $message);
+    //         }
+    //     }
+
+    //     // Display messages for successful insertions
+    //     foreach ($successMessages as $message) {
+    //         Alert::success('Success Detail', $message);
+    //     }
+
+    //     return redirect()->route('schedule');
+
+    //     // Check if 'group-a' is present in the request, indicating task entries
+    //     if ($request->has('group-a') && !empty($request->input('group-a'))) {
+    //         $this->addTask($request, $dates);
+    //     }
+    // }
+
     public function addSchedule(Request $request){
 
         $data = $request->all();
-
-        if (isset($data['off_day']) && $data['off_day'] == 1) {
-            // Perform actions for off_day being 1 (e.g., save to database)
-            foreach ($data['selected_users'] as $userId) {
-                $start = Carbon::parse($data['date_start']);
-                $end = Carbon::parse($data['date_end']);
-
-                // Loop through dates and save schedule for each date
-                while ($start->lte($end)) {
-                    $schedule = new Schedule();
-                    $schedule->employee_id = $userId;
-                    $schedule->date = $start->toDateString();
-                    $schedule->off_day = 1;
-                    $schedule->shift_id = null;
-                    $schedule->remarks = null;
-                    $schedule->save();
-
-                    $start->addDay();
-                }
-            }
-
-            // Redirect to the schedule page
-            Alert::success('Done', 'Successfully Inserted');
-            return redirect()->route('schedule');
-        }
-
-        $validationPassed = true;
 
         // Validation
         $validator = Validator::make($data, [
@@ -780,7 +1060,6 @@ class AdminController extends Controller
             'date_end' => 'nullable|date|after_or_equal:date_start',
             'shift_id' => 'nullable',
             'remarks' => 'nullable',
-            'off_day' => 'nullable',
             'selected_users' => 'required|array',
         ], [
             'date_start.required' => 'The start date is required.',
@@ -797,58 +1076,31 @@ class AdminController extends Controller
                 ->withInput();
         }
 
-        // foreach ($data['selected_users'] as $key => $userId) {
-        //     // Your logic for off_day being 0
-        //     $start = Carbon::parse($data['date_start']);
-        //     $end = Carbon::parse($data['date_end']);
-        //     $dates = [];
+        if (isset($data['off_day']) && $data['off_day'] == 1) {
 
-        //     if ($data['date_end'] === null) {
-        //         $dates[] = $start->toDateString();
-        //     } else {
-        //         while ($start->lte($end)) {
-        //             $dates[] = $start->toDateString();
-        //             $start->addDay();
-        //         }
-        //     }
+            // Perform actions for off_day being 1 (e.g., save to database)
+            foreach ($data['selected_users'] as $userId) {
+                $start = Carbon::parse($data['date_start']);
+                $end = Carbon::parse($data['date_end']);
 
-        //     foreach ($dates as $date) {
-        //         // Check if a record already exists for the user and date
-        //         $existingSchedule = Schedule::where('employee_id', $userId)
-        //                             ->where('date', $date)
-        //                             ->first();
+                // Loop through dates and save schedule for each date
+                // while ($start->lte($end)) {
+                    $this->saveSchedule($userId, $start, true);
+                    $start->addDay();
 
-        //         if (isset($data['period_id'][$key]) && !$this->validateDuplicatePeriodIds($userId, $date, $data['period_id'][$key])) {
-        //             Alert::error('Error', 'One employee cannot have duplicate period IDs in a day.');
-        //             return redirect()->route('schedule');
-        //         }
+                // }
+            }
 
-        //         if ($existingSchedule) {
-        //             $userNickname = User::find($userId)->nickname; // Assuming User is the model for your user table
-        //             Alert::error('Error', 'Record for ' . $date . ' already exists for user ' . $userNickname);
-        //             return redirect()->route('schedule');
-        //         }
+            // Redirect to the schedule page
+            Alert::success('Done', 'Successfully Inserted');
+            return redirect()->route('schedule');
+        }
 
-        //         $schedule = new Schedule();
-        //         $schedule->date = $date;
-        //         $schedule->employee_id = $userId;
-        //         $schedule->off_day = 0;
-        //         $schedule->shift_id = $data['shift_id'];
-        //         $schedule->remarks = $data['remarks'];
-        //         $schedule->save();
 
-        //         // Check if the save operation was successful
-        //         if (!$schedule->exists) {
-        //             $validationPassed = false;
-        //             break;
-        //         }
+        $successMessages = [];
+        $failedMessages = [];
 
-        //     }
-        // }
-
-        // Display success alert
-
-        $failedInsertions = [];
+        $selectedUsers = $data['selected_users'];
 
         foreach ($data['selected_users'] as $key => $userId) {
             // Your logic for off_day being 0
@@ -865,57 +1117,175 @@ class AdminController extends Controller
                 }
             }
 
+            $successInsertedDates = [];
+            $failedDates = [];
+
             foreach ($dates as $date) {
-                // Check if a record already exists for the user and date
-                $existingSchedule = Schedule::where('employee_id', $userId)
-                    ->where('date', $date)
-                    ->first();
+                $result = $this->saveSchedule($userId, $date);
 
-                if (isset($data['period_id'][$key]) && !$this->validateDuplicatePeriodIds($userId, $date, $data['period_id'][$key])) {
-                    Alert::error('Error', 'One employee cannot have duplicate period IDs in a day.');
-                    return redirect()->route('schedule');
+                if ($result === true) {
+                    $successInsertedDates[] = $date;
+                } elseif ($result === 'max_schedules_exceeded') {
+                    $userNickname = User::find($userId)->nickname;
+                    $failedMessages[] = "Failed to insert " . implode(' and ', $failedDates) . " for user $userNickname due to exceeding the maximum of two schedules.";
+                } elseif ($result === 'shift_overlap') {
+                    $userNickname = User::find($userId)->nickname;
+                    $failedMessages[] = "Failed to insert $date for user $userNickname due to shift overlap.";
                 }
+            }
 
-                if ($existingSchedule) {
-                    $userNickname = User::find($userId)->nickname; // Assuming User is the model for your user table
-                    $failedInsertions[] = "Record for $userNickname on $date already exists.";
-                    continue; // Skip to the next iteration if a record already exists for the current date
-                }
+            // if (!empty($failedDates)) {
+            //     $userNickname = User::find($userId)->nickname;
+            //     $failedMessages[] = "Failed to insert " . implode(' and ', $failedDates) . " for user $userNickname due to exceeding the maximum of two schedules.";
+            // }
 
-                $schedule = new Schedule();
-                $schedule->date = $date;
-                $schedule->employee_id = $userId;
-                $schedule->off_day = 0;
-                $schedule->shift_id = $data['shift_id'];
-                $schedule->remarks = $data['remarks'];
-                $schedule->save();
-
-                // Check if the save operation was successful
-                if (!$schedule->exists) {
-                    $validationPassed = false;
-                    $failedInsertions[] = "Failed to insert record for user $userId on $date.";
-                    break;
-                }
+            if (!empty($successInsertedDates)) {
+                $userNickname = User::find($userId)->nickname;
+                $successMessages[] = "Schedule for user $userNickname on " . implode(' and ', $successInsertedDates) . " successfully inserted.";
             }
         }
 
-        // Display success alert or failure message
-        if ($validationPassed) {
-            Alert::success('Done', 'Successfully Inserted');
-        } else {
+        // Display messages for successful insertions
+        foreach ($successMessages as $message) {
+            Alert::success('Success Detail', $message);
+        }
+
+        // Display messages for failed insertions
+        if (!empty($failedMessages)) {
             Alert::error('Error', 'Some insertions failed. See details below.');
-            foreach ($failedInsertions as $message) {
+            foreach ($failedMessages as $message) {
                 Alert::error('Error Detail', $message);
             }
         }
 
-        return redirect()->route('schedule');
-
-
         // Check if 'group-a' is present in the request, indicating task entries
         if ($request->has('group-a') && !empty($request->input('group-a'))) {
-            $this->addTask($request, $dates);
+            $this->saveTask($request, $dates, $selectedUsers);
         }
+
+        return redirect()->route('schedule');
+    }
+
+    private function saveSchedule($userId, $date, $offDay = false){
+        // Check if there are already two schedule records for the same user and date
+        $existingSchedules = DB::table('schedules')
+            ->where('employee_id', $userId)
+            ->where('date', $date)
+            ->count();
+
+        // Check if the user already has two schedules on this date
+        if ($existingSchedules >= 2) {
+            // Display an error message for exceeding two schedules
+            return 'max_schedules_exceeded';
+        }
+
+        // If it's not an off day, check for shift overlap
+        if (!$offDay) {
+            $shiftId = request('shift_id');
+
+            // Retrieve shift details based on the selected shift_id
+            $shiftDetails = Shift::where('id', $shiftId)->first();
+
+            // Check if the shift details are found
+            if (!$shiftDetails) {
+                // Display an error message for invalid shift_id
+                return 'invalid_shift';
+            }
+
+            $newShiftStart = $shiftDetails->shift_start;
+            $newShiftEnd = $shiftDetails->shift_end;
+
+            // Retrieve all existing shifts for the same user and date
+            $existingShifts = DB::table('schedules')
+                ->join('users', 'schedules.employee_id', '=', 'users.id')
+                ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                ->where('schedules.employee_id', $userId)
+                ->where('schedules.date', $date)
+                ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end')
+                ->get();
+
+            // Check for overlap with each existing shift
+            foreach ($existingShifts as $existingShift) {
+                $existingShiftStart = $existingShift->shift_start;
+                $existingShiftEnd = $existingShift->shift_end;
+
+                // Check if the new shift overlaps with the existing shift
+                if ($newShiftStart < $existingShiftEnd && $newShiftEnd > $existingShiftStart) {
+                    // Display an error message for shift overlap
+                    return 'shift_overlap';
+                }
+            }
+        }
+
+        // Your logic for creating and saving a new schedule
+        $schedule = new Schedule();
+        $schedule->date = $date;
+        $schedule->employee_id = $userId;
+        $schedule->off_day = $offDay ? 1 : 0;
+        $schedule->shift_id = request('shift_id'); // You may need to replace this with your actual logic
+        $schedule->remarks = request('remarks'); // You may need to replace this with your actual logic
+        $schedule->save();
+
+        return true;
+    }
+
+    private function saveTask($data, $dates, $selectedUsers){
+        $successMessages = [];
+        $failedMessages = [];
+
+        foreach ($selectedUsers as $key => $userId) {
+            // Your logic for off_day being 0
+            $taskDates = [];
+
+            if ($data['date_end'] === null) {
+                $taskDates[] = $data['date_start'];
+            } else {
+                $taskDates = $dates;
+            }
+
+            $successInsertedTaskDates = [];
+            $failedTaskDates = [];
+
+            foreach ($taskDates as $date) {
+                if ($this->saveTaskEntry($userId, $date, $data['group-a'])) {
+                    $successInsertedTaskDates[] = $date;
+                } else {
+                    $failedTaskDates[] = $date;
+                }
+            }
+
+            if (!empty($failedTaskDates)) {
+                $userNickname = User::find($userId)->nickname;
+                $failedMessages[] = "Failed to insert task for " . implode(' and ', $failedTaskDates) . " for user $userNickname.";
+            }
+
+            if (!empty($successInsertedTaskDates)) {
+                $userNickname = User::find($userId)->nickname;
+                $successMessages[] = "Task for user $userNickname on " . implode(' and ', $successInsertedTaskDates) . " successfully inserted.";
+            }
+        }
+    }
+
+    private function saveTaskEntry($userId, $date, $groupAData){
+        $success = true;
+
+        foreach ($groupAData as $taskData) {
+            $task = new Task();
+            $task->employee_id = $userId;
+            $task->date = $date;
+            $task->period_id = $taskData['period_id'];
+            $task->start_time = $taskData['start_time'];
+            $task->end_time = $taskData['end_time'];
+            $task->duty_id = $taskData['duty_id'];
+            $task->save();
+
+            // If any task insertion fails, set $success to false
+            if (!$task->exists) {
+                $success = false;
+            }
+        }
+
+        return $success;
     }
 
     public function editSchedule($id){
@@ -1179,6 +1549,7 @@ class AdminController extends Controller
     }
 
     public function addTask(Request $request, $dates = null, $selectedUsers = null) {
+        // dd($request->all());
 
         // If $dates and $selectedUsers are not provided, use request input
         if ($dates === null) {
@@ -1227,20 +1598,11 @@ class AdminController extends Controller
                 ->withInput();
         }
 
-        // $request->validate([
-        //     'group-a' => 'required|array', // Ensure at least one task is submitted
-        //     'group-a.*.period_id' => 'required',
-        //     'group-a.*.start_time' => 'required',
-        //     'group-a.*.end_time' => 'required',
-        //     'group-a.*.duty_id' => 'required',
-        //     'selected_users' => 'required|array|min:1',
-        //     'selected_users.*' => 'exists:users,id',
-        // ]);
-
         $tasks = $request->input('group-a', []);
 
         // Loop through selected users and create tasks
         foreach ($selectedUsers as $userId) {
+
             foreach ($tasks as $taskData) {
                 foreach ($dates as $date) {
 
@@ -1274,7 +1636,6 @@ class AdminController extends Controller
         Alert::success('Done', 'Successfully Inserted');
         return redirect()->route('viewTask');
         // return response()->json(['status' => 'success', 'message' => 'Successfully Inserted.']);
-
     }
 
     public function editTask($id){

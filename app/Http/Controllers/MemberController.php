@@ -114,13 +114,6 @@ class MemberController extends Controller
         $user = User::where('id', '=', Auth::user()->id)->first();
 
         // Validate the input
-        // $request->validate([
-        //     'full_name' => 'required|string|max:255',
-        //     'address' => 'required|string|max:255',
-        //     'email' => 'required|email|max:255',
-        // ]);
-
-        // Validate the input
         $request->validate([
             'full_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',

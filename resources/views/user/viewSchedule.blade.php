@@ -6,7 +6,7 @@
 
 
 <!-- Main Content -->
-<div class="main-content d-flex flex-column flex-md-row">
+{{-- <div class="main-content d-flex flex-column flex-md-row">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -49,6 +49,29 @@
         </div>
     </div>
 
+</div> --}}
+
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+
+
+
+            <div class="col-md-3 col-sm-6">
+                <!-- Card -->
+                <div class="card mb-30" style="background-color: #E9E7FF; border-color: #E9E7FF;">
+                    <div class="card-body">
+                        <h4 class="progress-title">Pending OT Approval</h4>
+                        <div class="mb-4">
+                            <p style="font-size: 30px;"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Card -->
+            </div>
+
+        </div>
+    </div>
 </div>
 
 <!-- End Main Content -->
