@@ -17,10 +17,11 @@ class Shift extends Model
         'shift_end'
     ];
 
-    public function schedules(){
-        return $this->hasMany(Schedule::class);
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class, 'shift_id');
     }
-    
+
     public function getFormattedShiftTimeAttribute()
     {
         $shift_start = Carbon::parse($this->shift_start);

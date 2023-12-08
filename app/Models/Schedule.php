@@ -24,9 +24,8 @@ class Schedule extends Model
     }
 
     public function shift(){
-        return $this->belongsTo(Shift::class, 'shift_id', 'id');
+        return $this->belongsTo(Shift::class, 'shift_id');
     }
-
     public function tasks(){
         return $this->hasMany(Task::class, 'date', 'date');
     }

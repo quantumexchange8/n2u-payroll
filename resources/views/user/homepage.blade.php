@@ -68,24 +68,22 @@
                                     // Filter out schedules that match the current date
                                     return $scheduleDate->isSameDay($currentDate);
                                 });
+
+                                // Sort today's schedules by shift start time
+                                $todaySchedules = $todaySchedules->sortBy(function ($schedule) {
+                                    // Calculate shift start time
+                                    $shiftStart = \Carbon\Carbon::parse($schedule->shift->shift_start);
+                                    return $shiftStart->format('H:i');
+                                });
                               @endphp
 
-                              @foreach ($todaySchedules as $schedule)
-                                  @php
-                                    $shiftInfo = null;
-                                    if ($schedule->shift && $schedule->shift->shift_start && $schedule->shift->shift_end) {
-                                        $shiftStart = new DateTime($schedule->shift->shift_start);
-                                        $shiftEnd = new DateTime($schedule->shift->shift_end);
-                                        $shiftInfo = $shiftStart->format('h:i A') . ' - ' . $shiftEnd->format('h:i A');
-                                    }
-                                  @endphp
-
-                                  <tr>
-                                      <td>{{ $currentDate->format('d M Y') }}</td>
-                                      <td>{{ $shiftInfo }}</td>
-                                      <td>{{ $schedule->remarks}}</td>
-                                  </tr>
-                              @endforeach
+                                @foreach ($todaySchedules as $schedule)
+                                    <tr>
+                                        <td>{{ $currentDate->format('d M Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($schedule->shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($schedule->shift->shift_end)->format('h:i A') }}</td>
+                                        <td>{{ $schedule->remarks }}</td>
+                                    </tr>
+                                @endforeach
                           </tbody>
                         </table>
                       </div>
