@@ -272,14 +272,15 @@ class RecordController extends Controller
             ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end')
             ->where('schedules.employee_id', $user->id)
             ->whereDate('schedules.date', '=', $currentDate)
+            ->whereNull('schedules.deleted_at')
             ->orderBy('shifts.shift_start', 'asc')
             ->get();
 
         // Get the "Late Threshold Minutes" setting value
-        $lateThreshold = Setting::where('setting_name', 'Late Threshold Minutes')->value('value');
+        $lateThreshold = Setting::where('setting_name', 'Late Threshold (in minutes)')->value('value');
 
         // Fetch the "Overtime Calculation" setting value
-        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
+        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation (in minutes)')->value('value');
 
         if ($status === 'Clock In') {
             // Perform clock in
@@ -362,7 +363,7 @@ class RecordController extends Controller
                 }
 
                 if($status === 'Clock In') {
-                    if ($clockinCount = 0){
+                    if ($clockinCount == 0){
                         if ($recordData['in'] === 'Clock In' && $currentTime->greaterThan($firstShiftStartTime)) {
 
                             // Calculate late threshold time
@@ -376,7 +377,7 @@ class RecordController extends Controller
                         } else {
                             $recordData['status'] = 'On-Time';
                         }
-                    }else if ($clockinCount = 1 ) {
+                    }else if ($clockinCount == 1 ) {
                         if ($recordData['in'] === 'Clock In' && $currentTime->greaterThan($secondShiftStartTime)) {
 
                             // Calculate late threshold time
@@ -393,7 +394,7 @@ class RecordController extends Controller
                     }
 
                 } elseif ($status === 'Clock Out') {
-                    if ($clockoutCount = 0) {
+                    if ($clockoutCount == 0) {
                         if ($currentTime->lessThanOrEqualTo($firstShiftEndTime)) {
                             $recordData['status'] = 'On-Time';
                         } else {
@@ -442,7 +443,7 @@ class RecordController extends Controller
                                 $recordData['status'] = 'On-Time';
                             }
                         }
-                    }else if ($clockoutCount = 1) {
+                    }else if ($clockoutCount == 1) {
                         if ($currentTime->lessThanOrEqualTo($secondShiftEndTime)) {
                             $recordData['status'] = 'On-Time';
                         } else {
@@ -540,9 +541,6 @@ class RecordController extends Controller
                 }
 
             }else if (!empty($firstShift) && empty($secondShift)){
-
-
-
                 // Check if the user has reached the limit (2 times for both clock in and clock out)
                 // if ($clockinCount + $clockoutCount >= 2) {
 
@@ -560,9 +558,11 @@ class RecordController extends Controller
                 }
 
                 if($status === 'Clock In') {
-                    if ($clockinCount = 0){
-                        if ($recordData['in'] === 'Clock In' && $currentTime->greaterThan($firstShiftStartTime)) {
 
+                    // dd($clockinCount);
+
+                    if ($clockinCount == 0){
+                        if ($recordData['in'] === 'Clock In' && $currentTime->greaterThan($firstShiftStartTime)) {
                             // Calculate late threshold time
                             $lateThresholdTime = $firstShiftStartTime->copy()->addMinutes($lateThreshold);
 
@@ -574,7 +574,7 @@ class RecordController extends Controller
                         } else {
                             $recordData['status'] = 'On-Time';
                         }
-                    }else if ($clockinCount = 1 ) {
+                    }else if ($clockinCount == 1 ) {
                         // if ($recordData['in'] === 'Clock In' && $currentTime->greaterThan($secondShiftStartTime)) {
 
                         //     // Calculate late threshold time
@@ -593,10 +593,13 @@ class RecordController extends Controller
                     }
 
                 } elseif ($status === 'Clock Out') {
-                    if ($clockoutCount = 0) {
+
+                    if ($clockoutCount == 0) {
+
                         if ($currentTime->lessThanOrEqualTo($firstShiftEndTime)) {
                             $recordData['status'] = 'On-Time';
-                        } else {
+
+                        } else if($currentTime >= $firstShiftEndTime){
                             // Get the "Overtime Calculation" setting value
                             $overtimeCalculationMinutes = intval($overtimeCalculation);
 
@@ -641,7 +644,7 @@ class RecordController extends Controller
                                 $recordData['status'] = 'On-Time';
                             }
                         }
-                    }else if ($clockoutCount = 1) {
+                    }else if ($clockoutCount == 1) {
                         // if ($currentTime->lessThanOrEqualTo($secondShiftEndTime)) {
                         //     $recordData['status'] = 'On-Time';
                         // } else {

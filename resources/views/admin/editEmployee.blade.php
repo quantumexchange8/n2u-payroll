@@ -89,6 +89,7 @@
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Position</label>
                                     <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off">
+                                        <option value="">Select Position</option>
                                         @foreach($positions as $position)
                                             <option value="{{ $position->id }}" {{ $user->position->id === $position->id ? 'selected' : '' }}>
                                                 {{ $position->position_name }}
@@ -139,7 +140,7 @@
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
-                                <div class="form-group">
+                                <div class="form-group" style="display: none;">
                                     <label class="font-14 bold mb-2">Role</label>
                                     <select class="theme-input-style" id="role" name="role">
                                         <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
@@ -286,10 +287,9 @@
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
-                                <div class="form-group">
+                                <div class="form-group" style="display: none;">
                                     <label class="font-14 bold mb-2">Other Image</label>
                                     <div style="margin-bottom: 15px;">
-                                        <a href="{{ asset('uploads/employee/offerLetter/' . $offer_letter) }}" class="file-modal-link">{{$offer_letter}}</a>
                                         <a href="{{ asset('uploads/employee/otherImage/' . $other_image) }}" class="file-modal-link">{{$other_image}}</a>
                                     </div>
                                     <div>
@@ -304,6 +304,12 @@
                                     <input type="password" class="theme-input-style" id="password" name="password" placeholder="Password" value="{{$user->password}}">
                                 </div>
                                 <!-- End Form Group -->
+
+                                <div class="form-row">
+                                    <div class="col-12" id="moreImageButton" data-employee-id="{{ $user->id }}">
+                                        <button class="btn long">More Image</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -429,13 +435,7 @@
                 $("#otherBankFields").hide();
             }
         });
-    });
-</script>
 
-
-<!-- JavaScript code for modal -->
-<script>
-    $(document).ready(function() {
         $('.file-modal-link').on('click', function(e) {
             e.preventDefault();
             var src = $(this).attr('href');
@@ -444,4 +444,25 @@
         });
     });
 </script>
+
+<script>
+    // Ensure the DOM is fully loaded before attaching the event listener
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Script loaded");
+
+        // Attach the click event listener to the button
+        document.getElementById('moreImageButton').addEventListener('click', function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+
+            console.log("Button clicked");
+            var employeeId = this.getAttribute('data-employee-id');
+            console.log("Employee ID:", employeeId);
+
+            // Redirect to the other-images route
+            window.location.href = "/admin/other-image/" + employeeId;
+        });
+    });
+</script>
+
 

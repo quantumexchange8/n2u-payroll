@@ -70,6 +70,7 @@
                                         <th>Shift End</th>
                                         <th>Clock out</th>
                                         <th>OT hours</th>
+                                        <th>Approved OT hours</th>
                                         <th>Status</th>
                                         {{-- @if($otapproval->remark != null) --}}
                                         <th>Remark</th>
@@ -94,6 +95,7 @@
                                                 <td>
                                                     {{ $otapproval->ot_hour }}
                                                 </td>
+                                                <td>{{ $otapproval->approved_ot_hour }}</td>
                                                 {{-- <td style="{{ $otapproval->status === 'Pending' ? 'color: orange; font-weight: bold;' : ($otapproval->status === 'Approved' ? 'color: #84f542; font-weight: bold;' : 'color: red; font-weight: bold;') }}"> --}}
                                                 <td>
                                                     @if($otapproval->status == 'Pending')
@@ -116,7 +118,7 @@
                                                         @csrf
 
                                                         @if($otapproval->status == 'Approved')
-                                                            <button type="submit" name="ot_approval" value="Approved" class="details-btn approved-btn" disabled style="color: #67CFA2">
+                                                            <button type="submit" name="ot_approval" value="Approved" class="details-btn approve-button" disabled style="color: #67CFA2">
                                                                 Approved
                                                             </button>
                                                         @elseif($otapproval->status == 'Rejected')
@@ -124,7 +126,9 @@
                                                                 Rejected
                                                             </button>
                                                         @else
-                                                            <button type="submit" name="ot_approval" value="Approved" class="details-btn approved-btn" style="color: #67CFA2">
+                                                            <input type="hidden" name="approved_ot_hour" id="approvedothour-{{ $otapproval->id }}">
+
+                                                            <button type="button" name="ot_approval" value="Approved" class="details-btn approve-button" data-punchrecord-id="{{ $otapproval->id }}" style="color: #67CFA2">
                                                                 Approved
                                                             </button>
 
@@ -156,7 +160,84 @@
 
 @endsection
 
-{{-- Update OT Approval Function --}}
+{{-- Approval OT Approval --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        $('.approve-button').on('click', function() {
+            var punchRecord_id = $(this).data('punchrecord-id');
+            console.log(punchRecord_id);
+
+            // Make an AJAX request to get the ot_hour value
+            $.ajax({
+                url: '/get-ot-hour/' + punchRecord_id, // Adjust the URL endpoint accordingly
+                type: 'GET',
+                success: function(response) {
+                    var current_ot_hour = response.ot_hour;
+
+                    Swal.fire({
+                        title: 'Do you agree with the OT hour?',
+                        text: '',
+                        icon: 'info',
+                        input: 'text',
+                        inputValue: current_ot_hour,
+                        inputLabel: 'OT hour',
+                        inputPlaceholder: 'Enter new OT hour if not agree',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, approve',
+                        cancelButtonText: 'Cancel',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const approved_ot_hour = result.value;
+                            console.log(approved_ot_hour);
+                            if (approved_ot_hour) {
+                                Swal.fire({
+                                    title: 'Approve Confirmation',
+                                    text: 'Are you sure you want to approve with the provided OT hour?',
+                                    icon: 'info',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Yes, approve',
+                                    cancelButtonText: 'Cancel',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        const form = document.getElementById('reject-form-' + punchRecord_id);
+                                        console.log(form);
+                                        if (form) {
+                                            const remarkInput = document.createElement('input');
+                                            remarkInput.type = 'hidden';
+                                            remarkInput.name = 'approved_ot_hour';
+                                            remarkInput.value = approved_ot_hour;
+
+                                            console.log(remarkInput.value)
+                                            form.appendChild(remarkInput);
+                                            form.submit();
+                                        } else {
+                                            console.error('Form not found: ' + 'reject-form-' + punchRecord_id);
+                                        }
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'OT hour cannot be empty.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Ok'
+                                });
+                            }
+                        }
+                    });
+                },
+                error: function(error) {
+                    console.error('Error fetching ot_hour:', error);
+                    // Handle the error, show an alert or log it
+                }
+            });
+        });
+    });
+</script>
+
+
+
+{{-- Reject OT Approval --}}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         $('.reject-button').on('click', function() {

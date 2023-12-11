@@ -11,18 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ot_approvals', function (Blueprint $table) {
+        Schema::create('other_images', function (Blueprint $table) {
             $table->id();
             $table->string('employee_id');
-            $table->string('date');
-            $table->string('shift_start');
-            $table->string('shift_end');
-            $table->string('clock_out_time');
-            $table->string('ot_hour');
-            $table->string('approved_ot_hour')->nullable();
-            $table->string('status');
-            $table->string('remark')->nullable();
+            $table->string('file_name')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -31,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ot_approvals');
+        Schema::dropIfExists('other_images');
     }
 };

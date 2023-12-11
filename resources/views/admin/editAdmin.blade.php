@@ -8,7 +8,7 @@
             <div class="col-lg-12">
                 <!-- Base Horizontal Form With Icons -->
                 <div class="form-element py-30 multiple-column">
-                    <h4 class="font-20 mb-20">Edit Employee</h4>
+                    <h4 class="font-20 mb-20">Edit Admin</h4>
 
                     <!-- Form -->
                     <form action="{{ route('updateAdmin', $user->id) }}" method="POST" enctype="multipart/form-data">
@@ -46,6 +46,20 @@
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
+                                <div class="form-group" style="display: none;">
+                                    <label class="font-14 bold mb-2">Role</label>
+                                    <select class="theme-input-style" id="role" name="role">
+                                        <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
+                                        <option value="member" {{ $user->role === 'member' ? 'selected' : '' }}>Member</option>
+                                    </select>
+                                </div>
+                                <!-- End Form Group -->
+
+                            </div>
+
+                            <div class="col-lg-6">
+
+                                <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Nickname</label>
                                     <input type="text" class="theme-input-style" id="nickname" name="nickname" autocomplete="off" placeholder="Nickname" value="{{$user->nickname}}">
@@ -66,41 +80,7 @@
                                 <!-- End Form Group -->
 
                                 <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Salary</label>
-                                    <input type="text" class="theme-input-style" id="salary" name="salary" autocomplete="off" placeholder="Salary" value="{{$user->salary}}">
-                                    @error('salary')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Employed Since</label>
-                                    <input type="date" class="theme-input-style" id="employed_since" name="employed_since" autocomplete="off" placeholder="Employed Since" value="{{$user->employed_since}}">
-                                    @error('employed_since')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Role</label>
-                                    <select class="theme-input-style" id="role" name="role">
-                                        <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
-                                        <option value="member" {{ $user->role === 'member' ? 'selected' : '' }}>Member</option>
-                                    </select>
-                                </div>
-                                <!-- End Form Group -->
-
-                            </div>
-
-                            <div class="col-lg-6">
-
-                                <!-- Form Group -->
-                                <div class="form-group">
+                                <div class="form-group" style="display: none;">
                                     <label class="font-14 bold mb-2">Nationality</label>
                                     <select class="theme-input-style" id="nation" name="nation" autocomplete="off">
                                         <option value="">Select Nationality</option>
@@ -123,70 +103,6 @@
                                     </select>
                                 </div>
                                 <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Bank Name</label>
-                                    <select class="theme-input-style" id="bank_name" name="bank_name" autocomplete="off">
-                                        <option value="">Select Bank Name</option>
-                                        <option value="Maybank" {{ $user->bank_name === 'Maybank' ? 'selected' : '' }}>Maybank</option>
-                                        <option value="CIMB" {{ $user->bank_name === 'CIMB' ? 'selected' : '' }}>CIMB</option>
-                                        <option value="UOB" {{ $user->bank_name === 'UOB' ? 'selected' : '' }}>UOB</option>
-                                        <option value="RHB" {{ $user->bank_name === 'RHB' ? 'selected' : '' }}>RHB</option>
-                                        <option value="Public Bank" {{ $user->bank_name === 'Public Bank' ? 'selected' : '' }}>Public Bank</option>
-                                        <option value="Hong Leong Bank" {{ $user->bank_name === 'Hong Leong Bank' ? 'selected' : '' }}>Hong Leong Bank</option>
-                                        <option value="AmBank" {{ $user->bank_name === 'AmBank' ? 'selected' : '' }}>AmBank</option>
-                                        <option value="Bank Rakyat" {{ $user->bank_name === 'Bank Rakyat' ? 'selected' : '' }}>Bank Rakyat</option>
-                                        <option value="OCBC Bank" {{ $user->bank_name === 'OCBC Bank' ? 'selected' : '' }}>OCBC Bank</option>
-                                        <option value="HSBC Bank" {{ $user->bank_name === 'HSBC Bank' ? 'selected' : '' }}>HSBC Bank</option>
-                                        <option value="Bank Islam" {{ $user->bank_name === 'Bank Islam' ? 'selected' : '' }}>Bank Islam</option>
-                                        <option value="Affin Bank" {{ $user->bank_name === 'Affin Bank' ? 'selected' : '' }}>Affin Bank</option>
-                                        <option value="Alliance Bank" {{ $user->bank_name === 'Alliance Bank' ? 'selected' : '' }}>Alliance Bank</option>
-                                        <option value="Standard Chartered" {{ $user->bank_name === 'Standard Chartered' ? 'selected' : '' }}>Standard Chartered</option>
-                                        <option value="MBSB Bank" {{ $user->bank_name === 'MBSB Bank' ? 'selected' : '' }}>MBSB Bank</option>
-                                        <option value="BSN" {{ $user->bank_name === 'BSN' ? 'selected' : '' }}>BSN</option>
-                                        <option value="Bank Muamalat" {{ $user->bank_name === 'Bank Muamalat' ? 'selected' : '' }}>Bank Muamalat</option>
-                                        <option value="Other" {{ $user->bank_name === 'Other' ? 'selected' : '' }}>Other</option>
-                                    </select>
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Bank Account</label>
-                                    <input type="text" class="theme-input-style" id="bank_account" name="bank_account" autocomplete="off" placeholder="Bank Account" value="{{$user->bank_account}}">
-                                    @error('bank_account')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Container for Account Type, Account ID, and Account PIC -->
-                                <div id="otherBankFields" style="display: none">
-                                    <!-- Form Group -->
-                                    <div class="form-group">
-                                        <label class="font-14 bold mb-2">Account Type</label>
-                                        <input type="number" class="theme-input-style" id="account_type" name="account_type" autocomplete="off" placeholder="Account Type" value="{{ $user->account_type}}">
-                                        @error('account_type')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <!-- End Form Group -->
-
-                                    <!-- Form Group -->
-                                    <div class="form-group">
-                                        <label class="font-14 bold mb-2">Account ID</label>
-                                        <input type="number" class="theme-input-style" id="account_id" name="account_id" autocomplete="off" placeholder="Account ID" value="{{ $user->account_id }}">
-                                        @error('account_id')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <!-- End Form Group -->
-
-
-                                </div>
-
-
 
                                 <!-- Form Group -->
                                 <div class="form-group" style="display: none;">

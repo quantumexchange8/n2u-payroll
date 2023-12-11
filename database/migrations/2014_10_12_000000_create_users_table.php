@@ -34,7 +34,7 @@ return new class extends Migration
             $table->string('passport_size_photo')->nullable();
             $table->string('ic_photo')->nullable();
             $table->string('offer_letter')->nullable();
-            $table->string('other_image')->nullable();
+
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role')->default('member');

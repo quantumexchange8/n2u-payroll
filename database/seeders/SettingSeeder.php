@@ -13,27 +13,22 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         Setting::create([
-            'setting_name' => 'Overtime Calculation',
-            'value' => '15 minutes',
+            'setting_name' => 'Overtime Calculation (in minutes)',
+            'value' => '15',
             'description' => 'OT start calculate after shift end 15 minutes'
         ]);
 
         Setting::create([
-            'setting_name' => 'Late Threshold Minutes',
-            'value' => '5 minutes',
+            'setting_name' => 'Late Threshold (in minutes)',
+            'value' => '5',
             'description' => 'Allow late in 5 minutes'
         ]);
 
         Setting::create([
-            'setting_name' => 'OT Allowance',
-            'value' => 'RM6',
+            'setting_name' => 'OT Allowance (in RM)',
+            'value' => '6',
             'description' => 'RM6 per hour'
         ]);
 
-        // Setting::create([
-        //     'setting_name' => 'Notice Board',
-        //     'value' => 'Everyone should help each other if others needed help.',
-        //     'description' => 'Motivation'
-        // ]);
     }
 }

@@ -118,6 +118,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('admin/ot-approval', [AdminController::class, 'otApproval'])->name('otApproval');
     Route::post('admin/update-ot-approval/{id}', [AdminController::class, 'updateOtApproval'])->name('updateOtApproval');
     Route::delete('admin/delete-ot-approval/{id}', [AdminController::class, 'deleteOtApproval'])->name('deleteOtApproval');
+    Route::get('/get-ot-hour/{id}', [AdminController::class, 'getOtHour']);
+
 
     Route::get('admin/salary-logs', [AdminController::class, 'salaryLogs'])->name('salaryLogs');
 
@@ -125,6 +127,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('admin/total-work', [AdminController::class, 'totalWork'])->name('totalWork');
     Route::post('admin/update-total-work/{id}', [AdminController::class, 'updateTotalWork'])->name('updateTotalWork');
+
+    Route::get('admin/other-image/{employee_id}', [AdminController::class, 'otherImage'])->name('otherImage');
+    Route::post('admin/other-image/add-other-image/{employeeId}', [AdminController::class, 'addOtherImage'])->name('addOtherImage');
+    Route::delete('admin/other-images/{employeeId}/delete/{imageId}', [AdminController::class, 'deleteOtherImage'])->name('deleteOtherImage');
+
 
     // User
     Route::get('user/view-schedule', [MemberController::class, 'viewSchedule'])->name('viewSchedule');

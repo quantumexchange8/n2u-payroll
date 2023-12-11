@@ -14,6 +14,7 @@ use App\Models\Task;
 use App\Models\User;
 use App\Models\Period;
 use App\Models\OtApproval;
+use App\Models\OtherImage;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -114,16 +115,34 @@ class AdminController extends Controller
             }
 
             // Handle other image
+            // if ($request->hasFile('other_image')) {
+            //     $file = $request->file('other_image');
+            //     $extension = $file->getClientOriginalExtension();
+            //     $filename = $full_name_with_underscores . '_other_image.' . $extension; // Modify the file name
+            //     $file->move('uploads/employee/otherImage/', $filename);
+            //     $validatedData['other_image'] = $filename;
+            // }
+
+            // Handle other images
             if ($request->hasFile('other_image')) {
                 $file = $request->file('other_image');
                 $extension = $file->getClientOriginalExtension();
-                $filename = $full_name_with_underscores . '_other_image.' . $extension; // Modify the file name
-                $file->move('uploads/employee/otherImage/', $filename);
-                $validatedData['other_image'] = $filename;
+                $otherImageFilename = $full_name_with_underscores . '_other_image.' . time() . '.' . $extension;// Modify the file name
+                $file->move('uploads/employee/otherImage/', $otherImageFilename);
+                // $validatedData['other_image'] = $otherImageFilename;
             }
 
             // Create the user record with the validated and modified data
-            User::create($validatedData);
+            $user = User::create($validatedData);
+
+            // Store the user ID for later use
+            $userId = $user->id;
+
+            // Insert data into other_images table
+            OtherImage::create([
+                'employee_id' => $userId,
+                'file_name' => $otherImageFilename,
+            ]);
 
             Alert::success('Done', 'Successfully Registered');
             return redirect()->route('viewEmployee');
@@ -154,6 +173,8 @@ class AdminController extends Controller
         // Validate the incoming request data
         $validatedData = $request->validated();
 
+        $full_name_with_underscores = str_replace(' ', '_', $validatedData['employee_id']);
+
         // Handle file uploads if necessary
         $photoPath = 'uploads/employee/passportSizePhoto/';
         $icPath = 'uploads/employee/icPhoto/';
@@ -165,10 +186,10 @@ class AdminController extends Controller
         if ($request->hasFile('passport_size_photo')) {
             $photo = $request->file('passport_size_photo');
             $photoExtension = $photo->getClientOriginalExtension();
-            $photoName = $data->full_name . '_photo.' . $photoExtension;
+            $photoName = $full_name_with_underscores . '_photo.' . $photoExtension;
 
             // Delete all previous files with the same full name
-            $filesToDelete = glob($photoPath . $data->full_name . '_photo.*');
+            $filesToDelete = glob($photoPath . $full_name_with_underscores . '_photo.*');
             foreach ($filesToDelete as $fileToDelete) {
                 if (File::exists($fileToDelete)) {
                     File::delete($fileToDelete);
@@ -186,10 +207,10 @@ class AdminController extends Controller
         if ($request->hasFile('ic_photo')) {
             $icPhoto = $request->file('ic_photo');
             $icExtension = $icPhoto->getClientOriginalExtension();
-            $icName = $data->full_name . '_ic.' . $icExtension;
+            $icName = $full_name_with_underscores . '_ic.' . $icExtension;
 
             // Delete all previous files with the same full name
-            $filesToDelete = glob($icPath . $data->full_name . '_ic.*');
+            $filesToDelete = glob($icPath . $full_name_with_underscores . '_ic.*');
             foreach ($filesToDelete as $fileToDelete) {
                 if (File::exists($fileToDelete)) {
                     File::delete($fileToDelete);
@@ -207,10 +228,10 @@ class AdminController extends Controller
         if ($request->hasFile('offer_letter')) {
             $offerLetter = $request->file('offer_letter');
             $offerLetterExtension = $offerLetter->getClientOriginalExtension();
-            $offerLetterName = $data->full_name . '_offer_letter.' . $offerLetterExtension;
+            $offerLetterName = $full_name_with_underscores . '_offer_letter.' . $offerLetterExtension;
 
             // Delete all previous files with the same full name
-            $filesToDelete = glob($offerLetterPath . $data->full_name . '_offer_letter.*');
+            $filesToDelete = glob($offerLetterPath . $full_name_with_underscores . '_offer_letter.*');
             foreach ($filesToDelete as $fileToDelete) {
                 if (File::exists($fileToDelete)) {
                     File::delete($fileToDelete);
@@ -228,10 +249,10 @@ class AdminController extends Controller
         if ($request->hasFile('account_pic')) {
             $accountPic = $request->file('account_pic');
             $accountPicExtension = $accountPic->getClientOriginalExtension();
-            $accountPicName = $data->full_name . '_account_pic.' . $accountPicExtension;
+            $accountPicName = $full_name_with_underscores . '_account_pic.' . $accountPicExtension;
 
             // Delete all previous files with the same full name
-            $filesToDelete = glob($accountPicPath . $data->full_name . '_account_pic.*');
+            $filesToDelete = glob($accountPicPath . $full_name_with_underscores . '_account_pic.*');
             foreach ($filesToDelete as $fileToDelete) {
                 if (File::exists($fileToDelete)) {
                     File::delete($fileToDelete);
@@ -249,13 +270,19 @@ class AdminController extends Controller
         if ($request->hasFile('other_image')) {
             $otherImage = $request->file('other_image');
             $otherImageExtension = $otherImage->getClientOriginalExtension();
-            $otherImageName = $data->full_name . '_other_image_' . time() . '.' . $otherImageExtension;
+            $otherImageName = $full_name_with_underscores . '_other_image_' . time() . '.' . $otherImageExtension;
 
             // Upload the new offer letter
             $otherImage->move($otherImagePath, $otherImageName);
 
             // Update the database field with the new file name
             $validatedData['other_image'] = $otherImageName;
+
+            // Insert data into other_images table
+            OtherImage::create([
+                'employee_id' => $validatedData['employee_id'],
+                'file_name' => $otherImageName,
+            ]);
         }
 
 
@@ -2004,6 +2031,114 @@ class AdminController extends Controller
         ]);
     }
 
+    // public function updateOtApproval(Request $request, $id) {
+
+    //     $punchRecord = PunchRecord::find($id);
+    //     $otapproval = OtApproval::find($id);
+
+    //     // Check if the OtApproval record is found
+    //     if ($otapproval) {
+    //         // Retrieve the associated punch record where ot_approval is 'Pending'
+    //         $punchRecord = PunchRecord::whereDate('created_at', '=', $otapproval->date)
+    //             ->where('ot_approval', 'Pending')
+    //             ->first();
+
+    //         // Check if the associated punch record is found
+    //         if ($punchRecord) {
+    //             $clockout = $otapproval->clock_out_time;
+    //             $hourAndMinute = Carbon::parse($clockout)->format('H:i');
+
+    //             $clockout = $hourAndMinute;
+    //             $shiftEnd = $otapproval->shift_end;
+
+    //             $clockoutTime = Carbon::parse($clockout);
+    //             $shiftEndTime = Carbon::parse($shiftEnd);
+
+    //             $minutesDifference = $clockoutTime->diffInMinutes($shiftEndTime);
+
+    //             // You can also get the hours and minutes separately if needed
+    //             // $hours = floor($minutesDifference / 60);
+    //             $totalHours = $minutesDifference / 60;
+
+    //             $totalHoursRounded = number_format($totalHours, 2);
+
+    //             if ($request->remark == null) {
+
+    //                 $punchRecord->ot_approval = 'Approved';
+    //                 $otapproval->status = 'Approved';
+    //                 $otapproval->ot_hour = $totalHoursRounded;
+
+    //                 // Retrieve the associated user
+    //                 // $user = User::where('id', $punchRecord->employee_id)->first();
+
+    //                 // // Check if the user exists and has schedules
+    //                 // if ($user) {
+    //                 //     $schedule = Schedule::where('employee_id', $user->id)
+    //                 //         ->whereDate('date', $punchRecord->created_at->toDateString())
+    //                 //         ->first();
+
+    //                 //     if ($schedule) {
+    //                 //         $shift = Shift::find($schedule->shift_id);
+
+    //                 //         if ($shift) {
+    //                 //             // Calculate the overtime hours based on the difference between created_at and shift end
+    //                 //             $shiftEndTime = Carbon::createFromFormat('H:i', $shift->shift_end);
+    //                 //             $createdTime = Carbon::parse($punchRecord->created_at);
+
+    //                 //             // Fetch the "Overtime Calculation" setting value
+    //                 //             $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
+    //                 //             // Get the "Overtime Calculation" setting value
+    //                 //             $overtimeCalculationMinutes = intval($overtimeCalculation);
+
+    //                 //             // Calculate the difference in minutes between created_at and shift end
+    //                 //             $minutesDifference = $createdTime->diffInMinutes($shiftEndTime);
+
+    //                 //             // Subtract the overtime calculation minutes
+    //                 //             $minutesDifference -= $overtimeCalculationMinutes;
+
+    //                 //             // Convert the minutes to hours
+    //                 //             $otHours = $minutesDifference / 60;
+
+    //                 //             // Round otHours to 2 decimal places
+    //                 //             $otHours = round($otHours, 2);
+
+    //                 //             $punchRecord->ot_hours = $otHours;
+    //                 //         }
+    //                 //     }
+    //                 // }
+
+
+    //                 $punchRecord->save();
+    //                 $otapproval->save();
+    //             } else {
+    //                 $punchRecord->ot_approval = 'Rejected';
+    //                 $punchRecord->remarks = $request->remark;
+
+    //                 $otapproval->status = 'Rejected';
+    //                 $otapproval->remark = $request->remark;
+
+    //                 $punchRecord->save();
+    //                 $otapproval->save();
+    //             }
+
+    //             Alert::success('Done', 'Successfully Updated');
+    //             return redirect()->route('otApproval');
+    //         } else {
+    //             // Handle the case where the associated punch record is not found
+    //             Alert::error('Error', 'Associated Punch Record not found.');
+    //             return redirect()->route('otApproval');
+    //         }
+
+
+    //     } else {
+    //         // Handle the case where the OtApproval record is not found
+    //         Alert::error('Error', 'OtApproval Record not found.');
+    //         return redirect()->route('otApproval');
+    //     }
+
+
+    // }
+
     public function updateOtApproval(Request $request, $id) {
 
         $punchRecord = PunchRecord::find($id);
@@ -2040,46 +2175,7 @@ class AdminController extends Controller
                     $punchRecord->ot_approval = 'Approved';
                     $otapproval->status = 'Approved';
                     $otapproval->ot_hour = $totalHoursRounded;
-
-                    // Retrieve the associated user
-                    // $user = User::where('id', $punchRecord->employee_id)->first();
-
-                    // // Check if the user exists and has schedules
-                    // if ($user) {
-                    //     $schedule = Schedule::where('employee_id', $user->id)
-                    //         ->whereDate('date', $punchRecord->created_at->toDateString())
-                    //         ->first();
-
-                    //     if ($schedule) {
-                    //         $shift = Shift::find($schedule->shift_id);
-
-                    //         if ($shift) {
-                    //             // Calculate the overtime hours based on the difference between created_at and shift end
-                    //             $shiftEndTime = Carbon::createFromFormat('H:i', $shift->shift_end);
-                    //             $createdTime = Carbon::parse($punchRecord->created_at);
-
-                    //             // Fetch the "Overtime Calculation" setting value
-                    //             $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
-                    //             // Get the "Overtime Calculation" setting value
-                    //             $overtimeCalculationMinutes = intval($overtimeCalculation);
-
-                    //             // Calculate the difference in minutes between created_at and shift end
-                    //             $minutesDifference = $createdTime->diffInMinutes($shiftEndTime);
-
-                    //             // Subtract the overtime calculation minutes
-                    //             $minutesDifference -= $overtimeCalculationMinutes;
-
-                    //             // Convert the minutes to hours
-                    //             $otHours = $minutesDifference / 60;
-
-                    //             // Round otHours to 2 decimal places
-                    //             $otHours = round($otHours, 2);
-
-                    //             $punchRecord->ot_hours = $otHours;
-                    //         }
-                    //     }
-                    // }
-
+                    $otapproval->approved_ot_hour = $request->approved_ot_hour;
 
                     $punchRecord->save();
                     $otapproval->save();
@@ -2112,6 +2208,19 @@ class AdminController extends Controller
 
     }
 
+    public function getOtHour($id){
+        // Fetch the PunchRecord by ID
+        $punchRecord = OtApproval::find($id);
+
+      
+        if ($punchRecord) {
+            // Return the ot_hour as JSON
+            return response()->json(['ot_hour' => $punchRecord->ot_hour]);
+        } else {
+            // Handle the case where PunchRecord is not found
+            return response()->json(['error' => 'Record not found'], 404);
+        }
+    }
     public function deleteOtApproval($id){
 
         $punchRecords = PunchRecord::find($id);
@@ -2242,5 +2351,63 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Remark updated successfully.');
     }
+
+    public function otherImage($employeeId){
+        $user = User::find($employeeId);
+        $otherImages = OtherImage::where('employee_id', $employeeId)->get();
+
+        return view('admin/otherImage', compact('user', 'otherImages'));
+    }
+
+    public function addOtherImage(Request $request, $employeeId){
+
+        // Validate the request
+        $request->validate([
+            'new_other_image' => 'required|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:2048',
+        ]);
+
+
+        // dd($request->all());
+
+        // Get the employee by ID
+        $user = User::find($employeeId);
+
+        $full_name_with_underscores = str_replace(' ', '_', $user->employee_id);
+
+        $file = $request->file('new_other_image');
+        $extension = $file->getClientOriginalExtension();
+        $otherImageFilename = $full_name_with_underscores . '_other_image.' . time() . '.' . $extension;// Modify the file name
+        $file->move('uploads/employee/otherImage/', $otherImageFilename);
+
+        // Save the file path to the database
+        OtherImage::create([
+            'employee_id' => $user->id, // Adjust this based on your authentication logic
+            'file_name' => $otherImageFilename,
+        ]);
+
+        Alert::success('Done', 'Successfully Inserted');
+        return redirect()->back();
+
+    }
+
+    public function deleteOtherImage($employeeId, $imageId){
+        // Find the image by ID
+        $image = OtherImage::find($imageId);
+
+        // Get the file path
+        $filePath = 'uploads/employee/otherImage/' . $image->file_name;
+
+        // Delete the file from the file system
+        if (File::exists($filePath)) {
+            File::delete($filePath);
+        }
+
+        // Delete the record from the database
+        $image->delete();
+
+        Alert::success('Done', 'Successfully Deleted');
+        return redirect()->back();
+    }
+
 
 }

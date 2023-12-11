@@ -10,140 +10,139 @@
           <div class="row" style="display: flex;justify-content:center;flex-direction: column;align-items: center;flex-wrap: wrap;gap: 20px;">
 
             <form action="{{ route('clock_in') }}" method="POST" id="clockForm">
-              @csrf
-              <input type="hidden" id="statusInput" name="status" value="Clock In">
-              @php
-                $shift = App\Models\Schedule::where('employee_id', Auth::user()->id)
-                  ->whereDate('date', now()->toDateString()) // Filter by the current date
-                  ->get();
+                @csrf
+                <input type="hidden" id="statusInput" name="status" value="Clock In">
+                @php
+                    $shift = App\Models\Schedule::where('employee_id', Auth::user()->id)
+                    ->whereDate('date', now()->toDateString()) // Filter by the current date
+                    ->get();
 
-              @endphp
-              @if($shift->isEmpty())
-                  <button type="button" id="clockButton" class="btn" style="width:100%" disabled>
-                      {{$clock}}
-                  </button>
-              @else
-                  <button type="button" id="clockButton" class="btn" style="width:100%;
-                  @if ($status == 1)
-                      background-color: #6045E2;
-                      color: #FFFFFF;
-                      border: 2px solid #6045E2;
-                  @else
-                      background-color: #b04654;
-                      color: #FFFFFF;
-                      border: 2px solid #b04654;
-                  @endif
-                  ">
-                    {{ $status == 1 ? 'Clock In' : 'Clock Out' }}
-                  </button>
-              @endif
+                @endphp
+                @if($shift->isEmpty())
+                        <button type="button" id="clockButton" class="btn" style="width:100%">
+                            {{$clock}}
+                        </button>
+                @else
+                    <button type="button" id="clockButton" class="btn" style="width:100%;
+                    @if ($status == 1)
+                        background-color: #6045E2;
+                        color: #FFFFFF;
+                        border: 2px solid #6045E2;
+                    @else
+                        background-color: #b04654;
+                        color: #FFFFFF;
+                        border: 2px solid #b04654;
+                    @endif
+                    ">
+                        {{ $status == 1 ? 'Clock In' : 'Clock Out' }}
+                    </button>
+                @endif
 
             </form>
 
             <div class="col-12">
-              <div class="card mb-30">
-                  <div class="card-body pt-30">
-                      <h4 class="font-20">Today's Shift</h4>
-                  </div>
-                  <div class="table-responsive">
-                      <!-- Invoice List Table -->
-                      <div id="data-container">
-                        <table class="text-nowrap table-bordered dh-table">
-                          <thead>
-                              <tr style="text-align: center;">
-                                  <th>Date</th>
-                                  <th>Shift</th>
-                                  <th>Remarks</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              @php
-                                // Get the current date
-                                $currentDate = \Carbon\Carbon::now();
+                <div class="card mb-30">
+                        <div class="card-body pt-30">
+                            <h4 class="font-20">Today's Shift</h4>
+                        </div>
 
-                                // Filter schedules for today
-                                $todaySchedules = $schedules->filter(function ($schedule) use ($currentDate) {
-                                    $scheduleDate = \Carbon\Carbon::createFromFormat('Y-m-d', $schedule->date);
-
-                                    // Filter out schedules that match the current date
-                                    return $scheduleDate->isSameDay($currentDate);
-                                });
-
-                                // Sort today's schedules by shift start time
-                                $todaySchedules = $todaySchedules->sortBy(function ($schedule) {
-                                    // Calculate shift start time
-                                    $shiftStart = \Carbon\Carbon::parse($schedule->shift->shift_start);
-                                    return $shiftStart->format('H:i');
-                                });
-                              @endphp
-
-                                @foreach ($todaySchedules as $schedule)
-                                    <tr>
-                                        <td>{{ $currentDate->format('d M Y') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($schedule->shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($schedule->shift->shift_end)->format('h:i A') }}</td>
-                                        <td>{{ $schedule->remarks }}</td>
-                                    </tr>
-                                @endforeach
-                          </tbody>
-                        </table>
-                      </div>
-
-                      <!-- End Invoice List Table -->
-                  </div>
-
-                  <div class="card-body pt-30">
-                    <h4 class="font-20">Today's Task</h4>
-                  </div>
-                  <div class="table-responsive">
-                    <!-- Invoice List Table -->
-                    <div id="data-container">
-                      <table class="text-nowrap table-bordered dh-table">
-                        <thead>
-                            <tr style="text-align: center;">
-                                <th>Task</th>
-                                <th>Time</th>
-                                <th>Duty</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                          @php
-                              $todayTasks = $tasks->filter(function ($task) {
-                                  // Check if the task date is today
-                                  return \Carbon\Carbon::parse($task->date)->isToday();
-                              });
-                          @endphp
-
-                            @foreach ($todayTasks as $task)
+                    <div class="table-responsive">
+                        <!-- Invoice List Table -->
+                        <div id="data-container">
+                            <table class="text-nowrap table-bordered dh-table">
+                            <thead>
+                                <tr style="text-align: center;">
+                                    <th>Date</th>
+                                    <th>Shift</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 @php
-                                  $time = null;
-                                  if ($task->start_time && $task->end_time) {
-                                      $startTime = new DateTime($task->start_time);
-                                      $endTime = new DateTime($task->end_time);
-                                      $time = $startTime->format('h:i A') . ' - ' . $endTime->format('h:i A');
-                                  }
+                                    // Get the current date
+                                    $currentDate = \Carbon\Carbon::now();
+
+                                    // Filter schedules for today
+                                    $todaySchedules = $schedules->filter(function ($schedule) use ($currentDate) {
+                                        $scheduleDate = \Carbon\Carbon::createFromFormat('Y-m-d', $schedule->date);
+
+                                        // Filter out schedules that match the current date
+                                        return $scheduleDate->isSameDay($currentDate);
+                                    });
+
+                                    // Sort today's schedules by shift start time
+                                    $todaySchedules = $todaySchedules->sortBy(function ($schedule) {
+                                        // Calculate shift start time
+                                        $shiftStart = \Carbon\Carbon::parse($schedule->shift->shift_start);
+                                        return $shiftStart->format('H:i');
+                                    });
                                 @endphp
 
-                                <tr>
-                                    <td>{{ $task->period->period_name ?? null }}</td>
-                                    <td>{{ $time ?? null }}</td>
-                                    <td>{{ $task->duty->duty_name ?? null }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                      </table>
+                                    @foreach ($todaySchedules as $schedule)
+                                        <tr>
+                                            <td>{{ $currentDate->format('d M Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($schedule->shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($schedule->shift->shift_end)->format('h:i A') }}</td>
+                                            <td>{{ $schedule->remarks }}</td>
+                                        </tr>
+                                    @endforeach
+                            </tbody>
+                            </table>
+                        </div>
+
+                        <!-- End Invoice List Table -->
                     </div>
 
-                    <!-- End Invoice List Table -->
-                  </div>
-              </div>
+                    <div class="card-body pt-30">
+                        <h4 class="font-20">Today's Task</h4>
+                    </div>
+                    <div class="table-responsive">
+                        <!-- Invoice List Table -->
+                        <div id="data-container">
+                        <table class="text-nowrap table-bordered dh-table">
+                            <thead>
+                                <tr style="text-align: center;">
+                                    <th>Task</th>
+                                    <th>Time</th>
+                                    <th>Duty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @php
+                                $todayTasks = $tasks->filter(function ($task) {
+                                    // Check if the task date is today
+                                    return \Carbon\Carbon::parse($task->date)->isToday();
+                                });
+                            @endphp
+
+                                @foreach ($todayTasks as $task)
+                                    @php
+                                    $time = null;
+                                    if ($task->start_time && $task->end_time) {
+                                        $startTime = new DateTime($task->start_time);
+                                        $endTime = new DateTime($task->end_time);
+                                        $time = $startTime->format('h:i A') . ' - ' . $endTime->format('h:i A');
+                                    }
+                                    @endphp
+
+                                    <tr>
+                                        <td>{{ $task->period->period_name ?? null }}</td>
+                                        <td>{{ $time ?? null }}</td>
+                                        <td>{{ $task->duty->duty_name ?? null }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        </div>
+
+                        <!-- End Invoice List Table -->
+                    </div>
+                </div>
             </div>
 
-
-
             @php
-              $user = Auth::user();
-              $user_id = $user ? $user->id : null;
-              $currentDate = now()->toDateString();
+                $user = Auth::user();
+                $user_id = $user ? $user->id : null;
+                $currentDate = now()->toDateString();
             @endphp
 
             <div class="col-12">
@@ -222,48 +221,58 @@
 
     // Use try-catch to handle form submission errors.
     try {
-      const response = await fetch('{{ route('clock_in') }}', {
-        method: 'POST',
-        body: new FormData(clockForm),
-      });
-
-      if (response.ok) {
-        // Update the button text to the opposite.
-        clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
-
-        // Apply styles based on the status
-        console.log(status)
-        if (status === 'Clock In') {
-          clockButton.style.backgroundColor = '#b04654';
-          clockButton.style.color = '#FFFFFF';
-          clockButton.style.border = '2px solid #b04654';
-        } else {
-          clockButton.style.backgroundColor = '#6045E2';
-          clockButton.style.color = '#FFFFFF';
-          clockButton.style.border = '2px solid #6045E2';
+        if ('{!! $shift->isEmpty() !!}') {
+            // Display an error alert if $shift is empty.
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'You cannot clock in or out because there is no scheduled shift for today. Please contact admin.',
+            });
+            return; // Exit the function to prevent further execution.
         }
 
-        // Display a success alert
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
-        }).then((result) => {
-            if (result.isConfirmed) {
+        const response = await fetch('{{ route('clock_in') }}', {
+            method: 'POST',
+            body: new FormData(clockForm),
+        });
 
-              // Refresh the page
-              location.reload(); // This will reload the current page
+        if (response.ok) {
+            // Update the button text to the opposite.
+            clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
+
+            // Apply styles based on the status
+            console.log(status)
+            if (status === 'Clock In') {
+            clockButton.style.backgroundColor = '#b04654';
+            clockButton.style.color = '#FFFFFF';
+            clockButton.style.border = '2px solid #b04654';
+            } else {
+            clockButton.style.backgroundColor = '#6045E2';
+            clockButton.style.color = '#FFFFFF';
+            clockButton.style.border = '2px solid #6045E2';
             }
-        });
 
-      } else {
-        // Display an error alert
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Form submission failed. An error occurred while processing your request.',
-        });
-      }
+            // Display a success alert
+            Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                // Refresh the page
+                location.reload(); // This will reload the current page
+                }
+            });
+
+        } else {
+            // Display an error alert
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Form submission failed. An error occurred while processing your request.',
+            });
+        }
     } catch (error) {
       console.error('Error:', error);
     }

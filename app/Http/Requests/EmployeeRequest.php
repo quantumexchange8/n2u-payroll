@@ -44,7 +44,7 @@ class EmployeeRequest extends FormRequest
             'account_type' => 'nullable',
             'account_id' => 'nullable',
             'account_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'other_image'=> 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+
             'password' => 'required',
             'passport_size_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'ic_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',

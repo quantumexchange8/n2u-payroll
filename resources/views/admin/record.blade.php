@@ -42,7 +42,7 @@
                 <!-- End Card -->
              </div> --}}
 
-            <div class="col-md-6 col-sm-6">
+            <div class="col-md-6 col-sm-6" onclick="redirectToOTApproval()">
                 <!-- Card -->
                 <div class="card mb-30" style="background-color: #cce5ff; border-color: #b8daff;">
                     <div class="card-body">
@@ -128,6 +128,12 @@
 <!-- End Main Content -->
 
 @endsection
+
+<script>
+    function redirectToOTApproval() {
+        window.location.href = '{{ route('otApproval') }}';
+    }
+</script>
 
 {{-- <script>
     document.addEventListener('DOMContentLoaded', function() {
