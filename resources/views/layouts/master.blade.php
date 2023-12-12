@@ -180,22 +180,38 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('viewDepartment') }}">
-                                    <i class="icofont-building"></i>
-                                    <span class="link-title">Department</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('viewPosition') }}">
+                                <a href="">
                                     <i class="icofont-briefcase"></i>
-                                    <span class="link-title">Position</span>
+                                    <span class="link-title">Department & Position</span>
                                 </a>
+
+                                <!-- Sub Menu -->
+                                <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('viewDepartment') }}">Department</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewPosition') }}">Position</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu -->
                             </li>
                             <li>
-                                <a href="{{ route('viewDuty') }}">
+                                <a href="">
                                     <i class="icofont-files-stack"></i>
-                                    <span class="link-title">Duty</span>
+                                    <span class="link-title">Period & Duty</span>
                                 </a>
+
+                                <!-- Sub Menu -->
+                                <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('viewPeriod') }}">Period</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('viewDuty') }}">Duty</a>
+                                    </li>
+                                </ul>
+                                <!-- End Sub Menu -->
                             </li>
                             <li>
                                 <a href="{{ route('viewShift') }}">
@@ -224,21 +240,10 @@
                                 <!-- End Sub Menu -->
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{ route('viewTask') }}">
                                     <i class="icofont-instrument"></i>
-                                    <span class="link-title">Task & Period</span>
+                                    <span class="link-title">Task</span>
                                 </a>
-
-                                <!-- Sub Menu -->
-                                <ul class="nav sub-menu">
-                                    <li>
-                                        <a href="{{ route('viewTask') }}">Task</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('viewPeriod') }}">Period</a>
-                                    </li>
-                                </ul>
-                                <!-- End Sub Menu -->
                             </li>
                             <li>
                                 <a href="{{ route('otApproval') }}">

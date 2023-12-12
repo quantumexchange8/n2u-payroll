@@ -60,11 +60,10 @@
 
                     <div id="data-table" class="table-responsive">
                         <!-- Invoice List Table -->
-                        <table class="text-nowrap table-bordered dh-table">
+                        {{-- <table class="text-nowrap table-bordered dh-table">
                             <thead>
                                 <tr>
                                     <th>Date</th>
-                                    {{-- <th>Employee ID</th> --}}
                                     <th>Name</th>
                                     <th>Shift</th>
                                     <th>Check In</th>
@@ -78,7 +77,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($punchRecords->groupBy('employee_id') as $employeeId => $records)
-{{-- {{$punchRecords}} --}}
+
                                     @php
                                         $employeeName = $records[0]->user->full_name;
                                         $checkIn1 = null;
@@ -93,7 +92,8 @@
                                             if ($record->in === 'Clock In') {
                                                 if ($checkIn1 === null) {
                                                     $checkIn1 = $record->created_at->format('h:i:s A');
-                                                } else {
+                                                }
+                                                else {
                                                     $checkIn2 = $record->created_at->format('h:i:s A');
                                                 }
                                             } else {
@@ -116,7 +116,6 @@
                                                 N/A
                                             @endif
                                         </td>
-                                        {{-- <td>{{ $employeeId ?? null }}</td> --}}
                                         <td>{{ $employeeName ?? null }}</td>
                                         <td>
                                             @if ($shift ?? null)
@@ -131,6 +130,7 @@
                                         <td>{{ $checkOut2 ?? null}}</td>
                                         <td>{{ $totalWork ?? null}}</td>
                                         <td>{{ $remarks ?? null}}</td>
+
                                         <td>
                                             <form action="{{ route('updateTotalWork', $record->id) }}" method="POST" style="display: flex; justify-content: space-between; margin-top: 15px;" id="update-form-{{$record->id}}">
                                                 @csrf
@@ -142,7 +142,156 @@
                                     </tr>
                                 @endforeach
                             </tbody>
+                        </table> --}}
+
+                        {{-- <table class="text-nowrap table-bordered dh-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Total Work</th>
+                                    <th>Remark</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($users->sortBy(function ($user) use ($punchRecords) {
+                                    return $punchRecords->where('employee_id', $user->id)->min('created_at');
+                                }) as $user)
+                                    @php
+                                        $userPunchRecords = $punchRecords->where('employee_id', $user->id);
+                                        $groupedRecords = $userPunchRecords->groupBy(function ($record) {
+                                            return \Carbon\Carbon::parse($record->created_at)->format('d M Y');
+                                        });
+                                    @endphp
+
+                                    @foreach ($groupedRecords as $date => $records)
+                                        <tr data-date="{{ \Carbon\Carbon::parse($date ?? null )->format('Y-m-d') }}" data-full-name="{{ $user->full_name }}">
+                                            <td>{{ $date }}</td>
+                                            <td>{{ $user->full_name }}</td>
+                                            <td>{{ $records->where('in', 'Clock In')->first()->created_at->format('h:i:s A') ?? '' }}</td>
+                                            <td>{{ $records->where('out', 'Clock Out')->first()->created_at->format('h:i:s A') ?? '' }}</td>
+                                            <td>
+                                                @if ($records->count() == 1)
+                                                    {{ $records->first()->total_work ?? '' }}
+                                                @elseif ($loop->last)
+                                                    {{ $records->last()->total_work ?? '' }}
+                                                @else
+                                                    <!-- Leave this cell empty for intermediate rows -->
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($records->count() == 1)
+                                                    {{ $records->first()->remarks ?? '' }}
+                                                @elseif ($loop->last)
+                                                    {{ $records->last()->remarks ?? '' }}
+                                                @else
+                                                    <!-- Leave this cell empty for intermediate rows -->
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <form action="{{ route('updateTotalWork', $records->last()->id) }}" method="POST" style="display: flex; justify-content: space-between; margin-top: 15px;" id="update-form-{{$records->last()->id}}">
+                                                    @csrf
+                                                    <button type="button" class="edit-button details-btn" data-punchrecord-id="{{ $records->last()->id }}">
+                                                        Edit <i class="icofont-arrow-right"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endforeach
+                            </tbody>
+                        </table> --}}
+
+                        <table class="text-nowrap table-bordered dh-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Shift</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Total Hour</th>
+                                    <th>Remarks</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($users as $user)
+                                    @php
+                                        $userPunchRecords = $punchRecords->where('employee_id', $user->id)->sortBy('created_at');
+                                    @endphp
+
+                                    @php
+                                        $combinedRecords = collect([]);
+                                        $currentPair = collect([]);
+                                    @endphp
+
+                                    @foreach ($userPunchRecords as $record)
+                                        @php
+                                            // Check if the current record is the start of a new pair
+                                            if ($record->status_clock % 2 == 1) {
+                                                $currentPair = collect([$record]);
+                                            } else {
+                                                // If it's an even status_clock, add it to the current pair
+                                                $currentPair->push($record);
+
+                                                // If it's the end of a pair, add the pair to the combined records
+                                                if ($record->status_clock % 2 == 0) {
+                                                    $combinedRecords->push($currentPair);
+                                                }
+                                            }
+                                        @endphp
+                                    @endforeach
+
+                                    @foreach ($combinedRecords as $pair)
+                                        <tr data-date="{{ \Carbon\Carbon::parse($pair->first()->created_at ?? null )->format('Y-m-d') }}" data-full-name="{{ $user->full_name }}">
+                                            <td>{{ \Carbon\Carbon::parse($pair->first()->created_at)->format('d M Y') }}</td>
+                                            <td>{{ $user->full_name }}</td>
+                                            <td>
+                                                @php
+
+                                                    $shift = App\Models\Schedule::join('shifts', 'schedules.shift_id', 'shifts.id')
+                                                    ->where('employee_id', $user->id)
+                                                    ->where('date', \Carbon\Carbon::parse($pair->first()->created_at)->format('Y-m-d')) // Filter by the current date
+                                                    ->orderBy('shifts.id')
+                                                    ->first();
+
+                                                @endphp
+
+                                                @if ($shift)
+                                                    {{ \Carbon\Carbon::parse($shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($shift->shift_end)->format('h:i A') }}
+                                                @endif
+                                            </td>
+                                            <td>{{ $pair->first()->in === 'Clock In' ? $pair->first()->created_at->format('h:i A') : '' }}</td>
+                                            <td>{{ $pair->last()->out === 'Clock Out' ? $pair->last()->created_at->format('h:i A') : '' }}</td>
+                                            <td>
+                                                @if ($pair->last()->status_clock % 2 == 0)
+                                                    {{ $pair->last()->total_work }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($pair->last()->status_clock % 2 == 0)
+                                                    {{ $pair->last()->remarks }}
+                                                @endif
+                                            </td>
+
+                                            <td>
+                                                <form action="{{ route('updateTotalWork', $pair->last()->id) }}" method="POST" style="display: flex; justify-content: space-between; margin-top: 15px;" id="update-form-{{$pair->last()->id}}">
+                                                    @csrf
+                                                    <button type="button" class="edit-button details-btn" data-punchrecord-id="{{ $pair->last()->id }}">
+                                                        Edit <i class="icofont-arrow-right"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endforeach
+                            </tbody>
                         </table>
+
                         <!-- End Invoice List Table -->
                     </div>
                 </div>

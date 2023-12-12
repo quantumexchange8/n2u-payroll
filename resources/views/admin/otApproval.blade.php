@@ -161,7 +161,7 @@
 @endsection
 
 {{-- Approval OT Approval --}}
-<script>
+{{-- <script>
     document.addEventListener("DOMContentLoaded", function() {
         $('.approve-button').on('click', function() {
             var punchRecord_id = $(this).data('punchrecord-id');
@@ -215,6 +215,65 @@
                                         }
                                     }
                                 });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'OT hour cannot be empty.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Ok'
+                                });
+                            }
+                        }
+                    });
+                },
+                error: function(error) {
+                    console.error('Error fetching ot_hour:', error);
+                    // Handle the error, show an alert or log it
+                }
+            });
+        });
+    });
+</script> --}}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        $('.approve-button').on('click', function() {
+            var punchRecord_id = $(this).data('punchrecord-id');
+            console.log(punchRecord_id);
+
+            // Make an AJAX request to get the ot_hour value
+            $.ajax({
+                url: '/get-ot-hour/' + punchRecord_id, // Adjust the URL endpoint accordingly
+                type: 'GET',
+                success: function(response) {
+                    var current_ot_hour = response.ot_hour;
+
+                    Swal.fire({
+                        title: 'Do you agree with the OT hour?',
+                        text: '',
+                        icon: 'info',
+                        input: 'text',
+                        inputValue: current_ot_hour,
+                        inputLabel: 'OT hour',
+                        inputPlaceholder: 'Enter new OT hour if not agree',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, approve',
+                        cancelButtonText: 'Cancel',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const approved_ot_hour = result.value;
+                            if(approved_ot_hour) {
+                                const form = document.getElementById('reject-form-' + punchRecord_id);
+                                if (form) {
+                                    const remarkInput = document.createElement('input');
+                                    remarkInput.type = 'hidden';
+                                    remarkInput.name = 'approved_ot_hour';
+                                    remarkInput.value = approved_ot_hour;
+                                    form.appendChild(remarkInput);
+                                    form.submit();
+                                } else {
+                                    console.error('Form not found: ' + 'reject-form-' + punchRecord_id);
+                                }
                             } else {
                                 Swal.fire({
                                     title: 'Error',

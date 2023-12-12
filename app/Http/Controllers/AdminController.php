@@ -1151,25 +1151,36 @@ class AdminController extends Controller
                 $result = $this->saveSchedule($userId, $date);
 
                 if ($result === true) {
-                    $successInsertedDates[] = $date;
+                    $formattedDate = \Carbon\Carbon::parse($date)->format('d M Y'); // Format the date
+                    $successInsertedDates[] = $formattedDate;
                 } elseif ($result === 'max_schedules_exceeded') {
                     $userNickname = User::find($userId)->nickname;
-                    $failedMessages[] = "Failed to insert " . implode(' and ', $failedDates) . " for user $userNickname due to exceeding the maximum of two schedules.";
+                    $formattedFailedDate = \Carbon\Carbon::parse($date)->format('d M Y'); // Format the date
+                    $failedMessages[] = "Failed to insert $formattedFailedDate for user $userNickname due to exceeding the maximum of two schedules.";
+                    $failedDates[] = $formattedFailedDate;
                 } elseif ($result === 'shift_overlap') {
                     $userNickname = User::find($userId)->nickname;
-                    $failedMessages[] = "Failed to insert $date for user $userNickname due to shift overlap.";
+                    $formattedFailedDate = \Carbon\Carbon::parse($date)->format('d M Y'); // Format the date
+                    $failedMessages[] = "Failed to insert $formattedFailedDate for user $userNickname due to shift overlap.";
+                    $failedDates[] = $formattedFailedDate;
                 }
+            }
+
+            if (!empty($successInsertedDates)) {
+                $userNickname = User::find($userId)->nickname;
+                $successMessages[] = "Schedule for user $userNickname on " . implode(' and ', $successInsertedDates) . " successfully inserted.";
+            }
+
+
+            if (!empty($successInsertedDates)) {
+                $userNickname = User::find($userId)->nickname;
+                $successMessages[] = "Schedule for user $userNickname on " . implode(' and ', $successInsertedDates) . " successfully inserted.";
             }
 
             // if (!empty($failedDates)) {
             //     $userNickname = User::find($userId)->nickname;
             //     $failedMessages[] = "Failed to insert " . implode(' and ', $failedDates) . " for user $userNickname due to exceeding the maximum of two schedules.";
             // }
-
-            if (!empty($successInsertedDates)) {
-                $userNickname = User::find($userId)->nickname;
-                $successMessages[] = "Schedule for user $userNickname on " . implode(' and ', $successInsertedDates) . " successfully inserted.";
-            }
         }
 
         // Display messages for successful insertions
@@ -1325,8 +1336,6 @@ class AdminController extends Controller
         // Retrieve tasks and duties based on the schedule's employee ID and date
         $tasksAndDuties = $this->getTasksAndDuties($schedule->employee_id, $schedule->date);
 
-        // dd($tasksAndDuties);
-
         return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'tasksAndDuties', 'duties', 'periods'));
     }
 
@@ -1334,19 +1343,15 @@ class AdminController extends Controller
     private function getTasksAndDuties($employeeId, $date){
         // Use the query to get tasks and duties
         $tasksAndDuties = DB::table('tasks')
-            ->join('schedules', 'tasks.date', '=', 'schedules.date')
             ->join('duties', 'tasks.duty_id', '=', 'duties.id')
             ->join('periods', 'tasks.period_id', '=', 'periods.id')
-            ->select('tasks.id','tasks.period_id', 'tasks.start_time', 'tasks.end_time', 'schedules.date', 'duties.duty_name', 'periods.period_name')
-            ->where('schedules.employee_id', $employeeId)
-            ->where('schedules.date', $date)
+            ->where('tasks.employee_id', $employeeId)
+            ->where('tasks.date', $date)
             ->whereNull('tasks.deleted_at')
             ->get();
 
-            // dd($tasksAndDuties);
         return $tasksAndDuties;
     }
-
 
     // public function updateSchedule(Request $request, $id){
     //     // dd($request->all());
@@ -2212,7 +2217,7 @@ class AdminController extends Controller
         // Fetch the PunchRecord by ID
         $punchRecord = OtApproval::find($id);
 
-      
+
         if ($punchRecord) {
             // Return the ot_hour as JSON
             return response()->json(['ot_hour' => $punchRecord->ot_hour]);
@@ -2312,23 +2317,38 @@ class AdminController extends Controller
         return view('admin.salaryLogs', compact('salaryLogs', 'users'));
     }
 
-    public function totalWork(){
-        // Fetch punch records with user information
-        $punchRecords = PunchRecord::with('user')->get();
+    // public function totalWork(){
+    //     // Fetch punch records with user information
+    //     $punchRecords = PunchRecord::with('user')->get();
 
-        // Fetch users and their positions
-        $users = User::where('role', 'member')->with('position')->get();
+    //     // Fetch users and their positions
+    //     $users = User::where('role', 'member')->with('position')->get();
 
-        // Fetch schedules with their shifts
-        $schedules = Schedule::join('punch_records', 'schedules.date', '=', DB::raw('DATE(punch_records.created_at)'))
+    //     // Fetch schedules with their shifts
+    //     $schedules = Schedule::join('punch_records', 'schedules.date', '=', DB::raw('DATE(punch_records.created_at)'))
+    //         ->join('users', 'schedules.employee_id', '=', 'users.id')
+    //         ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+    //         ->select('schedules.id', 'shifts.shift_start', 'shifts.shift_end', 'punch_records.id', 'users.id as employee_id', 'schedules.date', 'punch_records.remarks')
+    //         ->get();
+
+    //     // Return the data to the view
+    //     return view('admin.totalWork', compact('punchRecords', 'users', 'schedules'));
+    // }
+
+    public function totalWork()
+    {
+        $punchRecords = PunchRecord::all();
+        $users = User::where('role', 'member')->get();
+        $schedules = Schedule::join('shifts', 'schedules.shift_id', '=', 'shifts.id')
             ->join('users', 'schedules.employee_id', '=', 'users.id')
-            ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-            ->select('schedules.id', 'shifts.shift_start', 'shifts.shift_end', 'punch_records.id', 'users.id as employee_id', 'schedules.date', 'punch_records.remarks')
+            ->select('shifts.shift_start', 'shifts.shift_end', 'schedules.employee_id')
             ->get();
 
-        // Return the data to the view
+        // dd($schedules);
+
         return view('admin.totalWork', compact('punchRecords', 'users', 'schedules'));
     }
+
 
     public function updateTotalWork(Request $request, $id){
 
