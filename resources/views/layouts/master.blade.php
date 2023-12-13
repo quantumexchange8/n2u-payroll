@@ -166,7 +166,7 @@
                     <!-- Nav -->
                     @if(Auth::user()->role == 'admin')
                         <ul class="nav">
-                            <li class="nav-category">Main</li>
+                            {{-- <li class="nav-category">Main</li> --}}
                             <li>
                                 <a href="{{route('admindashboard')}}">
                                     <i class="icofont-pie-chart"></i>

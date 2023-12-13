@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             DutySeeder::class,
             ShiftSeeder::class,
+            PeriodSeeder::class,
         ]);
     }
 }

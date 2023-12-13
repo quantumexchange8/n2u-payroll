@@ -732,8 +732,9 @@ class AdminController extends Controller
         foreach ($schedules as $schedule) {
             // Retrieve tasks related to the current schedule
             $tasks = Task::where('date', $schedule->date)
+                    ->where('employee_id', $schedule->employee_id)
                     ->with('duty')
-                    ->with('period') // Eager load the duty relationship
+                    ->with('period')
                     ->get();
 
             // Attach the tasks to the schedule object
@@ -2335,8 +2336,7 @@ class AdminController extends Controller
     //     return view('admin.totalWork', compact('punchRecords', 'users', 'schedules'));
     // }
 
-    public function totalWork()
-    {
+    public function totalWork(){
         $punchRecords = PunchRecord::all();
         $users = User::where('role', 'member')->get();
         $schedules = Schedule::join('shifts', 'schedules.shift_id', '=', 'shifts.id')
@@ -2348,7 +2348,6 @@ class AdminController extends Controller
 
         return view('admin.totalWork', compact('punchRecords', 'users', 'schedules'));
     }
-
 
     public function updateTotalWork(Request $request, $id){
 
@@ -2385,9 +2384,6 @@ class AdminController extends Controller
         $request->validate([
             'new_other_image' => 'required|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:2048',
         ]);
-
-
-        // dd($request->all());
 
         // Get the employee by ID
         $user = User::find($employeeId);
