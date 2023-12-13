@@ -28,7 +28,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Value</label>
-                                    <input type="text" class="theme-input-style" id="value" name="value" autocomplete="off" placeholder="Value" value="{{ old('value') }}">
+                                    <input type="number" class="theme-input-style" id="value" name="value" autocomplete="off" placeholder="Value" value="{{ old('value') }}">
                                     @error('value')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -42,7 +42,7 @@
                                     <label class="font-14 bold mb-2">Description</label>
                                     <input type="text" class="theme-input-style" id="description" name="description" autocomplete="off" placeholder="Description" value="{{ old('description') }}">
                                 </div>
-                                <!-- End Form Group --> 
+                                <!-- End Form Group -->
                             </div>
                         </div>
 

@@ -26,7 +26,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Value</label>
-                                    <input type="text" class="theme-input-style" id="value" name="value" autocomplete="off" placeholder="Value" value="{{ $setting->value }}">
+                                    <input type="number" class="theme-input-style" id="value" name="value" autocomplete="off" placeholder="Value" value="{{ $setting->value }}">
                                     @error('value')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -34,7 +34,7 @@
                                 <!-- End Form Group -->
                             </div>
 
-                            <div class="col-lg-6">                               
+                            <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Description</label>
