@@ -85,7 +85,7 @@
                                 </div>
                                 <!-- End Form Group -->
 
-                                <!-- Form Group -->
+                                {{-- <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Position</label>
                                     <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off">
@@ -97,7 +97,22 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <!-- End Form Group --> --}}
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Position</label>
+                                    <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off">
+                                        <option value="">Select Position</option>
+                                        @foreach($positions as $position)
+                                            <option value="{{ $position->id }}" {{ optional($user->position)->id === $position->id ? 'selected' : '' }}>
+                                                {{ $position->position_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <!-- End Form Group -->
+
 
                                 <!-- Form Group -->
                                 <div class="form-group">

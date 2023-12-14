@@ -124,15 +124,6 @@
 
 @endsection
 
-{{-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('addButton').addEventListener('click', function () {
-            // Triggering the click event on the hidden file input
-            document.getElementById('other_image').click();
-        });
-    });
-</script> --}}
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Triggering the modal when the "Add" button is clicked

@@ -8,7 +8,7 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            
+
             <div class="col-12">
                 <div class="card mb-30">
 
@@ -22,8 +22,8 @@
                                      <input type="date" id="date-filter" value=""/>
                                  </div>
                                 <!-- End Date Picker -->
-    
-    
+
+
                                 <!-- Dropdown Button -->
                                 <div class="dropdown-button mt-3 mt-sm-0">
                                     <button class="btn style--two orange" type="button" id="filter-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -59,7 +59,7 @@
                         <table class="text-nowrap table-bordered dh-table">
                             <thead>
                                 <tr>
-                                    <th>Nickname</th>
+                                    <th>Name</th>
                                     <th>Date</th>
                                     <th>Time</th>
                                     <th>In</th>
@@ -73,7 +73,7 @@
                                         $recordDate = Carbon\Carbon::parse($punchRecord->created_at)->toDateString();
                                         // $currentDate = now()->toDateString();
                                     @endphp
-                        
+
                                     {{-- @if ($recordDate == $currentDate) --}}
                                     @if ($recordDate)
                                         <tr class="status-{{ $punchRecord->status }}" data-date="{{ $recordDate }}">
@@ -90,7 +90,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        
+
                         <!-- End Invoice List Table -->
                     </div>
                 </div>
@@ -108,7 +108,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         // Get the filter dropdown items
         const filterItems = document.querySelectorAll('.dropdown-item[data-status]');
-        
+
         // Output the filterItems to the console to check if the selection is correct
         console.log(filterItems);
 

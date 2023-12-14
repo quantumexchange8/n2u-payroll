@@ -89,7 +89,33 @@
                                             <li>No shifts assigned for this schedule</li>
                                         @endif
                                     </ul>
+
                                     <div class="card-body">
+                                        <div class="d-sm-flex justify-content-between align-items-center">
+                                            <h4 class="font-18">Task:</h4>
+                                        </div>
+                                    </div>
+                                    <ul>
+                                        @if ($tasks->where('date', $schedule->date)->isNotEmpty())
+                                            @foreach ($tasks->where('date', $schedule->date)->sortBy('start_time') as $task)
+                                                <li>
+                                                    <strong>{{ $task->period_name }}</strong>
+                                                    <ul>
+                                                        <li>
+                                                            {{ \Carbon\Carbon::parse($task->start_time)->format('h:i A') }} -
+                                                            {{ \Carbon\Carbon::parse($task->end_time)->format('h:i A') }}
+                                                        </li>
+                                                        <li>{{ $task->duty_name }}</li>
+                                                    </ul>
+                                                </li>
+                                            @endforeach
+                                        @else
+                                            <li>No tasks assigned for this schedule</li>
+                                        @endif
+                                    </ul>
+
+
+                                    {{-- <div class="card-body">
                                         <div class="d-sm-flex justify-content-between align-items-center">
                                             <h4 class="font-18">Task</h4>
                                             <br>
@@ -122,7 +148,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>

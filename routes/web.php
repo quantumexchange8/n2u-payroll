@@ -86,6 +86,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('admin/schedule-report', [AdminController::class, 'scheduleReport'])->name('scheduleReport');
     Route::delete('admin/delete-schedule2/{id}', [AdminController::class, 'deleteSchedule2'])->name('deleteSchedule2');
 
+    Route::post('admin/duplicate-schedule', [AdminController::class, 'duplicateSchedule'])->name('duplicateSchedule');
+
     Route::get('admin/view-task', [AdminController::class, 'viewTask'])->name('viewTask');
     Route::get('admin/create-task', [AdminController::class, 'createTask'])->name('createTask');
     Route::post('admin/add-task', [AdminController::class, 'addTask'])->name('addTask');

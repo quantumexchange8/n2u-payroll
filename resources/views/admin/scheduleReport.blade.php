@@ -51,10 +51,18 @@
                                 </div>
                                 <!-- End Dropdown Button -->
 
+                                <div class="col-md-2">
+                                    <div class="form-row">
+                                        <div class="col-12">
+                                            <a href="{{route('createSchedule')}}" class="btn long">Create</a>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-1">
                                     <div class="form-row">
-                                        <div class="col-12 text-right">
-                                            <a href="{{route('createSchedule')}}" class="btn long">Create</a>
+                                        <div class="col-12">
+                                            <a href="" class="btn long duplicate-btn">Copy</a>
                                         </div>
                                     </div>
                                 </div>
@@ -65,11 +73,20 @@
 
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
-                        <table class="text-nowrap table-bordered dh-table">
+                        <table class="text-nowrap invoice-list">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Nickname</th>
+                                    <th>
+                                        <!-- Custom Checkbox -->
+                                        <label class="custom-checkbox">
+                                            <input type="checkbox">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </th>
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>Name</th>
                                     <th>Shift Start</th>
                                     <th>Shift End</th>
                                     <th>Remarks</th>
@@ -84,11 +101,17 @@
                                     @endphp
 
                                     @if ($recordDate)
-                                        <tr data-date="{{ $recordDate }}" data-full-name="{{ $employeeName }}">
+                                        <tr data-schedule-id="{{ $schedule->id }}" data-tasks="{{ json_encode($schedule->tasks) }}" data-date="{{ $recordDate }}" data-full-name="{{ $employeeName }}">
+                                            <td>
+                                                <!-- Custom Checkbox -->
+                                                <label class="custom-checkbox">
+                                                    <input type="checkbox">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <!-- End Custom Checkbox -->
+                                            </td>
                                             <td>{{ Carbon\Carbon::parse($schedule->date)->format('d M Y') }}</td>
                                             <td>{{ $schedule->user->nickname }}</td>
-                                            {{-- <td>{{ $schedule->shift->shift_start ?? null }}</td> --}}
-                                            {{-- <td>{{ $schedule->shift->shift_end ?? null}}</td> --}}
                                             <td>
                                                 @if ($schedule->shift && $schedule->shift->shift_start)
                                                     {{ Carbon\Carbon::parse($schedule->shift->shift_start)->format('g:i A') }}
@@ -176,6 +199,53 @@
     </div>
 </div>
 <!-- End Main Content -->
+
+<!-- Duplicate Modal -->
+{{-- <div class="modal fade" id="duplicateModal" tabindex="-1" role="dialog" aria-labelledby="duplicateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="duplicateModalLabel">Duplicate Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Selected information will be displayed here -->
+            </div>
+            <div class="modal-footer">
+                <!-- Buttons in the same row -->
+                <div class="btn-row">
+                    <button type="button" class="btn btn-secondary">Next</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> --}}
+
+
+<!-- User List Modal -->
+{{-- <div class="modal fade" id="userListModal" tabindex="-1" role="dialog" aria-labelledby="userListModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userListModalLabel">User List</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- User list will be displayed here -->
+                <ul id="userList"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div> --}}
+
 
 @endsection
 
@@ -291,5 +361,249 @@
         const currentFormattedDate = getCurrentFormattedDate();
         XLSX.writeFile(workbook, `${currentFormattedDate}-Schedule.xlsx`);
     }
+</script>
+
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+{{-- <script>
+    // Pass users data from PHP to JavaScript
+    var users = @json($users);
+
+    $(document).ready(function() {
+        // Listen for Duplicate button click
+        $('.duplicate-btn').click(function() {
+            // Prevent the default form submission behavior
+            event.preventDefault();
+
+            // Create an array to store selected rows
+            var selectedRows = [];
+
+            // Loop through each checkbox
+            $('table.invoice-list tbody input[type="checkbox"]:checked').each(function() {
+                // Get the parent row
+                var row = $(this).closest('tr');
+
+                // Get the data you want to duplicate (modify as needed)
+                var scheduleId = row.data('schedule-id');
+                var date = row.find('td:eq(1)').text();
+                var nickname = row.find('td:eq(2)').text();
+                var shiftStart = row.find('td:eq(3)').text();
+                var shiftEnd = row.find('td:eq(4)').text();
+                var remarks = row.find('td:eq(5)').text();
+
+                // Get tasks data from the data attribute
+                var tasks = row.data('tasks');
+
+                // Push the data to the selectedRows array
+                selectedRows.push({
+                    scheduleId: scheduleId,
+                    date: date,
+                    nickname: nickname,
+                    shiftStart: shiftStart,
+                    shiftEnd: shiftEnd,
+                    remarks: remarks,
+                    tasks: tasks
+                });
+
+                console.log('Selected Row:', {
+                    scheduleId: scheduleId,
+                    date: date,
+                    nickname: nickname,
+                    shiftStart: shiftStart,
+                    shiftEnd: shiftEnd,
+                    remarks: remarks,
+                    tasks: tasks
+                });
+            });
+
+            // Display the selected information in the modal (modify as needed)
+            $('#duplicateModal').modal('show');
+            $('#duplicateModal .modal-body').html('');
+
+            selectedRows.forEach(function(row) {
+                // Append the selected information to the modal body
+                $('#duplicateModal .modal-body').append(`
+                    <p style="margin-top:10px;">Date: ${row.date}</p>
+                    <p>Nickname: ${row.nickname}</p>
+                    <p>Shift Start: ${row.shiftStart}</p>
+                    <p>Shift End: ${row.shiftEnd}</p>
+                    <p>Remarks: ${row.remarks}</p>
+                    <p>Tasks:</p>
+                    <ul>
+                        ${row.tasks.map(task => `<li>${task.period.period_name} - ${task.duty.duty_name}</li>`).join('')}
+                    </ul>
+                    <hr>
+                `);
+            });
+
+             // Display checkboxes for users
+            $('#duplicateModal .modal-body').append(`
+                <p>Select Users:</p>
+                <form id="userCheckboxForm">
+                    ${users.map(user => `
+                        <div class="custom-checkbox">
+                            <input type="checkbox" id="user_${user.id}" name="selectedUsers[]" value="${user.id}">
+                            <label for="user_${user.id}">${user.full_name}</label>
+                        </div>
+                    `).join('')}
+                </form>
+            `);
+
+            // Display "Submit" and "Close" buttons
+            $('#duplicateModal .modal-footer').html(`
+                <div class="btn-row">
+                    <button type="button" class="btn btn-secondary" id="submitBtn">Next</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            `);
+
+            // Handle submit button click
+            $('#submitBtn').on('click', function() {
+                // Retrieve selected user IDs
+                var selectedUserIds = $('#userCheckboxForm input:checked').map(function() {
+                    return $(this).val();
+                }).get();
+
+                // Log selected user IDs (you can modify this part based on your requirements)
+                console.log('Selected User IDs:', selectedUserIds);
+
+                // Add logic to submit the form or perform other actions
+            });
+        });
+    });
+</script> --}}
+
+<script>
+
+    $(document).ready(function() {
+
+        // Retrieve the user full names from the Blade template
+        var users = @json($users);
+
+        // Listen for Duplicate button click
+        $('.duplicate-btn').click(function() {
+            // Prevent the default form submission behavior
+            event.preventDefault();
+
+            // Create an array to store selected rows
+            var selectedRows = [];
+
+            // Loop through each checkbox
+            $('table.invoice-list tbody input[type="checkbox"]:checked').each(function() {
+                // Get the parent row
+                var row = $(this).closest('tr');
+
+                // Get the data you want to duplicate (modify as needed)
+                var schedule_id = row.data('schedule-id');
+                var date = row.find('td:eq(1)').text();
+                var name = row.find('td:eq(2)').text();
+                var shift_start = row.find('td:eq(3)').text();
+                var shift_end = row.find('td:eq(4)').text();
+                var remarks = row.find('td:eq(5)').text();
+
+                // Get tasks data from the data attribute
+                var tasks = row.data('tasks');
+
+                // Push the data to the selectedRows array
+                selectedRows.push({
+                    schedule_id: schedule_id,
+                    date: date,
+                    name: name,
+                    shift_start: shift_start,
+                    shift_end: shift_end,
+                    remarks: remarks,
+                    tasks: tasks
+                });
+
+                console.log('Selected Row:', {
+                    schedule_id: schedule_id,
+                    date: date,
+                    name: name,
+                    shift_start: shift_start,
+                    shift_end: shift_end,
+                    remarks: remarks,
+                    tasks: tasks
+                });
+            });
+
+
+
+            // Create the modal dynamically
+            var modalContent = `
+                <div class="modal fade" id="userSelectionModal" tabindex="-1" role="dialog" aria-labelledby="userSelectionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="userSelectionModalLabel">Select User for Duplication</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Select a user to whom you want to duplicate the data:</p>
+                                <div class="form-group">
+                                    <label for="userDropdown">Select User:</label>
+                                    <select class="form-control" id="userDropdown" name="selectedUser">
+                                        ${users.map(user => `<option value="${user.id}">${user.full_name}</option>`).join('')}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="duplicateDataBtn">Duplicate Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Append the modal content to the body
+            $('body').append(modalContent);
+
+            // Display the modal for user selection
+            $('#userSelectionModal').modal('show');
+
+            // Handle Duplicate Data button click
+            $('#duplicateDataBtn').on('click', function() {
+                // Retrieve the selected user ID
+                var selectedUserId = $('#userDropdown').val();
+
+                // Log selected user ID (you can modify this part based on your requirements)
+                console.log('Selected User ID:', selectedUserId);
+
+                // Get the CSRF token from the meta tag
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                // Perform an AJAX request to send the selected user ID to the controller
+                $.ajax({
+                    url: '{{ route("duplicateSchedule") }}',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    data: {
+                        selectedUserId: selectedUserId,
+                        selectedRows: selectedRows,
+                    },
+                    success: function(response) {
+                        // Handle the success response from the controller
+                        console.log('Response:', response);
+
+                        // Close the user selection modal
+                        $('#userSelectionModal').modal('hide');
+                    },
+                    error: function(error) {
+                        // Handle the error response, if any
+                        console.error('Error:', error);
+                    }
+                });
+            });
+
+
+
+        });
+    });
 </script>
 

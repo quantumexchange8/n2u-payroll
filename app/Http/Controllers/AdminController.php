@@ -71,6 +71,7 @@ class AdminController extends Controller
     }
 
     public function addEmployee(EmployeeRequest $request){
+        // dd($request->all());
 
         try{
             // Validate the incoming request data
@@ -129,20 +130,23 @@ class AdminController extends Controller
                 $extension = $file->getClientOriginalExtension();
                 $otherImageFilename = $full_name_with_underscores . '_other_image.' . time() . '.' . $extension;// Modify the file name
                 $file->move('uploads/employee/otherImage/', $otherImageFilename);
-                // $validatedData['other_image'] = $otherImageFilename;
+
+                // Create the user record with the validated and modified data
+                $user = User::create($validatedData);
+
+                // Store the user ID for later use
+                $userId = $user->id;
+
+                // Insert data into other_images table
+                OtherImage::create([
+                    'employee_id' => $userId,
+                    'file_name' => $otherImageFilename,
+                ]);
+            } else {
+                // If 'other_image' is not present, create the user without creating an OtherImage record
+                User::create($validatedData);
             }
 
-            // Create the user record with the validated and modified data
-            $user = User::create($validatedData);
-
-            // Store the user ID for later use
-            $userId = $user->id;
-
-            // Insert data into other_images table
-            OtherImage::create([
-                'employee_id' => $userId,
-                'file_name' => $otherImageFilename,
-            ]);
 
             Alert::success('Done', 'Successfully Registered');
             return redirect()->route('viewEmployee');
@@ -614,7 +618,7 @@ class AdminController extends Controller
         $rules = [
             'shift_name' => 'required|max:255',
             'shift_start' => 'required',
-            'shift_end' => 'required'
+            'shift_end' => 'required|after_or_equal:shift_start'
         ];
 
         // Define custom error messages (optional)
@@ -623,6 +627,7 @@ class AdminController extends Controller
             'shift_name.max' => 'The Shift Name should not exceed 255 characters.',
             'shift_start.required' => 'The Shift Start field is required.',
             'shift_end.required' => 'The Shift End field is required.',
+            'shift_end.after_or_equal' => 'The end time must be after or equal to the start time.',
         ];
 
         // Validate the request data
@@ -656,7 +661,7 @@ class AdminController extends Controller
         $rules = [
             'shift_name' => 'required|max:255',
             'shift_start' => 'required',
-            'shift_end' => 'required',
+            'shift_end' => 'required|after_or_equal:shift_start',
         ];
 
         // Define custom error messages (optional)
@@ -665,6 +670,7 @@ class AdminController extends Controller
             'shift_name.max' => 'The Shift Name should not exceed 255 characters.',
             'shift_start.required' => 'The Shift Start is required.',
             'shift_end.required' => 'The Shift End is required.',
+            'shift_end.after_or_equal' => 'The end time must be after or equal to the start time.',
         ];
 
             // Validate the request data
@@ -1198,13 +1204,32 @@ class AdminController extends Controller
         }
 
         // Check if 'group-a' is present in the request, indicating task entries
-        if ($request->has('group-a') && !empty($request->input('group-a'))) {
+        // if ($request->has('group-a') && !empty($request->input('group-a'))) {
+        //     $this->saveTask($request, $dates, $selectedUsers);
+        // }
+
+        // if ($request->has('group-a') && is_array($request->input('group-a')) && count(array_filter($request->input('group-a'))) > 0) {
+        //     $this->saveTask($request, $dates, $selectedUsers);
+        // }
+
+        if ($request->has('group-a') && $this->hasNonEmptyValues($request->input('group-a'))) {
             $this->saveTask($request, $dates, $selectedUsers);
         }
 
         return redirect()->route('schedule');
     }
 
+    private function hasNonEmptyValues($array){
+        foreach ($array as $item) {
+            if (!is_array($item) || count(array_filter($item, function ($value) {
+                return !is_null($value);
+            })) > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     private function saveSchedule($userId, $date, $offDay = false){
         // Check if there are already two schedule records for the same user and date
         $existingSchedules = DB::table('schedules')
@@ -1462,6 +1487,18 @@ class AdminController extends Controller
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('scheduleReport');
     }
+
+    public function duplicateSchedule(Request $request){
+        $selectedUserId = $request->input('selectedUserId');
+        $selectedRows = $request->input('selectedRows');
+
+        // Process the selected data in the controller
+
+        dd($selectedUserId, $selectedRows);
+
+        return redirect()->route('scheduleReport');
+    }
+
 
     public function viewPeriod(){
         $periods = Period::all();
