@@ -125,6 +125,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('admin/salary-logs', [AdminController::class, 'salaryLogs'])->name('salaryLogs');
 
     Route::get('admin/attendance', [AdminController::class, 'attendance'])->name('attendance');
+    Route::get('admin/edit-attendance/{id}', [AdminController::class, 'editAttendance'])->name('editAttendance');
+    Route::post('admin/update-attendance/{id}', [AdminController::class, 'updateAttendance'])->name('updateAttendance');
+    Route::get('/getAttendanceData/{id}', [AdminController::class, 'getAttendanceData'])->name('getAttendanceData');
 
     Route::get('admin/total-work', [AdminController::class, 'totalWork'])->name('totalWork');
     Route::post('admin/update-total-work/{id}', [AdminController::class, 'updateTotalWork'])->name('updateTotalWork');

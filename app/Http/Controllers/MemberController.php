@@ -49,7 +49,6 @@ class MemberController extends Controller
         $periods = Period::all();
 
         $punchRecords = PunchRecord::with('user')->get();
-        //dd($punchRecords);
 
         // Modify the date and time columns
         $punchRecords->each(function ($punchRecord) {

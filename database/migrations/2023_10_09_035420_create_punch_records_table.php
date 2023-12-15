@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('employee_id');
             $table->string('in')->nullable();
             $table->string('out')->nullable();
+            $table->string('clock_in_time')->nullable();
+            $table->string('clock_out_time')->nullable();
             $table->string('status')->nullable();
             $table->string('status_clock')->nullable();
             $table->string('total_work')->nullable();

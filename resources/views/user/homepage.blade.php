@@ -154,32 +154,40 @@
                       <!-- Invoice List Table -->
                       <table id="punchRecordsTable" class="text-nowrap table-bordered dh-table">
                         <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>In</th>
-                            <th>Out</th>
-                          </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>In</th>
+                                <th>Out</th>
+                            </tr>
                         </thead>
                         <tbody>
-                          @foreach ($punchRecords as $punchRecord)
-                            @php
-                              $recordDate = Carbon\Carbon::parse($punchRecord->created_at)->toDateString();
-                              $currentDate = now()->toDateString();
-                            @endphp
-                            @if ($recordDate == $currentDate)
-                                @if ($punchRecord->user->id === $user_id)
-                                    <tr>
-                                        <td>{{ $punchRecord->user->full_name }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($recordDate)->format('d M Y') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($punchRecord->created_at)->format('g:i A') }}</td>
-                                        <td>{{ $punchRecord->in }}</td>
-                                        <td>{{ $punchRecord->out }}</td>
-                                    </tr>
+                            @foreach ($punchRecords as $punchRecord)
+                                @php
+                                    $recordDate = Carbon\Carbon::parse($punchRecord->created_at)->toDateString();
+                                    $currentDate = now()->toDateString();
+                                @endphp
+                                @if ($recordDate == $currentDate)
+                                    @if ($punchRecord->user->id === $user_id)
+                                        <tr>
+                                            <td>{{ $punchRecord->user->full_name }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($recordDate)->format('d M Y') }}</td>
+                                            <td>
+                                                @if ($punchRecord->in == 'Clock In')
+                                                    {{ \Carbon\Carbon::parse($punchRecord->clock_in_time)->format('g:i A') }}
+                                                @elseif ($punchRecord->out == 'Clock Out')
+                                                    {{ \Carbon\Carbon::parse($punchRecord->clock_out_time)->format('g:i A') }}
+                                                @else
+                                                    Not Available
+                                                @endif
+                                            </td>
+                                            <td>{{ $punchRecord->in }}</td>
+                                            <td>{{ $punchRecord->out }}</td>
+                                        </tr>
+                                    @endif
                                 @endif
-                            @endif
-                          @endforeach
+                            @endforeach
                         </tbody>
                       </table>
                       <!-- End Invoice List Table -->

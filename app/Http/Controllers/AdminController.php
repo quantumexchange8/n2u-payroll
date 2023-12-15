@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Duty;
 use App\Models\Position;
 use App\Models\PunchRecord;
+use App\Models\PunchRecordLog;
 use App\Models\SalaryLog;
 use App\Models\Schedule;
 use App\Models\Setting;
@@ -71,7 +72,6 @@ class AdminController extends Controller
     }
 
     public function addEmployee(EmployeeRequest $request){
-        // dd($request->all());
 
         try{
             // Validate the incoming request data
@@ -115,14 +115,6 @@ class AdminController extends Controller
                 $validatedData['account_pic'] = $filename;
             }
 
-            // Handle other image
-            // if ($request->hasFile('other_image')) {
-            //     $file = $request->file('other_image');
-            //     $extension = $file->getClientOriginalExtension();
-            //     $filename = $full_name_with_underscores . '_other_image.' . $extension; // Modify the file name
-            //     $file->move('uploads/employee/otherImage/', $filename);
-            //     $validatedData['other_image'] = $filename;
-            // }
 
             // Handle other images
             if ($request->hasFile('other_image')) {
@@ -1230,6 +1222,7 @@ class AdminController extends Controller
 
         return false;
     }
+
     private function saveSchedule($userId, $date, $offDay = false){
         // Check if there are already two schedule records for the same user and date
         $existingSchedules = DB::table('schedules')
@@ -1490,15 +1483,61 @@ class AdminController extends Controller
 
     public function duplicateSchedule(Request $request){
         $selectedUserId = $request->input('selectedUserId');
-        $selectedRows = $request->input('selectedRows');
+        $filteredRows = $request->input('filteredRows');
+        $allScheduleData = [];  // Array to store data for all selected rows
 
-        // Process the selected data in the controller
+        // Fetch associated data for each scheduleId
+        foreach ($filteredRows as $row) {
+            $scheduleId = $row['scheduleId'];
 
-        dd($selectedUserId, $selectedRows);
+            // Fetch associated data for the current scheduleId
+            $scheduleData = Schedule::find($scheduleId);
 
+            // Extract specific fields from the scheduleData
+            $selectedScheduleData = [
+                'id' => $scheduleData->id,
+                'date' => $scheduleData->date,
+                'employee_id' => $selectedUserId,
+                'shift_id' => $scheduleData->shift_id,
+                'off_day' => $scheduleData->off_day,
+                // Add other fields you want to include
+            ];
+
+            // Create a new Schedule model and save it to the database
+            $newSchedule = Schedule::create($selectedScheduleData);
+
+            // Check if 'tasks' key exists in the current row
+            if (isset($row['tasks']) && is_array($row['tasks'])) {
+                // Extract task data from the tasks array
+                $tasksData = [];
+                foreach ($row['tasks'] as $task) {
+                    $tasksData[] = [
+                        'id' => $task['id'],
+                        'date' => $task['date'],
+                        'employee_id' => $selectedUserId,
+                        'period_id' => $task['period_id'],
+                        'duty_id' => $task['duty_id'],
+                        'start_time' => $task['start_time'],
+                        'end_time' => $task['end_time']
+                        // Add other task fields you want to include
+                    ];
+
+                    // Create a new Task model associated with the new Schedule
+                    $newSchedule->tasks()->create([
+                        'date' => $task['date'],
+                        'employee_id' => $selectedUserId, // Replace with the selectedUserId
+                        'period_id' => $task['period_id'],
+                        'duty_id' => $task['duty_id'],
+                        'start_time' => $task['start_time'],
+                        'end_time' => $task['end_time']
+                        // Add other task fields you want to include
+                    ]);
+                }
+            }
+        }
+        Alert::success('Done', 'Successfully Duplicated');
         return redirect()->route('scheduleReport');
     }
-
 
     public function viewPeriod(){
         $periods = Period::all();
@@ -2247,8 +2286,6 @@ class AdminController extends Controller
             Alert::error('Error', 'OtApproval Record not found.');
             return redirect()->route('otApproval');
         }
-
-
     }
 
     public function getOtHour($id){
@@ -2293,7 +2330,79 @@ class AdminController extends Controller
         return view('admin.attendance', compact('punchRecords', 'schedules', 'shifts', 'settings'));
     }
 
-    public function salaryLogs(){
+    public function editAttendance($id){
+        $punchRecords = PunchRecord::find($id);
+
+        return view('admin.editOtApproval', [
+            'punchRecords' => $punchRecords,
+        ]);
+    }
+
+    public function getAttendanceData($id) {
+        $punchRecord = PunchRecord::find($id);
+
+        return response()->json([
+            'clock_in_time' => $punchRecord->clock_in_time,
+            'clock_out_time' => $punchRecord->clock_out_time,
+            'status' => $punchRecord->status,
+        ]);
+    }
+
+    public function updateAttendance(Request $request, $id)
+    {
+
+        $data = PunchRecord::find($id);
+
+        $actualData = PunchRecord::find($id);
+
+        $updateData = [];
+
+        // Check if clock_in_time is provided in the request
+        if ($request->has('clock_in_time')) {
+            $updateData['clock_in_time'] = $request->input('clock_in_time');
+        }
+
+        // Check if clock_out_time is provided in the request
+        if ($request->has('clock_out_time')) {
+            $updateData['clock_out_time'] = $request->input('clock_out_time');
+        }
+
+        // Check if status is provided in the request
+        if ($request->has('status')) {
+            $updateData['status'] = $request->input('status');
+        }
+
+        // Update the user's data based on the form input
+        $data->update($updateData);
+
+
+        // Select only specific fields from $actualData
+        $selectedData = $actualData->select('id','clock_in_time', 'clock_out_time', 'employee_id', 'created_at')->first();
+
+        $punch_record_id = $selectedData->id;
+        $actual_clock_in_time = $selectedData->clock_in_time;
+        $actual_clock_out_time = $selectedData->clock_out_time;
+        $date = $selectedData->created_at->format('Y-m-d');
+        $employee_id = $selectedData->employee_id;
+
+        $punchRecordLog = new PunchRecordLog();
+        $punchRecordLog->punch_record_id = $punch_record_id;
+        $punchRecordLog->employee_id = $employee_id;
+        $punchRecordLog->record_date = $date;
+        $punchRecordLog->actual_clock_in_time = $actual_clock_in_time;
+        $punchRecordLog->new_clock_in_time = $request->input('clock_in_time');
+        $punchRecordLog->actual_clock_out_time = $actual_clock_out_time;
+        $punchRecordLog->new_clock_out_time = $request->input('clock_out_time');
+        $punchRecordLog->save();
+
+        Alert::success('Done', 'Successfully Updated');
+        return redirect()->route('attendance');
+    }
+
+
+
+
+    public function salaryLogs () {
         // Fetch all users with their positions
         $users = User::where('role', 'member')->with('position')->get();
 
@@ -2373,7 +2482,7 @@ class AdminController extends Controller
     //     return view('admin.totalWork', compact('punchRecords', 'users', 'schedules'));
     // }
 
-    public function totalWork(){
+    public function totalWork () {
         $punchRecords = PunchRecord::all();
         $users = User::where('role', 'member')->get();
         $schedules = Schedule::join('shifts', 'schedules.shift_id', '=', 'shifts.id')
@@ -2461,6 +2570,5 @@ class AdminController extends Controller
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->back();
     }
-
 
 }

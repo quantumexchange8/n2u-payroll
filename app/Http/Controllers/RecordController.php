@@ -115,7 +115,9 @@ class RecordController extends Controller
                 'employee_id' => $user->id,
                 'in' => $status === 'Clock In' ? 'Clock In' : null,
                 'out' => $status === 'Clock Out' ? 'Clock Out' : null,
-                'ot_approval' => null, // Your other fields here
+                'clock_in_time' => null,
+                'clock_out_time' => null,
+                'ot_approval' => null,
                 'remarks' => null,
                 'status_clock' => $status_clock,
             ];
@@ -143,6 +145,9 @@ class RecordController extends Controller
                         } else {
                             $recordData['status'] = 'On-Time';
                         }
+
+                        $recordData['clock_in_time'] = $currentDateTime;
+
                     }else if ($clockinCount == 1 ) {
                         if ($recordData['in'] === 'Clock In' && $currentTime->greaterThan($secondShiftStartTime)) {
 
@@ -157,6 +162,8 @@ class RecordController extends Controller
                         } else {
                             $recordData['status'] = 'On-Time';
                         }
+
+                        $recordData['clock_in_time'] = $currentDateTime;
                     }
 
                 } elseif ($status === 'Clock Out') {
@@ -209,6 +216,9 @@ class RecordController extends Controller
                                 $recordData['status'] = 'On-Time';
                             }
                         }
+
+                        $recordData['clock_out_time'] = $currentDateTime;
+
                     }else if ($clockoutCount == 1) {
                         if ($currentTime->lessThanOrEqualTo($secondShiftEndTime)) {
                             $recordData['status'] = 'On-Time';
@@ -258,6 +268,8 @@ class RecordController extends Controller
                                 $recordData['status'] = 'On-Time';
                             }
                         }
+
+                        $recordData['clock_out_time'] = $currentDateTime;
                     }
                 }
 
@@ -286,19 +298,6 @@ class RecordController extends Controller
                         ->created_at;
 
                     $lastClockOutTime = now();
-
-
-                    // if ($firstClockOutTime >= $firstShiftEndTime) {
-                    //     $firstTotalWork = $firstShiftEndTime->diffInMinutes($firstClockInTime);
-                    // } else {
-                    //     $firstTotalWork = $firstClockOutTime->diffInMinutes($firstClockInTime);
-                    // }
-
-                    // if ($lastClockOutTime >= $secondShiftEndTime) {
-                    //     $secondTotalWork = $secondShiftEndTime->diffInMinutes($lastClockInTime);
-                    // }else {
-                    //     $secondTotalWork = $lastClockOutTime->diffInMinutes($lastClockInTime);
-                    // }
 
                     $checkFirstLate = $firstClockInTime->addMinutes($lateThreshold);
 
@@ -353,13 +352,6 @@ class RecordController extends Controller
 
             } else if (!empty($firstShift) && empty($secondShift)){
                 // Check if the user has reached the limit (2 times for both clock in and clock out)
-                // if ($clockinCount + $clockoutCount >= 2) {
-
-                //     // Limit reached, disable the button
-                //     // Alert::error('Failed', 'Oops');
-                //     return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-in and clock-out actions.');
-                // }
-
                 if ($status === 'Clock In' && $clockinCount >= 1) {
                     // Clock In limit reached, display error message
                     return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-in actions.');
@@ -369,8 +361,6 @@ class RecordController extends Controller
                 }
 
                 if($status === 'Clock In') {
-
-                    // dd($clockinCount);
 
                     if ($clockinCount == 0){
                         if ($recordData['in'] === 'Clock In' && $currentTime->greaterThan($firstShiftStartTime)) {
@@ -385,6 +375,9 @@ class RecordController extends Controller
                         } else {
                             $recordData['status'] = 'On-Time';
                         }
+
+                        $recordData['clock_in_time'] = $currentDateTime;
+
                     }else if ($clockinCount == 1 ) {
                         // if ($recordData['in'] === 'Clock In' && $currentTime->greaterThan($secondShiftStartTime)) {
 
@@ -455,6 +448,8 @@ class RecordController extends Controller
                                 $recordData['status'] = 'On-Time';
                             }
                         }
+
+                        $recordData['clock_out_time'] = $currentDateTime;
                     }else if ($clockoutCount == 1) {
                         // if ($currentTime->lessThanOrEqualTo($secondShiftEndTime)) {
                         //     $recordData['status'] = 'On-Time';
@@ -535,12 +530,6 @@ class RecordController extends Controller
 
                     $lastClockOutTime = now();
 
-                    // if ($lastClockOutTime >= $firstShiftEndTime) {
-                    //     $totalWork = $firstShiftEndTime->diffInMinutes($firstClockInTime);
-                    // } else {
-                    //     $totalWork = $lastClockOutTime->diffInMinutes($firstClockInTime);
-                    // }
-
                     $checkLate = $firstClockInTime->addMinutes($lateThreshold);
 
                     $checkOT = $lastClockOutTime->addMinutes($overtimeCalculation);
@@ -578,6 +567,8 @@ class RecordController extends Controller
                 'employee_id' => $user->id,
                 'in' => $status === 'Clock In' ? 'Clock In' : null,
                 'out' => $status === 'Clock Out' ? 'Clock Out' : null,
+                'clock_in_time' => null,
+                'clock_out_time' => null,
                 'ot_approval' => null,
                 'remarks' => null,
                 'status_clock' => 1
@@ -587,6 +578,5 @@ class RecordController extends Controller
 
             return redirect()->route('homepage')->with('error', 'Schedule information not found.');
         }
-
     }
 }

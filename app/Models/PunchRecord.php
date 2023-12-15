@@ -19,6 +19,8 @@ class PunchRecord extends Model
         'employee_id',
         'in',
         'out',
+        'clock_in_time',
+        'clock_out_time',
         'status',
         'status_clock',
         'total_work',
@@ -29,18 +31,17 @@ class PunchRecord extends Model
     ];
 
 
-    public function user()
-    {
+    public function user(){
         return $this->belongsTo(User::class, 'employee_id', 'id');
         //employee id refer to punch_records.employee_id
         //id refer to users.id
     }
-    
-    
+
+
     public function schedule() {
         return $this->belongsTo(Schedule::class, 'employee_id', 'employee_id');
     }
-    
+
 
 
 }

@@ -59,12 +59,13 @@
                         <table class="text-nowrap table-bordered dh-table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
                                     <th>Date</th>
+                                    <th>Name</th>
                                     <th>Time</th>
                                     <th>In</th>
                                     <th>Out</th>
                                     <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,13 +78,34 @@
                                     {{-- @if ($recordDate == $currentDate) --}}
                                     @if ($recordDate)
                                         <tr class="status-{{ $punchRecord->status }}" data-date="{{ $recordDate }}">
-                                            <td>{{$punchRecord->user->full_name}}</td>
                                             <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('d M Y') }}</td>
-                                            <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('g:i A') }}</td>
+                                            <td>{{$punchRecord->user->full_name}}</td>
+                                            <td>
+                                                @if ($punchRecord->in == 'Clock In')
+                                                    {{ \Carbon\Carbon::parse($punchRecord->clock_in_time)->format('g:i A') }}
+                                                @elseif ($punchRecord->out == 'Clock Out')
+                                                    {{ \Carbon\Carbon::parse($punchRecord->clock_out_time)->format('g:i A') }}
+                                                @else
+                                                    Not Available
+                                                @endif
+                                            </td>
                                             <td>{{$punchRecord->in}}</td>
                                             <td>{{$punchRecord->out}}</td>
                                             <td style ="{{ $punchRecord->status === 'Overtime' ? 'color: orange; font-weight: bold;' : ($punchRecord->status === 'On-Time' ? 'color: #84f542; font-weight: bold;' : 'color: red; font-weight: bold;') }}">
                                                 {{$punchRecord->status}}
+                                            </td>
+                                            {{-- <td>
+                                                <a href="{{ route('editAttendance', ['id' => $punchRecord->id]) }}" class="details-btn">
+                                                    Edit <i class="icofont-arrow-right"></i>
+                                                </a>
+                                            </td> --}}
+                                            <td>
+                                                <a href="#" class="edit-attendance details-btn"
+                                                   data-toggle="modal"
+                                                   data-target="#editAttendanceModal"
+                                                   data-id="{{ $punchRecord->id }}">
+                                                    Edit <i class="icofont-arrow-right"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     @endif
@@ -101,7 +123,64 @@
 </div>
 <!-- End Main Content -->
 
+{{-- <div class="modal fade" id="editAttendanceModal" tabindex="-1" role="dialog" aria-labelledby="editAttendanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAttendanceModalLabel">Edit Attendance</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <!-- Add other buttons or actions as needed -->
+            </div>
+        </div>
+    </div>
+</div> --}}
+
+<div class="modal fade" id="editAttendanceModal" tabindex="-1" role="dialog" aria-labelledby="editAttendanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAttendanceModalLabel">Edit Attendance</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editAttendanceForm">
+                <div class="modal-body">
+                    <div class="form-group" id="clockInGroup">
+                        <label for="clockIn">Clock In:</label>
+                        <input type="time" class="form-control" id="clockIn" name="clock_in_time">
+                    </div>
+                    <div class="form-group" id="clockOutGroup">
+                        <label for="clockOut">Clock Out:</label>
+                        <input type="time" class="form-control" id="clockOut" name="clock_out_time">
+                    </div>
+                    <div class="form-group" id="statusGroup">
+                        <label for="status">Status:</label>
+                        <input type="text" class="form-control" id="status" name="status">
+                    </div>
+                    <!-- Additional form fields can be added here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 {{-- Filter by status --}}
 <script>
@@ -222,3 +301,199 @@
     }
 </script>
 
+{{-- <script>
+    $(document).ready(function() {
+        $('.edit-attendance').click(function() {
+            var id = $(this).data('id');
+
+            // Fetch data via AJAX
+            $.ajax({
+                url: '/getAttendanceData/' + id,
+                method: 'GET',
+                success: function(data) {
+                    console.log('Retrieved Data:', data);
+
+                    // Update modal content with fetched data
+                    var modalBody = $('#editAttendanceModal').find('.modal-body');
+                    modalBody.empty(); // Clear existing content
+
+                    if (data.clock_in_time !== null) {
+                        var clockInTime = new Date(data.clock_in_time);
+                        var formattedClockInTime = clockInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                        modalBody.append('<p>Clock In: ' + formattedClockInTime + '</p>');
+                        modalBody.append('<p>Status: ' + data.status + '</p>');
+                    }
+
+                    if (data.clock_out_time !== null) {
+                        var clockOutTime = new Date(data.clock_out_time);
+                        var formattedClockOutTime = clockOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                        modalBody.append('<p>Clock Out: ' + formattedClockOutTime + '</p>');
+                        modalBody.append('<p>Status: ' + data.status + '</p>');
+                    }
+
+                    // If both clock_in_time and clock_out_time are null, you can add a default message
+                    if (data.clock_in_time === null && data.clock_out_time === null) {
+                        modalBody.append('<p>No clock-in or clock-out data available</p>');
+                    }
+
+                    $('#editAttendanceModal').modal('show');
+                },
+                error: function(error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        });
+    });
+</script> --}}
+
+
+
+<script>
+    $(document).ready(function() {
+
+        var attendanceData;
+
+        $('.edit-attendance').click(function() {
+            var id = $(this).data('id');
+
+            // Set the data-id attribute on the form
+            $('#editAttendanceForm').data('id', id);
+
+            // Fetch data via AJAX
+            $.ajax({
+                url: '/getAttendanceData/' + id,
+                method: 'GET',
+                success: function(data) {
+                    console.log('Retrieved Data:', data);
+                    attendanceData = data;
+
+                    // Update modal content with fetched data
+                    var modalBody = $('#editAttendanceModal').find('.modal-body');
+                    modalBody.find('.form-group').hide(); // Hide all form groups initially
+
+                    if (data.clock_in_time !== null) {
+                        var clockInTime = new Date(data.clock_in_time);
+                        var hours = clockInTime.getHours().toString().padStart(2, '0');
+                        var minutes = clockInTime.getMinutes().toString().padStart(2, '0');
+                        var formattedClockInTime = hours + ':' + minutes;
+
+                        modalBody.find('#clockIn').val(formattedClockInTime);
+                        modalBody.find('#clockInGroup').show();
+                    }
+
+                    if (data.clock_out_time !== null) {
+                        var clockOutTime = new Date(data.clock_out_time);
+                        var hours = clockOutTime.getHours().toString().padStart(2, '0');
+                        var minutes = clockOutTime.getMinutes().toString().padStart(2, '0');
+                        var formattedClockOutTime = hours + ':' + minutes;
+
+                        modalBody.find('#clockOut').val(formattedClockOutTime);
+                        modalBody.find('#clockOutGroup').show();
+                    }
+
+
+                    // Try to find and show the status group
+                    var statusGroup = modalBody.find('#statusGroup');
+                    if (statusGroup.length > 0) {
+                        statusGroup.show();
+                    } else {
+                        console.error('Status group not found');
+                    }
+
+                    modalBody.find('#status').val(data.status);
+
+                    // If both clock_in_time and clock_out_time are null, you can add a default message
+                    if (data.clock_in_time === null && data.clock_out_time === null) {
+                        modalBody.append('<p>No clock-in or clock-out data available</p>');
+                    }
+
+                    $('#editAttendanceModal').modal('show');
+
+                },
+                error: function(error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        });
+
+        // Handle form submission
+        $('#editAttendanceForm').submit(function(event) {
+            event.preventDefault();
+
+            var id = $(this).data('id');
+
+            console.log(id);
+
+            // Get the CSRF token value from the meta tag
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            // Check if attendanceData is defined
+            if (attendanceData) {
+                // Extract the date part from the existing clock_in_time
+                var existingClockInDate = attendanceData.clock_in_time ? attendanceData.clock_in_time.split(' ')[0] : null;
+
+                // Extract the date part from the existing clock_out_time
+                var existingClockOutDate = attendanceData.clock_out_time ? attendanceData.clock_out_time.split(' ')[0] : null;
+
+                // Extract the hours and minutes part from the new clockIn input
+                var newInTime = $('#clockIn').val();
+
+                // Extract the hours and minutes part from the new clockOut input
+                var newOutTime = $('#clockOut').val();
+
+                // Combine the existing date part with the new hours and minutes if not null
+                var newClockInTime = existingClockInDate && newInTime ? existingClockInDate + ' ' + newInTime + ':00' : null;
+                var newClockOutTime = existingClockOutDate && newOutTime ? existingClockOutDate + ' ' + newOutTime + ':00' : null;
+
+                // Log the data to be sent
+                console.log('Data to be sent:', {
+                    clock_in_time: newClockInTime,
+                    clock_out_time: newClockOutTime,
+                    status: $('#status').val(),
+                    _token: csrfToken
+                });
+
+                // Perform AJAX request to update the data
+                $.ajax({
+                    url: '/admin/update-attendance/' + id, // Replace with your update route
+                    method: 'POST',
+                    data: {
+                        clock_in_time: newClockInTime,
+                        clock_out_time: newClockOutTime,
+                        status: $('#status').val(),
+                        _token: csrfToken
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    success: function(response) {
+                        // Handle success response
+                        console.log('Update success:', response);
+
+                        // Optionally, close the modal or show a success message
+                        $('#editAttendanceModal').modal('hide');
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Done',
+                            text: 'Successfully Updated',
+                        }).then(function() {
+                            // Reload the page after the SweetAlert is closed
+                            location.reload();
+                        });
+                    },
+                    error: function(error) {
+                        // Handle error response
+                        console.error('Update error:', error);
+                        // Optionally, display an error message
+                    }
+                });
+            } else {
+                console.error('Error: attendanceData is null');
+            }
+        });
+    });
+
+</script>

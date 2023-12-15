@@ -4,6 +4,14 @@
 {{-- Excel --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
 
+{{-- Sweet Alert --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<!-- Bootstrap JS (Popper.js and Bootstrap JS) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
 <!-- Main Content -->
 <div class="main-content">
     <div class="container-fluid">
@@ -62,7 +70,7 @@
                                 <div class="col-md-1">
                                     <div class="form-row">
                                         <div class="col-12">
-                                            <a href="" class="btn long duplicate-btn">Copy</a>
+                                            <a href="" class="btn long duplicate-btn">Duplicate</a>
                                         </div>
                                     </div>
                                 </div>
@@ -200,54 +208,11 @@
 </div>
 <!-- End Main Content -->
 
-<!-- Duplicate Modal -->
-{{-- <div class="modal fade" id="duplicateModal" tabindex="-1" role="dialog" aria-labelledby="duplicateModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="duplicateModalLabel">Duplicate Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Selected information will be displayed here -->
-            </div>
-            <div class="modal-footer">
-                <!-- Buttons in the same row -->
-                <div class="btn-row">
-                    <button type="button" class="btn btn-secondary">Next</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> --}}
-
-
-<!-- User List Modal -->
-{{-- <div class="modal fade" id="userListModal" tabindex="-1" role="dialog" aria-labelledby="userListModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="userListModalLabel">User List</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- User list will be displayed here -->
-                <ul id="userList"></ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div> --}}
-
-
 @endsection
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 
 {{-- Filter by user's full name --}}
 <script>
@@ -363,15 +328,13 @@
     }
 </script>
 
-
-<!-- Include jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-{{-- <script>
-    // Pass users data from PHP to JavaScript
-    var users = @json($users);
-
+{{-- Copy Paste Record --}}
+<script>
     $(document).ready(function() {
+
+        // Retrieve the user full names from the Blade template
+        var users = @json($users);
+
         // Listen for Duplicate button click
         $('.duplicate-btn').click(function() {
             // Prevent the default form submission behavior
@@ -406,129 +369,7 @@
                     remarks: remarks,
                     tasks: tasks
                 });
-
-                console.log('Selected Row:', {
-                    scheduleId: scheduleId,
-                    date: date,
-                    nickname: nickname,
-                    shiftStart: shiftStart,
-                    shiftEnd: shiftEnd,
-                    remarks: remarks,
-                    tasks: tasks
-                });
             });
-
-            // Display the selected information in the modal (modify as needed)
-            $('#duplicateModal').modal('show');
-            $('#duplicateModal .modal-body').html('');
-
-            selectedRows.forEach(function(row) {
-                // Append the selected information to the modal body
-                $('#duplicateModal .modal-body').append(`
-                    <p style="margin-top:10px;">Date: ${row.date}</p>
-                    <p>Nickname: ${row.nickname}</p>
-                    <p>Shift Start: ${row.shiftStart}</p>
-                    <p>Shift End: ${row.shiftEnd}</p>
-                    <p>Remarks: ${row.remarks}</p>
-                    <p>Tasks:</p>
-                    <ul>
-                        ${row.tasks.map(task => `<li>${task.period.period_name} - ${task.duty.duty_name}</li>`).join('')}
-                    </ul>
-                    <hr>
-                `);
-            });
-
-             // Display checkboxes for users
-            $('#duplicateModal .modal-body').append(`
-                <p>Select Users:</p>
-                <form id="userCheckboxForm">
-                    ${users.map(user => `
-                        <div class="custom-checkbox">
-                            <input type="checkbox" id="user_${user.id}" name="selectedUsers[]" value="${user.id}">
-                            <label for="user_${user.id}">${user.full_name}</label>
-                        </div>
-                    `).join('')}
-                </form>
-            `);
-
-            // Display "Submit" and "Close" buttons
-            $('#duplicateModal .modal-footer').html(`
-                <div class="btn-row">
-                    <button type="button" class="btn btn-secondary" id="submitBtn">Next</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            `);
-
-            // Handle submit button click
-            $('#submitBtn').on('click', function() {
-                // Retrieve selected user IDs
-                var selectedUserIds = $('#userCheckboxForm input:checked').map(function() {
-                    return $(this).val();
-                }).get();
-
-                // Log selected user IDs (you can modify this part based on your requirements)
-                console.log('Selected User IDs:', selectedUserIds);
-
-                // Add logic to submit the form or perform other actions
-            });
-        });
-    });
-</script> --}}
-
-<script>
-
-    $(document).ready(function() {
-
-        // Retrieve the user full names from the Blade template
-        var users = @json($users);
-
-        // Listen for Duplicate button click
-        $('.duplicate-btn').click(function() {
-            // Prevent the default form submission behavior
-            event.preventDefault();
-
-            // Create an array to store selected rows
-            var selectedRows = [];
-
-            // Loop through each checkbox
-            $('table.invoice-list tbody input[type="checkbox"]:checked').each(function() {
-                // Get the parent row
-                var row = $(this).closest('tr');
-
-                // Get the data you want to duplicate (modify as needed)
-                var schedule_id = row.data('schedule-id');
-                var date = row.find('td:eq(1)').text();
-                var name = row.find('td:eq(2)').text();
-                var shift_start = row.find('td:eq(3)').text();
-                var shift_end = row.find('td:eq(4)').text();
-                var remarks = row.find('td:eq(5)').text();
-
-                // Get tasks data from the data attribute
-                var tasks = row.data('tasks');
-
-                // Push the data to the selectedRows array
-                selectedRows.push({
-                    schedule_id: schedule_id,
-                    date: date,
-                    name: name,
-                    shift_start: shift_start,
-                    shift_end: shift_end,
-                    remarks: remarks,
-                    tasks: tasks
-                });
-
-                console.log('Selected Row:', {
-                    schedule_id: schedule_id,
-                    date: date,
-                    name: name,
-                    shift_start: shift_start,
-                    shift_end: shift_end,
-                    remarks: remarks,
-                    tasks: tasks
-                });
-            });
-
-
 
             // Create the modal dynamically
             var modalContent = `
@@ -573,6 +414,24 @@
                 // Log selected user ID (you can modify this part based on your requirements)
                 console.log('Selected User ID:', selectedUserId);
 
+                // Create an array to store filtered data from selected rows
+                var filteredRows = [];
+
+                // Loop through each selected row and filter the data
+                selectedRows.forEach(function(row) {
+                    // Extract only the necessary data from the row
+                    var filteredData = {
+                        scheduleId: row.scheduleId,
+                        date: row.date,
+                        nickname: row.nickname,
+                        tasks:row.tasks,
+                        // Add other properties you want to include
+                    };
+
+                    // Push the filtered data to the array
+                    filteredRows.push(filteredData);
+                });
+
                 // Get the CSRF token from the meta tag
                 var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
@@ -585,7 +444,7 @@
                     },
                     data: {
                         selectedUserId: selectedUserId,
-                        selectedRows: selectedRows,
+                        filteredRows: filteredRows,
                     },
                     success: function(response) {
                         // Handle the success response from the controller
@@ -593,6 +452,18 @@
 
                         // Close the user selection modal
                         $('#userSelectionModal').modal('hide');
+
+                         // Display SweetAlert on success (use the promise to ensure the modal is hidden before showing SweetAlert)
+                        $('#userSelectionModal').on('hidden.bs.modal', function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Done',
+                                text: 'Successfully Duplicated',
+                            }).then(function() {
+                                // Reload the page after the SweetAlert is closed
+                                location.reload();
+                            });
+                        });
                     },
                     error: function(error) {
                         // Handle the error response, if any
@@ -600,8 +471,6 @@
                     }
                 });
             });
-
-
 
         });
     });
