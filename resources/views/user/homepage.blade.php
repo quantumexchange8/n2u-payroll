@@ -18,7 +18,7 @@
                     ->get();
 
                 @endphp
-                @if($shift->isEmpty())
+                {{-- @if($shift->isEmpty())
                         <button type="button" id="clockButton" class="btn" style="width:100%">
                             {{$clock}}
                         </button>
@@ -36,7 +36,21 @@
                     ">
                         {{ $status == 1 ? 'Clock In' : 'Clock Out' }}
                     </button>
+                @endif --}}
+
+                <button type="button" id="clockButton" class="btn" style="width:100%;
+                @if ($status == 1)
+                    background-color: #6045E2;
+                    color: #FFFFFF;
+                    border: 2px solid #6045E2;
+                @else
+                    background-color: #b04654;
+                    color: #FFFFFF;
+                    border: 2px solid #b04654;
                 @endif
+                ">
+                    {{ $status == 1 ? 'Clock In' : 'Clock Out' }}
+                </button>
 
             </form>
 
@@ -229,15 +243,15 @@
 
     // Use try-catch to handle form submission errors.
     try {
-        if ('{!! $shift->isEmpty() !!}') {
-            // Display an error alert if $shift is empty.
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'You cannot clock in or out because there is no scheduled shift for today. Please contact admin.',
-            });
-            return; // Exit the function to prevent further execution.
-        }
+        // if ('{!! $shift->isEmpty() !!}') {
+        //     // Display an error alert if $shift is empty.
+        //     Swal.fire({
+        //         icon: 'error',
+        //         title: 'Error',
+        //         text: 'You cannot clock in or out because there is no scheduled shift for today. Please contact admin.',
+        //     });
+        //     return; // Exit the function to prevent further execution.
+        // }
 
         const response = await fetch('{{ route('clock_in') }}', {
             method: 'POST',

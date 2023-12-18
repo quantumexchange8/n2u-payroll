@@ -1228,6 +1228,7 @@ class AdminController extends Controller
         $existingSchedules = DB::table('schedules')
             ->where('employee_id', $userId)
             ->where('date', $date)
+            ->whereNull('deleted_at')
             ->count();
 
         // Check if the user already has two schedules on this date
@@ -1258,6 +1259,7 @@ class AdminController extends Controller
                 ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
                 ->where('schedules.employee_id', $userId)
                 ->where('schedules.date', $date)
+                ->whereNull('schedules.deleted_at')
                 ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end')
                 ->get();
 
@@ -1482,61 +1484,77 @@ class AdminController extends Controller
     }
 
     public function duplicateSchedule(Request $request){
-        $selectedUserId = $request->input('selectedUserId');
-        $filteredRows = $request->input('filteredRows');
-        $allScheduleData = [];  // Array to store data for all selected rows
 
-        // Fetch associated data for each scheduleId
-        foreach ($filteredRows as $row) {
-            $scheduleId = $row['scheduleId'];
+        try {
+            $selectedUserId = $request->input('selectedUserId');
+            $filteredRows = $request->input('filteredRows');
+            $allScheduleData = [];  // Array to store data for all selected rows
 
-            // Fetch associated data for the current scheduleId
-            $scheduleData = Schedule::find($scheduleId);
+            // Fetch associated data for each scheduleId
+            foreach ($filteredRows as $row) {
+                $scheduleId = $row['scheduleId'];
 
-            // Extract specific fields from the scheduleData
-            $selectedScheduleData = [
-                'id' => $scheduleData->id,
-                'date' => $scheduleData->date,
-                'employee_id' => $selectedUserId,
-                'shift_id' => $scheduleData->shift_id,
-                'off_day' => $scheduleData->off_day,
-                // Add other fields you want to include
-            ];
+                // Fetch associated data for the current scheduleId
+                $scheduleData = Schedule::find($scheduleId);
 
-            // Create a new Schedule model and save it to the database
-            $newSchedule = Schedule::create($selectedScheduleData);
+                // Check if a schedule already exists for the selected user and date
+                $existingSchedule = Schedule::where('employee_id', $selectedUserId)
+                        ->where('date', $scheduleData->date)
+                        ->first();
 
-            // Check if 'tasks' key exists in the current row
-            if (isset($row['tasks']) && is_array($row['tasks'])) {
-                // Extract task data from the tasks array
-                $tasksData = [];
-                foreach ($row['tasks'] as $task) {
-                    $tasksData[] = [
-                        'id' => $task['id'],
-                        'date' => $task['date'],
+                // Only create a new schedule if it doesn't already exist
+                if (!$existingSchedule) {
+                    // Extract specific fields from the scheduleData
+                    $selectedScheduleData = [
+                        'id' => $scheduleData->id,
+                        'date' => $scheduleData->date,
                         'employee_id' => $selectedUserId,
-                        'period_id' => $task['period_id'],
-                        'duty_id' => $task['duty_id'],
-                        'start_time' => $task['start_time'],
-                        'end_time' => $task['end_time']
-                        // Add other task fields you want to include
+                        'shift_id' => $scheduleData->shift_id,
+                        'off_day' => $scheduleData->off_day,
+                        // Add other fields you want to include
                     ];
 
-                    // Create a new Task model associated with the new Schedule
-                    $newSchedule->tasks()->create([
-                        'date' => $task['date'],
-                        'employee_id' => $selectedUserId, // Replace with the selectedUserId
-                        'period_id' => $task['period_id'],
-                        'duty_id' => $task['duty_id'],
-                        'start_time' => $task['start_time'],
-                        'end_time' => $task['end_time']
-                        // Add other task fields you want to include
-                    ]);
+                    // Create a new Schedule model and save it to the database
+                    $newSchedule = Schedule::create($selectedScheduleData);
+
+                    // Check if 'tasks' key exists in the current row
+                    if (isset($row['tasks']) && is_array($row['tasks'])) {
+                        // Extract task data from the tasks array
+                        $tasksData = [];
+                        foreach ($row['tasks'] as $task) {
+                            $existingTask = Task::where('employee_id', $selectedUserId)
+                                                ->where('period_id', $task['period_id'])
+                                                ->where('date', $task['date'])
+                                                ->first();
+
+                            // Only create a new task if it doesn't already exist
+                            if (!$existingTask) {
+                                // Create a new Task model associated with the new Schedule
+                                $newSchedule->tasks()->create([
+                                    'date' => $task['date'],
+                                    'employee_id' => $selectedUserId,
+                                    'period_id' => $task['period_id'],
+                                    'duty_id' => $task['duty_id'],
+                                    'start_time' => $task['start_time'],
+                                    'end_time' => $task['end_time']
+                                ]);
+                            }
+                        }
+                    }
+                    return response()->json(['message' => 'Successfully duplicated'], 200);
+                } else {
+                    return response()->json(['error' => 'Duplicate data.'], 422);
                 }
             }
+
+        } catch (ValidationException $e) {
+            // Handle validation errors
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            // Handle other exceptions
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-        Alert::success('Done', 'Successfully Duplicated');
-        return redirect()->route('scheduleReport');
+
     }
 
     public function viewPeriod(){
@@ -2348,8 +2366,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function updateAttendance(Request $request, $id)
-    {
+    public function updateAttendance(Request $request, $id){
 
         $data = PunchRecord::find($id);
 
@@ -2398,9 +2415,6 @@ class AdminController extends Controller
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('attendance');
     }
-
-
-
 
     public function salaryLogs () {
         // Fetch all users with their positions
@@ -2490,14 +2504,10 @@ class AdminController extends Controller
             ->select('shifts.shift_start', 'shifts.shift_end', 'schedules.employee_id')
             ->get();
 
-        // dd($schedules);
-
         return view('admin.totalWork', compact('punchRecords', 'users', 'schedules'));
     }
 
     public function updateTotalWork(Request $request, $id){
-
-        // dd($request->all());
         // Validate the form data, including the remark
         $request->validate([
             'remark' => 'string', // Add any additional validation rules as needed
@@ -2569,6 +2579,92 @@ class AdminController extends Controller
 
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->back();
+    }
+
+    public function recalculateTotalHour(Request $request) {
+        // Get the "Late Threshold Minutes" setting value
+        $lateThreshold = Setting::where('setting_name', 'Late Threshold (in minutes)')->value('value');
+
+        // Fetch the "Overtime Calculation" setting value
+        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation (in minutes)')->value('value');
+
+        $selectedRows = $request->input('selectedRows');
+        $shiftDataArray = [];
+        $punchRecordDataArray = [];
+        $hoursDiffArray = [];
+        $newTotalHourArray = [];
+
+        // Accessing specific elements
+        foreach ($selectedRows as $row) {
+            $date = $row['date'];
+            $fullName = $row['fullName'];
+            $shift = $row['shift'];
+            $checkIn = $row['checkIn'];
+            $checkOut = $row['checkOut'];
+            $totalHour = $row['totalHour'];
+            $shiftId = $row['shiftId'];
+            $punchRecordId = $row['punchRecordId'];
+
+            // Parse checkIn and checkOut using Carbon
+            $carbonCheckIn = Carbon::createFromFormat('h:i A', $checkIn);
+            $carbonCheckOut = Carbon::createFromFormat('h:i A', $checkOut);
+
+            // Calculate the difference between checkOut and checkIn
+            $hoursDiff = $carbonCheckOut->diffInHours($carbonCheckIn);
+
+            // Add the calculated hours difference to the array
+            // $hoursDiffArray[] = $hoursDiff;
+
+            // Retrieve specific columns from the Shift model
+            $shiftData = Shift::select('shift_start', 'shift_end')->find($shiftId);
+
+            // Convert shift_start and shift_end to Carbon instances
+            $carbonShiftStart = Carbon::parse($shiftData['shift_start']);
+            $carbonShiftEnd = Carbon::parse($shiftData['shift_end']);
+
+            // Add the shift data to the array
+            // $shiftDataArray[] = $shiftData;
+
+            // Calculate overtime by adding overtimeCalculation to checkOut time
+            $carbonCheckOT = $carbonCheckOut->copy()->addMinutes($overtimeCalculation);
+
+            // Add the calculated overtime to the array
+            // $checkOTArray[] = $carbonCheckOT;
+
+            // Calculate late by adding lateThreshold to checkIn time
+            $carbonCheckLate = $carbonCheckIn->copy()->addMinutes($lateThreshold);
+
+            // Add the calculated lateThreshold to the array
+            // $checkLateArray[] = $carbonCheckLate;
+
+            if($carbonCheckIn->greaterThan($carbonCheckLate)) {
+                // Compare checkOut with checkOT and calculate new total hour accordingly
+                if ($carbonCheckOut->greaterThan($carbonCheckOT)) {
+                    // If checkOut is greater than checkOT, calculate new total hour using shift end time
+                    $newTotalHour = $carbonCheckIn->diffInHours($carbonShiftEnd);
+                } else {
+                    // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
+                    $newTotalHour = $carbonCheckIn->diffInHours($carbonCheckOut);
+                }
+            } else {
+                // Compare checkOut with checkOT and calculate new total hour accordingly
+                if ($carbonCheckOut->greaterThan($carbonCheckOT)) {
+                    // If checkOut is greater than checkOT, calculate new total hour using shift end time
+                    $newTotalHour = ($carbonShiftStart)->diffInHours($carbonShiftEnd);
+                } else {
+                    // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
+                    $newTotalHour = ($carbonShiftStart)->diffInHours($carbonCheckOut);
+                }
+            }
+
+            dd($newTotalHour);
+
+            // Update the total_work column in the PunchRecord model
+            PunchRecord::where('id', $punchRecordId)->update(['total_work' => $newTotalHour]);
+        }
+
+        Alert::success('Done', 'Successfully Updated');
+        return view('admin.totalWork', compact('selectedRows', 'shiftDataArray', 'checkOTArray', 'newTotalHourArray'));
     }
 
 }

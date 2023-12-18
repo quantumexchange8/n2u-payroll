@@ -131,6 +131,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('admin/total-work', [AdminController::class, 'totalWork'])->name('totalWork');
     Route::post('admin/update-total-work/{id}', [AdminController::class, 'updateTotalWork'])->name('updateTotalWork');
+    Route::post('admin/recalculate-total-hour', [AdminController::class, 'recalculateTotalHour'])->name('recalculateTotalHour');
 
     Route::get('admin/other-image/{employee_id}', [AdminController::class, 'otherImage'])->name('otherImage');
     Route::post('admin/other-image/add-other-image/{employeeId}', [AdminController::class, 'addOtherImage'])->name('addOtherImage');

@@ -70,7 +70,7 @@
                                 <div class="col-md-1">
                                     <div class="form-row">
                                         <div class="col-12">
-                                            <a href="" class="btn long duplicate-btn">Duplicate</a>
+                                            <a href="#" class="btn long duplicate-btn">Duplicate</a>
                                         </div>
                                     </div>
                                 </div>
@@ -369,6 +369,16 @@
                     remarks: remarks,
                     tasks: tasks
                 });
+
+                console.log('Selected Row:', {
+                    scheduleId: scheduleId,
+                    date: date,
+                    nickname: nickname,
+                    shiftStart: shiftStart,
+                    shiftEnd: shiftEnd,
+                    remarks: remarks,
+                    tasks: tasks
+                });
             });
 
             // Create the modal dynamically
@@ -437,7 +447,7 @@
 
                 // Perform an AJAX request to send the selected user ID to the controller
                 $.ajax({
-                    url: '{{ route("duplicateSchedule") }}',
+                 url: '{{ route("duplicateSchedule") }}',
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken
@@ -465,10 +475,19 @@
                             });
                         });
                     },
-                    error: function(error) {
-                        // Handle the error response, if any
-                        console.error('Error:', error);
+                    error: function(xhr, status, error) {
+                        // Handle the error response
+                        console.error('Error:', xhr.responseText);
+
+                        // Display SweetAlert on error with detailed error message
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to duplicate data due to the schedule already exist.',
+                            footer: '<pre>' + xhr.responseText + '</pre>'
+                        });
                     }
+
                 });
             });
 

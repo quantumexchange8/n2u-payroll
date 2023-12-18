@@ -54,95 +54,19 @@
                                     </div>
                                 </div>
                                 <!-- End Dropdown Button -->
+
+                                <div class="col-md-1">
+                                    <div class="form-row">
+                                        <div class="col-12">
+                                            <a href="#" class="btn long recalculate-btn" id="recalculateButton">Recalculate</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div id="data-table" class="table-responsive">
-                        <!-- Invoice List Table -->
-                        {{-- <table class="text-nowrap table-bordered dh-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Name</th>
-                                    <th>Shift</th>
-                                    <th>Check In</th>
-                                    <th>Check Out</th>
-                                    <th>Check In 2</th>
-                                    <th>Check Out 2</th>
-                                    <th>Total Hour</th>
-                                    <th>Remarks</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($punchRecords->groupBy('employee_id') as $employeeId => $records)
-
-                                    @php
-                                        $employeeName = $records[0]->user->full_name;
-                                        $checkIn1 = null;
-                                        $checkOut1 = null;
-                                        $checkIn2 = null;
-                                        $checkOut2 = null;
-                                        $totalWork = null;
-                                        $shift = $schedules->where('employee_id', $employeeId)->first();
-                                        $remarks = null;
-
-                                        foreach ($records as $record) {
-                                            if ($record->in === 'Clock In') {
-                                                if ($checkIn1 === null) {
-                                                    $checkIn1 = $record->created_at->format('h:i:s A');
-                                                }
-                                                else {
-                                                    $checkIn2 = $record->created_at->format('h:i:s A');
-                                                }
-                                            } else {
-                                                if ($checkOut1 === null) {
-                                                    $checkOut1 = $record->created_at->format('h:i:s A');
-                                                } else {
-                                                    $checkOut2 = $record->created_at->format('h:i:s A');
-                                                    $totalWork = $record->total_work;
-                                                    $remarks = $record->remarks;
-                                                }
-                                            }
-
-                                        }
-                                    @endphp
-                                    <tr data-date="{{ \Carbon\Carbon::parse($shift->date ?? null )->format('Y-m-d') }}" data-full-name="{{ $employeeName }}">
-                                        <td>
-                                            @if ($shift)
-                                                {{ \Carbon\Carbon::parse($shift->date)->format('d M Y') }}
-                                            @else
-                                                N/A
-                                            @endif
-                                        </td>
-                                        <td>{{ $employeeName ?? null }}</td>
-                                        <td>
-                                            @if ($shift ?? null)
-                                                {{ \Carbon\Carbon::parse($shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($shift->shift_end)->format('h:i A') }}
-                                            @else
-                                                N/A
-                                            @endif
-                                        </td>
-                                        <td>{{ $checkIn1 ?? null}}</td>
-                                        <td>{{ $checkOut1 ?? null}}</td>
-                                        <td>{{ $checkIn2 ?? null}}</td>
-                                        <td>{{ $checkOut2 ?? null}}</td>
-                                        <td>{{ $totalWork ?? null}}</td>
-                                        <td>{{ $remarks ?? null}}</td>
-
-                                        <td>
-                                            <form action="{{ route('updateTotalWork', $record->id) }}" method="POST" style="display: flex; justify-content: space-between; margin-top: 15px;" id="update-form-{{$record->id}}">
-                                                @csrf
-                                                <button type="button" class="edit-button details-btn" data-punchrecord-id="{{ $record->id }}">
-                                                    Edit <i class="icofont-arrow-right"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table> --}}
 
                         {{-- <table class="text-nowrap table-bordered dh-table">
                             <thead>
@@ -205,9 +129,16 @@
                             </tbody>
                         </table> --}}
 
-                        <table class="text-nowrap table-bordered dh-table">
+                        <table class="text-nowrap invoice-list">
                             <thead>
                                 <tr>
+                                    <th>
+                                        <!-- Custom Checkbox -->
+                                        <label class="custom-checkbox">
+                                            <input type="checkbox">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </th>
                                     <th>Date</th>
                                     <th>Name</th>
                                     <th>Shift</th>
@@ -248,15 +179,23 @@
 
                                     @foreach ($combinedRecords as $pair)
                                         <tr data-date="{{ \Carbon\Carbon::parse($pair->first()->created_at ?? null )->format('Y-m-d') }}" data-full-name="{{ $user->full_name }}">
+                                            <td>
+                                                <!-- Custom Checkbox -->
+                                                <label class="custom-checkbox">
+                                                    <input type="checkbox">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <!-- End Custom Checkbox -->
+                                            </td>
                                             <td>{{ \Carbon\Carbon::parse($pair->first()->created_at)->format('d M Y') }}</td>
                                             <td>{{ $user->full_name }}</td>
-                                            <td>
+                                            {{-- <td>
                                                 @php
 
                                                     $shift = App\Models\Schedule::join('shifts', 'schedules.shift_id', 'shifts.id')
                                                     ->where('employee_id', $user->id)
                                                     ->where('date', \Carbon\Carbon::parse($pair->first()->created_at)->format('Y-m-d')) // Filter by the current date
-                                                    ->orderBy('shifts.id')
+                                                    ->orderBy('shifts.shift_start')
                                                     ->first();
 
                                                 @endphp
@@ -264,10 +203,41 @@
                                                 @if ($shift)
                                                     {{ \Carbon\Carbon::parse($shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($shift->shift_end)->format('h:i A') }}
                                                 @endif
+                                            </td> --}}
+
+                                            @php
+                                                // Determine if the user has two shifts (status_clock 1 and 2 and 3 and 4)
+                                                $hasTwoShifts = $pair->first()->status_clock > 2;
+
+                                                // Determine which shift to use based on $hasTwoShifts
+                                                $shiftIndex = $hasTwoShifts ? 1 : 0;
+
+                                                // Query the database for the shift
+                                                $shift = App\Models\Schedule::join('shifts', 'schedules.shift_id', 'shifts.id')
+                                                    ->where('employee_id', $user->id)
+                                                    ->where('date', \Carbon\Carbon::parse($pair->first()->created_at)->format('Y-m-d'))
+                                                    ->orderBy('shifts.shift_start')
+                                                    ->when($hasTwoShifts, function ($query) use ($shiftIndex) {
+                                                        // If the user has two shifts, skip to the appropriate shift
+                                                        return $query->skip($shiftIndex);
+                                                    })
+                                                    ->first();
+                                            @endphp
+
+                                            <td data-shift-id="{{ $shift->id }}">
+                                                @if ($shift)
+                                                    {{-- Display shift information, e.g., {{ $shift->id }} --}}
+                                                    {{ \Carbon\Carbon::parse($shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($shift->shift_end)->format('h:i A') }}
+                                                @endif
                                             </td>
-                                            <td>{{ $pair->first()->in === 'Clock In' ? $pair->first()->created_at->format('h:i A') : '' }}</td>
-                                            <td>{{ $pair->last()->out === 'Clock Out' ? $pair->last()->created_at->format('h:i A') : '' }}</td>
                                             <td>
+                                                {{ $pair->first()->in === 'Clock In' ? \Carbon\Carbon::parse($pair->first()->clock_in_time)->format('h:i A') : '' }}
+                                            </td>
+
+                                            <td>
+                                                {{ $pair->last()->out === 'Clock Out' ? \Carbon\Carbon::parse($pair->last()->clock_out_time)->format('h:i A') : '' }}
+                                            </td>
+                                            <td data-punchrecord-id="{{ $pair->last()->id }}">
                                                 @if ($pair->last()->status_clock % 2 == 0)
                                                     {{ $pair->last()->total_work }}
                                                 @endif
@@ -303,6 +273,9 @@
 <!-- End Main Content -->
 
 @endsection
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 {{-- Filter by user's full name --}}
 <script>
@@ -484,4 +457,112 @@
 </script>
 
 
+{{-- Recalculate the total hour --}}
+{{-- <script>
+    $(document).ready(function() {
+        // Handle the Recalculate button click
+        $('#recalculateButton').click(function() {
+            // Array to store selected checkbox values
+            var selectedRows = [];
 
+            // Loop through all checkboxes
+            $('table.invoice-list tbody input[type="checkbox"]:checked').each(function() {
+                // Get the value of the checkbox (you may need to adjust this based on your HTML structure)
+                var id = $(this).closest('tr').data('id');
+
+                // Get data associated with the selected row
+                var rowData = {
+                    id: id,
+                    date: $(this).closest('tr').data('date'),
+                    fullName: $(this).closest('tr').data('full-name'),
+                    shift: $(this).closest('tr').find('td:eq(3)').text().trim(),  // Trim whitespace
+                    checkIn: $(this).closest('tr').find('td:eq(4)').text().trim(),  // Trim whitespace
+                    checkOut: $(this).closest('tr').find('td:eq(5)').text().trim(),  // Trim whitespace
+                    totalHour: $(this).closest('tr').find('td:eq(6)').text().trim()  // Trim whitespace
+                };
+
+                // Add the rowData to the array
+                selectedRows.push(rowData);
+            });
+
+            // Log the selected rows to the console
+            console.log('Selected Rows:', selectedRows);
+
+
+            // Send an AJAX request to your server with the selected checkbox ids
+            $.ajax({
+                url: '{{ route("recalculateTotalHour") }}', // Replace with your recalculate endpoint
+                method: 'POST',
+                data: {
+                    selectedRows: selectedRows,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    // Handle the success response (if needed)
+                    // console.log('Recalculation success:', response);
+
+                },
+                error: function(error) {
+                    // Handle the error response (if needed)
+                    console.error('Recalculation error:', error);
+                }
+            });
+        });
+    });
+</script> --}}
+
+
+<script>
+    $(document).ready(function() {
+        // Handle the Recalculate button click
+        $('#recalculateButton').click(function() {
+            // Array to store selected checkbox values
+            var selectedRows = [];
+
+            // Loop through all checkboxes
+            $('table.invoice-list tbody input[type="checkbox"]:checked').each(function() {
+                // Get the value of the checkbox (you may need to adjust this based on your HTML structure)
+                var id = $(this).closest('tr').data('id');
+
+                // Get data associated with the selected row
+                var rowData = {
+                    id: id,
+                    date: $(this).closest('tr').data('date'),
+                    fullName: $(this).closest('tr').data('full-name'),
+                    shift: $(this).closest('tr').find('td:eq(3)').text().trim(),  // Trim whitespace
+                    checkIn: $(this).closest('tr').find('td:eq(4)').text().trim(),  // Trim whitespace
+                    checkOut: $(this).closest('tr').find('td:eq(5)').text().trim(),  // Trim whitespace
+                    totalHour: $(this).closest('tr').find('td:eq(6)').text().trim(),  // Trim whitespace
+                    shiftId: $(this).closest('tr').find('td:eq(3)').data('shift-id'),
+                    punchRecordId: $(this).closest('tr').find('td:eq(6)').data('punchrecord-id')
+                };
+
+                // Add the rowData to the array
+                selectedRows.push(rowData);
+            });
+
+            // Log the selected rows to the console
+            console.log('Selected Rows:', selectedRows);
+
+            // Send an AJAX request to your server with the selected checkbox ids
+            $.ajax({
+                url: '{{ route("recalculateTotalHour") }}', // Replace with your recalculate endpoint
+                method: 'POST',
+                data: {
+                    selectedRows: selectedRows,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    // Handle the success response (if needed)
+                    // console.log('Recalculation success:', response);
+
+                },
+                error: function(error) {
+                    // Handle the error response (if needed)
+                    console.error('Recalculation error:', error);
+                }
+            });
+        });
+    });
+
+</script>
