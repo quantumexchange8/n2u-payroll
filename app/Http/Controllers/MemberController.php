@@ -15,6 +15,7 @@ use App\Models\Period;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -127,19 +128,40 @@ class MemberController extends Controller
 
     public function updateProfile(Request $request) {
 
-        // dd($request->all());
         // Use the currently authenticated user
         $user = User::where('id', '=', Auth::user()->id)->first();
 
-        // Validate the input
-        $request->validate([
+        $rules = [
             'full_name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'address' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
             'old-pass' => 'required_with:new-pass',
             'new-pass' => 'nullable|required_with:old-pass|different:old-pass',
             'retype-pass' => 'nullable|required_with:new-pass|same:new-pass',
-        ]);
+        ];
+
+        $messages = [
+            'full_name.required' => 'The Full Name is required.',
+            'full_name.max' => 'The Full Name should not exceed 255 characters.',
+            'address.max' => 'The Address should not exceed 255 characters.',
+            'email.email' => 'The Email must be a valid email address.',
+            'email.max' => 'The Email should not exceed 255 characters.',
+            'old-pass.required_with' => 'The Old Password field is required when New Password is present.',
+            'new-pass.required_with' => 'The New Password field is required when Old Password is present.',
+            'new-pass.different' => 'The New Password must be different from the Old Password.',
+            'retype-pass.required_with' => 'The Retype Password field is required when New Password is present.',
+            'retype-pass.same' => 'The Retype Password and New Password must match.',
+        ];
+
+        // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         // Update the user's data
         $user->full_name = $request->input('full_name');
@@ -202,8 +224,5 @@ class MemberController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
-
-
 
 }

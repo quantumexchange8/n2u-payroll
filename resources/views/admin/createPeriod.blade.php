@@ -17,7 +17,7 @@
                             <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Period</label>
+                                    <label class="font-14 bold mb-2">Period Name</label>
                                     <input type="text" class="theme-input-style" id="period_name" name="period_name" autocomplete="off" placeholder="Period Name" value="{{ old('period_name') }}">
                                     @error('period_name')
                                         <span class="text-danger">{{ $message }}</span>

@@ -26,7 +26,7 @@
 
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
-                        <table class="text-nowrap table-bordered dh-table">
+                        <table class="text-nowrap bg-white dh-table">
                             <thead>
                                 <tr>
                                     <th>Employee ID</th>

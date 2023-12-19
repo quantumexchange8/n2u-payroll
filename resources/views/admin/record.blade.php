@@ -82,10 +82,10 @@
 
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
-                        <table class="text-nowrap table-bordered dh-table">
+                        <table class="text-nowrap bg-white dh-table">
                             <thead>
                                 <tr>
-                                    <th>Nickname</th>
+                                    <th>Name</th>
                                     <th>Date</th>
                                     <th>Time</th>
                                     <th>In</th>

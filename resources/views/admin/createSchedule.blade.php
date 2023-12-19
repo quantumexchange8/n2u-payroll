@@ -21,7 +21,7 @@
                         <div class="form-element color-options">
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <label class="font-14 bold mb-2">Nickname</label>
+                                    <label class="font-14 bold mb-2">Name</label>
                                 </div>
 
                                 @php
@@ -72,7 +72,7 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Date Start</label>
+                                    <label class="font-14 bold mb-2">Start Date</label>
                                     <input type="date" class="theme-input-style" id="date_start" name="date_start" autocomplete="off">
                                     @error('date_start')
                                         <span class="text-danger">{{ $message }}</span>
@@ -87,7 +87,6 @@
                                         <span class="checkmark"></span>
                                     </label>
                                     <!-- End Custom Checkbox -->
-
                                     <label for="check26">Off Day</label>
                                 </div>
 
@@ -106,7 +105,7 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Date End</label>
+                                    <label class="font-14 bold mb-2">End Date</label>
                                     <input type="date" class="theme-input-style" id="date_end" name="date_end" autocomplete="off">
                                     @error('date_end')
                                         <span class="text-danger">{{ $message }}</span>
@@ -135,23 +134,20 @@
                                                             <option value="{{ $period->id }}">{{ $period->period_name }}</option>
                                                         @endforeach
                                                     </select>
-
                                                 </div>
                                                 <!-- End Form Group -->
 
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-2">
-                                                    <label for="inputMobile" class="bold mb-2">Start</label>
-                                                    <input type="time" class="form-control" id="start_time" name="start_time">
-
+                                                    <label for="inputMobile" class="bold mb-2">Start Time</label>
+                                                    <input type="time" class="form-control" id="start_time" name="start_time" autocomplete="off">
                                                 </div>
                                                 <!-- End Form Group -->
 
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-2">
-                                                    <label for="inputMobile" class="bold mb-2">End</label>
-                                                    <input type="time" class="form-control" id="end_time" name="end_time">
-
+                                                    <label for="inputMobile" class="bold mb-2">End Time</label>
+                                                    <input type="time" class="form-control" id="end_time" name="end_time" autocomplete="off">
                                                 </div>
                                                 <!-- End Form Group -->
 

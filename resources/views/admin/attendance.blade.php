@@ -56,7 +56,7 @@
 
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
-                        <table class="text-nowrap table-bordered dh-table">
+                        <table class="text-nowrap bg-white dh-table">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -79,7 +79,7 @@
                                     @if ($recordDate)
                                         <tr class="status-{{ $punchRecord->status }}" data-date="{{ $recordDate }}">
                                             <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('d M Y') }}</td>
-                                            <td>{{$punchRecord->user->full_name}}</td>
+                                            <td>{{$punchRecord->user->nickname}}</td>
                                             <td>
                                                 @if ($punchRecord->in == 'Clock In')
                                                     {{ \Carbon\Carbon::parse($punchRecord->clock_in_time)->format('g:i A') }}
@@ -122,26 +122,6 @@
     </div>
 </div>
 <!-- End Main Content -->
-
-{{-- <div class="modal fade" id="editAttendanceModal" tabindex="-1" role="dialog" aria-labelledby="editAttendanceModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editAttendanceModalLabel">Edit Attendance</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <!-- Add other buttons or actions as needed -->
-            </div>
-        </div>
-    </div>
-</div> --}}
 
 <div class="modal fade" id="editAttendanceModal" tabindex="-1" role="dialog" aria-labelledby="editAttendanceModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -301,55 +281,7 @@
     }
 </script>
 
-{{-- <script>
-    $(document).ready(function() {
-        $('.edit-attendance').click(function() {
-            var id = $(this).data('id');
-
-            // Fetch data via AJAX
-            $.ajax({
-                url: '/getAttendanceData/' + id,
-                method: 'GET',
-                success: function(data) {
-                    console.log('Retrieved Data:', data);
-
-                    // Update modal content with fetched data
-                    var modalBody = $('#editAttendanceModal').find('.modal-body');
-                    modalBody.empty(); // Clear existing content
-
-                    if (data.clock_in_time !== null) {
-                        var clockInTime = new Date(data.clock_in_time);
-                        var formattedClockInTime = clockInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-                        modalBody.append('<p>Clock In: ' + formattedClockInTime + '</p>');
-                        modalBody.append('<p>Status: ' + data.status + '</p>');
-                    }
-
-                    if (data.clock_out_time !== null) {
-                        var clockOutTime = new Date(data.clock_out_time);
-                        var formattedClockOutTime = clockOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-                        modalBody.append('<p>Clock Out: ' + formattedClockOutTime + '</p>');
-                        modalBody.append('<p>Status: ' + data.status + '</p>');
-                    }
-
-                    // If both clock_in_time and clock_out_time are null, you can add a default message
-                    if (data.clock_in_time === null && data.clock_out_time === null) {
-                        modalBody.append('<p>No clock-in or clock-out data available</p>');
-                    }
-
-                    $('#editAttendanceModal').modal('show');
-                },
-                error: function(error) {
-                    console.error('Error fetching data:', error);
-                }
-            });
-        });
-    });
-</script> --}}
-
-
-
+{{-- Edit clock in and clock out time --}}
 <script>
     $(document).ready(function() {
 

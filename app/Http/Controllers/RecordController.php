@@ -292,18 +292,18 @@ class RecordController extends Controller
 
                     $firstClockOutTime = now();
 
-                    $lastClockInTime = PunchRecord::where('employee_id', $user->id)
-                        ->whereDate('created_at', $currentDate)
-                        ->where('in', 'Clock In')
-                        ->orderBy('created_at', 'desc')
-                        ->first()
-                        ->created_at;
+                    // $lastClockInTime = PunchRecord::where('employee_id', $user->id)
+                    //     ->whereDate('created_at', $currentDate)
+                    //     ->where('in', 'Clock In')
+                    //     ->orderBy('created_at', 'desc')
+                    //     ->first()
+                    //     ->created_at;
 
-                    $lastClockOutTime = now();
+                    // $lastClockOutTime = now();
 
-                    $checkFirstLate = $firstClockInTime->addMinutes($lateThreshold);
+                    $checkFirstLate = $firstShiftStartTime->copy()->addMinutes($lateThreshold);
 
-                    $checkFirstOT = $firstClockOutTime->addMinutes($overtimeCalculation);
+                    $checkFirstOT = $firstShiftEndTime->copy()->addMinutes($overtimeCalculation);
 
                     // $checkSecondLate = $lastClockInTime->addMinutes($lateThreshold);
 
@@ -355,19 +355,19 @@ class RecordController extends Controller
                 // Calculate total hours for the second shift
                 if ($status === 'Clock Out' && $status_clock === 4) {
                     // Get the times for the first clock in, first clock out, last clock in, and last clock out
-                    $firstClockInTime = PunchRecord::where('employee_id', $user->id)
-                        ->whereDate('created_at', $currentDate)
-                        ->where('in', 'Clock In')
-                        ->orderBy('created_at', 'asc')
-                        ->first()
-                        ->created_at;
+                    // $firstClockInTime = PunchRecord::where('employee_id', $user->id)
+                    //     ->whereDate('created_at', $currentDate)
+                    //     ->where('in', 'Clock In')
+                    //     ->orderBy('created_at', 'asc')
+                    //     ->first()
+                    //     ->created_at;
 
-                    $firstClockOutTime = PunchRecord::where('employee_id', $user->id)
-                        ->whereDate('created_at', $currentDate)
-                        ->where('out', 'Clock Out')
-                        ->orderBy('created_at', 'asc')
-                        ->first()
-                        ->created_at;
+                    // $firstClockOutTime = PunchRecord::where('employee_id', $user->id)
+                    //     ->whereDate('created_at', $currentDate)
+                    //     ->where('out', 'Clock Out')
+                    //     ->orderBy('created_at', 'asc')
+                    //     ->first()
+                    //     ->created_at;
 
                     $lastClockInTime = PunchRecord::where('employee_id', $user->id)
                         ->whereDate('created_at', $currentDate)
@@ -378,13 +378,13 @@ class RecordController extends Controller
 
                     $lastClockOutTime = now();
 
-                    $checkFirstLate = $firstClockInTime->addMinutes($lateThreshold);
+                    // $checkFirstLate = $firstShiftStartTime->copy()->addMinutes($lateThreshold);
 
-                    $checkFirstOT = $firstClockOutTime->addMinutes($overtimeCalculation);
+                    // $checkFirstOT = $firstShiftEndTime->copy()->addMinutes($overtimeCalculation);
 
-                    $checkSecondLate = $lastClockInTime->addMinutes($lateThreshold);
+                    $checkSecondLate = $secondShiftStartTime->copy()->addMinutes($lateThreshold);
 
-                    $checkSecondOT = $lastClockOutTime->addMinutes($overtimeCalculation);
+                    $checkSecondOT = $secondShiftEndTime->copy()->addMinutes($overtimeCalculation);
 
                     // if ($firstClockInTime >= $firstShiftStartTime && $firstClockInTime >= $checkFirstLate) {
                     //     if ($firstClockOutTime >= $firstShiftEndTime && $firstClockOutTime >= $checkFirstOT) {
@@ -423,9 +423,7 @@ class RecordController extends Controller
                         }
                     }
 
-                    $totalWork = $secondTotalWork;
-
-                    $totalWorkInHours = number_format($totalWork / 60, 2);
+                    $totalWorkInHours = number_format($secondTotalWork / 60, 2);
                     $recordData['total_work'] = $totalWorkInHours;
                 }
 
@@ -593,8 +591,6 @@ class RecordController extends Controller
                         ->first()
                         ->created_at;
 
-                    // dd($firstClockInTime);
-
                     // $firstClockOutTime = PunchRecord::where('employee_id', $user->id)
                     //     ->whereDate('created_at', $currentDate)
                     //     ->where('out', 'Clock Out')
@@ -611,18 +607,15 @@ class RecordController extends Controller
 
                     $lastClockOutTime = now();
 
-                    $checkLate = $firstClockInTime->copy()->addMinutes($lateThreshold);
+                    $checkLate = $firstShiftStartTime->copy()->addMinutes($lateThreshold);
 
-                    $checkOT = $lastClockOutTime->copy()->addMinutes($overtimeCalculation);
-
-                    $totalWork1 = null;
-                    $totalWork2 = null;
+                    $checkOT = $firstShiftEndTime->copy()->addMinutes($overtimeCalculation);
 
                     if ($firstClockInTime >= $firstShiftStartTime && $firstClockInTime >= $checkLate) {
                         if ($lastClockOutTime >= $firstShiftEndTime && $lastClockOutTime >= $checkOT) {
-                            $totalWork1 = $firstShiftEndTime->diffInMinutes($firstClockInTime);
+                            $totalWork = $firstShiftEndTime->diffInMinutes($firstClockInTime);
                         } else{
-                            $totalWork2 = $lastClockOutTime->diffInMinutes($firstClockInTime);
+                            $totalWork = $lastClockOutTime->diffInMinutes($firstClockInTime);
                         }
                     } else {
                         if ($lastClockOutTime >= $firstShiftEndTime && $lastClockOutTime >= $checkOT) {
@@ -631,11 +624,9 @@ class RecordController extends Controller
                             $totalWork = $lastClockOutTime->diffInMinutes($firstShiftStartTime);
                         }
                     }
-
-                    dd($totalWork1, $totalWork2);
-
-                    // $totalWorkInHours = number_format($totalWork / 60, 2);
-                    // $recordData['total_work'] = $totalWorkInHours;
+                    
+                    $totalWorkInHours = number_format($totalWork / 60, 2);
+                    $recordData['total_work'] = $totalWorkInHours;
                 }
 
             }

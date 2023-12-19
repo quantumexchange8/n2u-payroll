@@ -48,7 +48,9 @@ class AdminController extends Controller
         $currentDate = Carbon::now()->toDateString();
 
         // Count total employees working for the current date
-        $totalEmployeesCount = Schedule::whereDate('date', $currentDate)->count();
+        $totalEmployeesCount = Schedule::whereDate('date', $currentDate)
+                                        ->distinct('employee_id')
+                                        ->count();
 
         // dd($totalEmployeesCount);
         // Retrieve all schedules, shifts, and settings
@@ -564,7 +566,7 @@ class AdminController extends Controller
             'duty_name.max' => 'The Duty Name should not exceed 255 characters.',
         ];
 
-            // Validate the request data
+        // Validate the request data
         $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
@@ -1399,6 +1401,7 @@ class AdminController extends Controller
 
     public function updateSchedule(Request $request, $id){
 
+        // dd($request->all());
         // Validate the request data
         $request->validate([
             // Validation rules for your form fields
@@ -1422,36 +1425,44 @@ class AdminController extends Controller
         // If there are tasks and duties, update or insert them into the tasks table
         if (!empty($tasksAndDuties)) {
             foreach ($tasksAndDuties as $taskData) {
-                // Check if a task exists with the given conditions
-                $existingTask = Task::where([
-                    'date' => $schedule->date,
-                    'employee_id' => $schedule->employee_id,
-                    'period_id' => $taskData['period_id'],
-                ])->first();
+                // Check if all key fields are null
+                $fieldsNull = is_null($taskData['period_id']) ||
+                                    is_null($taskData['duty_id']) ||
+                                    is_null($taskData['start_time']) ||
+                                    is_null($taskData['end_time']);
 
+                // If all key fields are not null, proceed with creating/updating the task
+                if (!$fieldsNull) {
+                    // Check if a task exists with the given conditions
+                    $existingTask = Task::where([
+                        'date' => $schedule->date,
+                        'employee_id' => $schedule->employee_id,
+                        'period_id' => $taskData['period_id'],
+                    ])->first();
 
-                if ($existingTask) {
-                    // Print debug information
-                    // dd('Task exists. Update it:', $existingTask->toArray());
+                    if ($existingTask) {
+                        // Print debug information
+                        // dd('Task exists. Update it:', $existingTask->toArray());
 
-                    // Update existing task
-                    $existingTask->update([
-                        'start_time' => $taskData['start_time'],
-                        'end_time' => $taskData['end_time'],
-                        'duty_id' => $taskData['duty_id'],
-                    ]);
-                } else {
-                    // Find or create a task based on date, employee_id, and task_name
-                    $task = Task::Create(
-                        [
-                            'date' => $schedule->date,
-                            'employee_id' => $schedule->employee_id,
-                            'period_id' => $taskData['period_id'],
+                        // Update existing task
+                        $existingTask->update([
                             'start_time' => $taskData['start_time'],
                             'end_time' => $taskData['end_time'],
                             'duty_id' => $taskData['duty_id'],
-                        ]
-                    );
+                        ]);
+                    } else {
+                        // Find or create a task based on date, employee_id, and task_name
+                        $task = Task::Create(
+                            [
+                                'date' => $schedule->date,
+                                'employee_id' => $schedule->employee_id,
+                                'period_id' => $taskData['period_id'],
+                                'start_time' => $taskData['start_time'],
+                                'end_time' => $taskData['end_time'],
+                                'duty_id' => $taskData['duty_id'],
+                            ]
+                        );
+                    }
                 }
             }
         }
@@ -1500,6 +1511,7 @@ class AdminController extends Controller
                 // Check if a schedule already exists for the selected user and date
                 $existingSchedule = Schedule::where('employee_id', $selectedUserId)
                         ->where('date', $scheduleData->date)
+                        ->whereNull('deleted_at')
                         ->first();
 
                 // Only create a new schedule if it doesn't already exist
@@ -1511,7 +1523,6 @@ class AdminController extends Controller
                         'employee_id' => $selectedUserId,
                         'shift_id' => $scheduleData->shift_id,
                         'off_day' => $scheduleData->off_day,
-                        // Add other fields you want to include
                     ];
 
                     // Create a new Schedule model and save it to the database
@@ -1525,6 +1536,7 @@ class AdminController extends Controller
                             $existingTask = Task::where('employee_id', $selectedUserId)
                                                 ->where('period_id', $task['period_id'])
                                                 ->where('date', $task['date'])
+                                                ->whereNull('deleted_at')
                                                 ->first();
 
                             // Only create a new task if it doesn't already exist
@@ -2527,6 +2539,69 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Remark updated successfully.');
     }
 
+    public function recalculateTotalHour(Request $request) {
+        // Get the "Late Threshold Minutes" setting value
+        $lateThreshold = Setting::where('setting_name', 'Late Threshold (in minutes)')->value('value');
+
+        // Fetch the "Overtime Calculation" setting value
+        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation (in minutes)')->value('value');
+
+        $selectedRows = $request->input('selectedRows');
+
+
+        // Accessing specific elements
+        foreach ($selectedRows as $row) {
+            $checkIn = $row['checkIn'];
+            $checkOut = $row['checkOut'];
+            $shiftId = $row['shiftId'];
+            $punchRecordId = $row['punchRecordId'];
+
+            // Parse checkIn and checkOut using Carbon
+            $carbonCheckIn = Carbon::createFromFormat('h:i A', $checkIn);
+            $carbonCheckOut = Carbon::createFromFormat('h:i A', $checkOut);
+
+            // Retrieve specific columns from the Shift model
+            $shiftData = Shift::select('shift_start', 'shift_end')->find($shiftId);
+
+            // Convert shift_start and shift_end to Carbon instances
+            $carbonShiftStart = Carbon::parse($shiftData['shift_start']);
+            $carbonShiftEnd = Carbon::parse($shiftData['shift_end']);
+
+            // Calculate late by adding lateThreshold to checkIn time
+            $carbonCheckLate = $carbonShiftStart->copy()->addMinutes($lateThreshold);
+
+            // Calculate overtime by adding overtimeCalculation to checkOut time
+            $carbonCheckOT = $carbonShiftEnd->copy()->addMinutes($overtimeCalculation);
+
+            if($carbonCheckIn->greaterThanOrEqualTo($carbonCheckLate)) {
+                // Compare checkOut with checkOT and calculate new total hour accordingly
+                if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
+                    // If checkOut is greater than checkOT, calculate new total hour using shift end time
+                    $newTotalWork = $carbonShiftEnd->diffInMinutes($carbonCheckIn);
+                } else {
+                    // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
+                    $newTotalWork = $carbonCheckOut->diffInMinutes($carbonCheckIn);
+                }
+            } else {
+                // Compare checkOut with checkOT and calculate new total hour accordingly
+                if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
+                    // If checkOut is greater than checkOT, calculate new total hour using shift end time
+                    $newTotalWork = ($carbonShiftEnd)->diffInMinutes($carbonShiftStart);
+                } else {
+                    // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
+                    $newTotalWork = ($carbonCheckOut)->diffInMinutes($carbonShiftStart);
+                }
+            }
+
+            $newTotalWorkInHours = number_format($newTotalWork / 60, 2);
+
+            // Update the total_work column in the PunchRecord model
+            PunchRecord::where('id', $punchRecordId)->update(['total_work' => $newTotalWorkInHours]);
+        }
+
+        return response()->json(['message' => 'Successfully updated']);
+    }
+
     public function otherImage($employeeId){
         $user = User::find($employeeId);
         $otherImages = OtherImage::where('employee_id', $employeeId)->get();
@@ -2581,90 +2656,6 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function recalculateTotalHour(Request $request) {
-        // Get the "Late Threshold Minutes" setting value
-        $lateThreshold = Setting::where('setting_name', 'Late Threshold (in minutes)')->value('value');
 
-        // Fetch the "Overtime Calculation" setting value
-        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation (in minutes)')->value('value');
-
-        $selectedRows = $request->input('selectedRows');
-        $shiftDataArray = [];
-        $punchRecordDataArray = [];
-        $hoursDiffArray = [];
-        $newTotalHourArray = [];
-
-        // Accessing specific elements
-        foreach ($selectedRows as $row) {
-            $date = $row['date'];
-            $fullName = $row['fullName'];
-            $shift = $row['shift'];
-            $checkIn = $row['checkIn'];
-            $checkOut = $row['checkOut'];
-            $totalHour = $row['totalHour'];
-            $shiftId = $row['shiftId'];
-            $punchRecordId = $row['punchRecordId'];
-
-            // Parse checkIn and checkOut using Carbon
-            $carbonCheckIn = Carbon::createFromFormat('h:i A', $checkIn);
-            $carbonCheckOut = Carbon::createFromFormat('h:i A', $checkOut);
-
-            // Calculate the difference between checkOut and checkIn
-            $hoursDiff = $carbonCheckOut->diffInHours($carbonCheckIn);
-
-            // Add the calculated hours difference to the array
-            // $hoursDiffArray[] = $hoursDiff;
-
-            // Retrieve specific columns from the Shift model
-            $shiftData = Shift::select('shift_start', 'shift_end')->find($shiftId);
-
-            // Convert shift_start and shift_end to Carbon instances
-            $carbonShiftStart = Carbon::parse($shiftData['shift_start']);
-            $carbonShiftEnd = Carbon::parse($shiftData['shift_end']);
-
-            // Add the shift data to the array
-            // $shiftDataArray[] = $shiftData;
-
-            // Calculate overtime by adding overtimeCalculation to checkOut time
-            $carbonCheckOT = $carbonCheckOut->copy()->addMinutes($overtimeCalculation);
-
-            // Add the calculated overtime to the array
-            // $checkOTArray[] = $carbonCheckOT;
-
-            // Calculate late by adding lateThreshold to checkIn time
-            $carbonCheckLate = $carbonCheckIn->copy()->addMinutes($lateThreshold);
-
-            // Add the calculated lateThreshold to the array
-            // $checkLateArray[] = $carbonCheckLate;
-
-            if($carbonCheckIn->greaterThan($carbonCheckLate)) {
-                // Compare checkOut with checkOT and calculate new total hour accordingly
-                if ($carbonCheckOut->greaterThan($carbonCheckOT)) {
-                    // If checkOut is greater than checkOT, calculate new total hour using shift end time
-                    $newTotalHour = $carbonCheckIn->diffInHours($carbonShiftEnd);
-                } else {
-                    // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
-                    $newTotalHour = $carbonCheckIn->diffInHours($carbonCheckOut);
-                }
-            } else {
-                // Compare checkOut with checkOT and calculate new total hour accordingly
-                if ($carbonCheckOut->greaterThan($carbonCheckOT)) {
-                    // If checkOut is greater than checkOT, calculate new total hour using shift end time
-                    $newTotalHour = ($carbonShiftStart)->diffInHours($carbonShiftEnd);
-                } else {
-                    // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
-                    $newTotalHour = ($carbonShiftStart)->diffInHours($carbonCheckOut);
-                }
-            }
-
-            dd($newTotalHour);
-
-            // Update the total_work column in the PunchRecord model
-            PunchRecord::where('id', $punchRecordId)->update(['total_work' => $newTotalHour]);
-        }
-
-        Alert::success('Done', 'Successfully Updated');
-        return view('admin.totalWork', compact('selectedRows', 'shiftDataArray', 'checkOTArray', 'newTotalHourArray'));
-    }
 
 }

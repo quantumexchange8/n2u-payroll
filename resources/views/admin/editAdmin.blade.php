@@ -82,7 +82,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group" style="display: none;">
                                     <label class="font-14 bold mb-2">Nationality</label>
-                                    <select class="theme-input-style" id="nation" name="nation" autocomplete="off">
+                                    <select class="theme-input-style" id="nation" name="nation">
                                         <option value="">Select Nationality</option>
                                         <option value="Malaysia" {{ $user->nation === 'Malaysia' ? 'selected' : '' }}>Malaysia</option>
                                         <option value="Thailand" {{ $user->nation === 'Thailand' ? 'selected' : '' }}>Thailand</option>

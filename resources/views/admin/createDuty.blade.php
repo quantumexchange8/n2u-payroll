@@ -17,7 +17,7 @@
                             <div class="col-lg-6">
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Duty</label>
+                                    <label class="font-14 bold mb-2">Duty Name</label>
                                     <input type="text" class="theme-input-style" id="duty_name" name="duty_name" autocomplete="off" placeholder="Duty Name" value="{{ old('duty_name') }}">
                                     @error('duty_name')
                                         <span class="text-danger">{{ $message }}</span>

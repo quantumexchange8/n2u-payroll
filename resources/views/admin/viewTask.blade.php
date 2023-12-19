@@ -48,11 +48,11 @@
 
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
-                        <table class="text-nowrap table-bordered dh-table">
+                        <table class="text-nowrap bg-white dh-table">
                             <thead>
                                 <tr>
                                     <th>Date</th>
-                                    <th>Nickname</th>
+                                    <th>Name</th>
                                     <th>Period</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>

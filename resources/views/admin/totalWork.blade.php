@@ -35,9 +35,9 @@
                                     </button>
 
                                     <div class="dropdown-menu" aria-labelledby="user-filter-dropdown">
-                                        <a class="dropdown-item" href="#" data-user-filter="all" data-full-name="All Users">All Users</a>
+                                        <a class="dropdown-item" href="#" data-user-filter="all" data-nickname="All Users">All Users</a>
                                         @foreach ($users as $user)
-                                            <a class="dropdown-item" href="#" data-user-filter="{{ $user->id }}" data-full-name="{{ $user->full_name }}">{{ $user->full_name }}</a>
+                                            <a class="dropdown-item" href="#" data-user-filter="{{ $user->id }}" data-nickname="{{ $user->nickname }}">{{ $user->nickname }}</a>
                                         @endforeach
                                     </div>
                                 </div>
@@ -178,7 +178,10 @@
                                     @endforeach
 
                                     @foreach ($combinedRecords as $pair)
-                                        <tr data-date="{{ \Carbon\Carbon::parse($pair->first()->created_at ?? null )->format('Y-m-d') }}" data-full-name="{{ $user->full_name }}">
+                                    <tr data-date="{{ \Carbon\Carbon::parse($pair->first()->created_at ?? null )->format('Y-m-d') }}" data-nickname="{{ $user->nickname }}">
+                                            {{-- @php
+                                                dd($user->nickname);
+                                            @endphp --}}
                                             <td>
                                                 <!-- Custom Checkbox -->
                                                 <label class="custom-checkbox">
@@ -188,7 +191,7 @@
                                                 <!-- End Custom Checkbox -->
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($pair->first()->created_at)->format('d M Y') }}</td>
-                                            <td>{{ $user->full_name }}</td>
+                                            <td>{{ $user->nickname }}</td>
                                             {{-- <td>
                                                 @php
 
@@ -278,29 +281,39 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 {{-- Filter by user's full name --}}
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const tableRows = document.querySelectorAll('.dh-table tbody tr');
-        const dropdownItems = document.querySelectorAll('.dropdown-item[data-full-name]');
+        const tableRows = document.querySelectorAll('.invoice-list tbody tr');
+        console.log('Table Rows:', tableRows);
+        const dropdownItems = document.querySelectorAll('.dropdown-item[data-nickname]');
 
         dropdownItems.forEach(function(item) {
             item.addEventListener('click', filterTable);
         });
 
         function filterTable(event) {
-            const selectedFullName = event.target.getAttribute('data-full-name');
+            console.log('Filtering...');
+
+            const selectedNickname = event.target.dataset.nickname;
+
+            console.log('Number of Table Rows:', tableRows.length);
 
             tableRows.forEach(function(row) {
-                const fullName = row.dataset.fullName;
+                console.log('Row data attributes:', row.dataset);
+                const nickname = row.dataset.nickname;
+                console.log('Row:', row);
+                console.log('Nickname:', nickname);
 
-                if (!selectedFullName || selectedFullName === 'All Users' || fullName === selectedFullName) {
+
+                if (!selectedNickname || selectedNickname === 'All Users' || nickname === selectedNickname) {
                     row.style.display = ''; // Show the row
                 } else {
                     row.style.display = 'none'; // Hide the row
                 }
             });
 
-            console.log('Selected Full Name:', selectedFullName);
+            console.log('Selected Nickname:', selectedNickname);
         }
     });
 </script>
@@ -333,7 +346,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const monthYearFilter = document.getElementById('month-year-filter');
-        const tableRows = document.querySelectorAll('.dh-table tbody tr');
+        const tableRows = document.querySelectorAll('.invoice-list tbody tr');
 
         monthYearFilter.addEventListener('input', filterTable);
 
@@ -377,7 +390,7 @@
 
     function exportFilteredDataToExcel() {
         // Get the table element by its class or ID
-        const table = document.querySelector('.dh-table');
+        const table = document.querySelector('.invoice-list');
 
         // Define an array to store the filtered table data
         const filteredData = [];
@@ -386,7 +399,7 @@
         const headerRow = table.querySelector('thead tr');
         const headerData = [];
         const headerCells = headerRow.cells;
-        for (let i = 0; i < headerCells.length - 1; i++) {
+        for (let i = 1; i < headerCells.length - 1; i++) {
             headerData.push(headerCells[i].textContent.trim());
         }
         filteredData.push(headerData);
@@ -397,7 +410,7 @@
             if (row.style.display !== 'none') {
                 const rowData = [];
                 const cells = row.cells;
-                for (let i = 0; i < cells.length - 1; i++) {
+                for (let i = 1; i < cells.length - 1; i++) {
                     rowData.push(cells[i].textContent.trim());
                 }
                 filteredData.push(rowData);
@@ -458,64 +471,14 @@
 
 
 {{-- Recalculate the total hour --}}
-{{-- <script>
-    $(document).ready(function() {
-        // Handle the Recalculate button click
-        $('#recalculateButton').click(function() {
-            // Array to store selected checkbox values
-            var selectedRows = [];
-
-            // Loop through all checkboxes
-            $('table.invoice-list tbody input[type="checkbox"]:checked').each(function() {
-                // Get the value of the checkbox (you may need to adjust this based on your HTML structure)
-                var id = $(this).closest('tr').data('id');
-
-                // Get data associated with the selected row
-                var rowData = {
-                    id: id,
-                    date: $(this).closest('tr').data('date'),
-                    fullName: $(this).closest('tr').data('full-name'),
-                    shift: $(this).closest('tr').find('td:eq(3)').text().trim(),  // Trim whitespace
-                    checkIn: $(this).closest('tr').find('td:eq(4)').text().trim(),  // Trim whitespace
-                    checkOut: $(this).closest('tr').find('td:eq(5)').text().trim(),  // Trim whitespace
-                    totalHour: $(this).closest('tr').find('td:eq(6)').text().trim()  // Trim whitespace
-                };
-
-                // Add the rowData to the array
-                selectedRows.push(rowData);
-            });
-
-            // Log the selected rows to the console
-            console.log('Selected Rows:', selectedRows);
-
-
-            // Send an AJAX request to your server with the selected checkbox ids
-            $.ajax({
-                url: '{{ route("recalculateTotalHour") }}', // Replace with your recalculate endpoint
-                method: 'POST',
-                data: {
-                    selectedRows: selectedRows,
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    // Handle the success response (if needed)
-                    // console.log('Recalculation success:', response);
-
-                },
-                error: function(error) {
-                    // Handle the error response (if needed)
-                    console.error('Recalculation error:', error);
-                }
-            });
-        });
-    });
-</script> --}}
-
-
 <script>
     $(document).ready(function() {
         // Handle the Recalculate button click
         $('#recalculateButton').click(function() {
+
+            // Log a message to the console to check if the click event is being triggered
+            console.log('Recalculate button clicked');
+
             // Array to store selected checkbox values
             var selectedRows = [];
 
@@ -544,6 +507,9 @@
             // Log the selected rows to the console
             console.log('Selected Rows:', selectedRows);
 
+            // Log the start of the AJAX request
+            console.log('Sending AJAX request');
+
             // Send an AJAX request to your server with the selected checkbox ids
             $.ajax({
                 url: '{{ route("recalculateTotalHour") }}', // Replace with your recalculate endpoint
@@ -554,7 +520,18 @@
                 },
                 success: function(response) {
                     // Handle the success response (if needed)
-                    // console.log('Recalculation success:', response);
+                    console.log('Recalculation success:', response);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Done',
+                        text: 'Successfully Updated',
+                    }).then(function() {
+                        // Reload the page after the SweetAlert is closed
+                        location.reload();
+                    });
+
+                    console.log('SweetAlert displayed');
 
                 },
                 error: function(error) {

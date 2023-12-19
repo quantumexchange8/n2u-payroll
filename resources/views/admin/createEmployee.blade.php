@@ -49,7 +49,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">IC Number / Passport</label>
-                                    <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number" value="{{ old('ic_number') }}">
+                                    <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number / Passport" value="{{ old('ic_number') }}">
                                     @error('ic_number')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -68,7 +68,7 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Email</label>
+                                    <label class="font-14 bold mb-2">Email Address</label>
                                     <input type="email" class="theme-input-style" id="email" name="email" autocomplete="off" placeholder="Email Address" value="{{ old('email') }}">
                                     @error('email')
                                         <span class="text-danger">{{ $message }}</span>
@@ -155,7 +155,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Nationality</label>
-                                    <select class="theme-input-style" id="nation" name="nation" autocomplete="off" value="{{ old('nation') }}">
+                                    <select class="theme-input-style" id="nation" name="nation" value="{{ old('nation') }}">
                                         <option value="">Select Nationality</option>
                                         <option value="Malaysia">Malaysia</option>
                                         <option value="Thailand">Thailand</option>
@@ -183,7 +183,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Bank Name</label>
-                                    <select class="theme-input-style" id="bank_name" name="bank_name" autocomplete="off" value="{{ old('bank_name') }}">
+                                    <select class="theme-input-style" id="bank_name" name="bank_name" value="{{ old('bank_name') }}">
                                         <option value="">Select Bank Name</option>
                                         <option value="Maybank">Maybank</option>
                                         <option value="CIMB">CIMB</option>

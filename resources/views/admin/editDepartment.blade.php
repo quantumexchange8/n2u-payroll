@@ -18,7 +18,7 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">Department</label>
+                                    <label class="font-14 bold mb-2">Department Name</label>
                                     <input type="text" class="theme-input-style" id="department_name" name="department_name" autocomplete="off" placeholder="Department Name" value="{{$department->department_name}}">
                                     @error('department_name')
                                         <span class="text-danger">{{ $message }}</span>

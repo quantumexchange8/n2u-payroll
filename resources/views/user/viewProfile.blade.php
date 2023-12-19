@@ -38,7 +38,7 @@
                                                     <label for="full_name">Full Name</label>
                                                 </div>
                                                 <div class="col-9">
-                                                    <input type="text" id="full_name" name="full_name" class="form-control" value="{{$user->full_name}}">
+                                                    <input type="text" id="full_name" name="full_name" class="form-control" autocomplete="off" value="{{$user->full_name}}">
                                                 </div>
                                             </div>
                                             <!-- End Form Group -->
@@ -49,7 +49,7 @@
                                                     <label for="address">Address</label>
                                                 </div>
                                                 <div class="col-9">
-                                                    <input type="text" id="address" name="address" class="form-control" value="{{$user->address}}">
+                                                    <input type="text" id="address" name="address" class="form-control" autocomplete="off" value="{{$user->address}}">
                                                 </div>
                                             </div>
                                             <!-- End Form Group -->
@@ -60,7 +60,7 @@
                                                     <label for="email">Email</label>
                                                 </div>
                                                 <div class="col-9">
-                                                    <input type="email" id="email" name="email" class="form-control" value="{{$user->email}}">
+                                                    <input type="email" id="email" name="email" class="form-control" autocomplete="off" value="{{$user->email}}">
                                                 </div>
                                             </div>
                                             <!-- End Form Group -->
@@ -71,7 +71,7 @@
                                                     <label for="edit-position">Position</label>
                                                 </div>
                                                 <div class="col-9">
-                                                    <input type="text" id="position" class="form-control" value="{{$user->position->position_name}}" readonly>
+                                                    <input type="text" id="position" class="form-control" value="{{ optional($user->position)->position_name }}" readonly>
                                                 </div>
                                             </div>
                                             <!-- End Form Group -->

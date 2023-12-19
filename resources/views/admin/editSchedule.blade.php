@@ -104,13 +104,13 @@
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
-                                                        <label for="inputMobile" class="bold mb-2">Start</label>
+                                                        <label for="inputMobile" class="bold mb-2">Start Time</label>
                                                         <input type="time" class="form-control" name="start_time" value="{{ $task->start_time }}" required>
                                                     </div>
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
-                                                        <label for="inputMobile" class="bold mb-2">End</label>
+                                                        <label for="inputMobile" class="bold mb-2">End Time</label>
                                                         <input type="time" class="form-control" name="end_time" value="{{ $task->end_time }}" required>
                                                     </div>
                                                     <!-- End Form Group -->
@@ -149,7 +149,7 @@
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputName" class="bold mb-2">Period</label>
-                                                        <select class="theme-input-style" id="period_id" name="period_id" value="{{ old('period_id') }}" required>
+                                                        <select class="theme-input-style" id="period_id" name="period_id" value="{{ old('period_id') }}" >
                                                             <option value="">Select Period</option>
                                                             @foreach ($periods as $period)
                                                                 <option value="{{ $period->id }}">{{ $period->period_name }}</option>
@@ -162,20 +162,20 @@
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
-                                                        <label for="inputMobile" class="bold mb-2">Start</label>
-                                                        <input type="time" class="form-control" name="start_time" value="" required>
+                                                        <label for="inputMobile" class="bold mb-2">Start Time</label>
+                                                        <input type="time" class="form-control" name="start_time" value="">
                                                     </div>
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
-                                                        <label for="inputMobile" class="bold mb-2">End</label>
-                                                        <input type="time" class="form-control" name="end_time" value="" required>
+                                                        <label for="inputMobile" class="bold mb-2">End Time</label>
+                                                        <input type="time" class="form-control" name="end_time" value="">
                                                     </div>
                                                     <!-- End Form Group -->
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputCompany" class="bold mb-2">Duty</label>
-                                                        <select class="theme-input-style" name="duty_id" required>
+                                                        <select class="theme-input-style" name="duty_id" >
                                                             <option value="">Select Duty</option>
                                                             @foreach($duties as $duty)
                                                                 <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>

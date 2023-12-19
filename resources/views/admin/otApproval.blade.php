@@ -60,10 +60,10 @@
 
                         <div class="table-responsive">
                             <!-- Attendance Table -->
-                            <table class="text-nowrap table-bordered dh-table">
+                            <table class="text-nowrap bg-white dh-table">
                                 <thead>
                                     <tr>
-                                        <th>Employee ID</th>
+                                        {{-- <th>Employee ID</th> --}}
                                         <th>Name</th>
                                         <th>Date</th>
                                         <th>Shift Start</th>
@@ -86,8 +86,8 @@
                                         @endphp
                                         @if (!empty($otapproval))
                                             <tr class="status-{{ $otapproval }}" data-date="{{ $recordDate }}">
-                                                <td>{{ $otapproval->employee_id }}</td>
-                                                <td>{{ $otapproval->user->full_name }}</td>
+                                                {{-- <td>{{ $otapproval->employee_id }}</td> --}}
+                                                <td>{{ $otapproval->user->nickname }}</td>
                                                 <td>{{ Carbon\Carbon::parse($otapproval->date)->format('d M Y') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($otapproval->shift_start)->format('g:i A') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($otapproval->shift_end)->format('g:i A') }}</td>

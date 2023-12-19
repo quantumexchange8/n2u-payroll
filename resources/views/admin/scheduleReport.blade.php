@@ -8,8 +8,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 <!-- Bootstrap JS (Popper.js and Bootstrap JS) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> --}}
+
 
 
 <!-- Main Content -->
@@ -70,7 +71,7 @@
                                 <div class="col-md-1">
                                     <div class="form-row">
                                         <div class="col-12">
-                                            <a href="#" class="btn long duplicate-btn">Duplicate</a>
+                                            <a href="#" class="btn long duplicate-btn">Copy</a>
                                         </div>
                                     </div>
                                 </div>
@@ -98,7 +99,7 @@
                                     <th>Shift Start</th>
                                     <th>Shift End</th>
                                     <th>Remarks</th>
-                                    <th>Action</th>
+                                    <th style="text-align:left;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -109,7 +110,7 @@
                                     @endphp
 
                                     @if ($recordDate)
-                                        <tr data-schedule-id="{{ $schedule->id }}" data-tasks="{{ json_encode($schedule->tasks) }}" data-date="{{ $recordDate }}" data-full-name="{{ $employeeName }}">
+                                        <tr data-schedule-id="{{ $schedule->id }}" data-tasks="{{ json_encode($schedule->tasks) }}" data-date="{{ $recordDate }}" data-full-name="{{ $schedule->user->nickname }}">
                                             <td>
                                                 <!-- Custom Checkbox -->
                                                 <label class="custom-checkbox">
@@ -135,7 +136,7 @@
                                                 @endif
                                             </td>
                                             <td>{{ $schedule->remarks }}</td>
-                                            <td>
+                                            <td style="text-align:left;">
                                                 <button class="details-btn view-btn" data-toggle="modal" data-target="#viewModal{{ $schedule->id }}">
                                                     View <i class="icofont-eye"></i>
                                                 </button>
@@ -157,7 +158,7 @@
                                                                             <th>Period</th>
                                                                             <th>Start Time</th>
                                                                             <th>End Time</th>
-                                                                            <th>Duty Name</th>
+                                                                            <th>Duty</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -210,14 +211,11 @@
 
 @endsection
 
-<!-- Include jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-
 {{-- Filter by user's full name --}}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const tableRows = document.querySelectorAll('.dh-table tbody tr');
+        const tableRows = document.querySelectorAll('.invoice-list tbody tr');
+        console.log('Table Rows:', tableRows);
         const dropdownItems = document.querySelectorAll('.dropdown-item[data-full-name]');
 
         dropdownItems.forEach(function(item) {
@@ -246,7 +244,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const dateFilter = document.getElementById('date-filter');
-        const tableRows = document.querySelectorAll('.dh-table tbody tr');
+        const tableRows = document.querySelectorAll('.invoice-list tbody tr');
 
         dateFilter.addEventListener('input', filterTable);
 
@@ -288,7 +286,7 @@
 
     function exportFilteredDataToExcel() {
         // Get the table element by its class or ID
-        const table = document.querySelector('.dh-table');
+        const table = document.querySelector('.invoice-list');
 
         // Define an array to store the filtered table data
         const filteredData = [];
@@ -297,7 +295,7 @@
         const headerRow = table.querySelector('thead tr');
         const headerData = [];
         const headerCells = headerRow.cells;
-        for (let i = 0; i < headerCells.length - 1; i++) {
+        for (let i = 1; i < headerCells.length - 1; i++) {
             headerData.push(headerCells[i].textContent.trim());
         }
         filteredData.push(headerData);
@@ -308,7 +306,7 @@
             if (row.style.display !== 'none') {
                 const rowData = [];
                 const cells = row.cells;
-                for (let i = 0; i < cells.length - 1; i++) {
+                for (let i = 1; i < cells.length - 1; i++) {
                     rowData.push(cells[i].textContent.trim());
                 }
                 filteredData.push(rowData);
@@ -328,7 +326,16 @@
     }
 </script>
 
+
+<!-- Include Bootstrap JS (Popper.js and Bootstrap JS) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
 {{-- Copy Paste Record --}}
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 <script>
     $(document).ready(function() {
 
@@ -350,11 +357,11 @@
 
                 // Get the data you want to duplicate (modify as needed)
                 var scheduleId = row.data('schedule-id');
-                var date = row.find('td:eq(1)').text();
-                var nickname = row.find('td:eq(2)').text();
-                var shiftStart = row.find('td:eq(3)').text();
-                var shiftEnd = row.find('td:eq(4)').text();
-                var remarks = row.find('td:eq(5)').text();
+                var date = row.find('td:eq(1)').text().trim();
+                var nickname = row.find('td:eq(2)').text().trim();
+                var shiftStart = row.find('td:eq(3)').text().trim();
+                var shiftEnd = row.find('td:eq(4)').text().trim();
+                var remarks = row.find('td:eq(5)').text().trim();
 
                 // Get tasks data from the data attribute
                 var tasks = row.data('tasks');
@@ -397,13 +404,13 @@
                                 <div class="form-group">
                                     <label for="userDropdown">Select User:</label>
                                     <select class="form-control" id="userDropdown" name="selectedUser">
-                                        ${users.map(user => `<option value="${user.id}">${user.full_name}</option>`).join('')}
+                                        ${users.map(user => `<option value="${user.id}">${user.nickname}</option>`).join('')}
                                     </select>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" id="duplicateDataBtn">Duplicate Data</button>
+                                <button type="button" class="btn btn-primary" id="duplicateDataBtn">Paste</button>
                             </div>
                         </div>
                     </div>
@@ -484,11 +491,18 @@
                             icon: 'error',
                             title: 'Error',
                             text: 'Failed to duplicate data due to the schedule already exist.',
-                            footer: '<pre>' + xhr.responseText + '</pre>'
+                            // footer: '<pre>' + xhr.responseText + '</pre>'
                         });
                     }
-
                 });
+
+            });
+
+
+            // Handle Close button click
+            $('.modal-header .close, .modal-footer .btn-secondary').on('click', function() {
+                // Close the user selection modal
+                $('#userSelectionModal').modal('hide');
             });
 
         });

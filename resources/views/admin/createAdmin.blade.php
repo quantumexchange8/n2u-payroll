@@ -46,8 +46,6 @@
                                 </div>
                                 <!-- End Form Group -->
 
-
-
                                 <!-- Form Group -->
                                 <div class="form-group" style="display: none;">
                                     <label class="font-14 bold mb-2">Role</label>
@@ -86,7 +84,7 @@
                                     @enderror
                                 </div>
                                 <!-- End Form Group -->
-                                
+
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Password</label>

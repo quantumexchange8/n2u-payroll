@@ -100,7 +100,7 @@
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">Start</label>
-                                                    <input type="time" class="form-control" id="start_time" name="group-a[0][start_time]">
+                                                    <input type="time" class="form-control" id="start_time" name="group-a[0][start_time]" autocomplete="off">
                                                     @error('group-a.0.start_time')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -110,7 +110,7 @@
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">End</label>
-                                                    <input type="time" class="form-control" id="end_time" name="group-a[0][end_time]">
+                                                    <input type="time" class="form-control" id="end_time" name="group-a[0][end_time]" autocomplete="off">
                                                     @error('group-a.0.end_time')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror

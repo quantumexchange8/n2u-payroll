@@ -5,7 +5,7 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            
+
             <div class="col-12">
                 <div class="card mb-30">
 
@@ -26,10 +26,10 @@
 
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
-                        <table class="text-nowrap table-bordered dh-table">
+                        <table class="text-nowrap bg-white dh-table">
                             <thead>
                                 <tr>
-                                    <th>Position Name</th>
+                                    <th>Position</th>
                                     <th>Department</th>
                                     <th>Actions</th>
                                 </tr>
