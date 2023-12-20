@@ -215,7 +215,7 @@
                                                     ->first();
                                             @endphp
 
-                                            <td data-shift-id="{{ $shift->id }}">
+                                            <td data-shift-id="{{ $shift->id ?? null}}">
                                                 @if ($shift)
                                                     {{-- Display shift information, e.g., {{ $shift->id }} --}}
                                                     {{ \Carbon\Carbon::parse($shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($shift->shift_end)->format('h:i A') }}
