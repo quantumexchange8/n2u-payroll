@@ -117,13 +117,14 @@ class AdminController extends Controller
                 $validatedData['account_pic'] = $filename;
             }
 
-
             // Handle other images
             if ($request->hasFile('other_image')) {
                 $file = $request->file('other_image');
                 $extension = $file->getClientOriginalExtension();
                 $otherImageFilename = $full_name_with_underscores . '_other_image.' . time() . '.' . $extension;// Modify the file name
-                $file->move('uploads/employee/otherImage/', $otherImageFilename);
+                // $file->move('uploads/employee/otherImage/', $otherImageFilename);
+                $file->move(public_path('uploads/employee/otherImage/'), $otherImageFilename);
+
 
                 // Create the user record with the validated and modified data
                 $user = User::create($validatedData);
