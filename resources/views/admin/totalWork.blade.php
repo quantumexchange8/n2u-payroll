@@ -177,8 +177,11 @@
                                         @endphp
                                     @endforeach
 
-                                    @foreach ($combinedRecords as $pair)
-                                    <tr data-date="{{ \Carbon\Carbon::parse($pair->first()->created_at ?? null )->format('Y-m-d') }}" data-nickname="{{ $user->nickname }}">
+                                    @foreach ($combinedRecords->sortBy(function($pair) {
+                                        return \Carbon\Carbon::parse($pair->first()->created_at)->timestamp;
+                                    }) as $pair)
+
+                                        <tr data-date="{{ \Carbon\Carbon::parse($pair->first()->created_at ?? null )->format('Y-m-d') }}" data-nickname="{{ $user->nickname }}">
                                             {{-- @php
                                                 dd($user->nickname);
                                             @endphp --}}
@@ -192,21 +195,6 @@
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($pair->first()->created_at)->format('d M Y') }}</td>
                                             <td>{{ $user->nickname }}</td>
-                                            {{-- <td>
-                                                @php
-
-                                                    $shift = App\Models\Schedule::join('shifts', 'schedules.shift_id', 'shifts.id')
-                                                    ->where('employee_id', $user->id)
-                                                    ->where('date', \Carbon\Carbon::parse($pair->first()->created_at)->format('Y-m-d')) // Filter by the current date
-                                                    ->orderBy('shifts.shift_start')
-                                                    ->first();
-
-                                                @endphp
-
-                                                @if ($shift)
-                                                    {{ \Carbon\Carbon::parse($shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($shift->shift_end)->format('h:i A') }}
-                                                @endif
-                                            </td> --}}
 
                                             @php
                                                 // Determine if the user has two shifts (status_clock 1 and 2 and 3 and 4)

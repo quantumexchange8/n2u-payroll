@@ -2551,10 +2551,12 @@ class AdminController extends Controller
 
         // Accessing specific elements
         foreach ($selectedRows as $row) {
+            $date = $row['date'];
             $checkIn = $row['checkIn'];
             $checkOut = $row['checkOut'];
             $shiftId = $row['shiftId'];
             $punchRecordId = $row['punchRecordId'];
+
 
             // Parse checkIn and checkOut using Carbon
             $carbonCheckIn = Carbon::createFromFormat('h:i A', $checkIn);
@@ -2597,6 +2599,51 @@ class AdminController extends Controller
 
             // Update the total_work column in the PunchRecord model
             PunchRecord::where('id', $punchRecordId)->update(['total_work' => $newTotalWorkInHours]);
+
+            $employee = PunchRecord::join('users', 'punch_records.employee_id', 'users.id')
+                                        ->where('punch_records.id', $punchRecordId)
+                                        ->select('users.employee_id')
+                                        ->first();
+
+            $employee_id = $employee->employee_id;
+
+            $clockOut = PunchRecord::where('id', $punchRecordId)
+                                    ->select('clock_out_time')
+                                    ->first();
+
+            $clockOutTime = Carbon::parse($clockOut->clock_out_time)->format('H:i:s');
+
+            if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
+                $otMinutesDifference = $carbonCheckOut->diffInMinutes($carbonCheckOT);
+
+                $otInHours = $otMinutesDifference / 60;
+
+                $otInHoursRounded = number_format($otInHours, 2);
+
+                $existingOTRecord = OtApproval::where('date', $date)
+                                                ->where('employee_id', $employee_id)
+                                                ->where('shift_start', $shiftData['shift_start'])
+                                                ->where('shift_end', $shiftData['shift_end']);
+                if ($existingOTRecord) {
+                    $updateOt = OtApproval::where('date', $date)
+                                ->where('employee_id', $employee_id)
+                                ->where('shift_start', $shiftData['shift_start'])
+                                ->where('shift_end', $shiftData['shift_end'])
+                                ->update(['ot_hour'  => $otInHoursRounded]);
+                } else {
+                    $newOt = OtApproval::create([
+                        'employee_id' => $employee_id,
+                        'date' => $date,
+                        'shift_start' => $shiftData['shift_start'],
+                        'shift_end' => $shiftData['shift_end'],
+                        'clock_out_time' => $clockOutTime,
+                        'ot_hour' => $otInHoursRounded,
+                        'status' => 'Pending'
+                    ]);
+                }
+
+                PunchRecord::where('id', $punchRecordId)->update(['ot_approval' => 'Pending']);
+            }
         }
 
         return response()->json(['message' => 'Successfully updated']);

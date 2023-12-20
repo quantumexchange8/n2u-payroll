@@ -138,7 +138,7 @@
                                             <td>{{ $schedule->remarks }}</td>
                                             <td style="text-align:left;">
                                                 <button class="details-btn view-btn" data-toggle="modal" data-target="#viewModal{{ $schedule->id }}">
-                                                    View <i class="icofont-eye"></i>
+                                                    View More<i class="icofont-eye"></i>
                                                 </button>
 
                                                 <!-- View Modal -->
