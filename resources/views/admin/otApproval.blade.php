@@ -304,9 +304,9 @@
             console.log(punchRecord_id);
             Swal.fire({
                 title: 'Are you sure?',
-                text: 'This action will reject the order. Are you sure you want to proceed?',
+                text: 'This action will reject the OT. Are you sure you want to proceed?',
                 icon: 'warning',
-                input: 'text', // Use a text input
+                input: 'text',
                 inputLabel: 'Remark',
                 inputPlaceholder: 'Enter your remark...',
                 showCancelButton: true,

@@ -138,7 +138,7 @@
                                             <td>{{ $schedule->remarks }}</td>
                                             <td style="text-align:left;">
                                                 <button class="details-btn view-btn" data-toggle="modal" data-target="#viewModal{{ $schedule->id }}">
-                                                    View More<i class="icofont-eye"></i>
+                                                    View <i class="icofont-eye"></i>
                                                 </button>
 
                                                 <!-- View Modal -->
@@ -487,17 +487,17 @@
                         console.error('Error:', xhr.responseText);
 
                         // Display SweetAlert on error with detailed error message
+                        let errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : 'An unexpected error occurred.';
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'Failed to duplicate data due to the schedule already exist.',
-                            // footer: '<pre>' + xhr.responseText + '</pre>'
+                            text: errorMessage,
                         });
                     }
+
                 });
 
             });
-
 
             // Handle Close button click
             $('.modal-header .close, .modal-footer .btn-secondary').on('click', function() {

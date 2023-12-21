@@ -55,7 +55,7 @@
                             <!-- Form Group -->
                             <div class="form-group mb-20">
                                 <label for="e_id" class="mb-2 font-14 bold black">Employee ID</label>
-                                <input type="string" id="employee_id" name="employee_id" class="theme-input-style" placeholder="Employee ID">
+                                <input type="string" id="employee_id" name="employee_id" class="theme-input-style" placeholder="Employee ID" autocomplete="off">
                                 @error('employee_id')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror

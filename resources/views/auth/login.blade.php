@@ -86,6 +86,7 @@
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
+
                             <!-- End Form Group -->
                             <div style="display:flex;justify-content:center">
                                 <div style="width:250px">
@@ -105,9 +106,7 @@
                                     <button class="btn-keys" type="button" onclick="appendToResult(0)">0</button>
                                     <button class="btn-keys" type="submit">Login</button>
                                 </div>
-                                
                             </div>
-                            
 
                             <div class="d-flex justify-content-between mb-20">
                                 <div class="d-flex align-items-center">

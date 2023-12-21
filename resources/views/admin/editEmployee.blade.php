@@ -303,18 +303,6 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group" style="display: none;">
-                                    <label class="font-14 bold mb-2">Other Image</label>
-                                    <div style="margin-bottom: 15px;">
-                                        <a href="{{ asset('uploads/employee/otherImage/' . $other_image) }}" class="file-modal-link">{{$other_image}}</a>
-                                    </div>
-                                    <div>
-                                        <input type="file" class="theme-input-style" name="other_image" id="otherImageFile" style="background: #ffffff;">
-                                    </div>
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group" style="display: none;">
                                     <label class="font-14 bold mb-2">Password</label>
                                     <input type="password" class="theme-input-style" id="password" name="password" placeholder="Password" value="{{$user->password}}">
                                 </div>

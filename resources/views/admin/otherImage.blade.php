@@ -33,13 +33,13 @@
                         <div class="card-body">
                             @if (pathinfo($image->file_name, PATHINFO_EXTENSION) == 'pdf')
                                 <!-- Display PDF using an iframe -->
-                                <iframe src="{{ asset('uploads/employee/otherImage/' . $image->file_name) }}" width="100%" height="300" style="border: none;"></iframe>
+                                <iframe src="{{ asset('storage/employee/otherImage/' . $image->file_name) }}" width="100%" height="300" style="border: none;"></iframe>
                             @elseif (in_array(pathinfo($image->file_name, PATHINFO_EXTENSION), ['doc', 'docx']))
                                 <!-- Provide a download link for Word documents -->
-                                <a href="{{ asset('uploads/employee/otherImage/' . $image->file_name) }}" target="_blank" download="{{ $image->file_name }}">Download DOC</a>
+                                <a href="{{ asset('storage/employee/otherImage/' . $image->file_name) }}" target="_blank" download="{{ $image->file_name }}">Download DOC</a>
                             @else
                                 <!-- Display the image -->
-                                <img src="{{ asset('uploads/employee/otherImage/' . $image->file_name) }}" alt="Other Image">
+                                <img src="{{ asset('storage/employee/otherImage/' . $image->file_name) }}" alt="Other Image">
                             @endif
 
                             <div class="row">
@@ -73,13 +73,13 @@
                                             <!-- Display image or file inside the modal -->
                                             @if (pathinfo($image->file_name, PATHINFO_EXTENSION) == 'pdf')
                                                 <!-- Display PDF using an iframe -->
-                                                <iframe src="{{ asset('uploads/employee/otherImage/' . $image->file_name) }}" width="100%" height="400" style="border: none;"></iframe>
+                                                <iframe src="{{ asset('storage/employee/otherImage/' . $image->file_name) }}" width="100%" height="400" style="border: none;"></iframe>
                                             @elseif (in_array(pathinfo($image->file_name, PATHINFO_EXTENSION), ['doc', 'docx']))
                                                 <!-- Provide a download link for Word documents -->
-                                                <a href="{{ asset('uploads/employee/otherImage/' . $image->file_name) }}" target="_blank" download="{{ $image->file_name }}">Download DOC</a>
+                                                <a href="{{ asset('storage/employee/otherImage/' . $image->file_name) }}" target="_blank" download="{{ $image->file_name }}">Download DOC</a>
                                             @else
                                                 <!-- Display the image -->
-                                                <img src="{{ asset('uploads/employee/otherImage/' . $image->file_name) }}" alt="Other Image" style="max-width: 100%; max-height: 400px;">
+                                                <img src="{{ asset('storage/employee/otherImage/' . $image->file_name) }}" alt="Other Image" style="max-width: 100%; max-height: 400px;">
                                             @endif
                                         </div>
                                     </div>

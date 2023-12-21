@@ -124,10 +124,10 @@ class RecordController extends Controller
             if(!empty($firstShift) && !empty($secondShift)){
 
                 // Check if the user has reached the limit (4 times for both clock in and clock out)
-                if ($clockinCount + $clockoutCount >= 4) {
-                    // Limit reached, disable the button
-                    return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-in and clock-out actions.');
-                }
+                // if ($clockinCount + $clockoutCount >= 4) {
+                //     // Limit reached, disable the button
+                //     return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-in and clock-out actions.');
+                // }
 
                 if($status === 'Clock In') {
                     if ($clockinCount == 0){
@@ -200,8 +200,6 @@ class RecordController extends Controller
 
                                 $totalHoursRounded = number_format($totalHours, 2);
 
-                                // dd($totalHoursRounded);
-
                                 $newot = OtApproval::create([
                                     'employee_id' => Auth::user()->employee_id,
                                     'date' => $currentDate,
@@ -228,8 +226,6 @@ class RecordController extends Controller
                             // Calculate the overtime threshold time
                             $overtimeThresholdTime = $secondShiftEndTime->copy()->addMinutes($overtimeCalculationMinutes);
 
-                            // dd($overtimeCalculationMinutes, $overtimeThresholdTime);
-
                             if ($currentTime->greaterThan($overtimeThresholdTime)) {
                                 $recordData['status'] = 'Overtime';
                                 $recordData['ot_approval'] = 'Pending';
@@ -251,8 +247,6 @@ class RecordController extends Controller
                                 $totalHours = $minutesDifference / 60;
 
                                 $totalHoursRounded = number_format($totalHours, 2);
-
-                                // dd($totalHoursRounded);
 
                                 $newot = OtApproval::create([
                                     'employee_id' => Auth::user()->employee_id,
@@ -342,7 +336,6 @@ class RecordController extends Controller
                     //     }
                     // }
 
-                    // $totalWork = $firstTotalWork;
 
                     $totalWorkInHours = number_format($firstTotalWork / 60, 2);
                     $recordData['total_work'] = $totalWorkInHours;
@@ -421,13 +414,13 @@ class RecordController extends Controller
 
             } else if (!empty($firstShift) && empty($secondShift)){
                 // Check if the user has reached the limit (2 times for both clock in and clock out)
-                if ($status === 'Clock In' && $clockinCount >= 1) {
-                    // Clock In limit reached, display error message
-                    return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-in actions.');
-                } elseif ($status === 'Clock Out' && $clockoutCount >= 1) {
-                    // Clock Out limit reached, display error message
-                    return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-out actions.');
-                }
+                // if ($status === 'Clock In' && $clockinCount >= 1) {
+                //     // Clock In limit reached, display error message
+                //     return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-in actions.');
+                // } elseif ($status === 'Clock Out' && $clockoutCount >= 1) {
+                //     // Clock Out limit reached, display error message
+                //     return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-out actions.');
+                // }
 
                 if($status === 'Clock In') {
 

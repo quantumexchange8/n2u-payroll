@@ -56,9 +56,9 @@
 
             <div class="col-12">
                 <div class="card mb-30">
-                        <div class="card-body pt-30">
-                            <h4 class="font-20">Today's Shift</h4>
-                        </div>
+                    <div class="card-body pt-30">
+                        <h4 class="font-20">Today's Shift</h4>
+                    </div>
 
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
@@ -79,25 +79,37 @@
                                     // Filter schedules for today
                                     $todaySchedules = $schedules->filter(function ($schedule) use ($currentDate) {
                                         $scheduleDate = \Carbon\Carbon::createFromFormat('Y-m-d', $schedule->date);
-
                                         // Filter out schedules that match the current date
                                         return $scheduleDate->isSameDay($currentDate);
                                     });
 
                                     // Sort today's schedules by shift start time
                                     $todaySchedules = $todaySchedules->sortBy(function ($schedule) {
+                                        // Check if 'shift' relationship is null before accessing 'shift_start'
+                                        $shiftStart = optional($schedule->shift)->shift_start;
+
+                                        // Handle cases where shift_start is null
+                                        if ($shiftStart === null) {
+                                            return ''; // You can use an empty string or another default value
+                                        }
+
                                         // Calculate shift start time
-                                        $shiftStart = \Carbon\Carbon::parse($schedule->shift->shift_start);
-                                        return $shiftStart->format('H:i');
+                                        return \Carbon\Carbon::parse($shiftStart)->format('H:i');
                                     });
                                 @endphp
 
                                     @foreach ($todaySchedules as $schedule)
-                                        <tr>
-                                            <td>{{ $currentDate->format('d M Y') }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($schedule->shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($schedule->shift->shift_end)->format('h:i A') }}</td>
-                                            <td>{{ $schedule->remarks }}</td>
-                                        </tr>
+                                    <tr>
+                                        <td>{{ $currentDate->format('d M Y') }}</td>
+                                        <td>
+                                            @if ($schedule->off_day == 1)
+                                                Off Day
+                                            @else
+                                                {{ \Carbon\Carbon::parse($schedule->shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($schedule->shift->shift_end)->format('h:i A') }}
+                                            @endif
+                                        </td>
+                                        <td>{{ $schedule->remarks }}</td>
+                                    </tr>
                                     @endforeach
                             </tbody>
                             </table>
@@ -106,9 +118,15 @@
                         <!-- End Invoice List Table -->
                     </div>
 
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card mb-30">
                     <div class="card-body pt-30">
                         <h4 class="font-20">Today's Task</h4>
                     </div>
+
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
                         <div id="data-container">
@@ -305,8 +323,6 @@
     // }, 60000); // 300,000 milliseconds = 5 minutes
 
   });
-
-
 
 </script>
 

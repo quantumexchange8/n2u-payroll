@@ -151,15 +151,18 @@
                             </thead>
                             <tbody>
                                 @foreach ($users as $user)
+                                    {{-- Get punch records for the current user and sort them by created_at --}}
                                     @php
                                         $userPunchRecords = $punchRecords->where('employee_id', $user->id)->sortBy('created_at');
                                     @endphp
 
+                                    {{-- Collections to store combined punch record pairs --}}
                                     @php
                                         $combinedRecords = collect([]);
                                         $currentPair = collect([]);
                                     @endphp
 
+                                    {{-- Organize punch records into pairs --}}
                                     @foreach ($userPunchRecords as $record)
                                         @php
                                             // Check if the current record is the start of a new pair
@@ -177,68 +180,69 @@
                                         @endphp
                                     @endforeach
 
-                                    @foreach ($combinedRecords->sortBy(function($pair) {
+                                    {{-- Display user punch records in a table --}}
+                                    @foreach ($combinedRecords->sortBy(function ($pair) {
                                         return \Carbon\Carbon::parse($pair->first()->created_at)->timestamp;
                                     }) as $pair)
-
                                         <tr data-date="{{ \Carbon\Carbon::parse($pair->first()->created_at ?? null )->format('Y-m-d') }}" data-nickname="{{ $user->nickname }}">
-                                            {{-- @php
-                                                dd($user->nickname);
-                                            @endphp --}}
+                                            {{-- Custom Checkbox --}}
                                             <td>
-                                                <!-- Custom Checkbox -->
                                                 <label class="custom-checkbox">
                                                     <input type="checkbox">
                                                     <span class="checkmark"></span>
                                                 </label>
-                                                <!-- End Custom Checkbox -->
                                             </td>
+
+                                            {{-- Display date and user nickname --}}
                                             <td>{{ \Carbon\Carbon::parse($pair->first()->created_at)->format('d M Y') }}</td>
                                             <td>{{ $user->nickname }}</td>
 
+                                            {{-- Determine user shifts --}}
                                             @php
-                                                // Determine if the user has two shifts (status_clock 1 and 2 and 3 and 4)
                                                 $hasTwoShifts = $pair->first()->status_clock > 2;
-
-                                                // Determine which shift to use based on $hasTwoShifts
                                                 $shiftIndex = $hasTwoShifts ? 1 : 0;
-
-                                                // Query the database for the shift
                                                 $shift = App\Models\Schedule::join('shifts', 'schedules.shift_id', 'shifts.id')
                                                     ->where('employee_id', $user->id)
                                                     ->where('date', \Carbon\Carbon::parse($pair->first()->created_at)->format('Y-m-d'))
                                                     ->orderBy('shifts.shift_start')
                                                     ->when($hasTwoShifts, function ($query) use ($shiftIndex) {
-                                                        // If the user has two shifts, skip to the appropriate shift
                                                         return $query->skip($shiftIndex);
                                                     })
                                                     ->first();
                                             @endphp
 
+                                            {{-- Display shift details --}}
                                             <td data-shift-id="{{ $shift->id ?? null}}">
                                                 @if ($shift)
-                                                    {{-- Display shift information, e.g., {{ $shift->id }} --}}
                                                     {{ \Carbon\Carbon::parse($shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($shift->shift_end)->format('h:i A') }}
                                                 @endif
                                             </td>
+
+                                            {{-- Display clock in time --}}
                                             <td>
                                                 {{ $pair->first()->in === 'Clock In' ? \Carbon\Carbon::parse($pair->first()->clock_in_time)->format('h:i A') : '' }}
                                             </td>
 
+                                            {{-- Display clock out time --}}
                                             <td>
                                                 {{ $pair->last()->out === 'Clock Out' ? \Carbon\Carbon::parse($pair->last()->clock_out_time)->format('h:i A') : '' }}
                                             </td>
+
+                                            {{-- Display total work --}}
                                             <td data-punchrecord-id="{{ $pair->last()->id }}">
                                                 @if ($pair->last()->status_clock % 2 == 0)
                                                     {{ $pair->last()->total_work }}
                                                 @endif
                                             </td>
+
+                                            {{-- Display remarks --}}
                                             <td>
                                                 @if ($pair->last()->status_clock % 2 == 0)
                                                     {{ $pair->last()->remarks }}
                                                 @endif
                                             </td>
 
+                                            {{-- Edit button --}}
                                             <td>
                                                 <form action="{{ route('updateTotalWork', $pair->last()->id) }}" method="POST" style="display: flex; justify-content: space-between; margin-top: 15px;" id="update-form-{{$pair->last()->id}}">
                                                     @csrf
@@ -250,6 +254,7 @@
                                         </tr>
                                     @endforeach
                                 @endforeach
+
                             </tbody>
                         </table>
 

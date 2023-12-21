@@ -103,6 +103,7 @@ class MemberController extends Controller
     //     return view('user.viewSchedule', compact('schedules', 'user', 'shifts'));
     // }
 
+    // Card view
     public function viewSchedule(Request $request){
         $user = User::where('id', '=', Auth::user()->id)->first();
         $today = Carbon::now()->toDateString();
@@ -118,7 +119,6 @@ class MemberController extends Controller
 
         return view('user.viewSchedule', compact('schedules', 'user', 'tasks'));
     }
-
 
     public function viewProfile(){
         $user = auth()->user(); // Retrieve the currently logged-in user
@@ -197,7 +197,6 @@ class MemberController extends Controller
     public function getdata(){
 
         $punchRecords = PunchRecord::with('user')->get();
-        //dd($punchRecords);
 
         // Modify the date and time columns
         $punchRecords->each(function ($punchRecord) {

@@ -76,17 +76,6 @@
                                             </div>
                                             <!-- End Form Group -->
 
-                                            <!-- Form Group -->
-                                            {{-- <div class="form-group row align-items-center">
-                                                <div class="col-3">
-                                                    <label for="edit-address">Salary</label>
-                                                </div>
-                                                <div class="col-9">
-                                                    <input type="text" id="salary" class="form-control" value="{{$user->salary}}" readonly>
-                                                </div>
-                                            </div> --}}
-                                            <!-- End Form Group -->
-
                                         </div>
                                         <!-- End Edit Personal Info -->
 
@@ -94,6 +83,7 @@
                                 </div>
                                 <!-- End Card -->
                             </div>
+
                             <div class="col-xl-6">
                                 <!-- Card -->
                                 <div class="card mb-30">
@@ -153,7 +143,7 @@
                     <!-- End Form -->
 
                 </div>
-
+                
             </div>
         </div>
     </div>

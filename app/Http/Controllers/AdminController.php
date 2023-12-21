@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\EmployeeRequest;
@@ -52,7 +53,6 @@ class AdminController extends Controller
                                         ->distinct('employee_id')
                                         ->count();
 
-        // dd($totalEmployeesCount);
         // Retrieve all schedules, shifts, and settings
         $schedules = Schedule::all();
         $shifts = Shift::all();
@@ -65,11 +65,13 @@ class AdminController extends Controller
     public function viewEmployee() {
         $users = User::where('role', 'member')->with('position')->get(); // Eager load the positions
         $positions = Position::all(); // Fetch all positions
+
         return view('admin.viewEmployee', compact('users', 'positions'));
     }
 
     public function createEmployee(){
         $positions = Position::all();
+
         return view('admin.createEmployee', compact('positions'));
     }
 
@@ -122,9 +124,9 @@ class AdminController extends Controller
                 $file = $request->file('other_image');
                 $extension = $file->getClientOriginalExtension();
                 $otherImageFilename = $full_name_with_underscores . '_other_image.' . time() . '.' . $extension;// Modify the file name
-                // $file->move('uploads/employee/otherImage/', $otherImageFilename);
-                $file->move(public_path('uploads/employee/otherImage/'), $otherImageFilename);
+                $file->move('storage/employee/otherImage/', $otherImageFilename);
 
+                // Storage::putFileAs('employee/otherImage', $file, $otherImageFilename);
 
                 // Create the user record with the validated and modified data
                 $user = User::create($validatedData);
@@ -161,9 +163,8 @@ class AdminController extends Controller
         $ic_photo = $user->ic_photo;
         $offer_letter = $user->offer_letter;
         $account_pic = $user->account_pic;
-        $other_image = $user->other_image;
 
-        return view('admin.editEmployee', compact('user', 'positions', 'passport_size_photo', 'ic_photo', 'offer_letter', 'account_pic', 'other_image'));
+        return view('admin.editEmployee', compact('user', 'positions', 'passport_size_photo', 'ic_photo', 'offer_letter', 'account_pic'));
     }
 
     public function updateEmployee(EmployeeRequest $request, $id) {
@@ -179,7 +180,7 @@ class AdminController extends Controller
         $icPath = 'uploads/employee/icPhoto/';
         $offerLetterPath = 'uploads/employee/offerLetter/';
         $accountPicPath = 'uploads/employee/accountPic/';
-        $otherImagePath = 'uploads/employee/otherImage/';
+        // $otherImagePath = 'uploads/employee/otherImage/';
 
         // Handle passport size photo
         if ($request->hasFile('passport_size_photo')) {
@@ -266,23 +267,23 @@ class AdminController extends Controller
         }
 
         // Handle other image
-        if ($request->hasFile('other_image')) {
-            $otherImage = $request->file('other_image');
-            $otherImageExtension = $otherImage->getClientOriginalExtension();
-            $otherImageName = $full_name_with_underscores . '_other_image_' . time() . '.' . $otherImageExtension;
+        // if ($request->hasFile('other_image')) {
+        //     $otherImage = $request->file('other_image');
+        //     $otherImageExtension = $otherImage->getClientOriginalExtension();
+        //     $otherImageName = $full_name_with_underscores . '_other_image_' . time() . '.' . $otherImageExtension;
 
-            // Upload the new offer letter
-            $otherImage->move($otherImagePath, $otherImageName);
+        //     // Upload the new offer letter
+        //     $otherImage->move($otherImagePath, $otherImageName);
 
-            // Update the database field with the new file name
-            $validatedData['other_image'] = $otherImageName;
+        //     // Update the database field with the new file name
+        //     $validatedData['other_image'] = $otherImageName;
 
-            // Insert data into other_images table
-            OtherImage::create([
-                'employee_id' => $validatedData['employee_id'],
-                'file_name' => $otherImageName,
-            ]);
-        }
+        //     // Insert data into other_images table
+        //     OtherImage::create([
+        //         'employee_id' => $validatedData['employee_id'],
+        //         'file_name' => $otherImageName,
+        //     ]);
+        // }
 
 
         // Update the user's data based on the validated form input
@@ -294,10 +295,26 @@ class AdminController extends Controller
     }
 
     public function updateEmployeePassword(Request $request, $id){
-        // Validate the input
-        $request->validate([
-            'new_password' => ['required'],
-        ]);
+
+        // Define validation rules
+        $rules = [
+            'new_password' => 'required',
+        ];
+
+        // Define custom error messages (optional)
+        $messages = [
+            'new_password.required' => 'The New Password field is required.',
+        ];
+
+            // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         // Find the user by ID
         $user = User::find($id);
@@ -317,7 +334,8 @@ class AdminController extends Controller
 
         $employee = User::find($id);
 
-        $employee->delete(); // Soft delete the employee
+        $employee->delete();
+
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewEmployee');
     }
@@ -325,11 +343,13 @@ class AdminController extends Controller
     public function viewPosition(){
         $positions = Position::all();
         $departments = Department::all();
+
         return view('admin.viewPosition', compact('positions', 'departments'));
     }
 
     public function createPosition(){
         $departments = Department::all();
+
         return view('admin.createPosition', compact('departments'));
     }
 
@@ -369,6 +389,7 @@ class AdminController extends Controller
     public function editPosition($id){
         $positions = Position::with('department')->find($id);
         $departments = Department::all();
+
         return view('admin.editPosition', compact('positions', 'departments'));
     }
 
@@ -410,7 +431,7 @@ class AdminController extends Controller
 
         $position = Position::find($id);
 
-        $position->delete(); // Soft delete the employee
+        $position->delete();
 
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewPosition');
@@ -423,6 +444,7 @@ class AdminController extends Controller
     }
 
     public function createDepartment(){
+
         return view('admin.createDepartment');
     }
 
@@ -502,7 +524,7 @@ class AdminController extends Controller
 
         $department = Department::find($id);
 
-        $department->delete(); // Soft delete the employee
+        $department->delete();
 
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewDepartment');
@@ -515,6 +537,7 @@ class AdminController extends Controller
     }
 
     public function createDuty(){
+
         return view('admin.createDuty');
     }
 
@@ -592,7 +615,7 @@ class AdminController extends Controller
 
         $duty = Duty::find($id);
 
-        $duty->delete(); // Soft delete the employee
+        $duty->delete();
 
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewDepartment');
@@ -600,10 +623,12 @@ class AdminController extends Controller
 
     public function viewShift(){
         $shifts = Shift::all();
+
         return view('admin.viewShift', ['shifts' => $shifts]);
     }
 
     public function createShift(){
+
         return view('admin.createShift');
     }
 
@@ -695,7 +720,7 @@ class AdminController extends Controller
 
         $shift = Shift::find($id);
 
-        $shift->delete(); // Soft delete the employee
+        $shift->delete();
 
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewShift');
@@ -1091,11 +1116,11 @@ class AdminController extends Controller
             'remarks' => 'nullable',
             'selected_users' => 'required|array',
         ], [
-            'date_start.required' => 'The start date is required.',
-            'date_start.date' => 'The start date must be a valid date.',
-            'date_end.date' => 'The end date must be a valid date.',
-            'date_end.after_or_equal' => 'The end date must be after or equal to the start date.',
-            'shift_id.nullable' => 'The shift ID can be nullable.',
+            'date_start.required' => 'The Start Date is required.',
+            'date_start.date' => 'The Start Date must be a valid date.',
+            'date_end.date' => 'The End Date must be a valid date.',
+            'date_end.after_or_equal' => 'The End Date must be after or equal to the start date.',
+            'shift_id.nullable' => 'The Shift ID can be nullable.',
             'selected_users.required' => 'Please select at least one user.',
         ]);
 
@@ -1124,7 +1149,6 @@ class AdminController extends Controller
             Alert::success('Done', 'Successfully Inserted');
             return redirect()->route('schedule');
         }
-
 
         $successMessages = [];
         $failedMessages = [];
@@ -1513,50 +1537,81 @@ class AdminController extends Controller
                 $existingSchedule = Schedule::where('employee_id', $selectedUserId)
                         ->where('date', $scheduleData->date)
                         ->whereNull('deleted_at')
-                        ->first();
+                        ->count();
 
-                // Only create a new schedule if it doesn't already exist
-                if (!$existingSchedule) {
-                    // Extract specific fields from the scheduleData
-                    $selectedScheduleData = [
-                        'id' => $scheduleData->id,
-                        'date' => $scheduleData->date,
-                        'employee_id' => $selectedUserId,
-                        'shift_id' => $scheduleData->shift_id,
-                        'off_day' => $scheduleData->off_day,
-                    ];
+                if ($existingSchedule < 2) {
 
-                    // Create a new Schedule model and save it to the database
-                    $newSchedule = Schedule::create($selectedScheduleData);
+                    // Retrieve shift details based on the selected shift_id
+                    $shiftDetails = Shift::where('id', $scheduleData->shift_id)->first();
 
-                    // Check if 'tasks' key exists in the current row
-                    if (isset($row['tasks']) && is_array($row['tasks'])) {
-                        // Extract task data from the tasks array
-                        $tasksData = [];
-                        foreach ($row['tasks'] as $task) {
-                            $existingTask = Task::where('employee_id', $selectedUserId)
-                                                ->where('period_id', $task['period_id'])
-                                                ->where('date', $task['date'])
-                                                ->whereNull('deleted_at')
-                                                ->first();
+                    $newShiftStart = $shiftDetails->shift_start;
+                    $newShiftEnd = $shiftDetails->shift_end;
 
-                            // Only create a new task if it doesn't already exist
-                            if (!$existingTask) {
-                                // Create a new Task model associated with the new Schedule
-                                $newSchedule->tasks()->create([
-                                    'date' => $task['date'],
-                                    'employee_id' => $selectedUserId,
-                                    'period_id' => $task['period_id'],
-                                    'duty_id' => $task['duty_id'],
-                                    'start_time' => $task['start_time'],
-                                    'end_time' => $task['end_time']
-                                ]);
+                    // Retrieve all existing shifts for the same user and date
+                    $existingShifts = DB::table('schedules')
+                                        ->join('users', 'schedules.employee_id', '=', 'users.id')
+                                        ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                                        ->where('schedules.employee_id', $selectedUserId)
+                                        ->where('schedules.date', $scheduleData->date)
+                                        ->whereNull('schedules.deleted_at')
+                                        ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end')
+                                        ->get();
+
+                    // Check for overlap with each existing shift
+                    foreach ($existingShifts as $existingShift) {
+                        $existingShiftStart = $existingShift->shift_start;
+                        $existingShiftEnd = $existingShift->shift_end;
+
+                        // Check if the new shift overlaps with the existing shift
+                        if ($newShiftStart < $existingShiftEnd && $newShiftEnd > $existingShiftStart) {
+                            // Display an error message for shift overlap
+                            $errorMessage = 'Failed to duplicate due to shift overlap.';
+                            return response()->json(['error' => $errorMessage], 422);
+                        } else {
+                            // Extract specific fields from the scheduleData
+                            $selectedScheduleData = [
+                                'id' => $scheduleData->id,
+                                'date' => $scheduleData->date,
+                                'employee_id' => $selectedUserId,
+                                'shift_id' => $scheduleData->shift_id,
+                                'off_day' => $scheduleData->off_day,
+                            ];
+
+                            // Create a new Schedule model and save it to the database
+                            $newSchedule = Schedule::create($selectedScheduleData);
+
+                            // Check if 'tasks' key exists in the current row
+                            if (isset($row['tasks']) && is_array($row['tasks'])) {
+                                // Extract task data from the tasks array
+                                $tasksData = [];
+                                foreach ($row['tasks'] as $task) {
+                                    $existingTask = Task::where('employee_id', $selectedUserId)
+                                                        ->where('period_id', $task['period_id'])
+                                                        ->where('date', $task['date'])
+                                                        ->whereNull('deleted_at')
+                                                        ->first();
+
+                                    // Only create a new task if it doesn't already exist
+                                    if (!$existingTask) {
+                                        // Create a new Task model associated with the new Schedule
+                                        $newSchedule->tasks()->create([
+                                            'date' => $task['date'],
+                                            'employee_id' => $selectedUserId,
+                                            'period_id' => $task['period_id'],
+                                            'duty_id' => $task['duty_id'],
+                                            'start_time' => $task['start_time'],
+                                            'end_time' => $task['end_time']
+                                        ]);
+                                    }
+                                }
                             }
+                            return response()->json(['message' => 'Successfully duplicated'], 200);
                         }
                     }
-                    return response()->json(['message' => 'Successfully duplicated'], 200);
-                } else {
-                    return response()->json(['error' => 'Duplicate data.'], 422);
+                }
+                else {
+                    $errorMessage = 'Failed to duplicate due to exceeding the maximum of two schedules.';
+                    return response()->json(['error' => $errorMessage], 422);
                 }
             }
 
@@ -1565,7 +1620,8 @@ class AdminController extends Controller
             return response()->json(['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             // Handle other exceptions
-            return response()->json(['error' => $e->getMessage()], 500);
+            $errorMessage = 'Failed to duplicate due to an unexpected error.';
+            return response()->json(['error' => $errorMessage], 500);
         }
 
     }
@@ -1577,6 +1633,7 @@ class AdminController extends Controller
     }
 
     public function createPeriod(){
+
         return view('admin.createPeriod');
     }
 
@@ -1654,7 +1711,7 @@ class AdminController extends Controller
 
         $period = Period::find($id);
 
-        $period->delete(); // Soft delete the employee
+        $period->delete();
 
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewPeriod');
@@ -1678,6 +1735,7 @@ class AdminController extends Controller
         $users = User::where('role', 'member')->with('position')->get();
         $duties = Duty::all();
         $periods = Period::all();
+
         return view('admin.createTask', compact('users', 'duties', 'periods'));
     }
 
@@ -1689,7 +1747,6 @@ class AdminController extends Controller
     }
 
     public function addTask(Request $request, $dates = null, $selectedUsers = null) {
-        // dd($request->all());
 
         // If $dates and $selectedUsers are not provided, use request input
         if ($dates === null) {
@@ -1809,8 +1866,8 @@ class AdminController extends Controller
             'date.required' => 'Date is required.',
             'start_time.required' => 'Start Time is required.',
             'end_time.required' => 'End Time is required.',
-            'duty_id.required' => 'Duty Name is required.',
-            'period_id.required' => 'Period Name is required.',
+            'duty_id.required' => 'Duty is required.',
+            'period_id.required' => 'Period is required.',
         ];
 
             // Validate the request data
@@ -1905,13 +1962,7 @@ class AdminController extends Controller
 
         $task = Task::find($id);
 
-        if (!$task) {
-            return response()->json(['message' => 'Task not found'], 404);
-        }
-
         $task->delete();
-
-        // return response()->json(['message' => 'Task deleted successfully']);
 
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewTask');
@@ -1930,19 +1981,14 @@ class AdminController extends Controller
 
     public function addAdmin(EmployeeRequest $request){
 
-        try{
-            // Validate the incoming request data
-            $validatedData = $request->validated();
+        // Validate the incoming request data
+        $validatedData = $request->validated();
 
-            // Create the user record with the validated and modified data
-            User::create($validatedData);
+        // Create the user record with the validated and modified data
+        User::create($validatedData);
 
-            Alert::success('Done', 'Successfully Registered');
-            return redirect()->route('viewAdmin');
-        }catch(ValidationException $e){
-            // If a validation exception occurs, redirect back with errors and input
-            return redirect()->back()->withErrors($e->validator)->withInput();
-        }
+        Alert::success('Done', 'Successfully Registered');
+        return redirect()->route('viewAdmin');
     }
 
     public function editAdmin($id) {
@@ -1952,7 +1998,7 @@ class AdminController extends Controller
     }
 
     public function updateAdmin(EmployeeRequest $request, $id) {
-        // dd($request->all());
+
         $data = User::find($id);
 
         // Validate the incoming request data
@@ -1989,13 +2035,14 @@ class AdminController extends Controller
 
         $employee = User::find($id);
 
-        $employee->delete(); // Soft delete the employee
+        $employee->delete();
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewAdmin');
     }
 
     public function viewSetting(){
         $settings = Setting::all();
+
         return view('admin.viewSetting', ['settings' => $settings]);
     }
 
@@ -2085,14 +2132,14 @@ class AdminController extends Controller
 
         $setting = Setting::find($id);
 
-        $setting->delete(); // Soft delete the employee
+        $setting->delete();
 
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('viewSetting');
     }
 
     public function otApproval() {
-        // $punchRecords = PunchRecord::all();
+
         $currentDate = now()->toDateString();
         $otHours = null;
 
@@ -2100,14 +2147,14 @@ class AdminController extends Controller
 
         // Fetch the schedule information for the user.
         $schedule = DB::table('schedules')
-            ->join('users', 'schedules.employee_id', '=', 'users.id')
-            ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-            ->join('punch_records', 'punch_records.employee_id', '=', 'schedules.employee_id')
-            ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end')
-            ->whereDate('schedules.date', '=', $currentDate)
-            ->whereDate('punch_records.created_at', '=', $currentDate)
-            ->whereNotNull('punch_records.ot_approval') // Add this line to filter based on ot_approval not being null
-            ->first();
+                        ->join('users', 'schedules.employee_id', '=', 'users.id')
+                        ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                        ->join('punch_records', 'punch_records.employee_id', '=', 'schedules.employee_id')
+                        ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end')
+                        ->whereDate('schedules.date', '=', $currentDate)
+                        ->whereDate('punch_records.created_at', '=', $currentDate)
+                        ->whereNotNull('punch_records.ot_approval') // Add this line to filter based on ot_approval not being null
+                        ->first();
 
         // Check if $schedule is null
         if ($schedule === null) {
@@ -2123,8 +2170,6 @@ class AdminController extends Controller
         }
 
         $otapproval = OtApproval::with(['user'])->get();
-
-        // dd($otapproval);
 
         return view('admin.otApproval', [
             // 'punchRecords' => $punchRecords,
@@ -2311,7 +2356,6 @@ class AdminController extends Controller
                 return redirect()->route('otApproval');
             }
 
-
         } else {
             // Handle the case where the OtApproval record is not found
             Alert::error('Error', 'OtApproval Record not found.');
@@ -2323,7 +2367,6 @@ class AdminController extends Controller
         // Fetch the PunchRecord by ID
         $punchRecord = OtApproval::find($id);
 
-
         if ($punchRecord) {
             // Return the ot_hour as JSON
             return response()->json(['ot_hour' => $punchRecord->ot_hour]);
@@ -2332,11 +2375,12 @@ class AdminController extends Controller
             return response()->json(['error' => 'Record not found'], 404);
         }
     }
+
     public function deleteOtApproval($id){
 
         $punchRecords = PunchRecord::find($id);
 
-        $punchRecords->delete(); // Soft delete the employee
+        $punchRecords->delete();
 
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->route('otApproval');
@@ -2405,7 +2449,6 @@ class AdminController extends Controller
         // Update the user's data based on the form input
         $data->update($updateData);
 
-
         // Select only specific fields from $actualData
         $selectedData = $actualData->select('id','clock_in_time', 'clock_out_time', 'employee_id', 'created_at')->first();
 
@@ -2434,7 +2477,7 @@ class AdminController extends Controller
         $users = User::where('role', 'member')->with('position')->get();
 
         // Get the OT allowance value from the settings table
-        $otAllowanceSetting = Setting::where('setting_name', 'OT Allowance')->first();
+        $otAllowanceSetting = Setting::where('setting_name', 'OT Allowance (in RM)')->first();
 
         if ($otAllowanceSetting) {
             $otAllowanceValue = (float) preg_replace('/[^0-9.]/', '', $otAllowanceSetting->value);
@@ -2445,40 +2488,44 @@ class AdminController extends Controller
 
         // Loop through each user to calculate their total OT hours and update/create records for each month
         foreach ($users as $user) {
-            $employeeId = $user->id;
+            $employeeId = $user->employee_id;
+
+            $userId = $user->id;
 
             // Loop through each month
             for ($month = 1; $month <= 12; $month++) {
                 // Query the punch_record table to check if the user has records for the current month
-                $hasRecordsForMonth = PunchRecord::where('employee_id', $employeeId)
+                $hasRecordsForMonth = PunchRecord::where('employee_id', $userId)
                     ->whereMonth('created_at', $month)
                     ->exists();
 
+
                 // If the user has records for the current month, calculate total_ot_hour
                 if ($hasRecordsForMonth) {
-                    $otHoursForMonth = PunchRecord::selectRaw('SUM(ot_hours) as total_ot_hour')
+                    $otHoursForMonth = OtApproval::selectRaw('SUM(approved_ot_hour) as total_ot_hour')
                         ->where('employee_id', $employeeId)
                         ->whereMonth('created_at', $month)
                         ->value('total_ot_hour');
 
-
                     $basicSalary = $user->salary;
-
                     $totalOTPay = $otHoursForMonth * $otAllowanceValue;
-
                     $totalPayout = $basicSalary + $totalOTPay;
+
+                    // Format the values with two decimal places
+                    $totalOTPayFormatted = number_format($totalOTPay, 2, '.', '');
+                    $totalPayoutFormatted = number_format($totalPayout, 2, '.', '');
 
                     // Find or create a SalaryLog entry for the user and month
                     $salaryLog = SalaryLog::updateOrCreate(
                         [
-                            'employee_id' => $employeeId,
+                            'employee_id' => $userId,
                             'month' => $month,
                             'year' => date('Y'), // You can adjust this as needed
                         ],
                         [
                             'total_ot_hour' => $otHoursForMonth,
-                            'total_ot_pay' => $totalOTPay,
-                            'total_payout' => $totalPayout,
+                            'total_ot_pay' => $totalOTPayFormatted,
+                            'total_payout' => $totalPayoutFormatted,
                         ]
                     );
                 }
@@ -2549,7 +2596,6 @@ class AdminController extends Controller
 
         $selectedRows = $request->input('selectedRows');
 
-
         // Accessing specific elements
         foreach ($selectedRows as $row) {
             $date = $row['date'];
@@ -2557,7 +2603,6 @@ class AdminController extends Controller
             $checkOut = $row['checkOut'];
             $shiftId = $row['shiftId'];
             $punchRecordId = $row['punchRecordId'];
-
 
             // Parse checkIn and checkOut using Carbon
             $carbonCheckIn = Carbon::createFromFormat('h:i A', $checkIn);
@@ -2651,10 +2696,10 @@ class AdminController extends Controller
     }
 
     public function otherImage($employeeId){
-        $user = User::find($employeeId);
-        $otherImages = OtherImage::where('employee_id', $employeeId)->get();
+        $user = User::with('otherImages')->find($employeeId);
+        $otherImages = $user->otherImages;
 
-        return view('admin/otherImage', compact('user', 'otherImages'));
+        return view('admin.otherImage', compact('user', 'otherImages'));
     }
 
     public function addOtherImage(Request $request, $employeeId){
@@ -2672,7 +2717,10 @@ class AdminController extends Controller
         $file = $request->file('new_other_image');
         $extension = $file->getClientOriginalExtension();
         $otherImageFilename = $full_name_with_underscores . '_other_image.' . time() . '.' . $extension;// Modify the file name
-        $file->move('uploads/employee/otherImage/', $otherImageFilename);
+        $file->move('storage/employee/otherImage/', $otherImageFilename);
+
+        // Use Storage::putFileAs to store the file in the desired directory
+        // Storage::putFileAs('employee/otherImage', $file, $otherImageFilename);
 
         // Save the file path to the database
         OtherImage::create([
@@ -2690,7 +2738,7 @@ class AdminController extends Controller
         $image = OtherImage::find($imageId);
 
         // Get the file path
-        $filePath = 'uploads/employee/otherImage/' . $image->file_name;
+        $filePath = 'storage/employee/otherImage/' . $image->file_name;
 
         // Delete the file from the file system
         if (File::exists($filePath)) {
@@ -2703,7 +2751,6 @@ class AdminController extends Controller
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->back();
     }
-
 
 
 }

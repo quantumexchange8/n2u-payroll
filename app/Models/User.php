@@ -44,13 +44,17 @@ class User extends Authenticatable
         'role',
         'status'
     ];
-    
+
     public function position() {
         return $this->belongsTo(Position::class, 'position_id', 'id');
     }
 
     public function schedules(){
         return $this->hasMany(Schedule::class, 'employee_id', 'id');
+    }
+
+    public function otherImages(){
+        return $this->hasMany(OtherImage::class, 'employee_id');
     }
 
     /**
@@ -73,5 +77,5 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    
+
 }

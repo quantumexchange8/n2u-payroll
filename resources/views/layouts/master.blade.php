@@ -268,12 +268,12 @@
                                 </ul>
                                 <!-- End Sub Menu -->
                             </li>
-                            {{-- <li>
+                            <li>
                                 <a href="{{ route('salaryLogs') }}">
                                     <i class="icofont-money"></i>
                                     <span class="link-title">Salary Logs</span>
                                 </a>
-                            </li> --}}
+                            </li>
                             <li>
                                 <a href="{{ route('viewAdmin') }}">
                                     <i class="icofont-users"></i>
