@@ -34,6 +34,16 @@
 
 <body>
 
+    <style>
+
+        .btn-keys {
+            width: 70px;
+            height: 70px;
+            font-size: 18px;
+            margin: 5px;
+        }
+    </style>
+
     <div class="mn-vh-100 d-flex align-items-center">
 
         <div class="container">
@@ -71,12 +81,33 @@
                             <!-- Form Group -->
                             <div class="form-group mb-20">
                                 <label for="password" class="mb-2 font-14 bold black">Password</label>
-                                <input type="password" id="password" name="password" class="theme-input-style" placeholder="********">
+                                <input type="text" id="password" name="password" class="theme-input-style" placeholder="********" readonly>
                                 @error('password')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                             <!-- End Form Group -->
+                            <div style="display:flex;justify-content:center">
+                                <div style="width:250px">
+                                    <button class="btn-keys" type="button" onclick="appendToResult(1)">1</button>
+                                    <button class="btn-keys" type="button" onclick="appendToResult(2)">2</button>
+                                    <button class="btn-keys" type="button" onclick="appendToResult(3)">3</button>
+                                    <br>
+                                    <button class="btn-keys" type="button" onclick="appendToResult(4)">4</button>
+                                    <button class="btn-keys" type="button" onclick="appendToResult(5)">5</button>
+                                    <button class="btn-keys" type="button" onclick="appendToResult(6)">6</button>
+                                    <br>
+                                    <button class="btn-keys" type="button" onclick="appendToResult(7)">7</button>
+                                    <button class="btn-keys" type="button" onclick="appendToResult(8)">8</button>
+                                    <button class="btn-keys" type="button" onclick="appendToResult(9)">9</button>
+                                    <br>
+                                    <button class="btn-keys" type="button" onclick="clearResult()">C</button>
+                                    <button class="btn-keys" type="button" onclick="appendToResult(0)">0</button>
+                                    <button class="btn-keys" type="submit">Login</button>
+                                </div>
+                                
+                            </div>
+                            
 
                             <div class="d-flex justify-content-between mb-20">
                                 <div class="d-flex align-items-center">
@@ -99,7 +130,7 @@
                             </div> --}}
 
                             <div class="d-flex align-items-center">
-                                <button type="submit" class="btn long mr-20">Log In</button>
+                                {{-- <button type="submit" class="btn long mr-20">Log In</button> --}}
                                 {{-- <span class="font-12 d-block"><a href="register.html" class="bold">Sign Up</a>,If you have no account.</span> --}}
                             </div>
                         </form>
@@ -123,7 +154,17 @@
     <script src="../../../assets/js/script.js"></script>
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
 
+    <script>
+        function appendToResult(value) {
+            var resultField = document.getElementById("password");
+            resultField.value += value;
+        }
 
+        function clearResult() {
+            var resultField = document.getElementById("password");
+            resultField.value = '';
+        }
+    </script>
 
 </body>
 
