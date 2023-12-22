@@ -595,8 +595,6 @@ class RecordController extends Controller
                     $checkLate = $firstShiftStartTime->copy()->addMinutes($lateThreshold);
 
                     $checkOT = $firstShiftEndTime->copy()->addMinutes($overtimeCalculation);
-
-
                     if ($firstClockInTime >= $firstShiftStartTime && $firstClockInTime >= $checkLate) {
                         if ($lastClockOutTime >= $firstShiftEndTime && $lastClockOutTime >= $checkOT) {
                             $totalWork = $firstShiftEndTime->diffInMinutes($firstClockInTime);

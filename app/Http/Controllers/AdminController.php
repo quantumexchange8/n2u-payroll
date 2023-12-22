@@ -53,6 +53,7 @@ class AdminController extends Controller
                                         ->distinct('employee_id')
                                         ->count();
 
+
         // Retrieve all schedules, shifts, and settings
         $schedules = Schedule::all();
         $shifts = Shift::all();
@@ -1557,10 +1558,11 @@ class AdminController extends Controller
                                         ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end')
                                         ->get();
 
-                    // Check for overlap with each existing shift
-                    foreach ($existingShifts as $existingShift) {
-                        $existingShiftStart = $existingShift->shift_start;
-                        $existingShiftEnd = $existingShift->shift_end;
+                    // Check if $existingShifts is not empty
+                    if ($existingShifts->isNotEmpty()) {
+
+                        $existingShiftStart = $existingShifts[0]->shift_start;
+                        $existingShiftEnd = $existingShifts[0]->shift_end;
 
                         // Check if the new shift overlaps with the existing shift
                         if ($newShiftStart < $existingShiftEnd && $newShiftEnd > $existingShiftStart) {
@@ -1568,6 +1570,7 @@ class AdminController extends Controller
                             $errorMessage = 'Failed to duplicate due to shift overlap.';
                             return response()->json(['error' => $errorMessage], 422);
                         } else {
+
                             // Extract specific fields from the scheduleData
                             $selectedScheduleData = [
                                 'id' => $scheduleData->id,
@@ -1605,7 +1608,49 @@ class AdminController extends Controller
                                     }
                                 }
                             }
-                            return response()->json(['message' => 'Successfully duplicated'], 200);
+                        }
+
+                        // Return success message after all rows have been processed
+                        return response()->json(['message' => 'Successfully duplicated'], 200);
+
+                    } else {
+
+                        // Extract specific fields from the scheduleData
+                        $selectedScheduleData = [
+                            'id' => $scheduleData->id,
+                            'date' => $scheduleData->date,
+                            'employee_id' => $selectedUserId,
+                            'shift_id' => $scheduleData->shift_id,
+                            'off_day' => $scheduleData->off_day,
+                        ];
+
+                        // Create a new Schedule model and save it to the database
+                        $newSchedule = Schedule::create($selectedScheduleData);
+
+                        // Check if 'tasks' key exists in the current row
+                        if (isset($row['tasks']) && is_array($row['tasks'])) {
+                            // Extract task data from the tasks array
+                            $tasksData = [];
+                            foreach ($row['tasks'] as $task) {
+                                $existingTask = Task::where('employee_id', $selectedUserId)
+                                                    ->where('period_id', $task['period_id'])
+                                                    ->where('date', $task['date'])
+                                                    ->whereNull('deleted_at')
+                                                    ->first();
+
+                                // Only create a new task if it doesn't already exist
+                                if (!$existingTask) {
+                                    // Create a new Task model associated with the new Schedule
+                                    $newSchedule->tasks()->create([
+                                        'date' => $task['date'],
+                                        'employee_id' => $selectedUserId,
+                                        'period_id' => $task['period_id'],
+                                        'duty_id' => $task['duty_id'],
+                                        'start_time' => $task['start_time'],
+                                        'end_time' => $task['end_time']
+                                    ]);
+                                }
+                            }
                         }
                     }
                 }
@@ -1614,6 +1659,9 @@ class AdminController extends Controller
                     return response()->json(['error' => $errorMessage], 422);
                 }
             }
+
+             // Return success message after all rows have been processed
+            return response()->json(['message' => 'Successfully duplicated'], 200);
 
         } catch (ValidationException $e) {
             // Handle validation errors
@@ -1625,7 +1673,7 @@ class AdminController extends Controller
         }
 
     }
-
+    
     public function viewPeriod(){
         $periods = Period::all();
 

@@ -161,85 +161,10 @@
 @endsection
 
 {{-- Approval OT Approval --}}
-{{-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        $('.approve-button').on('click', function() {
-            var punchRecord_id = $(this).data('punchrecord-id');
-            console.log(punchRecord_id);
-
-            // Make an AJAX request to get the ot_hour value
-            $.ajax({
-                url: '/get-ot-hour/' + punchRecord_id, // Adjust the URL endpoint accordingly
-                type: 'GET',
-                success: function(response) {
-                    var current_ot_hour = response.ot_hour;
-
-                    Swal.fire({
-                        title: 'Do you agree with the OT hour?',
-                        text: '',
-                        icon: 'info',
-                        input: 'text',
-                        inputValue: current_ot_hour,
-                        inputLabel: 'OT hour',
-                        inputPlaceholder: 'Enter new OT hour if not agree',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes, approve',
-                        cancelButtonText: 'Cancel',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            const approved_ot_hour = result.value;
-                            console.log(approved_ot_hour);
-                            if (approved_ot_hour) {
-                                Swal.fire({
-                                    title: 'Approve Confirmation',
-                                    text: 'Are you sure you want to approve with the provided OT hour?',
-                                    icon: 'info',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Yes, approve',
-                                    cancelButtonText: 'Cancel',
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        const form = document.getElementById('reject-form-' + punchRecord_id);
-                                        console.log(form);
-                                        if (form) {
-                                            const remarkInput = document.createElement('input');
-                                            remarkInput.type = 'hidden';
-                                            remarkInput.name = 'approved_ot_hour';
-                                            remarkInput.value = approved_ot_hour;
-
-                                            console.log(remarkInput.value)
-                                            form.appendChild(remarkInput);
-                                            form.submit();
-                                        } else {
-                                            console.error('Form not found: ' + 'reject-form-' + punchRecord_id);
-                                        }
-                                    }
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'OT hour cannot be empty.',
-                                    icon: 'error',
-                                    confirmButtonText: 'Ok'
-                                });
-                            }
-                        }
-                    });
-                },
-                error: function(error) {
-                    console.error('Error fetching ot_hour:', error);
-                    // Handle the error, show an alert or log it
-                }
-            });
-        });
-    });
-</script> --}}
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         $('.approve-button').on('click', function() {
             var punchRecord_id = $(this).data('punchrecord-id');
-            console.log(punchRecord_id);
 
             // Make an AJAX request to get the ot_hour value
             $.ajax({
@@ -294,14 +219,12 @@
     });
 </script>
 
-
-
 {{-- Reject OT Approval --}}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         $('.reject-button').on('click', function() {
             var punchRecord_id = $(this).data('punchrecord-id');
-            console.log(punchRecord_id);
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: 'This action will reject the OT. Are you sure you want to proceed?',
@@ -345,10 +268,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Get the filter dropdown items
-        const filterItems = document.querySelectorAll('.dropdown-item[data-status');
-
-        // Output the filterItems to the console to check if the selection is correct
-        console.log('filter items:',filterItems);
+        const filterItems = document.querySelectorAll('.dropdown-item[data-status');;
 
         // Add a click event listener to each filter item
         filterItems.forEach(function(item) {
@@ -356,9 +276,6 @@
                 event.preventDefault();
                 const selectedStatus = this.dataset.status;
                 const tableRows = document.querySelectorAll('.dh-table tbody tr');
-
-                // Output the selected status to the console to check if it's correct
-                console.log('selected status:',selectedStatus);
 
                 // Iterate through table rows and hide/show based on the selected filter
                 tableRows.forEach(function(row) {
@@ -374,43 +291,7 @@
     });
 </script>
 
-{{-- Filter by date and status--}}
-{{-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const filterDropdown = document.getElementById('filter-dropdown');
-        const dateFilter = document.getElementById('date-filter');
-        const tableRows = document.querySelectorAll('.dh-table tbody tr');
-
-        // Add a click event listener to the filter dropdown
-        filterDropdown.addEventListener('click', filterTable);
-        dateFilter.addEventListener('input', filterTable);
-
-        function filterTable() {
-            const selectedStatus = filterDropdown.dataset.status;
-            const selectedDate = dateFilter.value;
-
-            tableRows.forEach(function(row) {
-                const status = row.classList[0];
-                const date = row.dataset.date; // You'll need to set the data-date attribute in your table rows
-
-                const statusFilter = selectedStatus === 'all' || status === selectedStatus;
-                const dateFilter = !selectedDate || date === selectedDate;
-
-                console.log('Selected Date:', selectedDate);
-                console.log('Row Date:', date);
-
-                if (statusFilter && dateFilter) {
-                    row.style.display = ''; // Show the row
-                } else {
-                    row.style.display = 'none'; // Hide the row
-                }
-            });
-        }
-
-
-    });
-</script> --}}
-
+{{-- Filter by date --}}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const dateFilter = document.getElementById('date-filter');
@@ -497,5 +378,40 @@
 </script>
 
 
+{{-- Filter by date and status--}}
+{{-- <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const filterDropdown = document.getElementById('filter-dropdown');
+        const dateFilter = document.getElementById('date-filter');
+        const tableRows = document.querySelectorAll('.dh-table tbody tr');
 
+        // Add a click event listener to the filter dropdown
+        filterDropdown.addEventListener('click', filterTable);
+        dateFilter.addEventListener('input', filterTable);
+
+        function filterTable() {
+            const selectedStatus = filterDropdown.dataset.status;
+            const selectedDate = dateFilter.value;
+
+            tableRows.forEach(function(row) {
+                const status = row.classList[0];
+                const date = row.dataset.date; // You'll need to set the data-date attribute in your table rows
+
+                const statusFilter = selectedStatus === 'all' || status === selectedStatus;
+                const dateFilter = !selectedDate || date === selectedDate;
+
+                console.log('Selected Date:', selectedDate);
+                console.log('Row Date:', date);
+
+                if (statusFilter && dateFilter) {
+                    row.style.display = ''; // Show the row
+                } else {
+                    row.style.display = 'none'; // Hide the row
+                }
+            });
+        }
+
+
+    });
+</script> --}}
 

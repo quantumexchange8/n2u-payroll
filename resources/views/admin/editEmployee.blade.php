@@ -451,16 +451,13 @@
 <script>
     // Ensure the DOM is fully loaded before attaching the event listener
     document.addEventListener('DOMContentLoaded', function() {
-        console.log("Script loaded");
 
         // Attach the click event listener to the button
         document.getElementById('moreImageButton').addEventListener('click', function(event) {
             // Prevent the default form submission
             event.preventDefault();
 
-            console.log("Button clicked");
             var employeeId = this.getAttribute('data-employee-id');
-            console.log("Employee ID:", employeeId);
 
             // Redirect to the other-images route
             window.location.href = "/admin/other-image/" + employeeId;

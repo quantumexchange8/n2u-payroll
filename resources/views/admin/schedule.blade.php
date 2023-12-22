@@ -35,13 +35,13 @@
                             <label for="off_day"><i class="icofont-calendar"></i></label>
                             <input type="checkbox" name="off_day" value="1"> Off Day
                         </div>
-                        
+
                         <div class="calendar-modal-title-wrap w-10 d-flex mt-10">
                             <div class="calendar-modal-title m_style flex-grow">
                                 <label for="shift_id"><i class="icofont-clock-time"></i></label>
                                 <select name="shift_id">
                                     @foreach ($shifts as $shift)
-                                        <option value="{{ $shift->id }}">{{ $shift->formatted_shift_time }}</option>  
+                                        <option value="{{ $shift->id }}">{{ $shift->formatted_shift_time }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -62,7 +62,7 @@
                                 <label for="remark"><i class="icofont-brush"></i></label>
                                 <select name="duty_id">
                                     @foreach ($duties as $duty)
-                                        <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>  
+                                        <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -77,7 +77,7 @@
                                     <label for="formGroupExampleInput2"></label>
                                     <input type="date" name="date_start" placeholder="Date">
                                 </div>
-                                
+
                                 <div class="calendar-modal-end-date m_style mr-2">
                                     <label for="formGroupExampleInput3"></label>
                                     <input type="date" name="date_end" placeholder="Date">
@@ -91,7 +91,7 @@
                         <button class="btn" id="saveSchedule">Save</button>
                     </div>
                 </div>
-            </form>    
+            </form>
         </div>
     </div> --}}
 
@@ -135,12 +135,12 @@
                     <button class="edit-btn" data-toggle="modal" data-target="#editEventModal" data-dismiss="modal" id="editEventButton">
                         <i class="icofont-ui-edit"></i> Edit
                     </button>
-    
+
                     <form id="deleteEventForm" method="POST" action="{{ route('deleteSchedule', ['id' => 0]) }}">
                         @csrf
                         @method('DELETE')
                     </form>
-    
+
                     <button type="button" class="delete-btn" data-dismiss="modal" id="deleteEventBtn">
                         <i class="icofont-ui-delete"></i> Delete
                     </button>
@@ -167,14 +167,14 @@
                             <label for="employee_id"><img src="../../assets/img/svg/color.svg" alt="" class="svg"></label>
                             <input type="text" id="edit_employee_id" name="employee_id">
                         </div>
-    
+
                         <div class="calendar-modal-title-wrap w-100 d-none mt-10">
                             <div class="calendar-modal-title m_style flex-grow">
                                 <label for="shift_id"><i class="icofont-clock-time"></i></label>
                                 <input type="text" id="edit_shift_id" name="shift_id">
                             </div>
                         </div>
-                        
+
 
                         <div class="custom-select-box d-inline-flex align-items-center m_style">
                             <label for="edit_employee_id"><img src="../../assets/img/svg/color.svg" alt="" class="svg"></label>
@@ -182,11 +182,11 @@
                                 @foreach ($users as $user)
                                     <option value="{{ $user->id }}" {{ $user->id === $user->employee_id ? 'selected' : '' }}>
                                         {{ $user->full_name }}
-                                    </option>                               
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
-    
+
                         <div class="calendar-modal-title-wrap w-100 d-flex mt-10">
                             <div class="calendar-modal-title m_style flex-grow">
                                 <label for="edit_shift_id"><i class="icofont-clock-time"></i></label>
@@ -219,7 +219,7 @@
                          </div>
                     </div>
                     <!-- End Modal Header -->
-    
+
                     <!-- Modal Body -->
                     <div id="modalBody2" class="modal-body border-bottom-0 pt-0 pb-0">
                         <form id="scheduleForm">
@@ -230,7 +230,7 @@
                         </form>
                     </div>
                     <!-- End Modal Body -->
-    
+
                     <div class="modal-footer border-top-0 pt-10">
                         <button class="btn" id="saveSchedule">Save</button>
                     </div>
@@ -256,7 +256,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Nickname</th>
+                                <th>Name</th>
                                 <th>Shift Start</th>
                                 <th>Shift End</th>
                                 <th>Remarks</th>
@@ -296,8 +296,6 @@
 
                 // Set the scheduleId as a data attribute on the form
                 $('#scheduleForm').data('schedule-id', scheduleId);
-
-                console.log(fullName, date, shiftStart, shiftEnd, dutyName, scheduleId, remarks);
 
                 // Set the values in the editEventModal
                 $('#edit_employee_id').val(fullName);
@@ -384,7 +382,7 @@
                             icon: 'success',
                             title: 'Success',
                             text: 'Schedule deleted successfully.',
-                            
+
                         }).then(() => {
                             // After successful deletion, you can perform additional actions.
                             // For example, refreshing the page.

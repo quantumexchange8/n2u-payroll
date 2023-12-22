@@ -215,7 +215,6 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const tableRows = document.querySelectorAll('.invoice-list tbody tr');
-        console.log('Table Rows:', tableRows);
         const dropdownItems = document.querySelectorAll('.dropdown-item[data-full-name]');
 
         dropdownItems.forEach(function(item) {
@@ -234,8 +233,6 @@
                     row.style.display = 'none'; // Hide the row
                 }
             });
-
-            console.log('Selected Full Name:', selectedFullName);
         }
     });
 </script>
@@ -428,9 +425,6 @@
                 // Retrieve the selected user ID
                 var selectedUserId = $('#userDropdown').val();
 
-                // Log selected user ID (you can modify this part based on your requirements)
-                console.log('Selected User ID:', selectedUserId);
-
                 // Create an array to store filtered data from selected rows
                 var filteredRows = [];
 
@@ -464,8 +458,6 @@
                         filteredRows: filteredRows,
                     },
                     success: function(response) {
-                        // Handle the success response from the controller
-                        console.log('Response:', response);
 
                         // Close the user selection modal
                         $('#userSelectionModal').modal('hide');

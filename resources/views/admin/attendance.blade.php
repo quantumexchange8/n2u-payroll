@@ -168,18 +168,12 @@
         // Get the filter dropdown items
         const filterItems = document.querySelectorAll('.dropdown-item[data-status]');
 
-        // Output the filterItems to the console to check if the selection is correct
-        console.log(filterItems);
-
         // Add a click event listener to each filter item
         filterItems.forEach(function(item) {
             item.addEventListener('click', function(event) {
                 event.preventDefault();
                 const selectedStatus = this.dataset.status;
                 const tableRows = document.querySelectorAll('.dh-table tbody tr');
-
-                // Output the selected status to the console to check if it's correct
-                console.log(selectedStatus);
 
                 // Iterate through table rows and hide/show based on the selected filter
                 tableRows.forEach(function(row) {
@@ -298,7 +292,6 @@
                 url: '/getAttendanceData/' + id,
                 method: 'GET',
                 success: function(data) {
-                    console.log('Retrieved Data:', data);
                     attendanceData = data;
 
                     // Update modal content with fetched data
@@ -356,8 +349,6 @@
 
             var id = $(this).data('id');
 
-            console.log(id);
-
             // Get the CSRF token value from the meta tag
             var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
@@ -380,12 +371,12 @@
                 var newClockOutTime = existingClockOutDate && newOutTime ? existingClockOutDate + ' ' + newOutTime + ':00' : null;
 
                 // Log the data to be sent
-                console.log('Data to be sent:', {
-                    clock_in_time: newClockInTime,
-                    clock_out_time: newClockOutTime,
-                    status: $('#status').val(),
-                    _token: csrfToken
-                });
+                // console.log('Data to be sent:', {
+                //     clock_in_time: newClockInTime,
+                //     clock_out_time: newClockOutTime,
+                //     status: $('#status').val(),
+                //     _token: csrfToken
+                // });
 
                 // Perform AJAX request to update the data
                 $.ajax({
@@ -401,9 +392,6 @@
                         'X-CSRF-TOKEN': csrfToken
                     },
                     success: function(response) {
-                        // Handle success response
-                        console.log('Update success:', response);
-
                         // Optionally, close the modal or show a success message
                         $('#editAttendanceModal').modal('hide');
 

@@ -274,11 +274,9 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 {{-- Filter by user's full name --}}
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const tableRows = document.querySelectorAll('.invoice-list tbody tr');
-        console.log('Table Rows:', tableRows);
         const dropdownItems = document.querySelectorAll('.dropdown-item[data-nickname]');
 
         dropdownItems.forEach(function(item) {
@@ -286,18 +284,10 @@
         });
 
         function filterTable(event) {
-            console.log('Filtering...');
-
             const selectedNickname = event.target.dataset.nickname;
 
-            console.log('Number of Table Rows:', tableRows.length);
-
             tableRows.forEach(function(row) {
-                console.log('Row data attributes:', row.dataset);
                 const nickname = row.dataset.nickname;
-                console.log('Row:', row);
-                console.log('Nickname:', nickname);
-
 
                 if (!selectedNickname || selectedNickname === 'All Users' || nickname === selectedNickname) {
                     row.style.display = ''; // Show the row
@@ -305,8 +295,6 @@
                     row.style.display = 'none'; // Hide the row
                 }
             });
-
-            console.log('Selected Nickname:', selectedNickname);
         }
     });
 </script>
@@ -423,12 +411,73 @@
     }
 </script>
 
-<!-- JavaScript code for the SweetAlert -->
+{{-- Recalculate the total hour --}}
+<script>
+    $(document).ready(function() {
+        // Handle the Recalculate button click
+        $('#recalculateButton').click(function() {
+
+            // Array to store selected checkbox values
+            var selectedRows = [];
+
+            // Loop through all checkboxes
+            $('table.invoice-list tbody input[type="checkbox"]:checked').each(function() {
+                // Get the value of the checkbox (you may need to adjust this based on your HTML structure)
+                var id = $(this).closest('tr').data('id');
+
+                // Get data associated with the selected row
+                var rowData = {
+                    id: id,
+                    date: $(this).closest('tr').data('date'),
+                    fullName: $(this).closest('tr').data('full-name'),
+                    shift: $(this).closest('tr').find('td:eq(3)').text().trim(),  // Trim whitespace
+                    checkIn: $(this).closest('tr').find('td:eq(4)').text().trim(),  // Trim whitespace
+                    checkOut: $(this).closest('tr').find('td:eq(5)').text().trim(),  // Trim whitespace
+                    totalHour: $(this).closest('tr').find('td:eq(6)').text().trim(),  // Trim whitespace
+                    shiftId: $(this).closest('tr').find('td:eq(3)').data('shift-id'),
+                    punchRecordId: $(this).closest('tr').find('td:eq(6)').data('punchrecord-id')
+                };
+
+                // Add the rowData to the array
+                selectedRows.push(rowData);
+            });
+
+            // Send an AJAX request to your server with the selected checkbox ids
+            $.ajax({
+                url: '{{ route("recalculateTotalHour") }}', // Replace with your recalculate endpoint
+                method: 'POST',
+                data: {
+                    selectedRows: selectedRows,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Done',
+                        text: 'Successfully Updated',
+                    }).then(function() {
+                        // Reload the page after the SweetAlert is closed
+                        location.reload();
+                    });
+
+                },
+                error: function(error) {
+                    // Handle the error response (if needed)
+                    console.error('Recalculation error:', error);
+                }
+            });
+        });
+    });
+
+</script>
+
+<!-- Enter remarks -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         $('.edit-button').on('click', function() {
             var punchRecord_id = $(this).data('punchrecord-id');
-            console.log(punchRecord_id);
+
             Swal.fire({
                 title: 'Edit Remarks',
                 input: 'text', // Use a text input
@@ -460,79 +509,4 @@
             });
         });
     });
-</script>
-
-
-{{-- Recalculate the total hour --}}
-<script>
-    $(document).ready(function() {
-        // Handle the Recalculate button click
-        $('#recalculateButton').click(function() {
-
-            // Log a message to the console to check if the click event is being triggered
-            console.log('Recalculate button clicked');
-
-            // Array to store selected checkbox values
-            var selectedRows = [];
-
-            // Loop through all checkboxes
-            $('table.invoice-list tbody input[type="checkbox"]:checked').each(function() {
-                // Get the value of the checkbox (you may need to adjust this based on your HTML structure)
-                var id = $(this).closest('tr').data('id');
-
-                // Get data associated with the selected row
-                var rowData = {
-                    id: id,
-                    date: $(this).closest('tr').data('date'),
-                    fullName: $(this).closest('tr').data('full-name'),
-                    shift: $(this).closest('tr').find('td:eq(3)').text().trim(),  // Trim whitespace
-                    checkIn: $(this).closest('tr').find('td:eq(4)').text().trim(),  // Trim whitespace
-                    checkOut: $(this).closest('tr').find('td:eq(5)').text().trim(),  // Trim whitespace
-                    totalHour: $(this).closest('tr').find('td:eq(6)').text().trim(),  // Trim whitespace
-                    shiftId: $(this).closest('tr').find('td:eq(3)').data('shift-id'),
-                    punchRecordId: $(this).closest('tr').find('td:eq(6)').data('punchrecord-id')
-                };
-
-                // Add the rowData to the array
-                selectedRows.push(rowData);
-            });
-
-            // Log the selected rows to the console
-            console.log('Selected Rows:', selectedRows);
-
-            // Log the start of the AJAX request
-            console.log('Sending AJAX request');
-
-            // Send an AJAX request to your server with the selected checkbox ids
-            $.ajax({
-                url: '{{ route("recalculateTotalHour") }}', // Replace with your recalculate endpoint
-                method: 'POST',
-                data: {
-                    selectedRows: selectedRows,
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    // Handle the success response (if needed)
-                    console.log('Recalculation success:', response);
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Done',
-                        text: 'Successfully Updated',
-                    }).then(function() {
-                        // Reload the page after the SweetAlert is closed
-                        location.reload();
-                    });
-
-                    console.log('SweetAlert displayed');
-
-                },
-                error: function(error) {
-                    // Handle the error response (if needed)
-                    console.error('Recalculation error:', error);
-                }
-            });
-        });
-    });
-
 </script>
