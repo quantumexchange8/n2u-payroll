@@ -1673,7 +1673,7 @@ class AdminController extends Controller
         }
 
     }
-    
+
     public function viewPeriod(){
         $periods = Period::all();
 
@@ -2692,7 +2692,9 @@ class AdminController extends Controller
             $newTotalWorkInHours = number_format($newTotalWork / 60, 2);
 
             // Update the total_work column in the PunchRecord model
-            PunchRecord::where('id', $punchRecordId)->update(['total_work' => $newTotalWorkInHours]);
+            $updateTotalWork = PunchRecord::where('id', $punchRecordId)->update(['total_work' => $newTotalWorkInHours]);
+
+
 
             $employee = PunchRecord::join('users', 'punch_records.employee_id', 'users.id')
                                         ->where('punch_records.id', $punchRecordId)
@@ -2707,6 +2709,7 @@ class AdminController extends Controller
 
             $clockOutTime = Carbon::parse($clockOut->clock_out_time)->format('H:i:s');
 
+
             if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
                 $otMinutesDifference = $carbonCheckOut->diffInMinutes($carbonCheckOT);
 
@@ -2717,14 +2720,18 @@ class AdminController extends Controller
                 $existingOTRecord = OtApproval::where('date', $date)
                                                 ->where('employee_id', $employee_id)
                                                 ->where('shift_start', $shiftData['shift_start'])
-                                                ->where('shift_end', $shiftData['shift_end']);
+                                                ->where('shift_end', $shiftData['shift_end'])
+                                                ->exists();
+
                 if ($existingOTRecord) {
+                    // Update existing OT record
                     $updateOt = OtApproval::where('date', $date)
                                 ->where('employee_id', $employee_id)
                                 ->where('shift_start', $shiftData['shift_start'])
                                 ->where('shift_end', $shiftData['shift_end'])
                                 ->update(['ot_hour'  => $otInHoursRounded]);
                 } else {
+                    // Create a new OT record
                     $newOt = OtApproval::create([
                         'employee_id' => $employee_id,
                         'date' => $date,

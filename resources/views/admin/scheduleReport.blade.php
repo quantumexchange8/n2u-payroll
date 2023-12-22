@@ -484,6 +484,9 @@
                             icon: 'error',
                             title: 'Error',
                             text: errorMessage,
+                        }).then(function() {
+                            // Reload the page after the SweetAlert is closed
+                            location.reload();
                         });
                     }
 
