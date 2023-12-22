@@ -92,15 +92,15 @@ class RecordController extends Controller
 
             // Count the number of clock-ins for the current date
             $clockinCount = PunchRecord::where('employee_id', $user->id)
-            ->whereDate('created_at', $currentDate)
-            ->where('in', 'Clock In')
-            ->count();
+                            ->whereDate('created_at', $currentDate)
+                            ->where('in', 'Clock In')
+                            ->count();
 
             // Count the number of clock-outs for the current date
             $clockoutCount = PunchRecord::where('employee_id', $user->id)
-            ->whereDate('created_at', $currentDate)
-            ->where('out', 'Clock Out')
-            ->count();
+                            ->whereDate('created_at', $currentDate)
+                            ->where('out', 'Clock Out')
+                            ->count();
 
             // Determine the 'status_clock' based on the button text and the number of clock-ins.
             if ($status === 'Clock In') {
@@ -595,6 +595,7 @@ class RecordController extends Controller
                     $checkLate = $firstShiftStartTime->copy()->addMinutes($lateThreshold);
 
                     $checkOT = $firstShiftEndTime->copy()->addMinutes($overtimeCalculation);
+
 
                     if ($firstClockInTime >= $firstShiftStartTime && $firstClockInTime >= $checkLate) {
                         if ($lastClockOutTime >= $firstShiftEndTime && $lastClockOutTime >= $checkOT) {
