@@ -65,7 +65,7 @@ class AdminController extends Controller
 
     public function viewEmployee() {
         $users = User::where('role', 'member')->with('position')->get(); // Eager load the positions
-        $positions = Position::all(); // Fetch all positions
+        $positions = Position::all();
 
         return view('admin.viewEmployee', compact('users', 'positions'));
     }
@@ -1524,6 +1524,7 @@ class AdminController extends Controller
 
         try {
             $selectedUserId = $request->input('selectedUserId');
+            $selectedDate = $request->input('selectedDate');
             $filteredRows = $request->input('filteredRows');
             $allScheduleData = [];  // Array to store data for all selected rows
 
@@ -1574,11 +1575,23 @@ class AdminController extends Controller
                             // Extract specific fields from the scheduleData
                             $selectedScheduleData = [
                                 'id' => $scheduleData->id,
-                                'date' => $scheduleData->date,
-                                'employee_id' => $selectedUserId,
                                 'shift_id' => $scheduleData->shift_id,
                                 'off_day' => $scheduleData->off_day,
                             ];
+
+                            // Check if $selectedDate is not null, use $selectedDate as 'date', otherwise use $scheduleData->date
+                            if ($selectedDate !== null) {
+                                $selectedScheduleData['date'] = $selectedDate;
+                            } else {
+                                $selectedScheduleData['date'] = $scheduleData->date;
+                            }
+
+                            // Check if $selectedUserId is not null, use $selectedUserId as 'employee_id', otherwise use $scheduleData->employee_id
+                            if ($selectedUserId !== null) {
+                                $selectedScheduleData['employee_id'] = $selectedUserId;
+                            } else {
+                                $selectedScheduleData['employee_id'] = $scheduleData->employee_id;
+                            }
 
                             // Create a new Schedule model and save it to the database
                             $newSchedule = Schedule::create($selectedScheduleData);
@@ -1618,11 +1631,23 @@ class AdminController extends Controller
                         // Extract specific fields from the scheduleData
                         $selectedScheduleData = [
                             'id' => $scheduleData->id,
-                            'date' => $scheduleData->date,
-                            'employee_id' => $selectedUserId,
                             'shift_id' => $scheduleData->shift_id,
                             'off_day' => $scheduleData->off_day,
                         ];
+
+                        // Check if $selectedDate is not null, use $selectedDate as 'date', otherwise use $scheduleData->date
+                        if ($selectedDate !== null) {
+                            $selectedScheduleData['date'] = $selectedDate;
+                        } else {
+                            $selectedScheduleData['date'] = $scheduleData->date;
+                        }
+
+                        // Check if $selectedUserId is not null, use $selectedUserId as 'employee_id', otherwise use $scheduleData->employee_id
+                        if ($selectedUserId !== null) {
+                            $selectedScheduleData['employee_id'] = $selectedUserId;
+                        } else {
+                            $selectedScheduleData['employee_id'] = $scheduleData->employee_id;
+                        }
 
                         // Create a new Schedule model and save it to the database
                         $newSchedule = Schedule::create($selectedScheduleData);
@@ -2694,8 +2719,6 @@ class AdminController extends Controller
             // Update the total_work column in the PunchRecord model
             $updateTotalWork = PunchRecord::where('id', $punchRecordId)->update(['total_work' => $newTotalWorkInHours]);
 
-
-
             $employee = PunchRecord::join('users', 'punch_records.employee_id', 'users.id')
                                         ->where('punch_records.id', $punchRecordId)
                                         ->select('users.employee_id')
@@ -2708,7 +2731,6 @@ class AdminController extends Controller
                                     ->first();
 
             $clockOutTime = Carbon::parse($clockOut->clock_out_time)->format('H:i:s');
-
 
             if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
                 $otMinutesDifference = $carbonCheckOut->diffInMinutes($carbonCheckOT);
@@ -2746,7 +2768,6 @@ class AdminController extends Controller
                 PunchRecord::where('id', $punchRecordId)->update(['ot_approval' => 'Pending']);
             }
         }
-
         return response()->json(['message' => 'Successfully updated']);
     }
 
@@ -2785,7 +2806,6 @@ class AdminController extends Controller
 
         Alert::success('Done', 'Successfully Inserted');
         return redirect()->back();
-
     }
 
     public function deleteOtherImage($employeeId, $imageId){
@@ -2806,6 +2826,5 @@ class AdminController extends Controller
         Alert::success('Done', 'Successfully Deleted');
         return redirect()->back();
     }
-
 
 }

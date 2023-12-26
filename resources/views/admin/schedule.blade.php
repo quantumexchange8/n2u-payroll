@@ -323,8 +323,7 @@
 
             // Function to format the shift time
             function formatShiftTime(shiftStart, shiftEnd) {
-                // Assuming shiftStart and shiftEnd are in a 24-hour format, e.g., "14:00"
-                // You may need to adjust this based on the actual format of your data
+
                 var formattedShiftStart = formatTime(shiftStart);
                 var formattedShiftEnd = formatTime(shiftEnd);
 

@@ -430,13 +430,15 @@
                     id: id,
                     date: $(this).closest('tr').data('date'),
                     fullName: $(this).closest('tr').data('full-name'),
-                    shift: $(this).closest('tr').find('td:eq(3)').text().trim(),  // Trim whitespace
-                    checkIn: $(this).closest('tr').find('td:eq(4)').text().trim(),  // Trim whitespace
-                    checkOut: $(this).closest('tr').find('td:eq(5)').text().trim(),  // Trim whitespace
-                    totalHour: $(this).closest('tr').find('td:eq(6)').text().trim(),  // Trim whitespace
+                    shift: $(this).closest('tr').find('td:eq(3)').text().trim(),
+                    checkIn: $(this).closest('tr').find('td:eq(4)').text().trim(),
+                    checkOut: $(this).closest('tr').find('td:eq(5)').text().trim(),
+                    totalHour: $(this).closest('tr').find('td:eq(6)').text().trim(),
                     shiftId: $(this).closest('tr').find('td:eq(3)').data('shift-id'),
                     punchRecordId: $(this).closest('tr').find('td:eq(6)').data('punchrecord-id')
                 };
+
+                console.log(rowData);
 
                 // Add the rowData to the array
                 selectedRows.push(rowData);
@@ -465,6 +467,15 @@
                 error: function(error) {
                     // Handle the error response (if needed)
                     console.error('Recalculation error:', error);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Please assign a shift.',
+                    }).then(function() {
+                        // Reload the page after the SweetAlert is closed
+                        location.reload();
+                    });
                 }
             });
         });

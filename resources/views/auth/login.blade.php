@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="keywords" content="">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Favicon -->
     {{-- <link rel="shortcut icon" href="assets/img/logo-icon.png"> --}}
@@ -28,6 +29,9 @@
     <!-- ======= MAIN STYLES ======= -->
     <link rel="stylesheet" href="../../../assets/css/style.css">
     <!-- ======= END MAIN STYLES ======= -->
+
+    {{-- Sweet Alert --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
     @laravelPWA
 </head>
@@ -56,6 +60,32 @@
                     <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-02.png" alt="" style="margin-bottom: 20px;"></a>
                 </div>
                 <!-- End Logo -->
+
+                <div>
+                    <form action="{{ route('checkIn') }}" method="POST" id="clockForm" class="row" style="justify-content: center; margin-bottom: 20px; margin-top: 20px;">
+                        @csrf
+                        <input type="hidden" id="statusInput" name="status" value="Clock In">
+                        <button type="button" id="clockButton" class="btn" style="width:20%;
+                            @if (!isset($status))
+                                background-color: #e69f5c;
+                                color: #FFFFFF;
+                                border: 2px solid #e69f5c;
+                            @elseif ($status == 1)
+                                background-color: #6045E2;
+                                color: #FFFFFF;
+                                border: 2px solid #6045E2;
+                            @elseif ($status == 2)
+                                background-color: #b04654;
+                                color: #FFFFFF;
+                                border: 2px solid #b04654;
+                            @endif
+                            " {{ isset($status) ? '' : 'disabled' }} >
+                            {{ isset($status) ? ($status == 1 ? 'Clock In' : 'Clock Out') : 'Select Employee ID' }}
+                        </button>
+                    </form>
+                </div>
+
+
                 <div class="row justify-content-center">
                     <div class="col-xl-7 col-lg-9">
                         {{-- <h4 class="mb-5 font-20">Welcome To n2u-Payroll</h4> --}}
@@ -86,8 +116,8 @@
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-
                             <!-- End Form Group -->
+
                             <div style="display:flex;justify-content:center">
                                 <div style="width:250px">
                                     <button class="btn-keys" type="button" onclick="appendToResult(1)">1</button>
@@ -163,6 +193,149 @@
             var resultField = document.getElementById("password");
             resultField.value = '';
         }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            $('#employee_id').on('change', function() {
+            var selectedUserId = $(this).val();
+
+                // Make an AJAX request to get the user status
+                $.ajax({
+                    url: '/get-user-status/' + selectedUserId,
+                    type: 'GET',
+                    success: function(response) {
+                        // Update the status and style of the clock button based on the response
+                        var status = response.status;
+
+                        console.log('Status: ', status);
+                        // Update button text and style based on status
+                        $('#clockButton').text(status == 1 ? 'Clock In' : 'Clock Out');
+                        $('#clockButton').css({
+                            'background-color': status == 1 ? '#6045E2' : '#b04654',
+                            'color': '#FFFFFF',
+                            'border': '2px solid ' + (status == 1 ? '#6045E2' : '#b04654')
+                        });
+
+                        // Update the hidden input field value
+                        $('#statusInput').val(status == 1 ? 'Clock In' : 'Clock Out');
+
+                        // Enable the button
+                        $('#clockButton').prop('disabled', false);
+
+                        // Store the selectedUserId in a data attribute
+                        $('#clockButton').data('user-id', selectedUserId);
+                        console.log('User ID stored:', selectedUserId);
+                    },
+                    error: function(error) {
+                        console.error('Error fetching user status:', error);
+                    }
+                });
+            });
+
+
+
+        });
+    </script>
+
+    <script>
+        // Get references to the button and form.
+        const clockButton = document.getElementById('clockButton');
+        const clockForm = document.getElementById('clockForm');
+
+        // Add a click event listener to the button.
+        clockButton.addEventListener('click', async function (e) {
+            e.preventDefault(); // Prevent the default form submission.
+
+            // Get the current button text.
+            const buttonText = clockButton.innerText;
+
+            const userStatus = clockButton.getAttribute('data-status');
+
+            // Get the stored user ID.
+            const userId = $(clockButton).data('user-id');
+
+            // Determine the new status value.
+            const status = buttonText === 'Clock In' ? 'Clock In' : 'Clock Out';
+
+            // Update the form input with the new status.
+            const statusInput = document.getElementById('statusInput');
+            statusInput.value = status;
+
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            // Disable the button.
+            //  clockButton.disabled = true;
+
+            // Use try-catch to handle form submission errors.
+            try {
+                console.log(userId);
+                console.log(status);
+                const response = await fetch('{{ route('checkIn') }}', {
+                    method: 'POST',
+                    body: new FormData(clockForm),
+                    // Pass userId as a query parameter
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        status: status,
+                    }),
+                });
+
+                if (response.ok) {
+                    // Update the button text to the opposite.
+                    clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
+
+                    // Apply styles based on the status
+                    console.log(status)
+                    if (status === 'Clock In') {
+                    clockButton.style.backgroundColor = '#b04654';
+                    clockButton.style.color = '#FFFFFF';
+                    clockButton.style.border = '2px solid #b04654';
+                    } else {
+                    clockButton.style.backgroundColor = '#6045E2';
+                    clockButton.style.color = '#FFFFFF';
+                    clockButton.style.border = '2px solid #6045E2';
+                    }
+
+                    // Display a success alert
+                    Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+
+                        // Refresh the page
+                        location.reload(); // This will reload the current page
+                        }
+                    });
+
+                } else {
+                    // Display an error alert
+                    Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Form submission failed. An error occurred while processing your request.',
+                    });
+                }
+            } catch (error) {
+            console.error('Error:', error);
+            }
+
+            // Set a timeout to enable the button after 5 minutes.
+            // setTimeout(function () {
+            //     clockButton.disabled = false;
+            // }, 60000); // 300,000 milliseconds = 5 minutes
+
+        });
     </script>
 
 </body>

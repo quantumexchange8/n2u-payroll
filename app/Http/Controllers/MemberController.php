@@ -71,7 +71,6 @@ class MemberController extends Controller
         ]);
     }
 
-
     // Calendar view
     // public function viewSchedule(Request $request) {
     //     // Check if the request wants JSON data

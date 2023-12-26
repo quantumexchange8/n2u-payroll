@@ -92,14 +92,12 @@
                                             <span class="checkmark"></span>
                                         </label>
                                     </th>
-                                    <th>
-                                        Date
-                                    </th>
+                                    <th>Date</th>
                                     <th>Name</th>
                                     <th>Shift Start</th>
                                     <th>Shift End</th>
                                     <th>Remarks</th>
-                                    <th style="text-align:left;">Action</th>
+                                    <th style="text-align:center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -125,18 +123,18 @@
                                                 @if ($schedule->shift && $schedule->shift->shift_start)
                                                     {{ Carbon\Carbon::parse($schedule->shift->shift_start)->format('g:i A') }}
                                                 @else
-                                                     <!-- or any other message you want to display -->
+                                                    <b>Off Day</b>
                                                 @endif
                                             </td>
                                             <td>
                                                 @if ($schedule->shift && $schedule->shift->shift_end)
                                                     {{ Carbon\Carbon::parse($schedule->shift->shift_end)->format('g:i A') }}
                                                 @else
-
+                                                    <b>Off Day</b>
                                                 @endif
                                             </td>
                                             <td>{{ $schedule->remarks }}</td>
-                                            <td style="text-align:left;">
+                                            <td style="text-align:center;">
                                                 <button class="details-btn view-btn" data-toggle="modal" data-target="#viewModal{{ $schedule->id }}">
                                                     View <i class="icofont-eye"></i>
                                                 </button>
@@ -397,12 +395,16 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <p>Select a user to whom you want to duplicate the data:</p>
                                 <div class="form-group">
-                                    <label for="userDropdown">Select User:</label>
+                                    <label class="font-14 bold mb-2" for="userDropdown">Select User:</label>
                                     <select class="form-control" id="userDropdown" name="selectedUser">
+                                        <option value="">Select User</option>
                                         ${users.map(user => `<option value="${user.id}">${user.nickname}</option>`).join('')}
                                     </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Date</label>
+                                    <input type="date" class="theme-input-style" id="datePick" name="selectedDate" autocomplete="off">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -425,6 +427,8 @@
                 // Retrieve the selected user ID
                 var selectedUserId = $('#userDropdown').val();
 
+                var selectedDate = $('#datePick').val();
+
                 // Create an array to store filtered data from selected rows
                 var filteredRows = [];
 
@@ -443,6 +447,12 @@
                     filteredRows.push(filteredData);
                 });
 
+                console.log({
+                    selectedUserId: selectedUserId,
+                    selectedDate: selectedDate,
+                    filteredRows: filteredRows,
+                });
+
                 // Get the CSRF token from the meta tag
                 var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
@@ -455,10 +465,10 @@
                     },
                     data: {
                         selectedUserId: selectedUserId,
+                        selectedDate: selectedDate,
                         filteredRows: filteredRows,
                     },
                     success: function(response) {
-
                         // Close the user selection modal
                         $('#userSelectionModal').modal('hide');
 
