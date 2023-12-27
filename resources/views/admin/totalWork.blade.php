@@ -202,13 +202,13 @@
                                                 $hasTwoShifts = $pair->first()->status_clock > 2;
                                                 $shiftIndex = $hasTwoShifts ? 1 : 0;
                                                 $shift = App\Models\Schedule::join('shifts', 'schedules.shift_id', 'shifts.id')
-                                                    ->where('employee_id', $user->id)
-                                                    ->where('date', \Carbon\Carbon::parse($pair->first()->created_at)->format('Y-m-d'))
-                                                    ->orderBy('shifts.shift_start')
-                                                    ->when($hasTwoShifts, function ($query) use ($shiftIndex) {
-                                                        return $query->skip($shiftIndex);
-                                                    })
-                                                    ->first();
+                                                        ->where('employee_id', $user->id)
+                                                        ->where('date', \Carbon\Carbon::parse($pair->first()->created_at)->format('Y-m-d'))
+                                                        ->orderBy('shifts.shift_start')
+                                                        ->when($hasTwoShifts, function ($query) use ($shiftIndex) {
+                                                            return $query->skip($shiftIndex);
+                                                        })
+                                                        ->first();
                                             @endphp
 
                                             {{-- Display shift details --}}

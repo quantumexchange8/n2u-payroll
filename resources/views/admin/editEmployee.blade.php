@@ -15,15 +15,6 @@
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
-                                {{-- @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif --}}
 
                                 <!-- Form Group -->
                                 <div class="form-group">
@@ -85,20 +76,6 @@
                                 </div>
                                 <!-- End Form Group -->
 
-                                {{-- <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">Position</label>
-                                    <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off">
-                                        <option value="">Select Position</option>
-                                        @foreach($positions as $position)
-                                            <option value="{{ $position->id }}" {{ $user->position->id === $position->id ? 'selected' : '' }}>
-                                                {{ $position->position_name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <!-- End Form Group --> --}}
-
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Position</label>
@@ -113,11 +90,11 @@
                                 </div>
                                 <!-- End Form Group -->
 
-
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Employee Type</label>
                                     <select class="theme-input-style" id="employee_type" name="employee_type">
+                                        <option value="">Select Employee Type</option>
                                         <option value="Full Time" {{ $user->employee_type === 'Full Time' ? 'selected' : '' }}>Full Time</option>
                                         <option value="Part Time" {{ $user->employee_type === 'Part Time' ? 'selected' : '' }}>Part Time</option>
                                     </select>
@@ -380,7 +357,7 @@
 
 
     <div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-lg" role="document" style="max-width: 700px;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="fileModalLabel">File Preview</h5>
@@ -389,7 +366,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <img id="fileViewer" src="" alt="File Preview" style="max-width: 100%; max-height: 80vh;">
+                    {{-- <img id="fileViewer" src="" alt="File Preview" style="max-width: 100%; max-height: 80vh;"> --}}
+                    <iframe id="fileViewer" src="" style="width: 100%; height: 80vh;" frameborder="0"></iframe>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

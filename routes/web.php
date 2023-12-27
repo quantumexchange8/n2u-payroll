@@ -29,8 +29,8 @@ Route::post('/login_post', [LoginController::class, 'login_post'])->name('login_
 Route::get('/register', [LoginController::class, 'register'])->name('register');
 Route::post('/register_post', [LoginController::class, 'register_post'])->name('register_post');
 
-Route::get('/get-user-status/{userId}', [LoginController::class, 'getUserStatus']);
-Route::post('/check-in', [LoginController::class, 'checkIn'])->name('checkIn');
+Route::get('/get-user-status/{userId}', [RecordController::class, 'getUserStatus']);
+Route::post('/check-in', [RecordController::class, 'checkIn'])->name('checkIn');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('dashboard', [MemberController::class, 'dashboard'])->name('homepage');

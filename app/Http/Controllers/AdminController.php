@@ -169,6 +169,7 @@ class AdminController extends Controller
     }
 
     public function updateEmployee(EmployeeRequest $request, $id) {
+
         $data = User::find($id);
 
         // Validate the incoming request data
@@ -292,7 +293,6 @@ class AdminController extends Controller
 
         Alert::success('Done', 'Successfully Updated');
         return redirect()->route('viewEmployee');
-
     }
 
     public function updateEmployeePassword(Request $request, $id){
@@ -1537,7 +1537,7 @@ class AdminController extends Controller
 
                 // Check if a schedule already exists for the selected user and date
                 $existingSchedule = Schedule::where('employee_id', $selectedUserId)
-                        ->where('date', $scheduleData->date)
+                        ->where('date', $selectedDate)
                         ->whereNull('deleted_at')
                         ->count();
 
@@ -1554,10 +1554,11 @@ class AdminController extends Controller
                                         ->join('users', 'schedules.employee_id', '=', 'users.id')
                                         ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
                                         ->where('schedules.employee_id', $selectedUserId)
-                                        ->where('schedules.date', $scheduleData->date)
+                                        ->where('schedules.date', $selectedDate)
                                         ->whereNull('schedules.deleted_at')
-                                        ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end')
+                                        ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
                                         ->get();
+
 
                     // Check if $existingShifts is not empty
                     if ($existingShifts->isNotEmpty()) {
@@ -1599,11 +1600,13 @@ class AdminController extends Controller
                             // Check if 'tasks' key exists in the current row
                             if (isset($row['tasks']) && is_array($row['tasks'])) {
                                 // Extract task data from the tasks array
+
                                 $tasksData = [];
                                 foreach ($row['tasks'] as $task) {
                                     $existingTask = Task::where('employee_id', $selectedUserId)
                                                         ->where('period_id', $task['period_id'])
                                                         ->where('date', $task['date'])
+                                                        ->where('duty_id', $task['duty_id'])
                                                         ->whereNull('deleted_at')
                                                         ->first();
 
@@ -2244,6 +2247,7 @@ class AdminController extends Controller
 
         $otapproval = OtApproval::with(['user'])->get();
 
+
         return view('admin.otApproval', [
             // 'punchRecords' => $punchRecords,
             // 'otStart' => $otStart,
@@ -2523,13 +2527,13 @@ class AdminController extends Controller
         $data->update($updateData);
 
         // Select only specific fields from $actualData
-        $selectedData = $actualData->select('id','clock_in_time', 'clock_out_time', 'employee_id', 'created_at')->first();
+        $actualData->select('id','clock_in_time', 'clock_out_time', 'employee_id', 'created_at')->first();
 
-        $punch_record_id = $selectedData->id;
-        $actual_clock_in_time = $selectedData->clock_in_time;
-        $actual_clock_out_time = $selectedData->clock_out_time;
-        $date = $selectedData->created_at->format('Y-m-d');
-        $employee_id = $selectedData->employee_id;
+        $punch_record_id = $actualData->id;
+        $actual_clock_in_time = $actualData->clock_in_time;
+        $actual_clock_out_time = $actualData->clock_out_time;
+        $date = $actualData->created_at->format('Y-m-d');
+        $employee_id = $actualData->employee_id;
 
         $punchRecordLog = new PunchRecordLog();
         $punchRecordLog->punch_record_id = $punch_record_id;

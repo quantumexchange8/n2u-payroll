@@ -211,7 +211,6 @@
                         // Update the status and style of the clock button based on the response
                         var status = response.status;
 
-                        console.log('Status: ', status);
                         // Update button text and style based on status
                         $('#clockButton').text(status == 1 ? 'Clock In' : 'Clock Out');
                         $('#clockButton').css({
@@ -228,7 +227,6 @@
 
                         // Store the selectedUserId in a data attribute
                         $('#clockButton').data('user-id', selectedUserId);
-                        console.log('User ID stored:', selectedUserId);
                     },
                     error: function(error) {
                         console.error('Error fetching user status:', error);
@@ -265,7 +263,6 @@
             const statusInput = document.getElementById('statusInput');
             statusInput.value = status;
 
-
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             // Disable the button.
@@ -273,12 +270,9 @@
 
             // Use try-catch to handle form submission errors.
             try {
-                console.log(userId);
-                console.log(status);
                 const response = await fetch('{{ route('checkIn') }}', {
                     method: 'POST',
                     body: new FormData(clockForm),
-                    // Pass userId as a query parameter
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
@@ -293,8 +287,6 @@
                     // Update the button text to the opposite.
                     clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
 
-                    // Apply styles based on the status
-                    console.log(status)
                     if (status === 'Clock In') {
                     clockButton.style.backgroundColor = '#b04654';
                     clockButton.style.color = '#FFFFFF';
@@ -327,13 +319,15 @@
                     });
                 }
             } catch (error) {
-            console.error('Error:', error);
-            }
+                console.error('Error:', error);
 
-            // Set a timeout to enable the button after 5 minutes.
-            // setTimeout(function () {
-            //     clockButton.disabled = false;
-            // }, 60000); // 300,000 milliseconds = 5 minutes
+                // Display a generic error alert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An unexpected error occurred.',
+                });
+            }
 
         });
     </script>

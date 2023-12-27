@@ -28,7 +28,6 @@
                                  </div>
                                 <!-- End Date Picker -->
 
-
                                 <!-- Dropdown Button -->
                                 <div class="dropdown-button mt-3 mt-sm-0">
                                     <button class="btn style--two orange" type="button" id="filter-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -63,7 +62,6 @@
                             <table class="text-nowrap bg-white dh-table">
                                 <thead>
                                     <tr>
-                                        {{-- <th>Employee ID</th> --}}
                                         <th>Name</th>
                                         <th>Date</th>
                                         <th>Shift Start</th>
@@ -72,9 +70,7 @@
                                         <th>OT hours</th>
                                         <th>Approved OT hours</th>
                                         <th>Status</th>
-                                        {{-- @if($otapproval->remark != null) --}}
-                                        <th>Remark</th>
-                                        {{-- @endif --}}
+                                        <th>Remarks</th>
                                         <th style="text-align: center;">Action</th>
                                     </tr>
                                 </thead>
@@ -86,8 +82,7 @@
                                         @endphp
                                         @if (!empty($otapproval))
                                             <tr class="status-{{ $otapproval }}" data-date="{{ $recordDate }}">
-                                                {{-- <td>{{ $otapproval->employee_id }}</td> --}}
-                                                <td>{{ $otapproval->user->nickname }}</td>
+                                                <td>{{ $otapproval->user->nickname ?? null}}</td>
                                                 <td>{{ Carbon\Carbon::parse($otapproval->date)->format('d M Y') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($otapproval->shift_start)->format('g:i A') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($otapproval->shift_end)->format('g:i A') }}</td>
