@@ -39,11 +39,10 @@
 <body>
 
     <style>
-
         .btn-keys {
             width: 70px;
             height: 70px;
-            font-size: 18px;
+            font-size: 16px;
             margin: 5px;
         }
     </style>
@@ -61,11 +60,11 @@
                 </div>
                 <!-- End Logo -->
 
-                <div>
-                    <form action="{{ route('checkIn') }}" method="POST" id="clockForm" class="row" style="justify-content: center; margin-bottom: 20px; margin-top: 20px;">
+                <div >
+                    <form action="{{ route('checkIn') }}" method="POST" id="clockForm" class="row" style="display: flex; justify-content: center; margin-bottom: 20px; margin-top: 20px;">
                         @csrf
                         <input type="hidden" id="statusInput" name="status" value="Clock In">
-                        <button type="button" id="clockButton" class="btn" style="width:20%;
+                        <button type="button" id="clockButton" class="btn" style="
                             @if (!isset($status))
                                 background-color: #e69f5c;
                                 color: #FFFFFF;
@@ -80,7 +79,9 @@
                                 border: 2px solid #b04654;
                             @endif
                             " {{ isset($status) ? '' : 'disabled' }} >
-                            {{ isset($status) ? ($status == 1 ? 'Clock In' : 'Clock Out') : 'Select Employee ID' }}
+                                <span style="white-space: normal;">
+                                    {{ isset($status) ? ($status == 1 ? 'Clock In' : 'Clock Out') : 'Select Employee ID' }}
+                                </span>
                         </button>
                     </form>
                 </div>
@@ -111,7 +112,7 @@
                             <!-- Form Group -->
                             <div class="form-group mb-20">
                                 <label for="password" class="mb-2 font-14 bold black">Password</label>
-                                <input type="text" id="password" name="password" class="theme-input-style" placeholder="********" readonly>
+                                <input type="password" id="password" name="password" class="theme-input-style" placeholder="********" readonly>
                                 @error('password')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror

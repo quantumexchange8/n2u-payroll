@@ -7,7 +7,7 @@
 <!-- Main Content -->
   <div class="main-content">
     <div class="container-fluid">
-          <div class="row" style="display: flex;justify-content:center;flex-direction: column;align-items: center;flex-wrap: wrap;gap: 20px;">
+        <div class="row" style="display: flex;justify-content:center;flex-direction: column;align-items: center;flex-wrap: wrap;gap: 20px;">
 
             <form action="{{ route('clock_in') }}" method="POST" id="clockForm">
                 @csrf
@@ -226,7 +226,7 @@
                   </div>
               </div>
             </div>
-          </div>
+        </div>
     </div>
   </div>
 <!-- End Main Content -->
