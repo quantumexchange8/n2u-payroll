@@ -134,7 +134,7 @@
                                                     <!-- Repeater Remove Btn -->
                                                     <div class="repeater-remove-btn col-lg-1">
                                                         <button data-repeater-delete class="remove-btn" data-task-id="{{ $task->id }}">
-                                                            <img src="../../assets/img/svg/remove.svg" alt="" class="svg">
+                                                            <img src="{{ asset('assets/img/svg/remove.svg') }}" alt="" class="svg">
                                                         </button>
                                                     </div>
                                                 </div>
@@ -190,7 +190,7 @@
                                                     <!-- Repeater Remove Btn -->
                                                     <div class="repeater-remove-btn col-lg-1">
                                                         <button data-repeater-delete class="remove-btn">
-                                                            <img src="../../assets/img/svg/remove.svg" alt="" class="svg">
+                                                            <img src="{{ asset('assets/img/svg/remove.svg') }}" alt="" class="svg">
                                                         </button>
                                                     </div>
 
@@ -201,7 +201,7 @@
                                     </div>
                                     <!-- Repeater End -->
                                     <button data-repeater-create type="button" class="repeater-add-btn btn-circle">
-                                        <img src="../../assets/img/svg/plus_white.svg" alt="" class="svg">
+                                        <img src="{{ asset('assets/img/svg/plus_white.svg') }}" alt="" class="svg">
                                     </button>
                                 </div>
 

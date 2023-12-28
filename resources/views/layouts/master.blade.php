@@ -20,18 +20,18 @@
    <!-- Web Fonts -->
    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i&display=swap" rel="stylesheet">
 
-   <!-- ======= BEGIN GLOBAL MANDATORY STYLES ======= -->
-   <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap.min.css">
-   <link rel="stylesheet" href="../../assets/fonts/icofont/icofont.min.css">
-   <link rel="stylesheet" href="../../assets/plugins/perfect-scrollbar/perfect-scrollbar.min.css">
-   <!-- ======= END BEGIN GLOBAL MANDATORY STYLES ======= -->
+    <!-- ======= BEGIN GLOBAL MANDATORY STYLES ======= -->
+    <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/fonts/icofont/icofont.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.css') }}">
+    <!-- ======= END BEGIN GLOBAL MANDATORY STYLES ======= -->
 
     <!-- ======= BEGIN PAGE LEVEL PLUGINS STYLES ======= -->
-    <link rel="stylesheet" href="../../assets/plugins/fullcalendar/fullcalendar.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.css') }}">
     <!-- ======= END BEGIN PAGE LEVEL PLUGINS STYLES ======= -->
 
     <!-- ======= MAIN STYLES ======= -->
-    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- ======= END MAIN STYLES ======= -->
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.3/dist/sweetalert2.min.css">
@@ -63,9 +63,9 @@
             <!-- Logo -->
             <div class="logo logo-align" >
 
-                <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-03.png"  alt=""></a>
+                <a href="{{route('admindashboard')}}" class="default-logo"><img src="{{ asset('assets/img/logo-03.png') }}"  alt=""></a>
 
-                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="../../assets/img/logo-03.png"  alt="" style="width: auto;"></a>
+                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="{{ asset('assets/img/logo-03.png') }}"  alt="" style="width: auto;"></a>
 
             </div>
             <!-- End Logo -->
@@ -113,7 +113,7 @@
                             <!-- Main Header Menu -->
                             <div class="main-header-pin d-block d-lg-none">
                             <div class="header-toogle-menu">
-                                <img src="../../assets/img/menu.png" alt="">
+                                <img src="{{ asset('assets/img/menu.png') }}" alt="">
                             </div>
                             </div>
                             <!-- End Main Header Menu -->
@@ -354,30 +354,30 @@
     <!-- End wrapper -->
 
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
-    <script src="../../assets/js/jquery.min.js"></script>
-    <script src="../../assets/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../../assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="../../assets/js/script.js"></script>
+    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ asset('assets/js/script.js') }}"></script>
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
 
     <!-- ======= BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
-    <script src="../../assets/plugins/jquery-ui/jquery-ui.min.js"></script>
-    <script src="../../assets/plugins/moment/moment.min.js"></script>
-    <script src="../../assets/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src="{{ asset('assets/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.js') }}"></script>
     <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
 
     <!-- ======= BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
-    <script src="../../assets/plugins/jquery-repeater/repeater.min.js"></script>
-    <script src="../../assets/plugins/jquery-repeater/custom-repeater.js"></script>
+    <script src="{{ asset('assets/plugins/jquery-repeater/repeater.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/jquery-repeater/custom-repeater.js') }}"></script>
     <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
 
 
 
     @if(Auth::check())
         @if(Auth::user()->role === 'admin')
-            <script src="../../assets/plugins/fullcalendar/admin-fullcalendar.js"></script>
+            <script src="{{ asset('assets/plugins/fullcalendar/admin-fullcalendar.js') }}"></script>
         @elseif(Auth::user()->role === 'member')
-            <script src="../../assets/plugins/fullcalendar/member-fullcalendar.js"></script>
+            <script src="{{ asset('assets/plugins/fullcalendar/member-fullcalendar.js') }}"></script>
         @endif
     @endif
 

@@ -27,7 +27,7 @@
     <!-- ======= END BEGIN GLOBAL MANDATORY STYLES ======= -->
 
     <!-- ======= MAIN STYLES ======= -->
-    <link rel="stylesheet" href="../../../assets/css/style.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- ======= END MAIN STYLES ======= -->
 
     {{-- Sweet Alert --}}
@@ -55,12 +55,12 @@
             <div class="card justify-content-center auth-card" style="padding-top: 30px;">
                 <!-- Logo -->
                 <div class="logo" style="display: flex; justify-content: center;">
-                    <a href="{{route('admindashboard')}}" class="default-logo"><img src="{{ asset('assets/img/logo-02.png')}}" alt="" style="margin-bottom: 20px;"></a>
+                    <a href="{{route('admindashboard')}}" class="default-logo"><img src="{{ asset('assets/img/logo-02.png') }}" alt="" style="margin-bottom: 20px;"></a>
                 </div>
                 <!-- End Logo -->
 
                 <div >
-                    <form action="{{ route('checkIn') }}" method="POST" id="clockForm" class="row" style="display: flex; justify-content: center; margin-bottom: 20px; margin-top: 20px;">
+                    <form action="{{ route('checkIn') }}" method="POST" id="clockForm" class="row" style="display: none; justify-content: center; margin-bottom: 20px; margin-top: 20px;">
                         @csrf
                         <input type="hidden" id="statusInput" name="status" value="Clock In">
                         <button type="button" id="clockButton" class="btn" style="
@@ -177,12 +177,10 @@
     <!-- End Footer -->
 
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
-    <script src="../../../assets/js/jquery.min.js"></script>
-    <script src="../../../assets/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="../../../assets/js/script.js"></script>
-
-
+    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ asset('assets/js/script.js') }}"></script>
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
 
     <script>
@@ -213,6 +211,8 @@
                         // Update the status and style of the clock button based on the response
                         var status = response.status;
 
+                        console.log(selectedUserId);
+
                         // Update button text and style based on status
                         $('#clockButton').text(status == 1 ? 'Clock In' : 'Clock Out');
                         $('#clockButton').css({
@@ -229,14 +229,15 @@
 
                         // Store the selectedUserId in a data attribute
                         $('#clockButton').data('user-id', selectedUserId);
+
+                        // Show the form
+                        $('#clockForm').show();
                     },
                     error: function(error) {
                         console.error('Error fetching user status:', error);
                     }
                 });
             });
-
-
 
         });
     </script>
