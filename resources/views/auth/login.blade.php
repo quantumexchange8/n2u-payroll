@@ -21,10 +21,9 @@
     <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i&display=swap" rel="stylesheet">
 
     <!-- ======= BEGIN GLOBAL MANDATORY STYLES ======= -->
-    {{-- <link rel="stylesheet" href="../../../assets/bootstrap/css/bootstrap.min.css"> --}}
-    <link rel="stylesheet" href="../../../assets/fonts/icofont/icofont.min.css">
-    <link rel="stylesheet" href="../../../assets/plugins/perfect-scrollbar/perfect-scrollbar.min.css">
-    <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/fonts/icofont/icofont.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.css') }}">
     <!-- ======= END BEGIN GLOBAL MANDATORY STYLES ======= -->
 
     <!-- ======= MAIN STYLES ======= -->
@@ -182,6 +181,8 @@
     <script src="../../../assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../../../assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="../../../assets/js/script.js"></script>
+
+    
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
 
     <script>
