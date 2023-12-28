@@ -1139,11 +1139,11 @@ class AdminController extends Controller
                 $end = Carbon::parse($data['date_end']);
 
                 // Loop through dates and save schedule for each date
-                // while ($start->lte($end)) {
+                while ($start->lte($end)) {
                     $this->saveSchedule($userId, $start, true);
                     $start->addDay();
 
-                // }
+                }
             }
 
             // Redirect to the schedule page
@@ -1222,15 +1222,6 @@ class AdminController extends Controller
                 Alert::error('Error Detail', $message);
             }
         }
-
-        // Check if 'group-a' is present in the request, indicating task entries
-        // if ($request->has('group-a') && !empty($request->input('group-a'))) {
-        //     $this->saveTask($request, $dates, $selectedUsers);
-        // }
-
-        // if ($request->has('group-a') && is_array($request->input('group-a')) && count(array_filter($request->input('group-a'))) > 0) {
-        //     $this->saveTask($request, $dates, $selectedUsers);
-        // }
 
         if ($request->has('group-a') && $this->hasNonEmptyValues($request->input('group-a'))) {
             $this->saveTask($request, $dates, $selectedUsers);

@@ -281,7 +281,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group" style="display: none;">
                                     <label class="font-14 bold mb-2">Password</label>
-                                    <input type="password" class="theme-input-style" id="password" name="password" placeholder="Password" value="{{$user->password}}">
+                                    <input type="number" class="theme-input-style" id="password" name="password" placeholder="Password" value="{{$user->password}}">
                                 </div>
                                 <!-- End Form Group -->
 
@@ -316,21 +316,11 @@
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
-                                {{-- @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif --}}
-
 
                                 <!-- Form Group -->
                                 <div class="form-group mb-4">
                                     <label for="new-pass" class="bold font-14 mb-2">New Password</label>
-                                    <input type="password" class="theme-input-style" id="new-pass" name="new_password" placeholder="********">
+                                    <input type="number" class="theme-input-style" id="new-pass" name="new_password" placeholder="********">
                                     @error('new_password')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror

@@ -8,7 +8,7 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            
+
             <div class="col-12">
                 <div class="card mb-30">
 
@@ -43,8 +43,9 @@
                         <table class="text-nowrap table-bordered dh-table">
                             <thead>
                                 <tr>
-                                    <th>Employee ID</th>
+                                    {{-- <th>Employee ID</th> --}}
                                     <th>Full Name</th>
+                                    <th>Nickname</th>
                                     <th>Basic Salary (RM)</th>
                                     <th>Total OT Hour</th>
                                     <th>Total OT Pay</th>
@@ -54,8 +55,9 @@
                             <tbody>
                                 @foreach($salaryLogs as $salaryLog)
                                     <tr data-date="{{ $salaryLog->year }}-{{ str_pad($salaryLog->month, 2, '0', STR_PAD_LEFT) }}">
-                                        <td>{{ $salaryLog->employee_id ?? null }}</td>
+                                        {{-- <td>{{ $salaryLog->employee_id ?? null }}</td> --}}
                                         <td>{{ $salaryLog->user->full_name ?? null }}</td>
+                                        <td>{{ $salaryLog->user->nickname ?? null }}</td>
                                         <td>{{ $salaryLog->user->salary ?? null }}</td>
                                         <td>{{ $salaryLog->total_ot_hour ?? null }}</td>
                                         <td>{{ $salaryLog->total_ot_pay ?? null }}</td>
@@ -158,8 +160,7 @@
 
         // Generate the Excel file and trigger a download with the current date in the filename
         const currentFormattedDate = getCurrentFormattedDate();
-        XLSX.writeFile(workbook, `${currentFormattedDate}-SalaryLogs.xlsx`);
+        XLSX.writeFile(workbook, `${currentFormattedDate}-Salary-Logs.xlsx`);
     }
 </script>
-
 

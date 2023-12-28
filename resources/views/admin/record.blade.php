@@ -134,30 +134,3 @@
         window.location.href = '{{ route('otApproval') }}';
     }
 </script>
-
-{{-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-
-        // Get the progress bar element
-        var progressBar = document.getElementById('progressBar');
-
-        if (progressBar) {
-            // Add a click event listener to the progress bar
-            progressBar.addEventListener('click', function() {
-                // Get the value of the data-progress attribute
-                var progressValue = progressBar.getAttribute('data-progress');
-
-                // Log a message to the console
-                console.log('Progress bar clicked!');
-
-                // Log the value of the data-progress attribute to the console
-                console.log('Progress value:', progressValue);
-
-                // Redirect to otApproval.blade.php
-                window.location.href = 'otApproval';
-            });
-        } else {
-            console.error('Element with id "progressBar" not found.');
-        }
-    });
-</script> --}}
