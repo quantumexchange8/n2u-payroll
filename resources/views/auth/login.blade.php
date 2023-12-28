@@ -21,9 +21,10 @@
     <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i&display=swap" rel="stylesheet">
 
     <!-- ======= BEGIN GLOBAL MANDATORY STYLES ======= -->
-    <link rel="stylesheet" href="../../../assets/bootstrap/css/bootstrap.min.css">
+    {{-- <link rel="stylesheet" href="../../../assets/bootstrap/css/bootstrap.min.css"> --}}
     <link rel="stylesheet" href="../../../assets/fonts/icofont/icofont.min.css">
     <link rel="stylesheet" href="../../../assets/plugins/perfect-scrollbar/perfect-scrollbar.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css')}}">
     <!-- ======= END BEGIN GLOBAL MANDATORY STYLES ======= -->
 
     <!-- ======= MAIN STYLES ======= -->
@@ -54,9 +55,8 @@
             <!-- Card -->
             <div class="card justify-content-center auth-card" style="padding-top: 30px;">
                 <!-- Logo -->
-                <div class="logo" style="display: flex;
-                justify-content: center;">
-                    <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-02.png" alt="" style="margin-bottom: 20px;"></a>
+                <div class="logo" style="display: flex; justify-content: center;">
+                    <a href="{{route('admindashboard')}}" class="default-logo"><img src="{{ asset('assets/img/logo-02.png')}}" alt="" style="margin-bottom: 20px;"></a>
                 </div>
                 <!-- End Logo -->
 

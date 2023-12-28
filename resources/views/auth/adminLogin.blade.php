@@ -41,8 +41,7 @@
             <!-- Card -->
             <div class="card justify-content-center auth-card" style="padding-top: 30px;">
                 <!-- Logo -->
-                <div class="logo" style="display: flex;
-                justify-content: center;">
+                <div class="logo" style="display: flex; justify-content: center;">
                     <a href="{{route('admindashboard')}}" class="default-logo"><img src="../../assets/img/logo-02.png" alt="" style="margin-bottom: 20px;"></a>
                 </div>
                 <!-- End Logo -->
