@@ -182,7 +182,7 @@
     <script src="../../../assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="../../../assets/js/script.js"></script>
 
-    
+
     <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
 
     <script>
