@@ -60,7 +60,7 @@
                 <!-- End Logo -->
 
                 <div >
-                    <form action="{{ route('checkIn') }}" method="POST" id="clockForm" class="row" style="display: none; justify-content: center; margin-bottom: 20px; margin-top: 20px;">
+                    <form action="{{ route('checkIn') }}" method="POST" id="clockForm" class="row" style="display: none; justify-content: center;">
                         @csrf
                         <input type="hidden" id="statusInput" name="status" value="Clock In">
                         <button type="button" id="clockButton" class="btn" style="
@@ -211,8 +211,6 @@
                         // Update the status and style of the clock button based on the response
                         var status = response.status;
 
-                        console.log(selectedUserId);
-
                         // Update button text and style based on status
                         $('#clockButton').text(status == 1 ? 'Clock In' : 'Clock Out');
                         $('#clockButton').css({
@@ -291,34 +289,36 @@
                     clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
 
                     if (status === 'Clock In') {
-                    clockButton.style.backgroundColor = '#b04654';
-                    clockButton.style.color = '#FFFFFF';
-                    clockButton.style.border = '2px solid #b04654';
+                        clockButton.style.backgroundColor = '#b04654';
+                        clockButton.style.color = '#FFFFFF';
+                        clockButton.style.border = '2px solid #b04654';
                     } else {
-                    clockButton.style.backgroundColor = '#6045E2';
-                    clockButton.style.color = '#FFFFFF';
-                    clockButton.style.border = '2px solid #6045E2';
+                        clockButton.style.backgroundColor = '#6045E2';
+                        clockButton.style.color = '#FFFFFF';
+                        clockButton.style.border = '2px solid #6045E2';
                     }
+
+                    clockButton.style.display = 'none';
 
                     // Display a success alert
                     Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
+                        icon: 'success',
+                        title: 'Success',
+                        text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
                     }).then((result) => {
                         if (result.isConfirmed) {
 
-                        // Refresh the page
-                        location.reload(); // This will reload the current page
+                            // Refresh the page
+                            location.reload();
                         }
                     });
 
                 } else {
                     // Display an error alert
                     Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Form submission failed. An error occurred while processing your request.',
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Form submission failed. An error occurred while processing your request.',
                     });
                 }
             } catch (error) {

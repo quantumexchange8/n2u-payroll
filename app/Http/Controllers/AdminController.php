@@ -1153,14 +1153,17 @@ class AdminController extends Controller
 
         $successMessages = [];
         $failedMessages = [];
-
         $selectedUsers = $data['selected_users'];
+
+        $failedDates = [];
+        $userNicknames = [];
 
         foreach ($data['selected_users'] as $key => $userId) {
             // Your logic for off_day being 0
             $start = Carbon::parse($data['date_start']);
             $end = Carbon::parse($data['date_end']);
             $dates = [];
+            $successInsertedDates = [];
 
             if ($data['date_end'] === null) {
                 $dates[] = $start->toDateString();
@@ -1171,44 +1174,32 @@ class AdminController extends Controller
                 }
             }
 
-            $successInsertedDates = [];
-            $failedDates = [];
-
             foreach ($dates as $date) {
                 $result = $this->saveSchedule($userId, $date);
+                $userNicknames[] = User::find($userId)->nickname;
+                $userNickname = User::find($userId)->nickname;
+                $userNicknamesString = implode(' and ', $userNicknames);
 
                 if ($result === true) {
-                    $formattedDate = \Carbon\Carbon::parse($date)->format('d M Y'); // Format the date
+                    $formattedDate = \Carbon\Carbon::parse($date)->format('d M Y');
                     $successInsertedDates[] = $formattedDate;
                 } elseif ($result === 'max_schedules_exceeded') {
-                    $userNickname = User::find($userId)->nickname;
-                    $formattedFailedDate = \Carbon\Carbon::parse($date)->format('d M Y'); // Format the date
-                    $failedMessages[] = "Failed to insert $formattedFailedDate for user $userNickname due to exceeding the maximum of two schedules.";
+                    $formattedFailedDate = \Carbon\Carbon::parse($date)->format('d M Y');
+                    $failedMessages[] = "Failed to insert $formattedFailedDate for user(s) $userNickname due to exceeding the maximum of two schedules.";
                     $failedDates[] = $formattedFailedDate;
                 } elseif ($result === 'shift_overlap') {
-                    $userNickname = User::find($userId)->nickname;
-                    $formattedFailedDate = \Carbon\Carbon::parse($date)->format('d M Y'); // Format the date
-                    $failedMessages[] = "Failed to insert $formattedFailedDate for user $userNickname due to shift overlap.";
+                    $formattedFailedDate = \Carbon\Carbon::parse($date)->format('d M Y');
+                    $failedMessages[] = "Failed to insert $formattedFailedDate for user(s) $userNickname due to shift overlap.";
                     $failedDates[] = $formattedFailedDate;
                 }
             }
-
-            if (!empty($successInsertedDates)) {
-                $userNickname = User::find($userId)->nickname;
-                $successMessages[] = "Schedule for user $userNickname on " . implode(' and ', $successInsertedDates) . " successfully inserted.";
-            }
-
-
-            if (!empty($successInsertedDates)) {
-                $userNickname = User::find($userId)->nickname;
-                $successMessages[] = "Schedule for user $userNickname on " . implode(' and ', $successInsertedDates) . " successfully inserted.";
-            }
-
-            // if (!empty($failedDates)) {
-            //     $userNickname = User::find($userId)->nickname;
-            //     $failedMessages[] = "Failed to insert " . implode(' and ', $failedDates) . " for user $userNickname due to exceeding the maximum of two schedules.";
-            // }
         }
+
+        if (!empty($successInsertedDates)) {
+            $userNicknamesString = implode(', ', array_unique($userNicknames));
+            $successMessages[] = "Schedule for user(s) $userNicknamesString on " . implode(', ', $successInsertedDates) . " successfully inserted.";
+        }
+
 
         // Display messages for successful insertions
         foreach ($successMessages as $message) {
@@ -1217,7 +1208,7 @@ class AdminController extends Controller
 
         // Display messages for failed insertions
         if (!empty($failedMessages)) {
-            Alert::error('Error', 'Some insertions failed. See details below.');
+            // Alert::error('Error', 'Some insertions failed. See details below.');
             foreach ($failedMessages as $message) {
                 Alert::error('Error Detail', $message);
             }
@@ -1418,75 +1409,109 @@ class AdminController extends Controller
 
     public function updateSchedule(Request $request, $id){
 
-        // dd($request->all());
-        // Validate the request data
-        $request->validate([
-            // Validation rules for your form fields
-        ]);
-
         // Find the schedule by ID
         $schedule = Schedule::find($id);
 
-        // Update schedule details
-        $schedule->employee_id = $request->input('employee_id');
-        $schedule->date = $request->input('date');
-        $schedule->shift_id = $request->input('shift_id');
-        $schedule->remarks = $request->input('remarks');
+        $existingSchedule = Schedule::where('employee_id', $request->input('employee_id'))
+                                    ->where('date', $request->input('date'))
+                                    ->whereNull('deleted_at')
+                                    ->exists();
 
-        // Save the updated schedule
-        $schedule->save();
 
-        // Check if there are tasks and duties submitted in the request
-        $tasksAndDuties = $request->input('group-a', []);
+        if ($existingSchedule) {
+            // Retrieve shift details based on the selected shift_id
+            $shiftDetails = Shift::where('id', $request->shift_id)->first();
 
-        // If there are tasks and duties, update or insert them into the tasks table
-        if (!empty($tasksAndDuties)) {
-            foreach ($tasksAndDuties as $taskData) {
-                // Check if all key fields are null
-                $fieldsNull = is_null($taskData['period_id']) ||
-                                    is_null($taskData['duty_id']) ||
-                                    is_null($taskData['start_time']) ||
-                                    is_null($taskData['end_time']);
+            $newShiftStart = $shiftDetails->shift_start;
+            $newShiftEnd = $shiftDetails->shift_end;
 
-                // If all key fields are not null, proceed with creating/updating the task
-                if (!$fieldsNull) {
-                    // Check if a task exists with the given conditions
-                    $existingTask = Task::where([
-                        'date' => $schedule->date,
-                        'employee_id' => $schedule->employee_id,
-                        'period_id' => $taskData['period_id'],
-                    ])->first();
+            // Retrieve all existing shifts for the same user and date
+            $existingShifts = DB::table('schedules')
+                                ->join('users', 'schedules.employee_id', '=', 'users.id')
+                                ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                                ->where('schedules.employee_id', $request->input('employee_id'))
+                                ->where('schedules.date', $request->input('date'))
+                                ->whereNull('schedules.deleted_at')
+                                ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
+                                ->first();
 
-                    if ($existingTask) {
-                        // Print debug information
-                        // dd('Task exists. Update it:', $existingTask->toArray());
 
-                        // Update existing task
-                        $existingTask->update([
-                            'start_time' => $taskData['start_time'],
-                            'end_time' => $taskData['end_time'],
-                            'duty_id' => $taskData['duty_id'],
-                        ]);
-                    } else {
-                        // Find or create a task based on date, employee_id, and task_name
-                        $task = Task::Create(
-                            [
-                                'date' => $schedule->date,
-                                'employee_id' => $schedule->employee_id,
-                                'period_id' => $taskData['period_id'],
-                                'start_time' => $taskData['start_time'],
-                                'end_time' => $taskData['end_time'],
-                                'duty_id' => $taskData['duty_id'],
-                            ]
-                        );
+            // Check if $existingShifts is not empty
+            if ($existingShifts) {
+
+                $existingShiftStart = $existingShifts->shift_start;
+                $existingShiftEnd = $existingShifts->shift_end;
+
+                // Check if the new shift overlaps with the existing shift
+                if ($newShiftStart < $existingShiftEnd && $newShiftEnd > $existingShiftStart) {
+
+                    Alert::error('Error', 'Failed to update due to shift overlap.');
+                    return redirect()->back();
+                } else {
+                    // Update schedule details
+                    $schedule->employee_id = $request->input('employee_id');
+                    $schedule->date = $request->input('date');
+                    $schedule->shift_id = $request->input('shift_id');
+                    $schedule->remarks = $request->input('remarks');
+
+                    // Save the updated schedule
+                    $schedule->save();
+
+                    // Check if there are tasks and duties submitted in the request
+                    $tasksAndDuties = $request->input('group-a', []);
+
+                    // If there are tasks and duties, update or insert them into the tasks table
+                    if (!empty($tasksAndDuties)) {
+                        foreach ($tasksAndDuties as $taskData) {
+                            // Check if all key fields are null
+                            $fieldsNull = is_null($taskData['period_id']) ||
+                                                is_null($taskData['duty_id']) ||
+                                                is_null($taskData['start_time']) ||
+                                                is_null($taskData['end_time']);
+
+                            // If all key fields are not null, proceed with creating/updating the task
+                            if (!$fieldsNull) {
+                                // Check if a task exists with the given conditions
+                                $existingTask = Task::where([
+                                    'date' => $schedule->date,
+                                    'employee_id' => $schedule->employee_id,
+                                    'period_id' => $taskData['period_id'],
+                                ])->first();
+
+                                if ($existingTask) {
+                                    // Print debug information
+                                    // dd('Task exists. Update it:', $existingTask->toArray());
+
+                                    // Update existing task
+                                    $existingTask->update([
+                                        'start_time' => $taskData['start_time'],
+                                        'end_time' => $taskData['end_time'],
+                                        'duty_id' => $taskData['duty_id'],
+                                    ]);
+                                } else {
+                                    // Find or create a task based on date, employee_id, and task_name
+                                    $task = Task::Create(
+                                        [
+                                            'date' => $schedule->date,
+                                            'employee_id' => $schedule->employee_id,
+                                            'period_id' => $taskData['period_id'],
+                                            'start_time' => $taskData['start_time'],
+                                            'end_time' => $taskData['end_time'],
+                                            'duty_id' => $taskData['duty_id'],
+                                        ]
+                                    );
+                                }
+                            }
+                        }
                     }
                 }
+
+                // Redirect with success message
+                Alert::success('Done', 'Successfully Updated');
+                return redirect()->route('schedule');
+
             }
         }
-
-        // Redirect with success message
-        Alert::success('Done', 'Successfully Updated');
-        return redirect()->route('schedule');
     }
 
     public function deleteSchedule($id){
