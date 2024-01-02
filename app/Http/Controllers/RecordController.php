@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 class RecordController extends Controller
 {
 
@@ -20,7 +21,32 @@ class RecordController extends Controller
         $user = User::where('employee_id', $userId)->first();
 
         if ($user) {
-            return response()->json(['status' => $user->status]);
+            return response()->json([
+                'status' => $user->status,
+                'hashed_password' => $user->password,
+            ]);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'User not found'], 404);
+        }
+    }
+
+
+    public function comparePassword($userId, $userPassword){
+        $user = User::where('employee_id', $userId)->first();
+
+        if ($user) {
+            $hashedPasswordFromServer = $user->password;
+
+            // Check if the entered password matches the stored hash
+            $isPasswordCorrect = Hash::check($userPassword, $hashedPasswordFromServer);
+
+            if ($isPasswordCorrect) {
+                // Passwords match, you can return a success response or perform other actions
+                return response()->json(['status' => 'success']);
+            } else {
+                // Passwords don't match, return an error response
+                return response()->json(['status' => 'error', 'message' => 'Incorrect password'], 400);
+            }
         } else {
             return response()->json(['status' => 'error', 'message' => 'User not found'], 404);
         }

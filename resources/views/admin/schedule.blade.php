@@ -384,8 +384,7 @@
 
                         }).then(() => {
                             // After successful deletion, you can perform additional actions.
-                            // For example, refreshing the page.
-                            location.reload(); // This reloads the page.
+                            location.reload();
                         });
                     } else {
                         // Display an error alert in case of a failure.

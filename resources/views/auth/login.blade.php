@@ -53,14 +53,24 @@
 
             <!-- Card -->
             <div class="card justify-content-center auth-card" style="padding-top: 30px;">
+
+                <div class="main-header-date-time text-right" style="margin-bottom: 5px;">
+                    <h3 class="time">
+                        <span id="hours">10</span>
+                        <span id="point">:</span>
+                        <span id="min">00</span>
+                    </h3>
+                    <span class="date"><span id="date">Tue, 12 October 2019</span></span>
+                </div>
+
                 <!-- Logo -->
                 <div class="logo" style="display: flex; justify-content: center;">
                     <a href="{{route('admindashboard')}}" class="default-logo"><img src="{{ asset('assets/img/logo-02.png') }}" alt="" style="margin-bottom: 20px;"></a>
                 </div>
                 <!-- End Logo -->
 
-                <div >
-                    <form action="{{ route('checkIn') }}" method="POST" id="clockForm" class="row" style="display: none; justify-content: center;">
+                <div id="clockForm" class="row" style="display: none; justify-content: center;">
+                    <form action="{{ route('checkIn') }}" method="POST"  >
                         @csrf
                         <input type="hidden" id="statusInput" name="status" value="Clock In">
                         <button type="button" id="clockButton" class="btn" style="
@@ -84,7 +94,6 @@
                         </button>
                     </form>
                 </div>
-
 
                 <div class="row justify-content-center">
                     <div class="col-xl-7 col-lg-9">
@@ -244,6 +253,7 @@
         // Get references to the button and form.
         const clockButton = document.getElementById('clockButton');
         const clockForm = document.getElementById('clockForm');
+        const userPasswordInput = document.getElementById('password');
 
         // Add a click event listener to the button.
         clockButton.addEventListener('click', async function (e) {
@@ -257,6 +267,9 @@
             // Get the stored user ID.
             const userId = $(clockButton).data('user-id');
 
+            // Get the user password.
+            const userPassword = document.getElementById('password').value;
+
             // Determine the new status value.
             const status = buttonText === 'Clock In' ? 'Clock In' : 'Clock Out';
 
@@ -264,61 +277,104 @@
             const statusInput = document.getElementById('statusInput');
             statusInput.value = status;
 
+            userPasswordInput.value = userPassword;
+
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             // Disable the button.
             //  clockButton.disabled = true;
-
             // Use try-catch to handle form submission errors.
             try {
-                const response = await fetch('{{ route('checkIn') }}', {
-                    method: 'POST',
-                    body: new FormData(clockForm),
+                const response = await fetch(`/compare-password/${userId}/${userPassword}`, {
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
                     },
-                    body: JSON.stringify({
-                        userId: userId,
-                        status: status,
-                    }),
                 });
 
                 if (response.ok) {
-                    // Update the button text to the opposite.
-                    clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
+                    const result = await response.json();
 
-                    if (status === 'Clock In') {
-                        clockButton.style.backgroundColor = '#b04654';
-                        clockButton.style.color = '#FFFFFF';
-                        clockButton.style.border = '2px solid #b04654';
-                    } else {
-                        clockButton.style.backgroundColor = '#6045E2';
-                        clockButton.style.color = '#FFFFFF';
-                        clockButton.style.border = '2px solid #6045E2';
-                    }
+                    if (result.status === 'success') {
 
-                    clockButton.style.display = 'none';
+                        try {
+                            const response = await fetch('{{ route('checkIn') }}', {
+                                method: 'POST',
 
-                    // Display a success alert
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken,
+                                },
+                                body: JSON.stringify({
+                                    userId: userId,
+                                    status: status,
+                                }),
+                            });
 
-                            // Refresh the page
-                            location.reload();
+                            if (response.ok) {
+                                // Update the button text to the opposite.
+                                clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
+
+                                if (status === 'Clock In') {
+                                    clockButton.style.backgroundColor = '#b04654';
+                                    clockButton.style.color = '#FFFFFF';
+                                    clockButton.style.border = '2px solid #b04654';
+                                } else {
+                                    clockButton.style.backgroundColor = '#6045E2';
+                                    clockButton.style.color = '#FFFFFF';
+                                    clockButton.style.border = '2px solid #6045E2';
+                                }
+
+                                clockButton.style.display = 'none';
+
+                                // Display a success alert
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+
+                                        // Refresh the page
+                                        location.reload();
+                                    }
+                                });
+
+                            } else {
+                                // Display an error alert
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Form submission failed. An error occurred while processing your request.',
+                                });
+                            }
+
+                        } catch (error) {
+                            console.error('Error:', error);
+
+                            // Display a generic error alert
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An unexpected error occurred.',
+                            });
                         }
-                    });
+
+                    } else {
+                        // Display an error alert for incorrect password
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Please enter correct password.',
+                        });
+                    }
 
                 } else {
                     // Display an error alert
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Form submission failed. An error occurred while processing your request.',
+                        text: 'Please enter correct password.',
                     });
                 }
             } catch (error) {
@@ -331,7 +387,6 @@
                     text: 'An unexpected error occurred.',
                 });
             }
-
         });
     </script>
 
