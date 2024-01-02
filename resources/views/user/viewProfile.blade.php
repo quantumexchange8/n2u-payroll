@@ -96,7 +96,7 @@
                                             <!-- Form Group -->
                                             <div class="form-group mb-4">
                                                 <label for="old-pass" class="bold font-14 mb-2 black">Old Password</label>
-                                                <input type="password" class="theme-input-style" id="old-pass" name="old-pass" placeholder="********">
+                                                <input type="number" class="theme-input-style" id="old-pass" name="old-pass">
                                             </div>
                                             @error('old-pass')
                                                 <span class="text-danger">{{ $message }}</span>
@@ -106,7 +106,7 @@
                                             <!-- Form Group -->
                                             <div class="form-group mb-4">
                                                 <label for="new-pass" class="bold font-14 mb-2 black">New Password</label>
-                                                <input type="password" class="theme-input-style" id="new-pass" name="new-pass" placeholder="********">
+                                                <input type="number" class="theme-input-style" id="new-pass" name="new-pass">
                                             </div>
                                             @error('new-pass')
                                                 <span class="text-danger">{{ $message }}</span>
@@ -116,7 +116,7 @@
                                             <!-- Form Group -->
                                             <div class="form-group mb-10">
                                                 <label for="retype-pass" class="bold font-14 mb-2 black">Retype Password</label>
-                                                <input type="password" class="theme-input-style" id="retype-pass" name="retype-pass" placeholder="********">
+                                                <input type="number" class="theme-input-style" id="retype-pass" name="retype-pass">
                                             </div>
                                             @error('retype-pass')
                                                 <span class="text-danger">{{ $message }}</span>
@@ -143,7 +143,7 @@
                     <!-- End Form -->
 
                 </div>
-                
+
             </div>
         </div>
     </div>

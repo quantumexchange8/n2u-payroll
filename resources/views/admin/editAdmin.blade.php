@@ -150,7 +150,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group mb-4">
                                     <label for="new-pass" class="bold font-14 mb-2">New Password</label>
-                                    <input type="password" class="theme-input-style" id="new-pass" name="new_password" placeholder="********">
+                                    <input type="number" class="theme-input-style" id="new-pass" name="new_password">
                                     @error('new_password')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
