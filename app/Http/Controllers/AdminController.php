@@ -2518,6 +2518,7 @@ class AdminController extends Controller
 
     public function updateAttendance(Request $request, $id){
 
+
         $data = PunchRecord::find($id);
 
         $actualData = PunchRecord::find($id);

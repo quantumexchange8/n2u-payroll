@@ -186,7 +186,7 @@
                       <!-- Invoice List Table -->
                       <table id="punchRecordsTable" class="text-nowrap table-bordered dh-table">
                         <thead>
-                            <tr>
+                            <tr style="text-align: center;">
                                 <th>Name</th>
                                 <th>Date</th>
                                 <th>Time</th>

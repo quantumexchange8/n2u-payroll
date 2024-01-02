@@ -134,6 +134,10 @@
             </div>
             <form id="editAttendanceForm">
                 <div class="modal-body">
+                    <div class="form-group" id="dateGroup">
+                        <label for="date">Date:</label>
+                        <input type="date" class="form-control" id="clockDate" name="date">
+                    </div>
                     <div class="form-group" id="clockInGroup">
                         <label for="clockIn">Clock In:</label>
                         <input type="time" class="form-control" id="clockIn" name="clock_in_time">
@@ -300,22 +304,40 @@
 
                     if (data.clock_in_time !== null) {
                         var clockInTime = new Date(data.clock_in_time);
+
+                        var year = clockInTime.getFullYear();
+                        var month = (clockInTime.getMonth() + 1).toString().padStart(2, '0');
+                        var day = clockInTime.getDate().toString().padStart(2, '0');
+
                         var hours = clockInTime.getHours().toString().padStart(2, '0');
                         var minutes = clockInTime.getMinutes().toString().padStart(2, '0');
+
+                        var formattedClockInDate = year + '-' + month + '-' + day;
                         var formattedClockInTime = hours + ':' + minutes;
 
                         modalBody.find('#clockIn').val(formattedClockInTime);
                         modalBody.find('#clockInGroup').show();
+                        modalBody.find('#clockDate').val(formattedClockInDate);
+                        modalBody.find('#dateGroup').show();
                     }
 
                     if (data.clock_out_time !== null) {
                         var clockOutTime = new Date(data.clock_out_time);
+
+                        var year = clockOutTime.getFullYear();
+                        var month = (clockOutTime.getMonth() + 1).toString().padStart(2, '0');
+                        var day = clockOutTime.getDate().toString().padStart(2, '0');
+
                         var hours = clockOutTime.getHours().toString().padStart(2, '0');
                         var minutes = clockOutTime.getMinutes().toString().padStart(2, '0');
+
+                        var formattedClockOutDate = year + '-' + month + '-' + day;
                         var formattedClockOutTime = hours + ':' + minutes;
 
                         modalBody.find('#clockOut').val(formattedClockOutTime);
                         modalBody.find('#clockOutGroup').show();
+                        modalBody.find('#clockDate').val(formattedClockOutDate);
+                        modalBody.find('#dateGroup').show();
                     }
 
 
@@ -343,6 +365,8 @@
             });
         });
 
+
+
         // Handle form submission
         $('#editAttendanceForm').submit(function(event) {
             event.preventDefault();
@@ -360,6 +384,8 @@
                 // Extract the date part from the existing clock_out_time
                 var existingClockOutDate = attendanceData.clock_out_time ? attendanceData.clock_out_time.split(' ')[0] : null;
 
+                var newDate = $('#clockDate').val();
+
                 // Extract the hours and minutes part from the new clockIn input
                 var newInTime = $('#clockIn').val();
 
@@ -367,16 +393,12 @@
                 var newOutTime = $('#clockOut').val();
 
                 // Combine the existing date part with the new hours and minutes if not null
-                var newClockInTime = existingClockInDate && newInTime ? existingClockInDate + ' ' + newInTime + ':00' : null;
-                var newClockOutTime = existingClockOutDate && newOutTime ? existingClockOutDate + ' ' + newOutTime + ':00' : null;
+                // var newClockInTime = existingClockInDate && newInTime ? existingClockInDate + ' ' + newInTime + ':00' : null;
+                // var newClockOutTime = existingClockOutDate && newOutTime ? existingClockOutDate + ' ' + newOutTime + ':00' : null;
 
-                // Log the data to be sent
-                // console.log('Data to be sent:', {
-                //     clock_in_time: newClockInTime,
-                //     clock_out_time: newClockOutTime,
-                //     status: $('#status').val(),
-                //     _token: csrfToken
-                // });
+                var newClockInTime = newDate && newInTime ? newDate + ' ' + newInTime + ':00' : null;
+                var newClockOutTime = newDate && newOutTime ? newDate + ' ' + newOutTime + ':00' : null;
+
 
                 // Perform AJAX request to update the data
                 $.ajax({
