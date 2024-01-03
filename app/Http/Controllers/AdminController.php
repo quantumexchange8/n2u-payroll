@@ -805,7 +805,7 @@ class AdminController extends Controller
                 $result = $this->saveSchedule($userId, $date);
                 $userNicknames[] = User::find($userId)->nickname;
                 $userNickname = User::find($userId)->nickname;
-                $userNicknamesString = implode(' and ', $userNicknames);
+                $userNicknamesString = implode(', ', $userNicknames);
 
                 if ($result === true) {
                     $formattedDate = \Carbon\Carbon::parse($date)->format('d M Y');
@@ -827,7 +827,6 @@ class AdminController extends Controller
             $successMessages[] = "Schedule for user(s) $userNicknamesString on " . implode(', ', $successInsertedDates) . " successfully inserted.";
         }
 
-
         // Display messages for successful insertions
         foreach ($successMessages as $message) {
             Alert::success('Success Detail', $message);
@@ -848,15 +847,27 @@ class AdminController extends Controller
         return redirect()->route('schedule');
     }
 
+    // private function hasNonEmptyValues($array){
+    //     foreach ($array as $item) {
+    //         if (!is_array($item) || count(array_filter($item, function ($value) {
+    //             return !is_null($value);
+    //         })) > 0) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+
+    // If group-a input is null, then no insert
     private function hasNonEmptyValues($array){
         foreach ($array as $item) {
             if (!is_array($item) || count(array_filter($item, function ($value) {
-                return !is_null($value);
+                return $value === '' || $value === null;
             })) > 0) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     private function saveSchedule($userId, $date, $offDay = false){

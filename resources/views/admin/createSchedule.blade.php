@@ -135,6 +135,9 @@
                                                             <option value="{{ $period->id }}" {{ old('period_id') == $period->id ? 'selected' : '' }}>{{ $period->period_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('period_id')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                                 <!-- End Form Group -->
 
@@ -142,6 +145,9 @@
                                                 <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">Start Time</label>
                                                     <input type="time" class="form-control" id="start_time" name="start_time" autocomplete="off" value="{{ old('start_time') }}">
+                                                    @error('start_time')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                                 <!-- End Form Group -->
 
@@ -149,6 +155,9 @@
                                                 <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">End Time</label>
                                                     <input type="time" class="form-control" id="end_time" name="end_time" autocomplete="off" value="{{ old('end_time') }}">
+                                                    @error('end_time')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                                 <!-- End Form Group -->
 
