@@ -29,8 +29,6 @@ class RecordController extends Controller
             return response()->json(['status' => 'error', 'message' => 'User not found'], 404);
         }
     }
-
-
     public function comparePassword($userId, $userPassword){
         $user = User::where('employee_id', $userId)->first();
 

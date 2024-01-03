@@ -578,7 +578,7 @@ class AdminController extends Controller
         $rules = [
             'shift_name' => 'required|max:255',
             'shift_start' => 'required',
-            'shift_end' => 'required|after_or_equal:shift_start'
+            'shift_end' => 'required'
         ];
 
         $messages = [
