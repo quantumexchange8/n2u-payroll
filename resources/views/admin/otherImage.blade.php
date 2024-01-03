@@ -10,7 +10,7 @@
                 <div class="card mb-30">
                     <div class="card-body">
                         <div class="d-sm-flex justify-content-between align-items-center">
-                            <h4 class="font-20 ">Other Image or File</h4>
+                            <h4 class="font-20 ">Other Image or File - {{$user->nickname}}</h4>
                             <div class="d-flex flex-wrap">
                                 <div class="col-md-4">
                                     <div class="form-row">

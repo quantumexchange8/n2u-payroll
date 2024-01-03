@@ -33,7 +33,7 @@
                                     <select class="theme-input-style" id="department_id" name="department_id">
                                         <option value="">Select Department</option>
                                         @foreach($departments as $department)
-                                            <option value="{{ $department->id }}">{{ $department->department_name }}</option>
+                                            <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>{{ $department->department_name }}</option>
                                         @endforeach
                                     </select>
                                     @error('department_id')

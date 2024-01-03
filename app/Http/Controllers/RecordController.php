@@ -754,17 +754,35 @@ class RecordController extends Controller
 
                     // $checkSecondOT = $lastClockOutTime->addMinutes($overtimeCalculation);
 
-                    if ($firstClockInTime >= $firstShiftStartTime && $firstClockInTime >= $checkFirstLate) {
-                        if ($firstClockOutTime >= $firstShiftEndTime && $firstClockOutTime >= $checkFirstOT) {
-                            $firstTotalWork = $firstShiftEndTime->diffInMinutes($firstClockInTime);
+                    if ($firstShiftStartTime > $firstShiftEndTime) {
+                        $newFirstShiftStartTime = $firstShiftStartTime->subDay();
+
+                        if ($firstClockInTime >= $firstShiftStartTime && $firstClockInTime >= $checkFirstLate) {
+                            if ($firstClockOutTime >= $firstShiftEndTime && $firstClockOutTime >= $checkFirstOT) {
+                                $firstTotalWork = $firstShiftEndTime->diffInMinutes($firstClockInTime);
+                            } else {
+                                $firstTotalWork = $firstClockOutTime->diffInMinutes($firstClockInTime);
+                            }
                         } else {
-                            $firstTotalWork = $firstClockOutTime->diffInMinutes($firstClockInTime);
+                            if ($firstClockOutTime >= $firstShiftEndTime && $firstClockOutTime >= $checkFirstOT) {
+                                $firstTotalWork = $firstShiftEndTime->diffInMinutes($newFirstShiftStartTime);
+                            } else {
+                                $firstTotalWork = $firstClockOutTime->diffInMinutes($newFirstShiftStartTime);
+                            }
                         }
                     } else {
-                        if ($firstClockOutTime >= $firstShiftEndTime && $firstClockOutTime >= $checkFirstOT) {
-                            $firstTotalWork = $firstShiftEndTime->diffInMinutes($firstShiftStartTime);
+                        if ($firstClockInTime >= $firstShiftStartTime && $firstClockInTime >= $checkFirstLate) {
+                            if ($firstClockOutTime >= $firstShiftEndTime && $firstClockOutTime >= $checkFirstOT) {
+                                $firstTotalWork = $firstShiftEndTime->diffInMinutes($firstClockInTime);
+                            } else {
+                                $firstTotalWork = $firstClockOutTime->diffInMinutes($firstClockInTime);
+                            }
                         } else {
-                            $firstTotalWork = $firstClockOutTime->diffInMinutes($firstShiftStartTime);
+                            if ($firstClockOutTime >= $firstShiftEndTime && $firstClockOutTime >= $checkFirstOT) {
+                                $firstTotalWork = $firstShiftEndTime->diffInMinutes($firstShiftStartTime);
+                            } else {
+                                $firstTotalWork = $firstClockOutTime->diffInMinutes($firstShiftStartTime);
+                            }
                         }
                     }
 
@@ -844,19 +862,38 @@ class RecordController extends Controller
                     //     }
                     // }
 
-                    if ($lastClockInTime >= $secondShiftStartTime && $lastClockInTime >= $checkSecondLate) {
-                        if ($lastClockOutTime >= $secondShiftEndTime && $lastClockOutTime >= $checkSecondOT) {
-                            $secondTotalWork = $secondShiftEndTime->diffInMinutes($lastClockInTime);
+                    if ($secondShiftStartTime > $secondShiftEndTime) {
+                        $newSecondShiftStartTime = $secondShiftStartTime->subDay();
+
+                        if ($lastClockInTime >= $secondShiftStartTime && $lastClockInTime >= $checkSecondLate) {
+                            if ($lastClockOutTime >= $secondShiftEndTime && $lastClockOutTime >= $checkSecondOT) {
+                                $secondTotalWork = $secondShiftEndTime->diffInMinutes($lastClockInTime);
+                            }else {
+                                $secondTotalWork = $lastClockOutTime->diffInMinutes($lastClockInTime);
+                            }
                         }else {
-                            $secondTotalWork = $lastClockOutTime->diffInMinutes($lastClockInTime);
+                            if ($lastClockOutTime >= $secondShiftEndTime && $lastClockOutTime >= $checkSecondOT) {
+                                $secondTotalWork = $secondShiftEndTime->diffInMinutes($newSecondShiftStartTime);
+                            }else {
+                                $secondTotalWork = $lastClockOutTime->diffInMinutes($newSecondShiftStartTime);
+                            }
                         }
-                    }else {
-                        if ($lastClockOutTime >= $secondShiftEndTime && $lastClockOutTime >= $checkSecondOT) {
-                            $secondTotalWork = $secondShiftEndTime->diffInMinutes($secondShiftStartTime);
+                    } else {
+                        if ($lastClockInTime >= $secondShiftStartTime && $lastClockInTime >= $checkSecondLate) {
+                            if ($lastClockOutTime >= $secondShiftEndTime && $lastClockOutTime >= $checkSecondOT) {
+                                $secondTotalWork = $secondShiftEndTime->diffInMinutes($lastClockInTime);
+                            }else {
+                                $secondTotalWork = $lastClockOutTime->diffInMinutes($lastClockInTime);
+                            }
                         }else {
-                            $secondTotalWork = $lastClockOutTime->diffInMinutes($secondShiftStartTime);
+                            if ($lastClockOutTime >= $secondShiftEndTime && $lastClockOutTime >= $checkSecondOT) {
+                                $secondTotalWork = $secondShiftEndTime->diffInMinutes($secondShiftStartTime);
+                            }else {
+                                $secondTotalWork = $lastClockOutTime->diffInMinutes($secondShiftStartTime);
+                            }
                         }
                     }
+
 
                     $totalWorkInHours = number_format($secondTotalWork / 60, 2);
                     $recordData['total_work'] = $totalWorkInHours;
@@ -971,19 +1008,38 @@ class RecordController extends Controller
                     $checkLate = $firstShiftStartTime->copy()->addMinutes($lateThreshold);
 
                     $checkOT = $firstShiftEndTime->copy()->addMinutes($overtimeCalculation);
-                    if ($firstClockInTime >= $firstShiftStartTime && $firstClockInTime >= $checkLate) {
-                        if ($lastClockOutTime >= $firstShiftEndTime && $lastClockOutTime >= $checkOT) {
-                            $totalWork = $firstShiftEndTime->diffInMinutes($firstClockInTime);
-                        } else{
-                            $totalWork = $lastClockOutTime->diffInMinutes($firstClockInTime);
+
+                    if ($firstShiftStartTime > $firstShiftEndTime) {
+                        $newFirstShiftStartTime = $firstShiftStartTime->subDay();
+                        if ($firstClockInTime >= $firstShiftStartTime && $firstClockInTime >= $checkLate) {
+                            if ($lastClockOutTime >= $firstShiftEndTime && $lastClockOutTime >= $checkOT) {
+                                $totalWork = $firstShiftEndTime->diffInMinutes($firstClockInTime);
+                            } else{
+                                $totalWork = $lastClockOutTime->diffInMinutes($firstClockInTime);
+                            }
+                        } else {
+                            if ($lastClockOutTime >= $firstShiftEndTime && $lastClockOutTime >= $checkOT) {
+                                $totalWork = $firstShiftEndTime->diffInMinutes($newFirstShiftStartTime);
+                            } else {
+                                $totalWork = $lastClockOutTime->diffInMinutes($newFirstShiftStartTime);
+                            }
                         }
                     } else {
-                        if ($lastClockOutTime >= $firstShiftEndTime && $lastClockOutTime >= $checkOT) {
-                            $totalWork = $firstShiftEndTime->diffInMinutes($firstShiftStartTime);
+                        if ($firstClockInTime >= $firstShiftStartTime && $firstClockInTime >= $checkLate) {
+                            if ($lastClockOutTime >= $firstShiftEndTime && $lastClockOutTime >= $checkOT) {
+                                $totalWork = $firstShiftEndTime->diffInMinutes($firstClockInTime);
+                            } else{
+                                $totalWork = $lastClockOutTime->diffInMinutes($firstClockInTime);
+                            }
                         } else {
-                            $totalWork = $lastClockOutTime->diffInMinutes($firstShiftStartTime);
+                            if ($lastClockOutTime >= $firstShiftEndTime && $lastClockOutTime >= $checkOT) {
+                                $totalWork = $firstShiftEndTime->diffInMinutes($firstShiftStartTime);
+                            } else {
+                                $totalWork = $lastClockOutTime->diffInMinutes($firstShiftStartTime);
+                            }
                         }
                     }
+
 
                     $totalWorkInHours = number_format($totalWork / 60, 2);
                     $recordData['total_work'] = $totalWorkInHours;

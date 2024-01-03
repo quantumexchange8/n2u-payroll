@@ -12,15 +12,6 @@
                     <!-- Form -->
                     <form action="{{route('addTask')}}" method="POST" class="repeater-default">
                         @csrf
-                        {{-- @if($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif --}}
 
                         <!-- Color Options -->
                         <div class="form-element color-options">
@@ -40,7 +31,8 @@
                                                 <div class="d-flex align-items-center mb-3">
                                                     <!-- Custom Checkbox -->
                                                     <label class="custom-checkbox solid position-relative mr-2">
-                                                        <input type="checkbox" name="selected_users[]" value="{{ $user->id }}">
+                                                        <input type="checkbox" name="selected_users[]" value="{{ $user->id }}"
+                                                        {{ in_array($user->id, old('selected_users', [])) ? 'checked' : '' }}>
                                                         <span class="checkmark"></span>
                                                     </label>
                                                     <!-- End Custom Checkbox -->
@@ -63,7 +55,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Date</label>
-                                    <input type="date" class="theme-input-style" id="date" name="dates" autocomplete="off">
+                                    <input type="date" class="theme-input-style" id="date" name="dates" autocomplete="off" value="{{ old('dates') }}">
                                     @error('dates')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -85,10 +77,10 @@
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-3">
                                                     <label for="inputName" class="bold mb-2">Period</label>
-                                                    <select class="theme-input-style" id="period_id" name="group-a[0][period_id]" value="{{ old('period_id') }}">
+                                                    <select class="theme-input-style" id="period_id" name="group-a[0][period_id]">
                                                         <option value="">Select Period</option>
                                                         @foreach ($periods as $period)
-                                                            <option value="{{ $period->id }}">{{ $period->period_name }}</option>
+                                                            <option value="{{ $period->id }}" {{ old('group-a.0.period_id') == $period->id ? 'selected' : '' }}>{{ $period->period_name }}</option>
                                                         @endforeach
                                                     </select>
                                                     @error('group-a.0.period_id')
@@ -100,7 +92,7 @@
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">Start</label>
-                                                    <input type="time" class="form-control" id="start_time" name="group-a[0][start_time]" autocomplete="off">
+                                                    <input type="time" class="form-control" id="start_time" name="group-a[0][start_time]" autocomplete="off" value="{{ old('group-a.0.start_time') }}">
                                                     @error('group-a.0.start_time')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -110,7 +102,7 @@
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-2">
                                                     <label for="inputMobile" class="bold mb-2">End</label>
-                                                    <input type="time" class="form-control" id="end_time" name="group-a[0][end_time]" autocomplete="off">
+                                                    <input type="time" class="form-control" id="end_time" name="group-a[0][end_time]" autocomplete="off" value="{{ old('group-a.0.end_time') }}">
                                                     @error('group-a.0.end_time')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -120,10 +112,10 @@
                                                 <!-- Form Group -->
                                                 <div class="form-group col-lg-3">
                                                     <label for="inputCompany" class="bold mb-2">Duty</label>
-                                                    <select class="theme-input-style" id="duty_id" name="group-a[0][duty_id]" autocomplete="off" value="{{ old('duty_id') }}">
+                                                    <select class="theme-input-style" id="duty_id" name="group-a[0][duty_id]" autocomplete="off" value="{{ old('group-a.0.duty_id') }}">
                                                         <option value="">Select Duty</option>
                                                         @foreach ($duties as $duty)
-                                                        <option value="{{ $duty->id }}">{{ $duty->duty_name }}</option>
+                                                        <option value="{{ $duty->id }}" {{ old('duty_id') == $duty->id ? 'selected' : '' }}>{{ $duty->duty_name }}</option>
                                                     @endforeach
                                                     </select>
                                                     @error('group-a.0.duty_id')

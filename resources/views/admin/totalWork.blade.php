@@ -133,7 +133,7 @@
                                             </td>
 
                                             {{-- Display date and user nickname --}}
-                                            <td>{{ \Carbon\Carbon::parse($pair->first()->created_at)->format('d M Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($pair->first()->clock_in_time)->format('d M Y') }}</td>
                                             <td>{{ $user->nickname }}</td>
 
                                             {{-- Determine user shifts --}}
@@ -142,7 +142,7 @@
                                                 $shiftIndex = $hasTwoShifts ? 1 : 0;
                                                 $shift = App\Models\Schedule::join('shifts', 'schedules.shift_id', 'shifts.id')
                                                         ->where('employee_id', $user->id)
-                                                        ->where('date', \Carbon\Carbon::parse($pair->first()->created_at)->format('Y-m-d'))
+                                                        ->where('date', \Carbon\Carbon::parse($pair->first()->clock_in_time)->format('Y-m-d'))
                                                         ->orderBy('shifts.shift_start')
                                                         ->when($hasTwoShifts, function ($query) use ($shiftIndex) {
                                                             return $query->skip($shiftIndex);

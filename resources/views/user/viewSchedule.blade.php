@@ -59,7 +59,7 @@
                 $remainingSchedules = 8; // Change this to the total number of schedules you want to display
             @endphp
 
-            @foreach ($schedules->where('date', '>=', now()->toDateString()) as $schedule)
+            @foreach ($schedules->where('date', '>=', now()->toDateString())->sortBy('date') as $schedule)
                 @if (!in_array($schedule->date, $displayedDates))
                     @php
                         $displayedDates[] = $schedule->date;

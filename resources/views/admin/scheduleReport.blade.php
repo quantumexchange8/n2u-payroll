@@ -471,7 +471,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Done',
-                                text: 'Successfully Duplicated',
+                                text: 'Schedule duplicated successfully.',
                             }).then(function() {
                                 // Reload the page after the SweetAlert is closed
                                 location.reload();

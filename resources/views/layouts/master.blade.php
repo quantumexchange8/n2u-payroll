@@ -63,9 +63,9 @@
             <!-- Logo -->
             <div class="logo logo-align" >
 
-                <a href="{{route('admindashboard')}}" class="default-logo"><img src="{{ asset('assets/img/logo-03.png') }}"  alt=""></a>
+                <a href="{{route('admindashboard')}}" class="default-logo"><img src="{{ asset('assets/img/logo-03.png') }}"  alt="" style="width: auto; margin-top: 15px;"></a>
 
-                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="{{ asset('assets/img/logo-03.png') }}"  alt="" style="width: auto;"></a>
+                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="{{ asset('assets/img/logo-03.png') }}"  alt="" style="width: auto; margin-top: 15px;"></a>
 
             </div>
             <!-- End Logo -->

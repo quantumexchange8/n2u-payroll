@@ -79,10 +79,10 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Position</label>
-                                    <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off" value="{{ old('position_id') }}">
+                                    <select class="theme-input-style" id="position_id" name="position_id" autocomplete="off">
                                         <option value="">Select Position</option>
                                         @foreach($positions as $position)
-                                            <option value="{{ $position->id }}">{{ $position->position_name }}</option>
+                                            <option value="{{ $position->id }}" {{ old('position_id') == $position->id ? 'selected' : '' }}>{{ $position->position_name }}</option>
                                         @endforeach
                                     </select>
                                     @error('position_id')
@@ -94,10 +94,10 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Employee Type</label>
-                                    <select class="theme-input-style" id="employee_type" name="employee_type" value="{{ old('employee_type') }}">
+                                    <select class="theme-input-style" id="employee_type" name="employee_type">
                                         <option value="">Select Employee Type</option>
-                                        <option value="Full Time">Full Time</option>
-                                        <option value="Part Time">Part Time</option>
+                                        <option value="Full Time" {{ old('employee_type') == 'Full Time' ? 'selected' : '' }}>Full Time</option>
+                                        <option value="Part Time" {{ old('employee_type') == 'Part Time' ? 'selected' : '' }}>Part Time</option>
                                     </select>
                                     @error('employee_type')
                                         <span class="text-danger">{{ $message }}</span>
@@ -128,7 +128,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Employed Since</label>
-                                    <input type="date" class="theme-input-style" id="employed_since" name="employed_since" autocomplete="off" placeholder="Employed Since" value="{{ old('employee_since') }}">
+                                    <input type="date" class="theme-input-style" id="employed_since" name="employed_since" autocomplete="off" placeholder="Employed Since" value="{{ old('employed_since') }}">
                                     @error('employed_since')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -155,24 +155,24 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Nationality</label>
-                                    <select class="theme-input-style" id="nation" name="nation" value="{{ old('nation') }}">
+                                    <select class="theme-input-style" id="nation" name="nation">
                                         <option value="">Select Nationality</option>
-                                        <option value="Malaysia">Malaysia</option>
-                                        <option value="Thailand">Thailand</option>
-                                        <option value="Cambodia">Cambodia</option>
-                                        <option value="Nepal">Nepal</option>
-                                        <option value="Myanmar">Myanmar</option>
-                                        <option value="Laos">Laos</option>
-                                        <option value="Vietnam">Vietnam</option>
-                                        <option value="Philippines">Philippines</option>
-                                        <option value="Pakistan">Pakistan</option>
-                                        <option value="Sri Lanka">Sri Lanka</option>
-                                        <option value="Turkmenistan">Turkmenistan</option>
-                                        <option value="Uzbekistan">Uzbekistan</option>
-                                        <option value="Kazakhstan">Kazakhstan</option>
-                                        <option value="India">India</option>
-                                        <option value="Indonesia">Indonesia</option>
-                                        <option value="Bangladesh">Bangladesh</option>
+                                        <option value="Malaysia" {{ old('nation') == 'Malaysia' ? 'selected' : '' }}>Malaysia</option>
+                                        <option value="Thailand" {{ old('nation') == 'Thailand' ? 'selected' : '' }}>Thailand</option>
+                                        <option value="Cambodia" {{ old('nation') == 'Cambodia' ? 'selected' : '' }}>Cambodia</option>
+                                        <option value="Nepal" {{ old('nation') == 'Nepal' ? 'selected' : '' }}>Nepal</option>
+                                        <option value="Myanmar" {{ old('nation') == 'Myanmar' ? 'selected' : '' }}>Myanmar</option>
+                                        <option value="Laos" {{ old('nation') == 'Laos' ? 'selected' : '' }}>Laos</option>
+                                        <option value="Vietnam" {{ old('nation') == 'Vietnam' ? 'selected' : '' }}>Vietnam</option>
+                                        <option value="Philippines" {{ old('nation') == 'Philippines' ? 'selected' : '' }}>Philippines</option>
+                                        <option value="Pakistan" {{ old('nation') == 'Pakistan' ? 'selected' : '' }}>Pakistan</option>
+                                        <option value="Sri Lanka" {{ old('nation') == 'Sri Lanka' ? 'selected' : '' }}>Sri Lanka</option>
+                                        <option value="Turkmenistan" {{ old('nation') == 'Turkmenistan' ? 'selected' : '' }}>Turkmenistan</option>
+                                        <option value="Uzbekistan" {{ old('nation') == 'Uzbekistan' ? 'selected' : '' }}>Uzbekistan</option>
+                                        <option value="Kazakhstan" {{ old('nation') == 'Kazakhstan' ? 'selected' : '' }}>Kazakhstan</option>
+                                        <option value="India" {{ old('nation') == 'India' ? 'selected' : '' }}>India</option>
+                                        <option value="Indonesia" {{ old('nation') == 'Indonesia' ? 'selected' : '' }}>Indonesia</option>
+                                        <option value="Bangladesh" {{ old('nation') == 'Bangladesh' ? 'selected' : '' }}>Bangladesh</option>
                                     </select>
                                     @error('nation')
                                         <span class="text-danger">{{ $message }}</span>
@@ -183,26 +183,26 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Bank Name</label>
-                                    <select class="theme-input-style" id="bank_name" name="bank_name" value="{{ old('bank_name') }}">
+                                    <select class="theme-input-style" id="bank_name" name="bank_name">
                                         <option value="">Select Bank Name</option>
-                                        <option value="Maybank">Maybank</option>
-                                        <option value="CIMB">CIMB</option>
-                                        <option value="UOB">UOB</option>
-                                        <option value="RHB">RHB</option>
-                                        <option value="Public Bank">Public Bank</option>
-                                        <option value="Hong Leong Bank">Hong Leong Bank</option>
-                                        <option value="AmBank">AmBank</option>
-                                        <option value="Bank Rakyat">Bank Rakyat</option>
-                                        <option value="OCBC Bank">OCBC Bank</option>
-                                        <option value="HSBC Bank">HSBC Bank</option>
-                                        <option value="Bank Islam">Bank Islam</option>
-                                        <option value="Affin Bank">Affin Bank</option>
-                                        <option value="Alliance Bank">Alliance Bank</option>
-                                        <option value="Standard Chartered">Standard Chartered</option>
-                                        <option value="MBSB Bank">MBSB Bank</option>
-                                        <option value="BSN">BSN</option>
-                                        <option value="Bank Muamalat">Bank Muamalat</option>
-                                        <option value="Other">Other</option>
+                                        <option value="Maybank" {{ old('bank_name') == 'Maybank' ? 'selected' : '' }}>Maybank</option>
+                                        <option value="CIMB" {{ old('bank_name') == 'CIMB' ? 'selected' : '' }}>CIMB</option>
+                                        <option value="UOB" {{ old('bank_name') == 'UOB' ? 'selected' : '' }}>UOB</option>
+                                        <option value="RHB" {{ old('bank_name') == 'UOB' ? 'selected' : '' }}>RHB</option>
+                                        <option value="Public Bank" {{ old('bank_name') == 'Public Bank' ? 'selected' : '' }}>Public Bank</option>
+                                        <option value="Hong Leong Bank" {{ old('bank_name') == 'Hong Leong Bank' ? 'selected' : '' }}>Hong Leong Bank</option>
+                                        <option value="AmBank" {{ old('bank_name') == 'AmBank' ? 'selected' : '' }}>AmBank</option>
+                                        <option value="Bank Rakyat" {{ old('bank_name') == 'Bank Rakyat' ? 'selected' : '' }}>Bank Rakyat</option>
+                                        <option value="OCBC Bank" {{ old('bank_name') == 'OCBC Bank' ? 'selected' : '' }}>OCBC Bank</option>
+                                        <option value="HSBC Bank" {{ old('bank_name') == 'HSBC Bank' ? 'selected' : '' }}>HSBC Bank</option>
+                                        <option value="Bank Islam" {{ old('bank_name') == 'Bank Islam' ? 'selected' : '' }}>Bank Islam</option>
+                                        <option value="Affin Bank" {{ old('bank_name') == 'Affin Bank' ? 'selected' : '' }}>Affin Bank</option>
+                                        <option value="Alliance Bank" {{ old('bank_name') == 'Alliance Bank' ? 'selected' : '' }}>Alliance Bank</option>
+                                        <option value="Standard Chartered" {{ old('bank_name') == 'Standard Chartered' ? 'selected' : '' }}>Standard Chartered</option>
+                                        <option value="MBSB Bank" {{ old('bank_name') == 'MBSB Bank' ? 'selected' : '' }}>MBSB Bank</option>
+                                        <option value="BSN" {{ old('bank_name') == 'BSN' ? 'selected' : '' }}>BSN</option>
+                                        <option value="Bank Muamalat" {{ old('bank_name') == 'Bank Muamalat' ? 'selected' : '' }}>Bank Muamalat</option>
+                                        <option value="Other" {{ old('bank_name') == 'Other' ? 'selected' : '' }}>Other</option>
                                     </select>
                                 </div>
                                 <!-- End Form Group -->

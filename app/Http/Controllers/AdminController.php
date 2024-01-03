@@ -619,7 +619,7 @@ class AdminController extends Controller
         $rules = [
             'shift_name' => 'required|max:255',
             'shift_start' => 'required',
-            'shift_end' => 'required|after_or_equal:shift_start',
+            'shift_end' => 'required',
         ];
 
         $messages = [
@@ -1025,14 +1025,19 @@ class AdminController extends Controller
                                 ->where('schedules.date', $request->input('date'))
                                 ->whereNull('schedules.deleted_at')
                                 ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
-                                ->first();
+                                ->get();
 
-            if ($existingShifts) {
 
-                $existingShiftStart = $existingShifts->shift_start;
-                $existingShiftEnd = $existingShifts->shift_end;
 
-                if ($newShiftStart < $existingShiftEnd && $newShiftEnd > $existingShiftStart) {
+            if ($existingShifts->count() == 2) {
+                // dd($request->all());
+                $existingShiftStart1 = $existingShifts[0]->shift_start;
+                $existingShiftEnd1 = $existingShifts[0]->shift_end;
+                $existingShiftStart2 = $existingShifts[1]->shift_start;
+                $existingShiftEnd2 = $existingShifts[1]->shift_end;
+
+                if (($newShiftStart < $existingShiftEnd1 && $newShiftEnd > $existingShiftStart1) ||
+                    ($newShiftStart < $existingShiftEnd2 && $newShiftEnd > $existingShiftStart2)) {
 
                     Alert::error('Error', 'Failed to update due to shift overlap.');
                     return redirect()->back();
@@ -1093,7 +1098,60 @@ class AdminController extends Controller
 
                 Alert::success('Done', 'Schedule updated successfully.');
                 return redirect()->route('schedule');
+            } else {
+                $schedule->employee_id = $request->input('employee_id');
+                $schedule->date = $request->input('date');
+                $schedule->shift_id = $request->input('shift_id');
+                $schedule->remarks = $request->input('remarks');
 
+                $schedule->save();
+
+                // Check if there are tasks and duties submitted in the request
+                $tasksAndDuties = $request->input('group-a', []);
+
+                // If there are tasks and duties, update or insert them into the tasks table
+                if (!empty($tasksAndDuties)) {
+                    foreach ($tasksAndDuties as $taskData) {
+                        // Check if all key fields are null
+                        $fieldsNull = is_null($taskData['period_id']) ||
+                                            is_null($taskData['duty_id']) ||
+                                            is_null($taskData['start_time']) ||
+                                            is_null($taskData['end_time']);
+
+                        // If all key fields are not null, proceed with creating/updating the task
+                        if (!$fieldsNull) {
+
+                            $existingTask = Task::where([
+                                'date' => $schedule->date,
+                                'employee_id' => $schedule->employee_id,
+                                'period_id' => $taskData['period_id'],
+                            ])->first();
+
+                            if ($existingTask) {
+
+                                $existingTask->update([
+                                    'start_time' => $taskData['start_time'],
+                                    'end_time' => $taskData['end_time'],
+                                    'duty_id' => $taskData['duty_id'],
+                                ]);
+                            } else {
+
+                                $task = Task::Create(
+                                    [
+                                        'date' => $schedule->date,
+                                        'employee_id' => $schedule->employee_id,
+                                        'period_id' => $taskData['period_id'],
+                                        'start_time' => $taskData['start_time'],
+                                        'end_time' => $taskData['end_time'],
+                                        'duty_id' => $taskData['duty_id'],
+                                    ]
+                                );
+                            }
+                        }
+                    }
+                }
+                Alert::success('Done', 'Schedule updated successfully.');
+                return redirect()->route('schedule');
             }
         }
     }
@@ -1102,9 +1160,19 @@ class AdminController extends Controller
 
         $schedule = Schedule::find($id);
         if ($schedule) {
+            $tasks = Task::where('employee_id', $schedule->employee_id)
+                        ->where('date', $schedule->date)
+                        ->get();
+
+            // Loop through tasks and delete each one
+            foreach ($tasks as $task) {
+                $task->delete();
+            }
+
+            // After deleting all tasks, delete the schedule
             $schedule->delete();
-            Alert::success('Done', 'Successfully Deleted');
-            return response()->json(['message' => 'Schedule deleted successfully.']);
+
+            return response()->json(['message' => 'Schedule and related tasks deleted successfully.']);
         } else {
             return response()->json(['message' => 'Schedule not found'], 404);
         }
@@ -1113,10 +1181,19 @@ class AdminController extends Controller
     public function deleteSchedule2($id){
 
         $schedule = Schedule::find($id);
+        $tasks = Task::where('employee_id', $schedule->employee_id)
+                    ->where('date', $schedule->date)
+                    ->get();
 
+        // Loop through tasks and delete each one
+        foreach ($tasks as $task) {
+            $task->delete();
+        }
+
+        // After deleting all tasks, delete the schedule
         $schedule->delete();
 
-        Alert::success('Done', 'Schedule deleted successfully.');
+        Alert::success('Done', 'Schedule and related tasks deleted successfully.');
         return redirect()->route('scheduleReport');
     }
 
@@ -1158,7 +1235,7 @@ class AdminController extends Controller
                         $existingShiftStart = $existingShifts[0]->shift_start;
                         $existingShiftEnd = $existingShifts[0]->shift_end;
 
-                        if ($newShiftStart < $existingShiftEnd && $newShiftEnd > $existingShiftStart) {
+                        if ($newShiftStart <= $existingShiftEnd && $newShiftEnd >= $existingShiftStart) {
                             $errorMessage = 'Failed to duplicate due to shift overlap.';
                             return response()->json(['error' => $errorMessage], 422);
                         } else {
@@ -2030,24 +2107,52 @@ class AdminController extends Controller
 
             $carbonCheckOT = $carbonShiftEnd->copy()->addMinutes($overtimeCalculation);
 
-            if($carbonCheckIn->greaterThanOrEqualTo($carbonCheckLate)) {
-                // Compare checkOut with checkOT and calculate new total hour accordingly
-                if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
-                    // If checkOut is greater than checkOT, calculate new total hour using shift end time
-                    $newTotalWork = $carbonShiftEnd->diffInMinutes($carbonCheckIn);
+
+            if ($carbonShiftStart > $carbonShiftEnd) {
+                $newCarbonShiftStart = $carbonShiftStart->subDay();
+
+                if ($carbonCheckIn->greaterThanOrEqualTo($carbonCheckLate)) {
+                    // Compare checkOut with checkOT and calculate new total hour accordingly
+                    if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
+                        // If checkOut is greater than checkOT, calculate new total hour using shift end time
+                        $newTotalWork = $carbonShiftEnd->diffInMinutes($carbonCheckIn);
+                    } else {
+                        // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
+                        $newTotalWork = $carbonCheckOut->diffInMinutes($carbonCheckIn);
+                    }
                 } else {
-                    // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
-                    $newTotalWork = $carbonCheckOut->diffInMinutes($carbonCheckIn);
+                    // Compare checkOut with checkOT and calculate new total hour accordingly
+                    if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
+                        // If checkOut is greater than checkOT, calculate new total hour using shift end time
+                        $newTotalWork = ($carbonShiftEnd)->diffInMinutes($newCarbonShiftStart);
+                    } else {
+                        // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
+                        $newTotalWork = ($carbonCheckOut)->diffInMinutes($newCarbonShiftStart);
+                    }
                 }
+
             } else {
-                // Compare checkOut with checkOT and calculate new total hour accordingly
-                if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
-                    // If checkOut is greater than checkOT, calculate new total hour using shift end time
-                    $newTotalWork = ($carbonShiftEnd)->diffInMinutes($carbonShiftStart);
+
+                if ($carbonCheckIn->greaterThanOrEqualTo($carbonCheckLate)) {
+                    // Compare checkOut with checkOT and calculate new total hour accordingly
+                    if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
+                        // If checkOut is greater than checkOT, calculate new total hour using shift end time
+                        $newTotalWork = $carbonShiftEnd->diffInMinutes($carbonCheckIn);
+                    } else {
+                        // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
+                        $newTotalWork = $carbonCheckOut->diffInMinutes($carbonCheckIn);
+                    }
                 } else {
-                    // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
-                    $newTotalWork = ($carbonCheckOut)->diffInMinutes($carbonShiftStart);
+                    // Compare checkOut with checkOT and calculate new total hour accordingly
+                    if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
+                        // If checkOut is greater than checkOT, calculate new total hour using shift end time
+                        $newTotalWork = ($carbonShiftEnd)->diffInMinutes($carbonShiftStart);
+                    } else {
+                        // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
+                        $newTotalWork = ($carbonCheckOut)->diffInMinutes($carbonShiftStart);
+                    }
                 }
+
             }
 
             $newTotalWorkInHours = number_format($newTotalWork / 60, 2);
@@ -2066,6 +2171,7 @@ class AdminController extends Controller
                                     ->first();
 
             $clockOutTime = Carbon::parse($clockOut->clock_out_time)->format('H:i:s');
+
 
             if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
                 $otMinutesDifference = $carbonCheckOut->diffInMinutes($carbonCheckOT);
