@@ -29,7 +29,6 @@
                         <table class="text-nowrap bg-white dh-table">
                             <thead>
                                 <tr>
-                                    {{-- <th>Shift ID</th> --}}
                                     <th>Shift</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>
@@ -39,7 +38,6 @@
                             <tbody>
                                 @foreach($shifts as $shift)
                                     <tr>
-                                        {{-- <td>{{ $shift->shift_id }}</td> --}}
                                         <td>{{ $shift->shift_name }}</td>
                                         {{-- <td>{{ $shift->shift_start->format('h:i A') }}</td>
                                         <td>{{ $shift->shift_end->format('h:i A') }}</td> --}}

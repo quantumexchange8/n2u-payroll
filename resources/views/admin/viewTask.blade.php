@@ -31,21 +31,6 @@
                         </div>
                     </div>
 
-                    {{-- <div class="row">
-                        <div class="col-md-8">
-                            <div class="card-body pt-20">
-                                <h4 class="font-20">Task Table</h4>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-row" style="margin-top: 12px; margin-right: 20px;">
-                                <div class="col-12 text-right">
-                                    <a href="{{route('createTask')}}" class="btn long">Create</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-
                     <div class="table-responsive">
                         <!-- Invoice List Table -->
                         <table class="text-nowrap bg-white dh-table">
@@ -114,12 +99,12 @@
             const selectedDate = dateFilter.value;
 
             tableRows.forEach(function(row) {
-                const date = row.dataset.date; // You'll need to set the data-date attribute in your table rows
+                const date = row.dataset.date;
 
                 if (!selectedDate || date === selectedDate) {
-                    row.style.display = ''; // Show the row
+                    row.style.display = '';
                 } else {
-                    row.style.display = 'none'; // Hide the row
+                    row.style.display = 'none';
                 }
             });
         }

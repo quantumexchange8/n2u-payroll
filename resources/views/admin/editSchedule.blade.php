@@ -86,6 +86,7 @@
                                             <div data-repeater-item data-task-id="{{ $task->id }}">
                                                 <!-- Repeater Content -->
                                                 <div class="item-content align-items-center row">
+
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputName" class="bold mb-2">Period</label>
@@ -102,18 +103,21 @@
                                                         @enderror
                                                     </div>
                                                     <!-- End Form Group -->
+
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">Start Time</label>
                                                         <input type="time" class="form-control" name="start_time" value="{{ $task->start_time }}" required>
                                                     </div>
                                                     <!-- End Form Group -->
+
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">End Time</label>
                                                         <input type="time" class="form-control" name="end_time" value="{{ $task->end_time }}" required>
                                                     </div>
                                                     <!-- End Form Group -->
+
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputCompany" class="bold mb-2">Duty</label>
@@ -137,6 +141,7 @@
                                                             <img src="{{ asset('assets/img/svg/remove.svg') }}" alt="" class="svg">
                                                         </button>
                                                     </div>
+                                                    
                                                 </div>
                                                 <hr />
                                             </div>
@@ -146,6 +151,7 @@
                                             <div data-repeater-item>
                                                 <!-- Repeater Content -->
                                                 <div class="item-content align-items-center row">
+
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputName" class="bold mb-2">Period</label>
@@ -160,18 +166,21 @@
                                                         @enderror
                                                     </div>
                                                     <!-- End Form Group -->
+
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">Start Time</label>
                                                         <input type="time" class="form-control" name="start_time" value="">
                                                     </div>
                                                     <!-- End Form Group -->
+
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-2">
                                                         <label for="inputMobile" class="bold mb-2">End Time</label>
                                                         <input type="time" class="form-control" name="end_time" value="">
                                                     </div>
                                                     <!-- End Form Group -->
+
                                                     <!-- Form Group -->
                                                     <div class="form-group col-lg-3">
                                                         <label for="inputCompany" class="bold mb-2">Duty</label>
@@ -199,10 +208,12 @@
                                             </div>
                                         @endforelse
                                     </div>
+
                                     <!-- Repeater End -->
                                     <button data-repeater-create type="button" class="repeater-add-btn btn-circle">
                                         <img src="{{ asset('assets/img/svg/plus_white.svg') }}" alt="" class="svg">
                                     </button>
+
                                 </div>
 
                                 <!-- End Form Element -->
@@ -217,6 +228,7 @@
                             </div>
                         </div>
                         <!-- End Form Row -->
+
                     </form>
                     <!-- End Form -->
                 </div>

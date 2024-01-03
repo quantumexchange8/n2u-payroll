@@ -38,17 +38,11 @@ class MemberController extends Controller
         }
         // Retrieve schedules related to the logged-in user (employee)
         $schedules = Schedule::where('employee_id', $user->id)->orderBy('date')->get();
-
         $shifts = Shift::all();
-
         $duties = Duty::all();
-
         $settings = Setting::all();
-
         $tasks = Task::where('employee_id', $user->id)->with('user')->get();
-
         $periods = Period::all();
-
         $punchRecords = PunchRecord::with('user')->get();
 
         // Modify the date and time columns
@@ -120,14 +114,13 @@ class MemberController extends Controller
     }
 
     public function viewProfile(){
-        $user = auth()->user(); // Retrieve the currently logged-in user
+        $user = auth()->user();
         $positions = Position::all();
         return view('user.viewProfile', compact('user', 'positions'));
     }
 
     public function updateProfile(Request $request) {
 
-        // Use the currently authenticated user
         $user = User::where('id', '=', Auth::user()->id)->first();
 
         $rules = [
@@ -152,7 +145,6 @@ class MemberController extends Controller
             'retype-pass.same' => 'The Retype Password and New Password must match.',
         ];
 
-        // Validate the request data
         $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
@@ -162,15 +154,12 @@ class MemberController extends Controller
                 ->withInput();
         }
 
-        // Update the user's data
         $user->full_name = $request->input('full_name');
         $user->address = $request->input('address');
         $user->email = $request->input('email');
 
-        // Save the changes
         $user->save();
 
-        // Check if the user wants to update their password
         if ($request->filled('old-pass') && $request->filled('new-pass') && $request->filled('retype-pass')) {
             // Check if the old password matches the user's current password
             if (Hash::check($request->input('old-pass'), $user->password)) {
@@ -187,7 +176,7 @@ class MemberController extends Controller
                 Alert::error('Incorrect Password', 'Your old password is incorrect.')->persistent(true, false);
             }
         } else {
-            Alert::success('Done', 'Successfully Updated')->persistent(true, false);
+            Alert::success('Done', 'Profile updated successfully.')->persistent(true, false);
         }
 
         return redirect()->route('viewProfile');
@@ -197,7 +186,6 @@ class MemberController extends Controller
 
         $punchRecords = PunchRecord::with('user')->get();
 
-        // Modify the date and time columns
         $punchRecords->each(function ($punchRecord) {
             $punchRecord->date = Carbon::parse($punchRecord->created_at)->toDateString();
             $punchRecord->time = Carbon::parse($punchRecord->created_at)->toTimeString();

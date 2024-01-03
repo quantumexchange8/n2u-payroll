@@ -136,16 +136,6 @@
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
-                                {{-- @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif --}}
-
 
                                 <!-- Form Group -->
                                 <div class="form-group mb-4">
@@ -175,79 +165,9 @@
         </div>
     </div>
 
-
-    <div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="fileModalLabel">File Preview</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <img id="fileViewer" src="" alt="File Preview" style="max-width: 100%; max-height: 80vh;">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
 <!-- End Main Content -->
 
 @endsection
 
-<!-- Include jQuery if it's not already included -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Add a script to your edit form view -->
-<script>
-    $(document).ready(function() {
-        // Check the initial value of the bank_name field
-        var initialBankName = $("#bank_name").val();
-
-        // Function to show the container and populate fields
-        function showContainerAndPopulateFields() {
-            $("#otherBankFields").show();
-            // You can make an AJAX request to get the database values
-            // Replace 'getDatabaseValues' with your actual route to retrieve database values
-            $.get('getDatabaseValues', { bank_name: initialBankName }, function(data) {
-                // Populate the fields with the retrieved data
-                $("#account_type").val(data.account_type);
-                $("#account_id").val(data.account_id);
-                // You can also populate other fields as needed
-            });
-        }
-
-        // Check if the initial value of bank_name is 'Other'
-        if (initialBankName === 'Other') {
-            showContainerAndPopulateFields();
-        }
-
-        // Add an event listener for changes in the bank_name field
-        $("#bank_name").change(function() {
-            if ($(this).val() === 'Other') {
-                showContainerAndPopulateFields();
-            } else {
-                $("#otherBankFields").hide();
-            }
-        });
-    });
-</script>
-
-
-<!-- JavaScript code for modal -->
-<script>
-    $(document).ready(function() {
-        $('.file-modal-link').on('click', function(e) {
-            e.preventDefault();
-            var src = $(this).attr('href');
-            $('#fileViewer').attr('src', src);
-            $('#fileModal').modal('show');
-        });
-    });
-</script>
 

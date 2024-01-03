@@ -78,7 +78,15 @@
                                     {{-- @if ($recordDate == $currentDate) --}}
                                     @if ($recordDate)
                                         <tr class="status-{{ $punchRecord->status }}" data-date="{{ $recordDate }}">
-                                            <td>{{ Carbon\Carbon::parse($punchRecord->created_at)->format('d M Y') }}</td>
+                                            <td>
+                                                @if ($punchRecord->clock_out_time == null)
+                                                    {{ Carbon\Carbon::parse($punchRecord->clock_in_time)->format('d M Y') }}
+                                                @elseif ($punchRecord->clock_in_time == null)
+                                                    {{ Carbon\Carbon::parse($punchRecord->clock_out_time)->format('d M Y') }}
+                                                @else
+                                                    {{ Carbon\Carbon::parse($punchRecord->created_at)->format('d M Y') }}
+                                                @endif
+                                            </td>
                                             <td>{{$punchRecord->user->nickname}}</td>
                                             <td>
                                                 @if ($punchRecord->in == 'Clock In')
@@ -300,7 +308,7 @@
 
                     // Update modal content with fetched data
                     var modalBody = $('#editAttendanceModal').find('.modal-body');
-                    modalBody.find('.form-group').hide(); // Hide all form groups initially
+                    modalBody.find('.form-group').hide();
 
                     if (data.clock_in_time !== null) {
                         var clockInTime = new Date(data.clock_in_time);
@@ -316,8 +324,9 @@
                         var formattedClockInTime = hours + ':' + minutes;
 
                         modalBody.find('#clockIn').val(formattedClockInTime);
-                        modalBody.find('#clockInGroup').show();
                         modalBody.find('#clockDate').val(formattedClockInDate);
+
+                        modalBody.find('#clockInGroup').show();
                         modalBody.find('#dateGroup').show();
                     }
 
@@ -335,13 +344,12 @@
                         var formattedClockOutTime = hours + ':' + minutes;
 
                         modalBody.find('#clockOut').val(formattedClockOutTime);
-                        modalBody.find('#clockOutGroup').show();
                         modalBody.find('#clockDate').val(formattedClockOutDate);
+
+                        modalBody.find('#clockOutGroup').show();
                         modalBody.find('#dateGroup').show();
                     }
 
-
-                    // Try to find and show the status group
                     var statusGroup = modalBody.find('#statusGroup');
                     if (statusGroup.length > 0) {
                         statusGroup.show();
@@ -353,7 +361,9 @@
 
                     // If both clock_in_time and clock_out_time are null, you can add a default message
                     if (data.clock_in_time === null && data.clock_out_time === null) {
-                        modalBody.append('<p>No clock-in or clock-out data available</p>');
+                        // modalBody.append('<p>No clock-in or clock-out data available</p>');
+                        modalBody.find('#clockInGroup').show();
+                        modalBody.find('#clockOutGroup').show();
                     }
 
                     $('#editAttendanceModal').modal('show');
@@ -365,18 +375,13 @@
             });
         });
 
-
-
-        // Handle form submission
         $('#editAttendanceForm').submit(function(event) {
             event.preventDefault();
 
             var id = $(this).data('id');
 
-            // Get the CSRF token value from the meta tag
             var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-            // Check if attendanceData is defined
             if (attendanceData) {
                 // Extract the date part from the existing clock_in_time
                 var existingClockInDate = attendanceData.clock_in_time ? attendanceData.clock_in_time.split(' ')[0] : null;
@@ -385,11 +390,7 @@
                 var existingClockOutDate = attendanceData.clock_out_time ? attendanceData.clock_out_time.split(' ')[0] : null;
 
                 var newDate = $('#clockDate').val();
-
-                // Extract the hours and minutes part from the new clockIn input
                 var newInTime = $('#clockIn').val();
-
-                // Extract the hours and minutes part from the new clockOut input
                 var newOutTime = $('#clockOut').val();
 
                 // Combine the existing date part with the new hours and minutes if not null
@@ -399,10 +400,8 @@
                 var newClockInTime = newDate && newInTime ? newDate + ' ' + newInTime + ':00' : null;
                 var newClockOutTime = newDate && newOutTime ? newDate + ' ' + newOutTime + ':00' : null;
 
-
-                // Perform AJAX request to update the data
                 $.ajax({
-                    url: '/admin/update-attendance/' + id, // Replace with your update route
+                    url: '/admin/update-attendance/' + id,
                     method: 'POST',
                     data: {
                         clock_in_time: newClockInTime,
@@ -414,7 +413,6 @@
                         'X-CSRF-TOKEN': csrfToken
                     },
                     success: function(response) {
-                        // Optionally, close the modal or show a success message
                         $('#editAttendanceModal').modal('hide');
 
                         Swal.fire({
@@ -422,14 +420,11 @@
                             title: 'Done',
                             text: 'Successfully Updated',
                         }).then(function() {
-                            // Reload the page after the SweetAlert is closed
                             location.reload();
                         });
                     },
                     error: function(error) {
-                        // Handle error response
                         console.error('Update error:', error);
-                        // Optionally, display an error message
                     }
                 });
             } else {

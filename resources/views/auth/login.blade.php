@@ -60,7 +60,7 @@
                         <span id="point">:</span>
                         <span id="min">00</span>
                     </h3>
-                    <span class="date"><span id="date">Tue, 12 October 2019</span></span>
+                    <span class="date"><span id="date">Mon, 01 January 2024</span></span>
                 </div>
 
                 <!-- Logo -->
@@ -283,7 +283,7 @@
 
             // Disable the button.
             //  clockButton.disabled = true;
-            // Use try-catch to handle form submission errors.
+
             try {
                 const response = await fetch(`/compare-password/${userId}/${userPassword}`, {
                     method: 'GET',

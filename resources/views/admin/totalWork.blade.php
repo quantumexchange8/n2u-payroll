@@ -68,67 +68,6 @@
 
                     <div id="data-table" class="table-responsive">
 
-                        {{-- <table class="text-nowrap table-bordered dh-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Name</th>
-                                    <th>Check In</th>
-                                    <th>Check Out</th>
-                                    <th>Total Work</th>
-                                    <th>Remark</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($users->sortBy(function ($user) use ($punchRecords) {
-                                    return $punchRecords->where('employee_id', $user->id)->min('created_at');
-                                }) as $user)
-                                    @php
-                                        $userPunchRecords = $punchRecords->where('employee_id', $user->id);
-                                        $groupedRecords = $userPunchRecords->groupBy(function ($record) {
-                                            return \Carbon\Carbon::parse($record->created_at)->format('d M Y');
-                                        });
-                                    @endphp
-
-                                    @foreach ($groupedRecords as $date => $records)
-                                        <tr data-date="{{ \Carbon\Carbon::parse($date ?? null )->format('Y-m-d') }}" data-full-name="{{ $user->full_name }}">
-                                            <td>{{ $date }}</td>
-                                            <td>{{ $user->full_name }}</td>
-                                            <td>{{ $records->where('in', 'Clock In')->first()->created_at->format('h:i:s A') ?? '' }}</td>
-                                            <td>{{ $records->where('out', 'Clock Out')->first()->created_at->format('h:i:s A') ?? '' }}</td>
-                                            <td>
-                                                @if ($records->count() == 1)
-                                                    {{ $records->first()->total_work ?? '' }}
-                                                @elseif ($loop->last)
-                                                    {{ $records->last()->total_work ?? '' }}
-                                                @else
-                                                    <!-- Leave this cell empty for intermediate rows -->
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($records->count() == 1)
-                                                    {{ $records->first()->remarks ?? '' }}
-                                                @elseif ($loop->last)
-                                                    {{ $records->last()->remarks ?? '' }}
-                                                @else
-                                                    <!-- Leave this cell empty for intermediate rows -->
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <form action="{{ route('updateTotalWork', $records->last()->id) }}" method="POST" style="display: flex; justify-content: space-between; margin-top: 15px;" id="update-form-{{$records->last()->id}}">
-                                                    @csrf
-                                                    <button type="button" class="edit-button details-btn" data-punchrecord-id="{{ $records->last()->id }}">
-                                                        Edit <i class="icofont-arrow-right"></i>
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @endforeach
-                            </tbody>
-                        </table> --}}
-
                         <table class="text-nowrap invoice-list">
                             <thead>
                                 <tr>

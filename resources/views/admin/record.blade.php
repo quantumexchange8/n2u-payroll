@@ -9,39 +9,6 @@
     <div class="container-fluid">
         <div class="row">
 
-            {{-- <div class="col-md-6 col-sm-6">
-                <!-- Card -->
-                <div class="card mb-30 progress_3">
-                   <div class="card-body">
-                      <h4 class="progress-title">Pending OT Approval</h4>
-                        <div class="ProgressBar-wrap position-relative mb-4">
-                            <div class="ProgressBar ProgressBar_1" id="progressBar" data-progress="{{ $pendingOTCount2 }}">
-                                <span class="ProgressBar-percentage ProgressBar-percentage--count"></span>
-                            </div>
-                        </div>
-
-                   </div>
-                </div>
-                <!-- End Card -->
-            </div>
-
-            <div class="col-md-6 col-sm-6">
-                <!-- Card -->
-                <div class="card mb-30 progress_1">
-                   <div class="card-body">
-                      <h4 class="progress-title">Total Employees Working Today</h4>
-                      <div class="ProgressBar-wrap position-relative mb-4">
-                         <div class="ProgressBar ProgressBar_1" data-progress="{{ $totalEmployeesCount }}">
-                            {{$totalEmployeesCount}}
-                            <span class="ProgressBar-percentage ProgressBar-percentage--count"></span>
-                         </div>
-                      </div>
-
-                   </div>
-                </div>
-                <!-- End Card -->
-             </div> --}}
-
             <div class="col-md-6 col-sm-6" onclick="redirectToOTApproval()">
                 <!-- Card -->
                 <div class="card mb-30" style="background-color: #cce5ff; border-color: #b8daff;">
@@ -55,7 +22,6 @@
                 <!-- End Card -->
             </div>
 
-
             <div class="col-md-6 col-sm-6">
                 <!-- Card -->
                 <div class="card mb-30" style="background-color: #d4edda; border-color: #c3e6cb;">
@@ -68,8 +34,6 @@
                 </div>
                 <!-- End Card -->
             </div>
-
-
 
             <div class="col-12">
                 <div class="card mb-30">

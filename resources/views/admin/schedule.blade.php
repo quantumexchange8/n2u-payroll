@@ -362,7 +362,7 @@
 
             // Add a click event listener to the delete button.
             deleteButton.addEventListener('click', async function (e) {
-                e.preventDefault(); // Prevent the default form submission.
+                e.preventDefault();
 
                 const formData = new FormData(deleteForm);
                 formData.append('_token', '{{ csrf_token() }}');
@@ -376,18 +376,15 @@
                 })
                 .then((response) => {
                     if (response.ok) {
-                        // Schedule deleted successfully, display a success alert.
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
                             text: 'Schedule deleted successfully.',
 
                         }).then(() => {
-                            // After successful deletion, you can perform additional actions.
                             location.reload();
                         });
                     } else {
-                        // Display an error alert in case of a failure.
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -396,7 +393,6 @@
                     }
                 })
                 .catch((error) => {
-                    // Handle any network errors or exceptions here.
                     console.error('Error:', error);
                 });
             });
