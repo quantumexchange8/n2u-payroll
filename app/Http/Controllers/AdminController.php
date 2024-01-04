@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Validation\ValidationException;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\EmployeeRequest;
@@ -858,8 +859,8 @@ class AdminController extends Controller
     //     return false;
     // }
 
-    // If group-a input is null, then no insert
     private function hasNonEmptyValues($array){
+         // If group-a input is null, then no insert
         foreach ($array as $item) {
             if (!is_array($item) || count(array_filter($item, function ($value) {
                 return $value === '' || $value === null;
@@ -1819,7 +1820,9 @@ class AdminController extends Controller
             $otStart = Carbon::parse($schedule->shift_end)->addMinutes($overtimeCalculationMinutes); // Adjust the minutes based on your calculation
         }
 
-        $otapproval = OtApproval::with(['user'])->get();
+        $otapproval = OtApproval::with(['user'])
+                                ->orderBy('date')
+                                ->get();
 
 
         return view('admin.otApproval', [
@@ -1845,9 +1848,16 @@ class AdminController extends Controller
         $punchRecord = PunchRecord::find($id);
         $otapproval = OtApproval::find($id);
 
+        // Extract the date only
+        // $dateOnly = Carbon::parse($otapproval->created_at)->toDateString();
+
+        // Alternatively, you can use the format method
+        // $dateOnlyFormatted = Carbon::parse($otapproval->created_at)->format('Y-m-d');
+
         if ($otapproval) {
 
-            $punchRecord = PunchRecord::whereDate('created_at', '=', $otapproval->date)
+            $punchRecord = PunchRecord::whereDate('created_at', '=', $otapproval->created_at)
+                ->where('employee_id', $otapproval->employee_id)
                 ->where('ot_approval', 'Pending')
                 ->first();
 
@@ -2014,7 +2024,7 @@ class AdminController extends Controller
         }
 
         foreach ($users as $user) {
-            $employeeId = $user->employee_id;
+            $employeeId = $user->id;
 
             $userId = $user->id;
 
@@ -2022,16 +2032,14 @@ class AdminController extends Controller
             for ($month = 1; $month <= 12; $month++) {
                 // Query the punch_record table to check if the user has records for the current month
                 $hasRecordsForMonth = PunchRecord::where('employee_id', $userId)
-                    ->whereMonth('created_at', $month)
+                    ->whereRaw('MONTH(created_at) = ?', [$month])
                     ->exists();
-
 
                 // If the user has records for the current month, calculate total_ot_hour
                 if ($hasRecordsForMonth) {
-                    $otHoursForMonth = OtApproval::selectRaw('SUM(approved_ot_hour) as total_ot_hour')
-                        ->where('employee_id', $employeeId)
-                        ->whereMonth('created_at', $month)
-                        ->value('total_ot_hour');
+                    $otHoursForMonth = OtApproval::where('employee_id', $employeeId)
+                                                ->whereMonth('created_at', $month)
+                                                ->sum('approved_ot_hour');
 
                     $basicSalary = $user->salary;
                     $totalOTPay = $otHoursForMonth * $otAllowanceValue;
@@ -2057,10 +2065,69 @@ class AdminController extends Controller
             }
         }
 
+
+
         $salaryLogs = SalaryLog::whereIn('employee_id', $users->pluck('id')->all())->get();
+
+
 
         return view('admin.salaryLogs', compact('salaryLogs', 'users'));
     }
+
+    // public function salaryLogs(){
+    //     $users = User::where('role', 'member')->with(['position', 'salaryLogs'])->get();
+
+    //     $otAllowanceSetting = Setting::where('setting_name', 'OT Allowance (in RM)')->first();
+    //     $otAllowanceValue = $otAllowanceSetting ? (float)preg_replace('/[^0-9.]/', '', $otAllowanceSetting->value) : 0;
+
+    //     foreach ($users as $user) {
+    //         $employeeId = $user->employee_id;
+
+    //         // Loop through each month
+    //         for ($month = 1; $month <= 12; $month++) {
+    //             $firstDayOfMonth = Carbon::createFromDate(date('Y'), $month, 1)->startOfDay();
+    //             $lastDayOfMonth = $firstDayOfMonth->copy()->endOfMonth();
+
+    //             // Query the punch_record table to check if the user has records for the current month
+    //             $hasRecordsForMonth = PunchRecord::where('employee_id', $user->id)
+    //                 ->whereBetween('created_at', [$firstDayOfMonth, $lastDayOfMonth])
+    //                 ->exists();
+
+    //             // If the user has records for the current month, calculate total_ot_hour
+    //             if ($hasRecordsForMonth) {
+    //                 $otHoursForMonth = $user->otApprovals()
+    //                     ->whereBetween('created_at', [$firstDayOfMonth, $lastDayOfMonth])
+    //                     ->sum('approved_ot_hour');
+
+    //                 $basicSalary = $user->salary;
+    //                 $totalOTPay = $otHoursForMonth * $otAllowanceValue;
+    //                 $totalPayout = $basicSalary + $totalOTPay;
+
+    //                 // Format the values with two decimal places
+    //                 $totalOTPayFormatted = number_format($totalOTPay, 2, '.', '');
+    //                 $totalPayoutFormatted = number_format($totalPayout, 2, '.', '');
+
+    //                 // Update or create a salary log for the user and month
+    //                 $user->salaryLogs()->updateOrCreate(
+    //                     [
+    //                         'month' => $month,
+    //                         'year' => date('Y'),
+    //                     ],
+    //                     [
+    //                         'total_ot_hour' => $otHoursForMonth,
+    //                         'total_ot_pay' => $totalOTPayFormatted,
+    //                         'total_payout' => $totalPayoutFormatted,
+    //                     ]
+    //                 );
+    //             }
+    //         }
+    //     }
+
+    //     $salaryLogs = SalaryLog::whereIn('employee_id', $users->pluck('id')->all())->get();
+
+    //     return view('admin.salaryLogs', compact('salaryLogs', 'users'));
+    // }
+
 
     public function totalWork () {
         $punchRecords = PunchRecord::all();
@@ -2100,7 +2167,7 @@ class AdminController extends Controller
         $selectedRows = $request->input('selectedRows');
 
         foreach ($selectedRows as $row) {
-            $date = $row['date'];
+            $date = Carbon::parse($row['date'])->format('Y-m-d');
             $checkIn = $row['checkIn'];
             $checkOut = $row['checkOut'];
             $shiftId = $row['shiftId'];
@@ -2118,9 +2185,11 @@ class AdminController extends Controller
 
             $carbonCheckOT = $carbonShiftEnd->copy()->addMinutes($overtimeCalculation);
 
+            // dd($date);
 
             if ($carbonShiftStart > $carbonShiftEnd) {
                 $newCarbonShiftStart = $carbonShiftStart->subDay();
+                $newDate = Carbon::parse($date)->subDay()->toDateString();
 
                 if ($carbonCheckIn->greaterThanOrEqualTo($carbonCheckLate)) {
                     // Compare checkOut with checkOT and calculate new total hour accordingly
@@ -2141,9 +2210,7 @@ class AdminController extends Controller
                         $newTotalWork = ($carbonCheckOut)->diffInMinutes($newCarbonShiftStart);
                     }
                 }
-
             } else {
-
                 if ($carbonCheckIn->greaterThanOrEqualTo($carbonCheckLate)) {
                     // Compare checkOut with checkOT and calculate new total hour accordingly
                     if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
@@ -2163,7 +2230,6 @@ class AdminController extends Controller
                         $newTotalWork = ($carbonCheckOut)->diffInMinutes($carbonShiftStart);
                     }
                 }
-
             }
 
             $newTotalWorkInHours = number_format($newTotalWork / 60, 2);
@@ -2172,10 +2238,10 @@ class AdminController extends Controller
 
             $employee = PunchRecord::join('users', 'punch_records.employee_id', 'users.id')
                                         ->where('punch_records.id', $punchRecordId)
-                                        ->select('users.employee_id')
+                                        ->select('users.id')
                                         ->first();
 
-            $employee_id = $employee->employee_id;
+            $employee_id = $employee->id;
 
             $clockOut = PunchRecord::where('id', $punchRecordId)
                                     ->select('clock_out_time')
@@ -2191,7 +2257,7 @@ class AdminController extends Controller
 
                 $otInHoursRounded = number_format($otInHours, 2);
 
-                $existingOTRecord = OtApproval::where('date', $date)
+                $existingOTRecord = OtApproval::where('date', $newDate)
                                                 ->where('employee_id', $employee_id)
                                                 ->where('shift_start', $shiftData['shift_start'])
                                                 ->where('shift_end', $shiftData['shift_end'])
@@ -2199,7 +2265,7 @@ class AdminController extends Controller
 
                 if ($existingOTRecord) {
 
-                    $updateOt = OtApproval::where('date', $date)
+                    $updateOt = OtApproval::where('date', $newDate)
                                 ->where('employee_id', $employee_id)
                                 ->where('shift_start', $shiftData['shift_start'])
                                 ->where('shift_end', $shiftData['shift_end'])
@@ -2208,7 +2274,7 @@ class AdminController extends Controller
 
                     $newOt = OtApproval::create([
                         'employee_id' => $employee_id,
-                        'date' => $date,
+                        'date' => $newDate,
                         'shift_start' => $shiftData['shift_start'],
                         'shift_end' => $shiftData['shift_end'],
                         'clock_out_time' => $clockOutTime,

@@ -57,6 +57,14 @@ class User extends Authenticatable
         return $this->hasMany(OtherImage::class, 'employee_id');
     }
 
+    public function salaryLogs(){
+        return $this->hasMany(SalaryLog::class, 'employee_id', 'id');
+    }
+
+    public function otApprovals(){
+        return $this->hasMany(OtApproval::class, 'employee_id', 'id');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

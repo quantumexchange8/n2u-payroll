@@ -63,9 +63,9 @@
             <!-- Logo -->
             <div class="logo logo-align" >
 
-                <a href="{{route('admindashboard')}}" class="default-logo"><img src="{{ asset('assets/img/logo-03.png') }}"  alt="" style="width: auto; margin-top: 15px;"></a>
+                <a href="{{route('admindashboard')}}" class="default-logo"><img src="{{ asset('assets/img/logo-03.png') }}"  alt="" style="height:80px; width:auto; margin-top:5px;"></a>
 
-                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="{{ asset('assets/img/logo-03.png') }}"  alt="" style="width: auto; margin-top: 15px;"></a>
+                <a href="{{route('admindashboard')}}" class="mobile-logo"><img src="{{ asset('assets/img/logo-03.png') }}"  alt="" style="width:auto;"></a>
 
             </div>
             <!-- End Logo -->
@@ -73,74 +73,74 @@
             <!-- Main Header -->
             <div class="main-header">
                 <div class="container-fluid">
-                <div class="row justify-content-between">
-                    <div class="col-3 col-lg-1 col-xl-4">
-                        <!-- Header Left -->
-                        <div class="main-header-left h-100 d-flex align-items-center">
-                            <!-- Main Header User -->
-                            <div class="main-header-user">
-                                <a href="#" class="d-flex align-items-center" data-toggle="dropdown">
-                                    {{-- <div class="menu-icon">
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                    </div> --}}
-
-                                    <div class="user-profile d-xl-flex align-items-center d-none">
-                                        <!-- User Avatar -->
-                                        {{-- <div class="user-avatar">
-                                            <img src="../../assets/img/avatar/user.png" alt="">
+                    <div class="row justify-content-between">
+                        <div class="col-3 col-lg-1 col-xl-4">
+                            <!-- Header Left -->
+                            <div class="main-header-left h-100 d-flex align-items-center">
+                                <!-- Main Header User -->
+                                <div class="main-header-user">
+                                    <a href="#" class="d-flex align-items-center" data-toggle="dropdown">
+                                        {{-- <div class="menu-icon">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
                                         </div> --}}
-                                        <!-- End User Avatar -->
 
-                                        <!-- User Info -->
-                                        <div class="user-info">
-                                            <h4 class="user-name">{{ auth()->user()->nickname }}</h4>
-                                            <p class="user-email">{{ auth()->user()->email }}</p>
+                                        <div class="user-profile d-xl-flex align-items-center d-none">
+                                            <!-- User Avatar -->
+                                            {{-- <div class="user-avatar">
+                                                <img src="../../assets/img/avatar/user.png" alt="">
+                                            </div> --}}
+                                            <!-- End User Avatar -->
+
+                                            <!-- User Info -->
+                                            <div class="user-info">
+                                                <h4 class="user-name">{{ auth()->user()->nickname }}</h4>
+                                                <p class="user-email">{{ auth()->user()->email }}</p>
+                                            </div>
+                                            <!-- End User Info -->
                                         </div>
-                                        <!-- End User Info -->
-                                    </div>
-                                </a>
-                                {{-- <div class="dropdown-menu">
-                                    <a href="#">My Profile</a>
-                                    <a href="#">task</a>
-                                    <a href="#">Settings</a>
-                                    <a href="{{ route('logout') }}">Log Out</a>
-                                </div> --}}
-                            </div>
-                            <!-- End Main Header User -->
+                                    </a>
+                                    {{-- <div class="dropdown-menu">
+                                        <a href="#">My Profile</a>
+                                        <a href="#">task</a>
+                                        <a href="#">Settings</a>
+                                        <a href="{{ route('logout') }}">Log Out</a>
+                                    </div> --}}
+                                </div>
+                                <!-- End Main Header User -->
 
-                            <!-- Main Header Menu -->
-                            <div class="main-header-pin d-block d-lg-none">
-                            <div class="header-toogle-menu">
-                                <img src="{{ asset('assets/img/menu.png') }}" alt="">
+                                <!-- Main Header Menu -->
+                                <div class="main-header-pin d-block d-lg-none">
+                                <div class="header-toogle-menu">
+                                    <img src="{{ asset('assets/img/menu.png') }}" alt="">
+                                </div>
+                                </div>
+                                <!-- End Main Header Menu -->
                             </div>
+                            <!-- End Header Left -->
+                        </div>
+                        <div class="col-9 col-lg-11 col-xl-8">
+                            <!-- Header Right -->
+                            <div class="main-header-right d-flex justify-content-end">
+                                <ul class="nav">
+                                    <li class="d-lg-flex">
+                                        <!-- Main Header Time -->
+                                        <div class="main-header-date-time text-right">
+                                            <h3 class="time">
+                                                <span id="hours">10</span>
+                                                <span id="point">:</span>
+                                                <span id="min">00</span>
+                                            </h3>
+                                            <span class="date"><span id="date">Mon, 01 January 2024</span></span>
+                                        </div>
+                                        <!-- End Main Header Time -->
+                                    </li>
+                                </ul>
                             </div>
-                            <!-- End Main Header Menu -->
+                            <!-- End Header Right -->
                         </div>
-                        <!-- End Header Left -->
                     </div>
-                    <div class="col-9 col-lg-11 col-xl-8">
-                        <!-- Header Right -->
-                        <div class="main-header-right d-flex justify-content-end">
-                            <ul class="nav">
-                                <li class="d-lg-flex">
-                                    <!-- Main Header Time -->
-                                    <div class="main-header-date-time text-right">
-                                        <h3 class="time">
-                                            <span id="hours">10</span>
-                                            <span id="point">:</span>
-                                            <span id="min">00</span>
-                                        </h3>
-                                        <span class="date"><span id="date">Tue, 12 October 2019</span></span>
-                                    </div>
-                                    <!-- End Main Header Time -->
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- End Header Right -->
-                    </div>
-                </div>
                 </div>
             </div>
             <!-- End Main Header -->
@@ -268,12 +268,12 @@
                                 </ul>
                                 <!-- End Sub Menu -->
                             </li>
-                            {{-- <li>
+                            <li>
                                 <a href="{{ route('salaryLogs') }}">
                                     <i class="icofont-money"></i>
                                     <span class="link-title">Salary Logs</span>
                                 </a>
-                            </li> --}}
+                            </li>
                             <li>
                                 <a href="{{ route('viewAdmin') }}">
                                     <i class="icofont-users"></i>

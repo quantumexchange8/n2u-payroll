@@ -4,6 +4,7 @@
 {{-- Excel --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
 
+
 <!-- Main Content -->
 <div class="main-content">
     <div class="container-fluid">
@@ -43,6 +44,8 @@
                         <table class="text-nowrap table-bordered dh-table">
                             <thead>
                                 <tr>
+                                    <th>Year</th>
+                                    <th>Month</th>
                                     <th>Full Name</th>
                                     <th>Nickname</th>
                                     <th>Basic Salary (RM)</th>
@@ -52,8 +55,33 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $prevYear = null;
+                                    $prevMonth = null;
+                                @endphp
+
                                 @foreach($salaryLogs as $salaryLog)
                                     <tr data-date="{{ $salaryLog->year }}-{{ str_pad($salaryLog->month, 2, '0', STR_PAD_LEFT) }}">
+                                        {{-- Year --}}
+                                        @if ($prevYear !== $salaryLog->year)
+                                            <td>{{ $salaryLog->year }}</td>
+                                            @php
+                                                $prevYear = $salaryLog->year;
+                                            @endphp
+                                        @else
+                                            <td></td>
+                                        @endif
+
+                                        {{-- Month --}}
+                                        @if ($prevMonth !== $salaryLog->month)
+                                            <td>{{ $salaryLog->month ?? null }}</td>
+                                            @php
+                                                $prevMonth = $salaryLog->month;
+                                            @endphp
+                                        @else
+                                            <td></td>
+                                        @endif
+
                                         <td>{{ $salaryLog->user->full_name ?? null }}</td>
                                         <td>{{ $salaryLog->user->nickname ?? null }}</td>
                                         <td>{{ $salaryLog->user->salary ?? null }}</td>
@@ -63,8 +91,11 @@
                                     </tr>
                                 @endforeach
                             </tbody>
+
+
                         </table>
                         <!-- End Invoice List Table -->
+
                     </div>
 
                 </div>

@@ -368,7 +368,7 @@
                 var rowData = {
                     id: id,
                     date: $(this).closest('tr').data('date'),
-                    fullName: $(this).closest('tr').data('full-name'),
+                    fullName: $(this).closest('tr').data('nickname'),
                     shift: $(this).closest('tr').find('td:eq(3)').text().trim(),
                     checkIn: $(this).closest('tr').find('td:eq(4)').text().trim(),
                     checkOut: $(this).closest('tr').find('td:eq(5)').text().trim(),
@@ -377,7 +377,7 @@
                     punchRecordId: $(this).closest('tr').find('td:eq(6)').data('punchrecord-id')
                 };
 
-                console.log(rowData);
+                // console.log(rowData);
 
                 // Add the rowData to the array
                 selectedRows.push(rowData);
@@ -396,23 +396,19 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Done',
-                        text: 'Successfully Updated',
+                        text: 'Total hour updated successfully.',
                     }).then(function() {
-                        // Reload the page after the SweetAlert is closed
                         location.reload();
                     });
 
                 },
                 error: function(error) {
-                    // Handle the error response (if needed)
-                    console.error('Recalculation error:', error);
 
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         text: 'Please assign a shift.',
                     }).then(function() {
-                        // Reload the page after the SweetAlert is closed
                         location.reload();
                     });
                 }

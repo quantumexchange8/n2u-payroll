@@ -281,7 +281,7 @@
                                 <!-- Form Group -->
                                 <div class="form-group" style="display: none;">
                                     <label class="font-14 bold mb-2">Password</label>
-                                    <input type="number" class="theme-input-style" id="password" name="password" placeholder="Password" value="{{$user->password}}">
+                                    <input type="password" class="theme-input-style" id="password" name="password" placeholder="Password" value="{{$user->password}}">
                                 </div>
                                 <!-- End Form Group -->
 

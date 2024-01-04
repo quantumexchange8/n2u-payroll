@@ -14,7 +14,7 @@ class OtApproval extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'employee_id', 'id');
-        //employee id refer to punch_records.employee_id
+        //employee id refer to ot_approval.employee_id
         //id refer to users.id
     }
 }

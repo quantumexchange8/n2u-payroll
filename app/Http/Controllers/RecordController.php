@@ -63,7 +63,7 @@ class RecordController extends Controller
         $schedules = DB::table('schedules')
             ->join('users', 'schedules.employee_id', '=', 'users.id')
             ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-            ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end')
+            ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
             ->where('schedules.employee_id', $user->id)
             ->whereDate('schedules.date', '=', $currentDate)
             ->whereNull('schedules.deleted_at')
@@ -90,6 +90,7 @@ class RecordController extends Controller
 
             $firstShift = null;
             $secondShift = null;
+
 
             // Check if the user has at least one schedule.
             if ($scheduleCount > 0) {
@@ -209,9 +210,11 @@ class RecordController extends Controller
 
                                 $totalHoursRounded = number_format($totalHours, 2);
 
+                                dd($user->id);
+
                                 $newot = OtApproval::create([
                                     'employee_id' => $user->id,
-                                    'date' => $currentDate,
+                                    'date' => $firstShift->date,
                                     'shift_start' => $firstShift->shift_start,
                                     'shift_end' => $firstShift->shift_end,
                                     'clock_out_time' => $currentTimes,
@@ -248,7 +251,7 @@ class RecordController extends Controller
                                 $hourAndMinute = \Carbon\Carbon::parse($clockout)->format('H:i');
 
                                 $clockout = $hourAndMinute;
-                                $shiftEnd = $firstShift->shift_end;
+                                $shiftEnd = $secondShift->shift_end;
 
                                 $clockoutTime = \Carbon\Carbon::parse($clockout);
                                 $shiftEndTime = \Carbon\Carbon::parse($shiftEnd);
@@ -261,9 +264,9 @@ class RecordController extends Controller
 
                                 $newot = OtApproval::create([
                                     'employee_id' => $user->id,
-                                    'date' => $currentDate,
-                                    'shift_start' => $firstShift->shift_start,
-                                    'shift_end' => $firstShift->shift_end,
+                                    'date' => $secondShift->date,
+                                    'shift_start' => $secondShift->shift_start,
+                                    'shift_end' => $secondShift->shift_end,
                                     'clock_out_time' => $currentTimes,
                                     'ot_hour' => $totalHoursRounded,
                                     'status' => 'Pending'
@@ -407,7 +410,7 @@ class RecordController extends Controller
 
                                 $newot = OtApproval::create([
                                     'employee_id' => $user->id,
-                                    'date' => $currentDate,
+                                    'date' => $firstShift->date,
                                     'shift_start' => $firstShift->shift_start,
                                     'shift_end' => $firstShift->shift_end,
                                     'clock_out_time' => $currentTimes,
@@ -498,7 +501,7 @@ class RecordController extends Controller
         $schedules = DB::table('schedules')
             ->join('users', 'schedules.employee_id', '=', 'users.id')
             ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-            ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end')
+            ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
             ->where('schedules.employee_id', $user->id)
             ->whereDate('schedules.date', '=', $currentDate)
             ->whereNull('schedules.deleted_at')
@@ -655,8 +658,8 @@ class RecordController extends Controller
                                 $totalHoursRounded = number_format($totalHours, 2);
 
                                 $newot = OtApproval::create([
-                                    'employee_id' => Auth::user()->employee_id,
-                                    'date' => $currentDate,
+                                    'employee_id' => Auth::user()->id,
+                                    'date' => $firstShift->date,
                                     'shift_start' => $firstShift->shift_start,
                                     'shift_end' => $firstShift->shift_end,
                                     'clock_out_time' => $currentTimes,
@@ -701,8 +704,8 @@ class RecordController extends Controller
                                 $totalHoursRounded = number_format($totalHours, 2);
 
                                 $newot = OtApproval::create([
-                                    'employee_id' => Auth::user()->employee_id,
-                                    'date' => $currentDate,
+                                    'employee_id' => Auth::user()->id,
+                                    'date' => $secondShift->date,
                                     'shift_start' => $secondShift->shift_start,
                                     'shift_end' => $secondShift->shift_end,
                                     'clock_out_time' => $currentTimes,
@@ -900,6 +903,7 @@ class RecordController extends Controller
                 }
 
             } else if (!empty($firstShift) && empty($secondShift)){
+
                 // Check if the user has reached the limit (2 times for both clock in and clock out)
                 // if ($status === 'Clock In' && $clockinCount >= 1) {
                 //     // Clock In limit reached, display error message
@@ -962,8 +966,8 @@ class RecordController extends Controller
                                 $totalHoursRounded = number_format($totalHours, 2);
 
                                 $newot = OtApproval::create([
-                                    'employee_id' => Auth::user()->employee_id,
-                                    'date' => $currentDate,
+                                    'employee_id' => Auth::user()->id,
+                                    'date' => $firstShift->date,
                                     'shift_start' => $firstShift->shift_start,
                                     'shift_end' => $firstShift->shift_end,
                                     'clock_out_time' => $currentTimes,

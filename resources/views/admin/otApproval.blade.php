@@ -77,7 +77,7 @@
                                 <tbody>
                                     @foreach ($otapproval as $otapproval)
                                         @php
-                                            $recordDate = Carbon\Carbon::parse($otapproval->created_at)->toDateString();
+                                            $recordDate = Carbon\Carbon::parse($otapproval->date)->toDateString();
                                             $currentDate = now()->toDateString();
                                         @endphp
                                         @if (!empty($otapproval))

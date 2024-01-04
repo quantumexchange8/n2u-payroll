@@ -58,13 +58,12 @@
                                 </form>
                             </div>
 
-
                             <!-- Modal -->
                             <div class="modal fade" id="viewModal{{ $image->id }}" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="viewModalLabel">View Image</h5>
+                                            <h5 class="modal-title" id="viewModalLabel">File Preview</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -102,7 +101,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Add Other Image</h5>
+                <h5 class="modal-title" id="addModalLabel">Add Other Image or File</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
