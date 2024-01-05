@@ -204,7 +204,16 @@
                                     @if ($punchRecord->user->id === $user_id)
                                         <tr>
                                             <td>{{ $punchRecord->user->full_name }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($recordDate)->format('d M Y') }}</td>
+                                            <td>
+                                                {{-- {{ \Carbon\Carbon::parse($recordDate)->format('d M Y') }} --}}
+                                                @if ($punchRecord->in == 'Clock In')
+                                                    {{ \Carbon\Carbon::parse($punchRecord->clock_in_time)->format('d M Y') }}
+                                                @elseif ($punchRecord->out == 'Clock Out')
+                                                    {{ \Carbon\Carbon::parse($punchRecord->clock_out_time)->format('d M Y') }}
+                                                @else
+                                                    Not Available
+                                                @endif
+                                            </td>
                                             <td>
                                                 @if ($punchRecord->in == 'Clock In')
                                                     {{ \Carbon\Carbon::parse($punchRecord->clock_in_time)->format('g:i A') }}

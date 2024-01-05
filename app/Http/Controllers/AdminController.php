@@ -1022,9 +1022,7 @@ class AdminController extends Controller
                                     ->whereNull('deleted_at')
                                     ->exists();
 
-
         if ($existingSchedule) {
-
             $shiftDetails = Shift::where('id', $request->shift_id)->first();
 
             $newShiftStart = $shiftDetails->shift_start;
@@ -1165,6 +1163,60 @@ class AdminController extends Controller
                 Alert::success('Done', 'Schedule updated successfully.');
                 return redirect()->route('schedule');
             }
+        } else {
+            $schedule->employee_id = $request->input('employee_id');
+            $schedule->date = $request->input('date');
+            $schedule->shift_id = $request->input('shift_id');
+            $schedule->remarks = $request->input('remarks');
+
+            $schedule->save();
+
+            // Check if there are tasks and duties submitted in the request
+            $tasksAndDuties = $request->input('group-a', []);
+
+            // If there are tasks and duties, update or insert them into the tasks table
+            if (!empty($tasksAndDuties)) {
+                foreach ($tasksAndDuties as $taskData) {
+                    // Check if all key fields are null
+                    $fieldsNull = is_null($taskData['period_id']) ||
+                                        is_null($taskData['duty_id']) ||
+                                        is_null($taskData['start_time']) ||
+                                        is_null($taskData['end_time']);
+
+                    // If all key fields are not null, proceed with creating/updating the task
+                    if (!$fieldsNull) {
+
+                        $existingTask = Task::where([
+                            'date' => $schedule->date,
+                            'employee_id' => $schedule->employee_id,
+                            'period_id' => $taskData['period_id'],
+                        ])->first();
+
+                        if ($existingTask) {
+
+                            $existingTask->update([
+                                'start_time' => $taskData['start_time'],
+                                'end_time' => $taskData['end_time'],
+                                'duty_id' => $taskData['duty_id'],
+                            ]);
+                        } else {
+
+                            $task = Task::Create(
+                                [
+                                    'date' => $schedule->date,
+                                    'employee_id' => $schedule->employee_id,
+                                    'period_id' => $taskData['period_id'],
+                                    'start_time' => $taskData['start_time'],
+                                    'end_time' => $taskData['end_time'],
+                                    'duty_id' => $taskData['duty_id'],
+                                ]
+                            );
+                        }
+                    }
+                }
+            }
+            Alert::success('Done', 'Schedule updated successfully.');
+            return redirect()->route('schedule');
         }
     }
 
@@ -2185,20 +2237,23 @@ class AdminController extends Controller
 
             $carbonCheckOT = $carbonShiftEnd->copy()->addMinutes($overtimeCalculation);
 
-            // dd($date);
 
             if ($carbonShiftStart > $carbonShiftEnd) {
+
+                $newCarbonCheckIn = $carbonCheckIn->subDay();
                 $newCarbonShiftStart = $carbonShiftStart->subDay();
+                $newCarbonCheckLate = $carbonCheckLate->subDay();
+                
                 $newDate = Carbon::parse($date)->subDay()->toDateString();
 
-                if ($carbonCheckIn->greaterThanOrEqualTo($carbonCheckLate)) {
+                if ($newCarbonCheckIn->greaterThanOrEqualTo($newCarbonCheckLate)) {
                     // Compare checkOut with checkOT and calculate new total hour accordingly
                     if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
                         // If checkOut is greater than checkOT, calculate new total hour using shift end time
-                        $newTotalWork = $carbonShiftEnd->diffInMinutes($carbonCheckIn);
+                        $newTotalWork = $carbonShiftEnd->diffInMinutes($newCarbonCheckIn);
                     } else {
                         // If checkOut is not greater than checkOT, calculate new total hour using checkOut time
-                        $newTotalWork = $carbonCheckOut->diffInMinutes($carbonCheckIn);
+                        $newTotalWork = $carbonCheckOut->diffInMinutes($newCarbonCheckIn);
                     }
                 } else {
                     // Compare checkOut with checkOT and calculate new total hour accordingly
@@ -2231,6 +2286,7 @@ class AdminController extends Controller
                     }
                 }
             }
+
 
             $newTotalWorkInHours = number_format($newTotalWork / 60, 2);
 
