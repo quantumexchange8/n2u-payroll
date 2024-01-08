@@ -40,7 +40,6 @@ class MemberController extends Controller
         $schedules = Schedule::where('employee_id', $user->id)->orderBy('date')->get();
         $shifts = Shift::all();
         $duties = Duty::all();
-        $settings = Setting::all();
         $tasks = Task::where('employee_id', $user->id)->with('user')->get();
         $periods = Period::all();
         $punchRecords = PunchRecord::with('user')->get();
@@ -59,7 +58,6 @@ class MemberController extends Controller
             'duty' => $duties,
             'status' => $status,
             'clock' => $clock,
-            'settings' => $settings,
             'tasks' => $tasks,
             'periods' => $periods
         ]);

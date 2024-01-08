@@ -14,6 +14,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 class RecordController extends Controller
 {
 
@@ -57,6 +58,7 @@ class RecordController extends Controller
         $user = User::where('employee_id', $userId)->first();
 
         $currentDate = now()->toDateString();
+        $currentDate = Carbon::parse($currentDate);
         $currentDateTime = now();
         $currentTimes = $currentDateTime->format('H:i:s');
 
@@ -103,25 +105,48 @@ class RecordController extends Controller
                 }
             }
 
+            if ($firstShift !== null) {
+                $firstShiftDate = $firstShift->date;
+            }
+
+            if ($secondShift !== null) {
+                $secondShiftDate = $secondShift->date;
+            }
+
             if(!empty($firstShift)){
-                $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
+                // $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
 
                 if ($firstShift->shift_start >= $firstShift->shift_end) {
-                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end)->addDay();
+                    $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start)->subDay();
+
+                    $firstShiftDate = Carbon::parse($firstShiftDate)->subDay();
+                    $firstShiftDate = $firstShiftDate->format('Y-m-d');
+
+                    $currentDate->subDay();
                 } else {
-                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end);
+                    $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
                 }
+
+                $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end);
             }
 
             if(!empty($secondShift)){
-                $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
+                // $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
 
                 if ($secondShift->shift_start >= $secondShift->shift_end) {
-                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end)->addDay();
+                    $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start)->subDay();
+
+                    $secondShiftDate = Carbon::parse($secondShiftDate)->subDay();
+                    $secondShiftDate = $secondShiftDate->format('Y-m-d');
+
+                    $currentDate->subDay();
                 } else {
-                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end);
+                    $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
                 }
+
+                $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end);
             }
+
 
             // Count the number of clock-ins for the current date
             $clockinCount = PunchRecord::where('employee_id', $user->id)
@@ -136,9 +161,21 @@ class RecordController extends Controller
                             ->count();
 
             if ($status === 'Clock In') {
-                $status_clock = $clockinCount + $clockoutCount + 1;
+                if ($clockinCount == 0 && $clockoutCount == 1){
+                    // If clockinCount is 0 and clockoutCount is 1, reset clockoutCount to 0
+                    $clockoutCount = 0;
+                    $status_clock = $clockinCount + $clockoutCount + 1;
+                } else {
+                    $status_clock = $clockinCount + $clockoutCount + 1;
+                }
             } elseif ($status === 'Clock Out') {
-                $status_clock = $clockinCount + $clockoutCount + 1;
+                if ($clockinCount == 1 && $clockoutCount == 1){
+                    // If clockinCount is 1 and clockoutCount is 1, reset clockoutCount to 0
+                    $clockoutCount = 0;
+                    $status_clock = $clockinCount + $clockoutCount + 1;
+                } else {
+                    $status_clock = $clockinCount + $clockoutCount + 1;
+                }
             }
 
             $recordData = [
@@ -151,6 +188,7 @@ class RecordController extends Controller
                 'remarks' => null,
                 'status_clock' => $status_clock,
             ];
+
 
             if(!empty($firstShift) && !empty($secondShift)){
 
@@ -220,11 +258,10 @@ class RecordController extends Controller
 
                                 $totalHoursRounded = number_format($totalHours, 2);
 
-                                dd($user->id);
 
                                 $newot = OtApproval::create([
                                     'employee_id' => $user->id,
-                                    'date' => $firstShift->date,
+                                    'date' => $firstShiftDate,
                                     'shift_start' => $firstShift->shift_start,
                                     'shift_end' => $firstShift->shift_end,
                                     'clock_out_time' => $currentTimes,
@@ -274,7 +311,7 @@ class RecordController extends Controller
 
                                 $newot = OtApproval::create([
                                     'employee_id' => $user->id,
-                                    'date' => $secondShift->date,
+                                    'date' => $secondShiftDate,
                                     'shift_start' => $secondShift->shift_start,
                                     'shift_end' => $secondShift->shift_end,
                                     'clock_out_time' => $currentTimes,
@@ -420,7 +457,7 @@ class RecordController extends Controller
 
                                 $newot = OtApproval::create([
                                     'employee_id' => $user->id,
-                                    'date' => $firstShift->date,
+                                    'date' => $firstShiftDate,
                                     'shift_start' => $firstShift->shift_start,
                                     'shift_end' => $firstShift->shift_end,
                                     'clock_out_time' => $currentTimes,
@@ -434,6 +471,7 @@ class RecordController extends Controller
                         }
 
                         $recordData['clock_out_time'] = $currentDateTime;
+
                     }
                 }
 
@@ -507,6 +545,7 @@ class RecordController extends Controller
         $status = $request->input('status');
 
         $currentDate = now()->toDateString();
+        $currentDate = Carbon::parse($currentDate);
         $currentDateTime = now();
         $currentTimes = $currentDateTime->format('H:i:s');
 
@@ -551,24 +590,47 @@ class RecordController extends Controller
                 }
             }
 
+            if ($firstShift !== null) {
+                $firstShiftDate = $firstShift->date;
+            }
+
+            if ($secondShift !== null) {
+                $secondShiftDate = $secondShift->date;
+            }
+
+
             if(!empty($firstShift)){
-                $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
+                // $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
 
                 if ($firstShift->shift_start >= $firstShift->shift_end) {
-                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end)->addDay();
+                    $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start)->subDay();
+
+                    $firstShiftDate = Carbon::parse($firstShiftDate)->subDay();
+                    $firstShiftDate = $firstShiftDate->format('Y-m-d');
+
+                    $currentDate->subDay();
                 } else {
-                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end);
+                    $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
                 }
+
+                $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end);
             }
 
             if(!empty($secondShift)){
-                $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
+                // $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
 
                 if ($secondShift->shift_start >= $secondShift->shift_end) {
-                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end)->addDay();
+                    $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start)->subDay();
+
+                    $secondShiftDate = Carbon::parse($secondShiftDate)->subDay();
+                    $secondShiftDate = $secondShiftDate->format('Y-m-d');
+
+                    $currentDate->subDay();
                 } else {
-                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end);
+                    $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
                 }
+
+                $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end);
             }
 
             // Count the number of clock-ins for the current date
@@ -584,10 +646,23 @@ class RecordController extends Controller
                             ->count();
 
             if ($status === 'Clock In') {
-                $status_clock = $clockinCount + $clockoutCount + 1;
+                if ($clockinCount == 0 && $clockoutCount == 1){
+                    // If clockinCount is 0 and clockoutCount is 1, reset clockoutCount to 0
+                    $clockoutCount = 0;
+                    $status_clock = $clockinCount + $clockoutCount + 1;
+                } else {
+                    $status_clock = $clockinCount + $clockoutCount + 1;
+                }
             } elseif ($status === 'Clock Out') {
-                $status_clock = $clockinCount + $clockoutCount + 1;
+                if ($clockinCount == 1 && $clockoutCount == 1){
+                    // If clockinCount is 1 and clockoutCount is 1, reset clockoutCount to 0
+                    $clockoutCount = 0;
+                    $status_clock = $clockinCount + $clockoutCount + 1;
+                } else {
+                    $status_clock = $clockinCount + $clockoutCount + 1;
+                }
             }
+
 
             $recordData = [
                 'employee_id' => $user->id,
@@ -681,7 +756,7 @@ class RecordController extends Controller
 
                                 $newot = OtApproval::create([
                                     'employee_id' => Auth::user()->id,
-                                    'date' => $firstShift->date,
+                                    'date' => $firstShiftDate,
                                     'shift_start' => $firstShift->shift_start,
                                     'shift_end' => $firstShift->shift_end,
                                     'clock_out_time' => $currentTimes,
@@ -727,7 +802,7 @@ class RecordController extends Controller
 
                                 $newot = OtApproval::create([
                                     'employee_id' => Auth::user()->id,
-                                    'date' => $secondShift->date,
+                                    'date' => $secondShiftDate,
                                     'shift_start' => $secondShift->shift_start,
                                     'shift_end' => $secondShift->shift_end,
                                     'clock_out_time' => $currentTimes,
@@ -934,7 +1009,7 @@ class RecordController extends Controller
 
                                 $newot = OtApproval::create([
                                     'employee_id' => Auth::user()->id,
-                                    'date' => $firstShift->date,
+                                    'date' => $firstShiftDate,
                                     'shift_start' => $firstShift->shift_start,
                                     'shift_end' => $firstShift->shift_end,
                                     'clock_out_time' => $currentTimes,

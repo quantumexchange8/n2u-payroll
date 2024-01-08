@@ -2243,8 +2243,8 @@ class AdminController extends Controller
                 $newCarbonCheckIn = $carbonCheckIn->subDay();
                 $newCarbonShiftStart = $carbonShiftStart->subDay();
                 $newCarbonCheckLate = $carbonCheckLate->subDay();
-                
-                $newDate = Carbon::parse($date)->subDay()->toDateString();
+
+                // $newDate = Carbon::parse($date)->subDay()->toDateString();
 
                 if ($newCarbonCheckIn->greaterThanOrEqualTo($newCarbonCheckLate)) {
                     // Compare checkOut with checkOT and calculate new total hour accordingly
@@ -2307,13 +2307,13 @@ class AdminController extends Controller
 
 
             if ($carbonCheckOut->greaterThanOrEqualTo($carbonCheckOT)) {
-                $otMinutesDifference = $carbonCheckOut->diffInMinutes($carbonCheckOT);
+                $otMinutesDifference = $carbonCheckOut->diffInMinutes($carbonShiftEnd);
 
                 $otInHours = $otMinutesDifference / 60;
 
                 $otInHoursRounded = number_format($otInHours, 2);
 
-                $existingOTRecord = OtApproval::where('date', $newDate)
+                $existingOTRecord = OtApproval::where('date', $date)
                                                 ->where('employee_id', $employee_id)
                                                 ->where('shift_start', $shiftData['shift_start'])
                                                 ->where('shift_end', $shiftData['shift_end'])
@@ -2321,7 +2321,7 @@ class AdminController extends Controller
 
                 if ($existingOTRecord) {
 
-                    $updateOt = OtApproval::where('date', $newDate)
+                    $updateOt = OtApproval::where('date', $date)
                                 ->where('employee_id', $employee_id)
                                 ->where('shift_start', $shiftData['shift_start'])
                                 ->where('shift_end', $shiftData['shift_end'])
@@ -2330,7 +2330,7 @@ class AdminController extends Controller
 
                     $newOt = OtApproval::create([
                         'employee_id' => $employee_id,
-                        'date' => $newDate,
+                        'date' => $date,
                         'shift_start' => $shiftData['shift_start'],
                         'shift_end' => $shiftData['shift_end'],
                         'clock_out_time' => $clockOutTime,

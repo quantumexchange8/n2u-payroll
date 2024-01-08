@@ -65,6 +65,10 @@ class User extends Authenticatable
         return $this->hasMany(OtApproval::class, 'employee_id', 'id');
     }
 
+    public function punchRecords(){
+        return $this->hasMany(PunchRecord::class, 'employee_id', 'id');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
