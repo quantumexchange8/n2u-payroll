@@ -1032,7 +1032,7 @@ class AdminController extends Controller
                                 ->get();
 
             if ($existingShifts->count() == 2) {
-               
+
                 $existingShiftStart1 = $existingShifts[0]->shift_start;
                 $existingShiftEnd1 = $existingShifts[0]->shift_end;
                 $existingShiftStart2 = $existingShifts[1]->shift_start;
@@ -1265,8 +1265,27 @@ class AdminController extends Controller
 
                 $scheduleData = Schedule::find($scheduleId);
 
-                $existingSchedule = Schedule::where('employee_id', $selectedUserId)
-                        ->where('date', $selectedDate)
+                // Extract specific fields from the scheduleData
+                $selectedScheduleData = [
+                    'id' => $scheduleData->id,
+                    'shift_id' => $scheduleData->shift_id,
+                    'off_day' => $scheduleData->off_day,
+                ];
+
+                if ($selectedDate !== null) {
+                    $selectedScheduleData['date'] = $selectedDate;
+                } else {
+                    $selectedScheduleData['date'] = $scheduleData->date;
+                }
+
+                if ($selectedUserId !== null) {
+                    $selectedScheduleData['employee_id'] = $selectedUserId;
+                } else {
+                    $selectedScheduleData['employee_id'] = $scheduleData->employee_id;
+                }
+
+                $existingSchedule = Schedule::where('employee_id', $selectedScheduleData['employee_id'])
+                        ->where('date', $selectedScheduleData['date'])
                         ->whereNull('deleted_at')
                         ->count();
 
@@ -1280,8 +1299,8 @@ class AdminController extends Controller
                     $existingShifts = DB::table('schedules')
                                         ->join('users', 'schedules.employee_id', '=', 'users.id')
                                         ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-                                        ->where('schedules.employee_id', $selectedUserId)
-                                        ->where('schedules.date', $selectedDate)
+                                        ->where('schedules.employee_id', $selectedScheduleData['employee_id'])
+                                        ->where('schedules.date', $selectedScheduleData['date'])
                                         ->whereNull('schedules.deleted_at')
                                         ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
                                         ->get();
@@ -1291,29 +1310,10 @@ class AdminController extends Controller
                         $existingShiftStart = $existingShifts[0]->shift_start;
                         $existingShiftEnd = $existingShifts[0]->shift_end;
 
-                        if ($newShiftStart <= $existingShiftEnd && $newShiftEnd >= $existingShiftStart) {
+                        if ($newShiftStart <= $existingShiftStart && $newShiftEnd >= $existingShiftEnd) {
                             $errorMessage = 'Failed to duplicate due to shift overlap.';
                             return response()->json(['error' => $errorMessage], 422);
                         } else {
-
-                            // Extract specific fields from the scheduleData
-                            $selectedScheduleData = [
-                                'id' => $scheduleData->id,
-                                'shift_id' => $scheduleData->shift_id,
-                                'off_day' => $scheduleData->off_day,
-                            ];
-
-                            if ($selectedDate !== null) {
-                                $selectedScheduleData['date'] = $selectedDate;
-                            } else {
-                                $selectedScheduleData['date'] = $scheduleData->date;
-                            }
-
-                            if ($selectedUserId !== null) {
-                                $selectedScheduleData['employee_id'] = $selectedUserId;
-                            } else {
-                                $selectedScheduleData['employee_id'] = $scheduleData->employee_id;
-                            }
 
                             $newSchedule = Schedule::create($selectedScheduleData);
 
@@ -1323,7 +1323,7 @@ class AdminController extends Controller
 
                                 $tasksData = [];
                                 foreach ($row['tasks'] as $task) {
-                                    $existingTask = Task::where('employee_id', $selectedUserId)
+                                    $existingTask = Task::where('employee_id', $selectedScheduleData['employee_id'])
                                                         ->where('period_id', $task['period_id'])
                                                         ->where('date', $task['date'])
                                                         ->where('duty_id', $task['duty_id'])
@@ -1335,7 +1335,7 @@ class AdminController extends Controller
                                         // Create a new Task model associated with the new Schedule
                                         $newSchedule->tasks()->create([
                                             'date' => $task['date'],
-                                            'employee_id' => $selectedUserId,
+                                            'employee_id' => $selectedScheduleData['employee_id'],
                                             'period_id' => $task['period_id'],
                                             'duty_id' => $task['duty_id'],
                                             'start_time' => $task['start_time'],
@@ -1350,24 +1350,6 @@ class AdminController extends Controller
 
                     } else {
 
-                        $selectedScheduleData = [
-                            'id' => $scheduleData->id,
-                            'shift_id' => $scheduleData->shift_id,
-                            'off_day' => $scheduleData->off_day,
-                        ];
-
-                        if ($selectedDate !== null) {
-                            $selectedScheduleData['date'] = $selectedDate;
-                        } else {
-                            $selectedScheduleData['date'] = $scheduleData->date;
-                        }
-
-                        if ($selectedUserId !== null) {
-                            $selectedScheduleData['employee_id'] = $selectedUserId;
-                        } else {
-                            $selectedScheduleData['employee_id'] = $scheduleData->employee_id;
-                        }
-
                         $newSchedule = Schedule::create($selectedScheduleData);
 
                         // Check if 'tasks' key exists in the current row
@@ -1375,7 +1357,7 @@ class AdminController extends Controller
                             // Extract task data from the tasks array
                             $tasksData = [];
                             foreach ($row['tasks'] as $task) {
-                                $existingTask = Task::where('employee_id', $selectedUserId)
+                                $existingTask = Task::where('employee_id', $selectedScheduleData['employee_id'])
                                                     ->where('period_id', $task['period_id'])
                                                     ->where('date', $task['date'])
                                                     ->whereNull('deleted_at')
@@ -1385,7 +1367,7 @@ class AdminController extends Controller
 
                                     $newSchedule->tasks()->create([
                                         'date' => $task['date'],
-                                        'employee_id' => $selectedUserId,
+                                        'employee_id' => $selectedScheduleData['employee_id'],
                                         'period_id' => $task['period_id'],
                                         'duty_id' => $task['duty_id'],
                                         'start_time' => $task['start_time'],
