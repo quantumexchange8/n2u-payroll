@@ -426,9 +426,7 @@ class AdminController extends Controller
         $department->department_name = $request->input('department_name');
         $department->save();
 
-        // Flash a success message for the next request
         Alert::success('Done', 'Department inserted successfully.');
-
         return redirect()->route('viewDepartment');
     }
 
@@ -469,9 +467,7 @@ class AdminController extends Controller
     }
 
     public function deleteDepartment($id){
-
         $department = Department::find($id);
-
         $department->delete();
 
         Alert::success('Done', 'Department deleted successfully.');
@@ -556,7 +552,6 @@ class AdminController extends Controller
     public function deleteDuty($id){
 
         $duty = Duty::find($id);
-
         $duty->delete();
 
         Alert::success('Done', 'Duty deleted successfully.');
@@ -655,7 +650,6 @@ class AdminController extends Controller
     public function deleteShift($id){
 
         $shift = Shift::find($id);
-
         $shift->delete();
 
         Alert::success('Done', 'Shift deleted successfully.');
@@ -899,13 +893,13 @@ class AdminController extends Controller
             $newShiftEnd = $shiftDetails->shift_end;
 
             $existingShifts = DB::table('schedules')
-                ->join('users', 'schedules.employee_id', '=', 'users.id')
-                ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-                ->where('schedules.employee_id', $userId)
-                ->where('schedules.date', $date)
-                ->whereNull('schedules.deleted_at')
-                ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end')
-                ->get();
+                                ->join('users', 'schedules.employee_id', '=', 'users.id')
+                                ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                                ->where('schedules.employee_id', $userId)
+                                ->where('schedules.date', $date)
+                                ->whereNull('schedules.deleted_at')
+                                ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end')
+                                ->get();
 
             foreach ($existingShifts as $existingShift) {
                 $existingShiftStart = $existingShift->shift_start;
@@ -1003,12 +997,12 @@ class AdminController extends Controller
     private function getTasksAndDuties($employeeId, $date){
 
         $tasksAndDuties = DB::table('tasks')
-            ->join('duties', 'tasks.duty_id', '=', 'duties.id')
-            ->join('periods', 'tasks.period_id', '=', 'periods.id')
-            ->where('tasks.employee_id', $employeeId)
-            ->where('tasks.date', $date)
-            ->whereNull('tasks.deleted_at')
-            ->get();
+                            ->join('duties', 'tasks.duty_id', '=', 'duties.id')
+                            ->join('periods', 'tasks.period_id', '=', 'periods.id')
+                            ->where('tasks.employee_id', $employeeId)
+                            ->where('tasks.date', $date)
+                            ->whereNull('tasks.deleted_at')
+                            ->get();
 
         return $tasksAndDuties;
     }
@@ -1037,10 +1031,8 @@ class AdminController extends Controller
                                 ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
                                 ->get();
 
-
-
             if ($existingShifts->count() == 2) {
-                // dd($request->all());
+               
                 $existingShiftStart1 = $existingShifts[0]->shift_start;
                 $existingShiftEnd1 = $existingShifts[0]->shift_end;
                 $existingShiftStart2 = $existingShifts[1]->shift_start;

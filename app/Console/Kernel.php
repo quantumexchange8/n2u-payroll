@@ -43,6 +43,14 @@ class Kernel extends ConsoleKernel
                     }
                 }
 
+
+                // Handle combined records
+                foreach ($combinedRecords as $combinedPair) {
+                    foreach ($combinedPair as $record) {
+                        echo 'ID: ' . $record->id . ' User Name: ' . $user->full_name . ' - Combined Record: ' . $record->created_at . PHP_EOL;
+                    }
+                }
+
                 // After the loop, handle single records
                 foreach ($userPunchRecords as $record) {
                     $isCombined = $combinedRecords->flatten()->contains(function ($combinedRecord) use ($record) {
@@ -50,6 +58,8 @@ class Kernel extends ConsoleKernel
                     });
 
                     if (!$isCombined) {
+                        echo 'ID: ' . $record->id . ' User Name: ' . $user->full_name . ' - Single Record: ' . $record->created_at . PHP_EOL;
+
                         if ($record->status_clock == 1) {
                             $newRecord = new PunchRecord();
                             $newRecord->employee_id = $user->id;
@@ -58,6 +68,7 @@ class Kernel extends ConsoleKernel
                             $newRecord->status = 'Notice';
                             $newRecord->status_clock = 2;
                             $newRecord->save();
+
                         } else {
                             $newRecord = new PunchRecord();
                             $newRecord->employee_id = $user->id;
@@ -67,11 +78,17 @@ class Kernel extends ConsoleKernel
                             $newRecord->status_clock = 4;
                             $newRecord->save();
                         }
+
+                        $userId = $user->id;
+                        $updateUser = User::find($userId);
+                        $updateUser->update([
+                            'status' => 1
+                        ]);
                     }
                 }
             }
 
-        })->dailyAt('06:00')->timezone('Asia/Kuala_Lumpur');
+        })->everyFiveMinutes();
         // dailyAt('06:00')->timezone('Asia/Kuala_Lumpur');
 
     }

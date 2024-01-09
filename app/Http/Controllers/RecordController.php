@@ -72,6 +72,7 @@ class RecordController extends Controller
             ->orderBy('shifts.shift_start', 'asc')
             ->get();
 
+
         $lateThreshold = Setting::where('setting_name', 'Late Threshold (in minutes)')->value('value');
 
         $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation (in minutes)')->value('value');
@@ -113,40 +114,69 @@ class RecordController extends Controller
                 $secondShiftDate = $secondShift->date;
             }
 
+            // if(!empty($firstShift)){
+            //     // $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
+
+            //     if ($firstShift->shift_start >= $firstShift->shift_end) {
+            //         $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start)->subDay();
+
+            //         $firstShiftDate = Carbon::parse($firstShiftDate)->subDay();
+            //         $firstShiftDate = $firstShiftDate->format('Y-m-d');
+
+            //         $currentDate->subDay();
+            //     } else {
+            //         $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
+            //     }
+
+            //     $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end);
+            // }
+
+            // if(!empty($secondShift)){
+            //     // $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
+
+            //     if ($secondShift->shift_start >= $secondShift->shift_end) {
+            //         $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start)->subDay();
+
+            //         $secondShiftDate = Carbon::parse($secondShiftDate)->subDay();
+            //         $secondShiftDate = $secondShiftDate->format('Y-m-d');
+
+            //         $currentDate->subDay();
+            //     } else {
+            //         $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
+            //     }
+
+            //     $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end);
+            // }
+
             if(!empty($firstShift)){
-                // $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
+                $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
 
                 if ($firstShift->shift_start >= $firstShift->shift_end) {
-                    $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start)->subDay();
+                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end)->addDay();
 
-                    $firstShiftDate = Carbon::parse($firstShiftDate)->subDay();
+                    $firstShiftDate = Carbon::parse($firstShiftDate)->addDay();
                     $firstShiftDate = $firstShiftDate->format('Y-m-d');
 
-                    $currentDate->subDay();
+                    $currentDate->addDay();
                 } else {
-                    $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
+                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end);
                 }
-
-                $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end);
             }
 
             if(!empty($secondShift)){
-                // $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
+                $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
 
                 if ($secondShift->shift_start >= $secondShift->shift_end) {
-                    $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start)->subDay();
+                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end)->addDay();
 
-                    $secondShiftDate = Carbon::parse($secondShiftDate)->subDay();
+                    $secondShiftDate = Carbon::parse($secondShiftDate)->addDay();
                     $secondShiftDate = $secondShiftDate->format('Y-m-d');
 
-                    $currentDate->subDay();
+                    $currentDate->addDay();
                 } else {
-                    $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
+                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end);
                 }
-
-                $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end);
             }
-
 
             // Count the number of clock-ins for the current date
             $clockinCount = PunchRecord::where('employee_id', $user->id)
@@ -159,6 +189,7 @@ class RecordController extends Controller
                             ->whereDate('created_at', $currentDate)
                             ->where('out', 'Clock Out')
                             ->count();
+
 
             if ($status === 'Clock In') {
                 if ($clockinCount == 0 && $clockoutCount == 1){
@@ -600,37 +631,33 @@ class RecordController extends Controller
 
 
             if(!empty($firstShift)){
-                // $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
+                $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
 
                 if ($firstShift->shift_start >= $firstShift->shift_end) {
-                    $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start)->subDay();
+                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end)->addDay();
 
-                    $firstShiftDate = Carbon::parse($firstShiftDate)->subDay();
+                    $firstShiftDate = Carbon::parse($firstShiftDate)->addDay();
                     $firstShiftDate = $firstShiftDate->format('Y-m-d');
 
-                    $currentDate->subDay();
+                    $currentDate->addDay();
                 } else {
-                    $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
+                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end);
                 }
-
-                $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end);
             }
 
             if(!empty($secondShift)){
-                // $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
+                $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
 
                 if ($secondShift->shift_start >= $secondShift->shift_end) {
-                    $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start)->subDay();
+                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end)->addDay();
 
-                    $secondShiftDate = Carbon::parse($secondShiftDate)->subDay();
+                    $secondShiftDate = Carbon::parse($secondShiftDate)->addDay();
                     $secondShiftDate = $secondShiftDate->format('Y-m-d');
 
-                    $currentDate->subDay();
+                    $currentDate->addDay();
                 } else {
-                    $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
+                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end);
                 }
-
-                $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end);
             }
 
             // Count the number of clock-ins for the current date
