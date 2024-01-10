@@ -1676,7 +1676,6 @@ class AdminController extends Controller
     public function addAdmin(EmployeeRequest $request){
 
         $validatedData = $request->validated();
-
         User::create($validatedData);
 
         Alert::success('Done', 'Admin registered successfully.');
@@ -1692,9 +1691,7 @@ class AdminController extends Controller
     public function updateAdmin(EmployeeRequest $request, $id) {
 
         $data = User::find($id);
-
         $validatedData = $request->validated();
-
         $data->update($validatedData);
 
         Alert::success('Done', 'Admin updated successfully.');
@@ -1721,8 +1718,8 @@ class AdminController extends Controller
     public function deleteAdmin($id){
 
         $employee = User::find($id);
-
         $employee->delete();
+
         Alert::success('Done', 'Admin deleted successfully.');
         return redirect()->route('viewAdmin');
     }
@@ -2211,8 +2208,9 @@ class AdminController extends Controller
 
             $carbonCheckOT = $carbonShiftEnd->copy()->addMinutes($overtimeCalculation);
 
+            dd($carbonCheckIn);
 
-            if ($carbonShiftStart > $carbonShiftEnd) {
+            if ($carbonShiftStart >= $carbonShiftEnd) {
 
                 $newCarbonCheckIn = $carbonCheckIn->subDay();
                 $newCarbonShiftStart = $carbonShiftStart->subDay();
