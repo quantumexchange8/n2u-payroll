@@ -283,7 +283,7 @@ class Kernel extends ConsoleKernel
                 }
             }
 
-        })->everyThirtySeconds();
+        })->dailyAt('06:00')->timezone('Asia/Kuala_Lumpur');
         // dailyAt('06:00')->timezone('Asia/Kuala_Lumpur');
 
     }
