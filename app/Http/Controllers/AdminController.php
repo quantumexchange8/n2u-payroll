@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Models\Period;
 use App\Models\OtApproval;
 use App\Models\OtherImage;
+use App\Models\Outlet;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -61,14 +62,16 @@ class AdminController extends Controller
     public function viewEmployee() {
         $users = User::where('role', 'member')->with('position')->get(); // Eager load the positions
         $positions = Position::all();
+        $outlets = Outlet::all();
 
-        return view('admin.viewEmployee', compact('users', 'positions'));
+        return view('admin.viewEmployee', compact('users', 'outlets', 'positions'));
     }
 
     public function createEmployee(){
         $positions = Position::all();
+        $outlets = Outlet::all();
 
-        return view('admin.createEmployee', compact('positions'));
+        return view('admin.createEmployee', compact('outlets', 'positions'));
     }
 
     public function addEmployee(EmployeeRequest $request){
@@ -110,27 +113,28 @@ class AdminController extends Controller
                 $validatedData['account_pic'] = $filename;
             }
 
-            if ($request->hasFile('other_image')) {
-                $file = $request->file('other_image');
-                $extension = $file->getClientOriginalExtension();
-                $otherImageFilename = $full_name_with_underscores . '_other_image.' . time() . '.' . $extension;// Modify the file name
-                $file->move('storage/employee/otherImage/', $otherImageFilename);
+            // if ($request->hasFile('other_image')) {
+            //     $file = $request->file('other_image');
+            //     $extension = $file->getClientOriginalExtension();
+            //     $otherImageFilename = $full_name_with_underscores . '_other_image.' . time() . '.' . $extension;// Modify the file name
+            //     $file->move('storage/employee/otherImage/', $otherImageFilename);
 
-                // Storage::putFileAs('employee/otherImage', $file, $otherImageFilename);
+            //     // Storage::putFileAs('employee/otherImage', $file, $otherImageFilename);
 
-                $user = User::create($validatedData);
+            //     $user = User::create($validatedData);
 
-                $userId = $user->id;
+            //     $userId = $user->id;
 
-                OtherImage::create([
-                    'employee_id' => $userId,
-                    'file_name' => $otherImageFilename,
-                ]);
-            } else {
+            //     OtherImage::create([
+            //         'employee_id' => $userId,
+            //         'file_name' => $otherImageFilename,
+            //     ]);
+            // } else {
 
-                User::create($validatedData);
-            }
-
+            //     User::create($validatedData);
+            // }
+            
+            User::create($validatedData);
 
             Alert::success('Done', 'Employee registered successfully.');
             return redirect()->route('viewEmployee');
@@ -144,14 +148,15 @@ class AdminController extends Controller
     public function editEmployee($id) {
         $user = User::with('position')->find($id);
         $positions = Position::all();
-
+        $outlets = Outlet::all();
+        
         //Fetch passport size photo, ic photo and offer letter
         $passport_size_photo = $user->passport_size_photo;
         $ic_photo = $user->ic_photo;
         $offer_letter = $user->offer_letter;
         $account_pic = $user->account_pic;
 
-        return view('admin.editEmployee', compact('user', 'positions', 'passport_size_photo', 'ic_photo', 'offer_letter', 'account_pic'));
+        return view('admin.editEmployee', compact('user', 'outlets', 'positions', 'passport_size_photo', 'ic_photo', 'offer_letter', 'account_pic'));
     }
 
     public function updateEmployee(EmployeeRequest $request, $id) {
@@ -474,6 +479,89 @@ class AdminController extends Controller
         return redirect()->route('viewDepartment');
     }
 
+    public function viewOutlet(){
+        $outlets = Outlet::all();
+
+        return view('admin.viewOutlet', ['outlets' => $outlets]);
+    }
+
+    public function createOutlet(){
+
+        return view('admin.createOutlet');
+    }
+
+    public function addOutlet(Request $request){
+
+        $rules = [
+            'outlet_location' => 'required|max:255',
+        ];
+
+        $messages = [
+            'outlet_location.required' => 'The Outlet Location field is required.',
+            'outlet_location.max' => 'The Outlet Location should not exceed 255 characters.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $outlet = new Outlet();
+        $outlet->outlet_location = $request->input('outlet_location');
+        $outlet->save();
+
+        Alert::success('Done', 'Outlet inserted successfully.');
+        return redirect()->route('viewOutlet');
+    }
+
+    public function editOutlet($id){
+        $outlet = Outlet::find($id);
+
+        return view('admin.editOutlet', ['outlet' => $outlet]);
+    }
+
+    public function updateOutlet(Request $request, $id){
+
+        $rules = [
+            'outlet_location' => 'required|max:255',
+        ];
+
+        $messages = [
+            'outlet_location.required' => 'The Outlet Location field is required.',
+            'outlet_location.max' => 'The Outlet Location should not exceed 255 characters.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $data = Outlet::find($id);
+
+        $data->update([
+            'outlet_location' => $request->input('outlet_location')
+        ]);
+
+        Alert::success('Done', 'Outlet updated successfully.');
+        return redirect()->route('viewOutlet');
+    }
+
+    public function deleteOutlet($id){
+        $outlet = Outlet::find($id);
+        $outlet->delete();
+
+        Alert::success('Done', 'Outlet deleted successfully.');
+        return redirect()->route('viewOutlet');
+    }
+
     public function viewDuty(){
         $duties = Duty::all();
 
@@ -555,7 +643,7 @@ class AdminController extends Controller
         $duty->delete();
 
         Alert::success('Done', 'Duty deleted successfully.');
-        return redirect()->route('viewDepartment');
+        return redirect()->route('viewDuty');
     }
 
     public function viewShift(){
@@ -2317,55 +2405,55 @@ class AdminController extends Controller
         return response()->json(['message' => 'Total hour updated successfully.']);
     }
 
-    public function otherImage($employeeId){
-        $user = User::with('otherImages')->find($employeeId);
-        $otherImages = $user->otherImages;
+    // public function otherImage($employeeId){
+    //     $user = User::with('otherImages')->find($employeeId);
+    //     $otherImages = $user->otherImages;
 
-        return view('admin.otherImage', compact('user', 'otherImages'));
-    }
+    //     return view('admin.otherImage', compact('user', 'otherImages'));
+    // }
 
-    public function addOtherImage(Request $request, $employeeId){
+    // public function addOtherImage(Request $request, $employeeId){
 
-        $request->validate([
-            'new_other_image' => 'required|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:2048',
-        ]);
+    //     $request->validate([
+    //         'new_other_image' => 'required|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:2048',
+    //     ]);
 
-        $user = User::find($employeeId);
+    //     $user = User::find($employeeId);
 
-        $full_name_with_underscores = str_replace(' ', '_', $user->employee_id);
+    //     $full_name_with_underscores = str_replace(' ', '_', $user->employee_id);
 
-        $file = $request->file('new_other_image');
-        $extension = $file->getClientOriginalExtension();
-        $otherImageFilename = $full_name_with_underscores . '_other_image.' . time() . '.' . $extension;
-        $file->move('storage/employee/otherImage/', $otherImageFilename);
+    //     $file = $request->file('new_other_image');
+    //     $extension = $file->getClientOriginalExtension();
+    //     $otherImageFilename = $full_name_with_underscores . '_other_image.' . time() . '.' . $extension;
+    //     $file->move('storage/employee/otherImage/', $otherImageFilename);
 
-        // Use Storage::putFileAs to store the file in the desired directory
-        // Storage::putFileAs('employee/otherImage', $file, $otherImageFilename);
+    //     // Use Storage::putFileAs to store the file in the desired directory
+    //     // Storage::putFileAs('employee/otherImage', $file, $otherImageFilename);
 
 
-        OtherImage::create([
-            'employee_id' => $user->id,
-            'file_name' => $otherImageFilename,
-        ]);
+    //     OtherImage::create([
+    //         'employee_id' => $user->id,
+    //         'file_name' => $otherImageFilename,
+    //     ]);
 
-        Alert::success('Done', 'Image or file inserted successfully.');
-        return redirect()->back();
-    }
+    //     Alert::success('Done', 'Image or file inserted successfully.');
+    //     return redirect()->back();
+    // }
 
-    public function deleteOtherImage($employeeId, $imageId){
+    // public function deleteOtherImage($employeeId, $imageId){
 
-        $image = OtherImage::find($imageId);
+    //     $image = OtherImage::find($imageId);
 
-        $filePath = 'storage/employee/otherImage/' . $image->file_name;
+    //     $filePath = 'storage/employee/otherImage/' . $image->file_name;
 
-        if (File::exists($filePath)) {
-            File::delete($filePath);
-        }
+    //     if (File::exists($filePath)) {
+    //         File::delete($filePath);
+    //     }
 
-        $image->delete();
+    //     $image->delete();
 
-        Alert::success('Done', 'Deleted successfully.');
-        return redirect()->back();
-    }
+    //     Alert::success('Done', 'Deleted successfully.');
+    //     return redirect()->back();
+    // }
 
 }

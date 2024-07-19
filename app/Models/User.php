@@ -25,6 +25,7 @@ class User extends Authenticatable
         'ic_number',
         'address',
         'email',
+        'outlet_id',
         'position_id',
         'employee_type',
         'remarks',
@@ -47,6 +48,10 @@ class User extends Authenticatable
 
     public function position() {
         return $this->belongsTo(Position::class, 'position_id', 'id');
+    }
+
+    public function outlet() {
+        return $this->belongsTo(Outlet::class, 'outlet_id', 'id');
     }
 
     public function schedules(){

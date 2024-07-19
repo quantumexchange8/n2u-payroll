@@ -39,6 +39,7 @@
 
     <link rel="manifest" href="/manifest.json">
     @laravelPWA
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 
 <body>
@@ -165,7 +166,7 @@
                 <div class="sidebar-body">
                     <!-- Nav -->
                     @if(Auth::user()->role == 'admin')
-                        <ul class="nav">
+                        <ul class="nav ">
                             {{-- <li class="nav-category">Main</li> --}}
                             <li>
                                 <a href="{{route('admindashboard')}}">
@@ -180,13 +181,16 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="">
+                                <a href="" style="display: flex; align-items: center; height: 50px;">
                                     <i class="icofont-briefcase"></i>
-                                    <span class="link-title">Department & Position</span>
+                                    <span class="link-title">Outlet, Department & Position</span>
                                 </a>
 
                                 <!-- Sub Menu -->
                                 <ul class="nav sub-menu">
+                                    <li>
+                                        <a href="{{ route('viewOutlet') }}">Outlet</a>
+                                    </li>
                                     <li>
                                         <a href="{{ route('viewDepartment') }}">Department</a>
                                     </li>

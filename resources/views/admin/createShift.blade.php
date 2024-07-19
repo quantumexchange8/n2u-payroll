@@ -24,6 +24,65 @@
                                     @enderror
                                 </div>
                                 <!-- End Form Group --> 
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Shift Days</label>
+                                    <div class="row text-center pt-2">
+                                        <div class="col-sm px-0">
+                                            <input hidden id="chk1" type="checkbox" class="btn-check" autocomplete="off">
+                                            <label class="btn btn-block text-indigo-500" for="chk1">
+                                                <span class="text-primary">Monday</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="col-sm px-0">
+                                            <input hidden id="chk2" type="checkbox" class="btn-check" autocomplete="off">
+                                            <label class="btn btn-block" for="chk2">
+                                                <span class="text">Tuesday</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="col-sm px-0">
+                                            <input hidden id="chk3" type="checkbox" class="btn-check" autocomplete="off">
+                                            <label class="btn btn-block" for="chk3">
+                                                <span class="text">Wednesday</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="col-sm px-0">
+                                            <input hidden id="chk4" type="checkbox" class="btn-check" autocomplete="off">
+                                            <label class="btn btn-block" for="chk4">
+                                                <span class="text">Thursday</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="col-sm px-0">
+                                            <input hidden id="chk5" type="checkbox" class="btn-check" autocomplete="off">
+                                            <label class="btn btn-block" for="chk5">
+                                                <span class="text">Friday</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="col-sm px-0">
+                                            <input hidden id="chk6" type="checkbox" class="btn-check" autocomplete="off">
+                                            <label class="btn btn-block" for="chk6">
+                                                <span class="text">Saturday</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="col-sm px-0">
+                                            <input hidden id="chk7" type="checkbox" class="btn-check" autocomplete="off">
+                                            <label class="btn btn-block" for="chk7">
+                                                <span class="text">Sunday</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    @error('shift_days')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <!-- End Form Group --> 
                             </div>
 
                             <div class="col-lg-6">
@@ -67,3 +126,32 @@
 <!-- End Main Content -->
 
 @endsection
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+    // Toggle label classes based on checkbox state for each checkbox
+    $('.btn-check').each(function() {
+        var checkbox = $(this);
+        var label = $('label[for="' + checkbox.attr('id') + '"]');
+
+        checkbox.change(function() {
+            var isChecked = checkbox.prop('checked');
+
+            if (isChecked) {
+                label.addClass('bg-white border border-indigo text-indigo').removeClass('');
+            } else {
+                label.addClass('').removeClass('bg-white border border-indigo text-indigo');
+            }
+        });
+
+        // Initial check on page load
+        if (checkbox.prop('checked')) {
+            label.addClass('').removeClass('');
+        } else {
+            label.addClass('').removeClass('');
+        }
+    });
+});
+</script>

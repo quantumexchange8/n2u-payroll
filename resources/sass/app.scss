@@ -1,0 +1,24 @@
+// Required
+@import "../../node_modules/bootstrap/scss/functions";
+
+// Default variable overrides
+$primary: #D4CBE5;
+
+// Required
+@import "../../node_modules/bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/variables-dark";
+@import "../../node_modules/bootstrap/scss/maps";
+@import "../../node_modules/bootstrap/scss/mixins";
+@import "../../node_modules/bootstrap/scss/root";
+
+// 4. Include any default map overrides here
+// Create your own map
+$custom-colors: (  
+  "my-yellow": $indigo-900
+);
+
+// Merge the maps
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+// Bootstrap
+//@import "node_modules/bootstrap-sass3/assets/stylesheets/bootstrap";

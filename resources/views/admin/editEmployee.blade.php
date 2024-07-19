@@ -48,16 +48,6 @@
 
                                 <!-- Form Group -->
                                 <div class="form-group">
-                                    <label class="font-14 bold mb-2">IC Number / Passport</label>
-                                    <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number" value="{{$user->ic_number}}">
-                                    @error('ic_number')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
                                     <label class="font-14 bold mb-2">Address</label>
                                     <input type="text" class="theme-input-style" id="address" name="address" autocomplete="off" placeholder="Address" value="{{$user->address}}">
                                     @error('address')
@@ -73,6 +63,20 @@
                                     @error('email')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
+                                </div>
+                                <!-- End Form Group -->
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Outlet</label>
+                                    <select class="theme-input-style" id="outlet_id" name="outlet_id" autocomplete="off">
+                                        <option value="">Select Outlet</option>
+                                        @foreach($outlets as $outlet)
+                                            <option value="{{ $outlet->id }}" {{ optional($user->outlet)->id === $outlet->id ? 'selected' : '' }}>
+                                                {{ $outlet->outlet_location }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <!-- End Form Group -->
 
@@ -145,6 +149,16 @@
 
                             <div class="col-lg-6">
 
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">IC Number / Passport</label>
+                                    <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number" value="{{$user->ic_number}}">
+                                    @error('ic_number')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <!-- End Form Group -->
+                                
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="font-14 bold mb-2">Nationality</label>

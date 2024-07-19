@@ -44,17 +44,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2">IC Number / Passport</label>
-                                    <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number / Passport" value="{{ old('ic_number') }}">
-                                    @error('ic_number')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
+                                <!-- End Form Group --> 
 
                                 <!-- Form Group -->
                                 <div class="form-group">
@@ -71,6 +61,21 @@
                                     <label class="font-14 bold mb-2">Email Address</label>
                                     <input type="email" class="theme-input-style" id="email" name="email" autocomplete="off" placeholder="Email Address" value="{{ old('email') }}">
                                     @error('email')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <!-- End Form Group -->
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">Outlet</label>
+                                    <select class="theme-input-style" id="outlet_id" name="outlet_id" autocomplete="off">
+                                        <option value="">Select Outlet</option>
+                                        @foreach($outlets as $outlet)
+                                            <option value="{{ $outlet->id }}" {{ old('outlet_id') == $outlet->id ? 'selected' : '' }}>{{ $outlet->outlet_location }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('outlet_id')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -151,6 +156,16 @@
                             </div>
 
                             <div class="col-lg-6">
+
+                                <!-- Form Group -->
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2">IC Number / Passport</label>
+                                    <input type="text" class="theme-input-style" id="ic_number" name="ic_number" autocomplete="off" placeholder="IC Number / Passport" value="{{ old('ic_number') }}">
+                                    @error('ic_number')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <!-- End Form Group -->
 
                                 <!-- Form Group -->
                                 <div class="form-group">

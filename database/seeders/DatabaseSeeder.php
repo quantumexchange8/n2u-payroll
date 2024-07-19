@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             DutySeeder::class,
             ShiftSeeder::class,
             PeriodSeeder::class,
+            OutletSeeder::class,
         ]);
     }
 }

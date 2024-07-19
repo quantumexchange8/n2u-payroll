@@ -14,7 +14,8 @@ class Shift extends Model
     protected $fillable = [
         'shift_name',
         'shift_start',
-        'shift_end'
+        'shift_end',
+        'shift_days'
     ];
 
     public function schedules()

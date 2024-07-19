@@ -51,6 +51,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('admin/update-employee-password/{id}', [AdminController::class, 'updateEmployeePassword'])->name('updateEmployeePassword');
     Route::delete('admin/delete-employee/{id}', [AdminController::class, 'deleteEmployee'])->name('deleteEmployee');
 
+    Route::get('admin/view-outlet', [AdminController::class, 'viewOutlet'])->name('viewOutlet');
+    Route::get('admin/create-outlet', [AdminController::class, 'createOutlet'])->name('createOutlet');
+    Route::post('admin/add-outlet', [AdminController::class, 'addOutlet'])->name('addOutlet');
+    Route::get('admin/edit-outlet/{id}', [AdminController::class, 'editOutlet'])->name('editOutlet');
+    Route::post('admin/update-outlet/{id}', [AdminController::class, 'updateOutlet'])->name('updateOutlet');
+    Route::delete('admin/delete-outlet/{id}', [AdminController::class, 'deleteOutlet'])->name('deleteOutlet');
+
     Route::get('admin/view-position', [AdminController::class, 'viewPosition'])->name('viewPosition');
     Route::get('admin/create-position', [AdminController::class, 'createPosition'])->name('createPosition');
     Route::post('admin/add-position', [AdminController::class, 'addPosition'])->name('addPosition');
@@ -154,3 +161,7 @@ Route::get('/offline', function () {
     return view('modules/laravelpwa/offline');
 
     });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

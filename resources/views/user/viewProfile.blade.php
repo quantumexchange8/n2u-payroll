@@ -25,7 +25,7 @@
                                     <div class="card-body p-30">
 
                                         <!-- Edit Personal Info -->
-                                        <div class="edit-personal-info mb-5">
+                                        <div class="edit-personal-info">
                                             <div class="row">
                                                 <div class="col-12">
                                                     <h4 class="mb-3">Personal Information</h4>
@@ -65,10 +65,60 @@
                                             </div>
                                             <!-- End Form Group -->
 
+                                        </div>
+                                        <!-- End Edit Personal Info -->
+
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-body p-30">
+
+                                        <!-- Employment Information -->
+                                        <div class="edit-personal-info">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h4 class="mb-3">Employment Information</h4>
+                                                </div>
+                                            </div>
+
                                             <!-- Form Group -->
                                             <div class="form-group row align-items-center">
                                                 <div class="col-3">
-                                                    <label for="edit-position">Position</label>
+                                                    <label for="full_name">Nickname</label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <input type="text" id="nickname" name="nickname" class="form-control" autocomplete="off" value="{{$user->nickname}}" readonly>
+                                                </div>
+                                            </div>
+                                            <!-- End Form Group -->
+
+                                            <!-- Form Group -->
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-3">
+                                                    <label for="outlet">Outlet</label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <input type="text" id="outlet" name="outlet" class="form-control" autocomplete="off" value="{{ optional($user->outlet)->outlet_location }}" readonly>
+                                                </div>
+                                            </div>
+                                            <!-- End Form Group -->
+
+                                            <!-- Form Group -->
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-3">
+                                                    <label for="department">Department</label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <input type="text" id="department" name="department" class="form-control" autocomplete="off" value="{{ optional($user->position)->department->department_name }}" readonly>
+                                                </div>
+                                            </div>
+                                            <!-- End Form Group -->
+
+                                            <!-- Form Group -->
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-3">
+                                                    <label for="position">Position</label>
                                                 </div>
                                                 <div class="col-9">
                                                     <input type="text" id="position" class="form-control" value="{{ optional($user->position)->position_name }}" readonly>

@@ -12,6 +12,8 @@ use App\Models\PunchRecord;
 use App\Models\Setting;
 use App\Models\Task;
 use App\Models\Period;
+use App\Models\Department;
+use App\Models\Outlet;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -113,8 +115,10 @@ class MemberController extends Controller
 
     public function viewProfile(){
         $user = auth()->user();
+        $outlets = Outlet::all();
+        $departments = Department::all();
         $positions = Position::all();
-        return view('user.viewProfile', compact('user', 'positions'));
+        return view('user.viewProfile', compact('user', 'outlets', 'departments', 'positions'));
     }
 
     public function updateProfile(Request $request) {
