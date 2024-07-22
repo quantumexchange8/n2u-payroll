@@ -662,7 +662,8 @@ class AdminController extends Controller
         $rules = [
             'shift_name' => 'required|max:255',
             'shift_start' => 'required',
-            'shift_end' => 'required'
+            'shift_end' => 'required',
+            'shift_days' => 'required|array',
         ];
 
         $messages = [
@@ -671,6 +672,7 @@ class AdminController extends Controller
             'shift_start.required' => 'The Shift Start field is required.',
             'shift_end.required' => 'The Shift End field is required.',
             'shift_end.after_or_equal' => 'The end time must be after or equal to the start time.',
+            'shift_days.required' => 'There must be at least one day in shift.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -682,10 +684,14 @@ class AdminController extends Controller
                 ->withInput();
         }
 
+        $selectedShiftDays = $request->input('shift_days', []);
+        $shiftDaysString = '-' . implode('-', $selectedShiftDays) . '-';
+
         $shift = new Shift();
         $shift->shift_name = $request->input('shift_name');
         $shift->shift_start = $request->input('shift_start');
         $shift->shift_end = $request->input('shift_end');
+        $shift->shift_days = $shiftDaysString;
         $shift->save();
 
         Alert::success('Done', 'Shift inserted successfully.');
@@ -704,6 +710,7 @@ class AdminController extends Controller
             'shift_name' => 'required|max:255',
             'shift_start' => 'required',
             'shift_end' => 'required',
+            'shift_days' => 'required|array',
         ];
 
         $messages = [
@@ -712,6 +719,7 @@ class AdminController extends Controller
             'shift_start.required' => 'The Shift Start is required.',
             'shift_end.required' => 'The Shift End is required.',
             'shift_end.after_or_equal' => 'The end time must be after or equal to the start time.',
+            'shift_days.required' => 'There must be at least one day in shift.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -723,12 +731,16 @@ class AdminController extends Controller
                 ->withInput();
         }
 
+        $selectedShiftDays = $request->input('shift_days', []);
+        $shiftDaysString = '-' . implode('-', $selectedShiftDays) . '-';
+
         $data = Shift::find($id);
 
         $data->update([
             'shift_name' => $request->input('shift_name'),
             'shift_start' => $request->input('shift_start'),
-            'shift_end' => $request->input('shift_end')
+            'shift_end' => $request->input('shift_end'),
+            'shift_days' => $shiftDaysString
         ]);
 
         Alert::success('Done', 'Shift updated successfully.');
