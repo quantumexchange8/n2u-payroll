@@ -12,10 +12,7 @@ class Shift extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'shift_name',
-        'shift_start',
-        'shift_end',
-        'shift_days'
+        'shift_name'
     ];
 
     public function schedules()
@@ -23,11 +20,8 @@ class Shift extends Model
         return $this->hasMany(Schedule::class, 'shift_id');
     }
 
-    public function getFormattedShiftTimeAttribute()
+    public function shift_schedules()
     {
-        $shift_start = Carbon::parse($this->shift_start);
-        $shift_end = Carbon::parse($this->shift_end);
-
-        return $shift_start->format('h:i A') . ' - ' . $shift_end->format('h:i A');
+        return $this->hasMany(ShiftSchedule::class, 'shift_id');
     }
 }

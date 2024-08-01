@@ -2,19 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\Shift;
+use App\Models\ShiftSchedule;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ShiftSeeder extends Seeder
+class ShiftScheduleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Shift::create([
-            'shift_name' => 'Opening',
+        ShiftSchedule::create([
+            //
         ]);
     }
 }

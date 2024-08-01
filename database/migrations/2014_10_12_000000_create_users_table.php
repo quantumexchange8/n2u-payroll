@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('ic_number')->unique();
             $table->string('address')->nullable();
             $table->string('email')->nullable();
+            $table->string('outlet_id')->nullable();
             $table->string('position_id')->nullable();
             $table->string('employee_type')->nullable();
             $table->integer('working_hour')->nullable();

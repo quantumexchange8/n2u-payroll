@@ -11,6 +11,7 @@ use App\Models\SalaryLog;
 use App\Models\Schedule;
 use App\Models\Setting;
 use App\Models\Shift;
+use App\Models\ShiftSchedule;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Period;
@@ -54,9 +55,10 @@ class AdminController extends Controller
 
         $schedules = Schedule::all();
         $shifts = Shift::all();
+        $shift_schedules = ShiftSchedule::all();
         $settings = Setting::all();
 
-        return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'settings', 'pendingOTCount', 'pendingOTCount2', 'totalEmployeesCount'));
+        return view('admin.record', compact('punchRecords', 'schedules', 'shifts', 'shift_schedules', 'settings', 'pendingOTCount', 'pendingOTCount2', 'totalEmployeesCount'));
     }
 
     public function viewEmployee() {
@@ -648,8 +650,9 @@ class AdminController extends Controller
 
     public function viewShift(){
         $shifts = Shift::all();
+        $shift_schedules = ShiftSchedule::all();
 
-        return view('admin.viewShift', ['shifts' => $shifts]);
+        return view('admin.viewShift', compact('shifts', 'shift_schedules'));
     }
 
     public function createShift(){
@@ -661,18 +664,19 @@ class AdminController extends Controller
 
         $rules = [
             'shift_name' => 'required|max:255',
-            'shift_start' => 'required',
-            'shift_end' => 'required',
-            'shift_days' => 'required|array',
+            'shift_schedules' => 'required|array|min:1', // Ensure at least one schedule is provided
+            'shift_schedules.*.shift_start' => 'required|date_format:H:i',
+            'shift_schedules.*.shift_end' => 'required|date_format:H:i|after:shift_schedules.*.shift_start',
+            'shift_schedules.*.shift_days' => 'required|array|min:1', // Ensure at least one day is selected per schedule
         ];
 
         $messages = [
             'shift_name.required' => 'The Shift Name field is required.',
             'shift_name.max' => 'The Shift Name should not exceed 255 characters.',
-            'shift_start.required' => 'The Shift Start field is required.',
-            'shift_end.required' => 'The Shift End field is required.',
-            'shift_end.after_or_equal' => 'The end time must be after or equal to the start time.',
-            'shift_days.required' => 'There must be at least one day in shift.',
+            'shift_schedules.*.shift_start.required' => 'The Shift Start field is required.',
+            'shift_schedules.*.shift_end.required' => 'The Shift End field is required.',
+            'shift_schedules.*.shift_end.after' => 'The end time must be after the start time.',
+            'shift_schedules.*.shift_days.required' => 'There must be at least one day in shift.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -684,15 +688,23 @@ class AdminController extends Controller
                 ->withInput();
         }
 
-        $selectedShiftDays = $request->input('shift_days', []);
-        $shiftDaysString = '-' . implode('-', $selectedShiftDays) . '-';
-
         $shift = new Shift();
         $shift->shift_name = $request->input('shift_name');
-        $shift->shift_start = $request->input('shift_start');
-        $shift->shift_end = $request->input('shift_end');
-        $shift->shift_days = $shiftDaysString;
         $shift->save();
+
+        // Process each ShiftSchedule from the data-repeater
+        foreach ($request->input('shift_schedules') as $scheduleData) {
+            $shiftSchedule = new ShiftSchedule();
+            $shiftSchedule->shift_id = $shift->id; // Assign the Shift ID to the ShiftSchedule
+            $shiftSchedule->shift_start = $scheduleData['shift_start'];
+            $shiftSchedule->shift_end = $scheduleData['shift_end'];
+
+            // Convert selected shift days to a string (if needed)
+            $shiftDaysString = '-' . implode('-', $scheduleData['shift_days']) . '-';
+            $shiftSchedule->shift_days = $shiftDaysString;
+
+            $shiftSchedule->save();
+        }
 
         Alert::success('Done', 'Shift inserted successfully.');
         return redirect()->route('viewShift');
@@ -700,26 +712,28 @@ class AdminController extends Controller
 
     public function editShift($id){
         $shift = Shift::find($id);
+        $shift_schedules  = ShiftSchedule::where('shift_id', $id)->get();
 
-        return view('admin.editShift', ['shift' => $shift]);
+        return view('admin.editShift', compact('shift', 'shift_schedules'));
     }
 
     public function updateShift(Request $request, $id){
 
         $rules = [
             'shift_name' => 'required|max:255',
-            'shift_start' => 'required',
-            'shift_end' => 'required',
-            'shift_days' => 'required|array',
+            'shift_schedules' => 'required|array|min:1', // Ensure at least one schedule is provided
+            'shift_schedules.*.shift_start' => 'required|date_format:H:i',
+            'shift_schedules.*.shift_end' => 'required|date_format:H:i|after:shift_schedules.*.shift_start',
+            'shift_schedules.*.shift_days' => 'required|array|min:1', // Ensure at least one day is selected per schedule
         ];
 
         $messages = [
             'shift_name.required' => 'The Shift Name field is required.',
             'shift_name.max' => 'The Shift Name should not exceed 255 characters.',
-            'shift_start.required' => 'The Shift Start is required.',
-            'shift_end.required' => 'The Shift End is required.',
-            'shift_end.after_or_equal' => 'The end time must be after or equal to the start time.',
-            'shift_days.required' => 'There must be at least one day in shift.',
+            'shift_schedules.*.shift_start.required' => 'The Shift Start field is required.',
+            'shift_schedules.*.shift_end.required' => 'The Shift End field is required.',
+            'shift_schedules.*.shift_end.after' => 'The end time must be after the start time.',
+            'shift_schedules.*.shift_days.required' => 'There must be at least one day in shift.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -734,14 +748,40 @@ class AdminController extends Controller
         $selectedShiftDays = $request->input('shift_days', []);
         $shiftDaysString = '-' . implode('-', $selectedShiftDays) . '-';
 
-        $data = Shift::find($id);
+        $shift = Shift::find($id);
 
-        $data->update([
-            'shift_name' => $request->input('shift_name'),
-            'shift_start' => $request->input('shift_start'),
-            'shift_end' => $request->input('shift_end'),
-            'shift_days' => $shiftDaysString
+        $shift->update([
+            'shift_name' => $request->input('shift_name')
         ]);
+
+        $shift_schedules = ShiftSchedule::where('shift_id', $id)->get();
+
+        foreach ($shift_schedules as $index => $shift_schedule) {
+            if (isset($request->input('shift_schedules')[$index]) && $request->input('shift_schedules')[$index] !== null) {
+                $scheduleData = $request->input('shift_schedules')[$index];
+                $shiftDaysString = '-' . implode('-', $scheduleData['shift_days']) . '-';
+                $shift_schedule->update([
+                    'shift_start' => $scheduleData['shift_start'],
+                    'shift_end' => $scheduleData['shift_end'],
+                    'shift_days' => $shiftDaysString
+                ]);
+            } else {
+                $shift_schedule->delete();
+            }
+        }
+
+        $requestShiftSchedules = $request->input('shift_schedules');
+        foreach ($requestShiftSchedules as $index => $scheduleData) {
+            if (!isset($shift_schedules[$index])) {
+                $shiftDaysString = '-' . implode('-', $scheduleData['shift_days']) . '-';
+                ShiftSchedule::create([
+                    'shift_id' => $shift->id,
+                    'shift_start' => $scheduleData['shift_start'],
+                    'shift_end' => $scheduleData['shift_end'],
+                    'shift_days' => $shiftDaysString
+                ]);
+            }
+        }
 
         Alert::success('Done', 'Shift updated successfully.');
         return redirect()->route('viewShift');
@@ -750,6 +790,10 @@ class AdminController extends Controller
     public function deleteShift($id){
 
         $shift = Shift::find($id);
+        $shift_schedules = ShiftSchedule::where('shift_id', $id)->get();
+        foreach ($shift_schedules as $shift_schedule) {
+            $shift_schedule->delete();
+        }
         $shift->delete();
 
         Alert::success('Done', 'Shift deleted successfully.');
