@@ -664,10 +664,14 @@ class AdminController extends Controller
 
         $rules = [
             'shift_name' => 'required|max:255',
-            'shift_schedules' => 'required|array|min:1', // Ensure at least one schedule is provided
+            'shift_schedules' => 'required|array|min:1',
             'shift_schedules.*.shift_start' => 'required|date_format:H:i',
-            'shift_schedules.*.shift_end' => 'required|date_format:H:i|shift_end_after_start:shift_schedules.*.shift_start',
-            'shift_schedules.*.shift_days' => 'required|array|min:1', // Ensure at least one day is selected per schedule
+            'shift_schedules.*.shift_end' => [
+                'required',
+                'date_format:H:i',
+                'shift_end_after_start:shift_schedules.*.shift_start',
+            ],
+            'shift_schedules.*.shift_days' => 'required|array|min:1',
         ];
 
         $messages = [
@@ -675,7 +679,7 @@ class AdminController extends Controller
             'shift_name.max' => 'The Shift Name should not exceed 255 characters.',
             'shift_schedules.*.shift_start.required' => 'The Shift Start field is required.',
             'shift_schedules.*.shift_end.required' => 'The Shift End field is required.',
-            'shift_schedules.*.shift_end.shift_end_after_start' => 'The end time must be after the start time or within 4 hours if after midnight.',
+            'shift_schedules.*.shift_end.shift_end_after_start' => 'The end time must be after :shift_schedules.*.shift_start. or within 4 hours if midnight.',
             'shift_schedules.*.shift_days.required' => 'There must be at least one day in shift.',
         ];
 
@@ -721,10 +725,14 @@ class AdminController extends Controller
 
         $rules = [
             'shift_name' => 'required|max:255',
-            'shift_schedules' => 'required|array|min:1', // Ensure at least one schedule is provided
+            'shift_schedules' => 'required|array|min:1',
             'shift_schedules.*.shift_start' => 'required|date_format:H:i',
-            'shift_schedules.*.shift_end' => 'required|date_format:H:i|after:shift_schedules.*.shift_start',
-            'shift_schedules.*.shift_days' => 'required|array|min:1', // Ensure at least one day is selected per schedule
+            'shift_schedules.*.shift_end' => [
+                'required',
+                'date_format:H:i',
+                'shift_end_after_start:shift_schedules.*.shift_start',
+            ],
+            'shift_schedules.*.shift_days' => 'required|array|min:1',
         ];
 
         $messages = [
@@ -732,7 +740,7 @@ class AdminController extends Controller
             'shift_name.max' => 'The Shift Name should not exceed 255 characters.',
             'shift_schedules.*.shift_start.required' => 'The Shift Start field is required.',
             'shift_schedules.*.shift_end.required' => 'The Shift End field is required.',
-            'shift_schedules.*.shift_end.after' => 'The end time must be after the start time.',
+            'shift_schedules.*.shift_end.shift_end_after_start' => 'The end time must be after :shift_schedules.*.shift_start. or within 4 hours if midnight.',
             'shift_schedules.*.shift_days.required' => 'There must be at least one day in shift.',
         ];
 

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 
@@ -31,25 +32,35 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Validator::extend('shift_end_after_start', function ($attribute, $value, $parameters, $validator) {
-            // $value is the value of shift_end
-            // $parameters[0] is the value of shift_start
-            $shiftStart = $parameters[0];
+            $shiftStartKey = str_replace('*', '0', $parameters[0]);
+            $shiftStart = $validator->getValue($shiftStartKey);
             $shiftEnd = $value;
 
             if (!preg_match('/^\d{2}:\d{2}$/', $shiftStart) || !preg_match('/^\d{2}:\d{2}$/', $shiftEnd)) {
-                return false; // Return false if time format is invalid
+                return false;
             }
 
-            // Convert times to Carbon objects for easier comparison
             $startTime = Carbon::createFromFormat('H:i', $shiftStart);
             $endTime = Carbon::createFromFormat('H:i', $shiftEnd);
 
-            // Check if shift_end is after shift_start or if shift_end is past midnight and shift_start is in the evening
-            return $endTime->greaterThan($startTime) || ($endTime->lessThan($startTime) && $endTime->greaterThan($startTime->copy()->addHours(4)));
+            Log::info("Start Time: $startTime, End Time: $endTime");
+            if ($endTime->greaterThan($startTime)) {
+                return true;
+            }
+        
+            $shiftEndCopy  = $endTime->copy()->addDay();
+            $shiftStartCopy = $startTime->copy()->addHours(4);
+            Log::info("Start Time: $shiftStartCopy, End Time: $shiftEndCopy");
+            if ($startTime->lessThan($shiftEndCopy) && $shiftEndCopy->lessThanOrEqualTo($shiftStartCopy)) {
+                return true;
+            }
         });
 
         Validator::replacer('shift_end_after_start', function ($message, $attribute, $rule, $parameters) {
-            return str_replace(':shift_start', $parameters[0], $message);
+            $shiftStartAttribute = str_replace('*', '0', $parameters[0]);
+            $shiftStart = request()->input($shiftStartAttribute);
+
+            return str_replace(':shift_schedules.*.shift_start', $shiftStart, $message);
         });
     }
 }
