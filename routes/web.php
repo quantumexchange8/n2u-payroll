@@ -5,6 +5,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RecordController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AjaxController;
 
 /*
 |--------------------------------------------------------------------------
@@ -154,6 +155,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('user/view-profile', [MemberController::class, 'viewProfile'])->name('viewProfile');
     Route::post('user/update-profile', [MemberController::class, 'updateProfile'])->name('updateProfile');
+
+    // Route::post('admin/create-schedule/a', [AjaxController::class, 'changeNameByOutlet'])->name('changeNameByOutlet');
+    Route::get('cahangeNameByOutlet', [AjaxController::class, 'changeNameByOutlet'])->name('changeNameByOutlet');
 });
 
 Route::get('/offline', function () {

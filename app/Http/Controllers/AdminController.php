@@ -875,16 +875,19 @@ class AdminController extends Controller
         $shifts = Shift::all();
         $duties = Duty::all();
         $periods = Period::all();
+        $outlets = Outlet::all();
 
-        return view('admin.createSchedule', compact('schedules', 'users', 'shifts', 'duties', 'periods'));
+        return view('admin.createSchedule', compact('schedules', 'users', 'shifts', 'duties', 'periods','outlets'));
     }
 
     public function addSchedule(Request $request){
 
         $data = $request->all();
+        // dd($data);
 
         // Validation
         $validator = Validator::make($data, [
+            'outlet_id'    => 'required',
             'date_start' => 'required|date',
             'date_end' => 'nullable|date|after_or_equal:date_start',
             'shift_id' => 'nullable',
@@ -897,6 +900,7 @@ class AdminController extends Controller
             'date_end.after_or_equal' => 'The End Date must be after or equal to the start date.',
             'shift_id.nullable' => 'The Shift ID can be nullable.',
             'selected_users.required' => 'Please select at least one user.',
+            'outlet_id.required' => 'Please select the outlet'
         ]);
 
         if ($validator->fails()) {
@@ -904,6 +908,7 @@ class AdminController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
+        dd($data);
 
         if (isset($data['off_day']) && $data['off_day'] == 1) {
 

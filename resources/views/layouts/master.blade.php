@@ -37,6 +37,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.3/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.3/dist/sweetalert2.all.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    {{-- select 2 --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet">
+
     <link rel="manifest" href="/manifest.json">
     @laravelPWA
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -375,7 +380,9 @@
     <script src="{{ asset('assets/plugins/jquery-repeater/custom-repeater.js') }}"></script>
     <!-- ======= End BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS ======= -->
 
-
+    <!-- ======= BEGIN SELECT2 SCRIPTS======= -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <!-- ======= End SELECT2 SCRIPTS ======= -->
 
     @if(Auth::check())
         @if(Auth::user()->role === 'admin')
