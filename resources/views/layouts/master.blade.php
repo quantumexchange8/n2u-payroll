@@ -254,12 +254,12 @@
                                     <span class="link-title">Task</span>
                                 </a>
                             </li>
-                            <li>
+                            {{-- <li>
                                 <a href="{{ route('otApproval') }}">
                                     <i class="icofont-pencil"></i>
                                     <span class="link-title">OT Approval</span>
                                 </a>
-                            </li>
+                            </li> --}}
                             <li>
                                 <a href="">
                                     <i class="icofont-folder-open"></i>

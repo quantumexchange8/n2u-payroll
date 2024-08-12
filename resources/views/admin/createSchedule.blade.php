@@ -7,7 +7,7 @@
     $(document).ready(function() {
         $('#selected_users').select2({
             placeholder:"Select Employee",
-            // allowClear: true,
+            allowClear: true,
             closeOnSelect: false,
         });
     });

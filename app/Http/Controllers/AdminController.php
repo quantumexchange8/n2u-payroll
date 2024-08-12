@@ -908,7 +908,7 @@ class AdminController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-        dd($data);
+        // dd($data);
 
         if (isset($data['off_day']) && $data['off_day'] == 1) {
 
@@ -1051,11 +1051,12 @@ class AdminController extends Controller
 
             $existingShifts = DB::table('schedules')
                                 ->join('users', 'schedules.employee_id', '=', 'users.id')
-                                ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+                                // ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
                                 ->where('schedules.employee_id', $userId)
                                 ->where('schedules.date', $date)
                                 ->whereNull('schedules.deleted_at')
-                                ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end')
+                                // ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end')
+                                ->select('users.employee_id')
                                 ->get();
 
             foreach ($existingShifts as $existingShift) {
