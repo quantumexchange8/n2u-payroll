@@ -23,6 +23,10 @@ class Schedule extends Model
         return $this->belongsTo(User::class, 'employee_id', 'id');
     }
 
+    public function shift_schedules(){
+        return $this->belongsTo(ShiftSchedule::class, 'shift_schedule_id', 'id');
+    }
+
     public function shift(){
         return $this->belongsTo(Shift::class, 'shift_id');
     }

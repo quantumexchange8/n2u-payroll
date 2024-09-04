@@ -52,17 +52,19 @@
                         <div class="form-element color-options">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <label class="font-14 bold mb-2" for="outlet_id">Outlet</label>
+                                    <label class="font-14 bold mb-2" for="outlet_id">Outlet
+                                        <span style="color:red;">*</span>
+                                    </label>
                                     <select class="theme-input-style" name="outlet_id" id="outlet_id" onchange="displayName()">
                                         <option value="">Select Outlet</option>
 
                                         @foreach ( $outlets as $outlets )
-                                        {{-- <option value="{{ $outlets->id}}" {{ old('outlet_id') == $outlets->id ? 'selected' : '' }}>{{ $outlets->outlet_location}}</option> --}}
-                                        <option value="{{ $outlets->id}}">{{ $outlets->outlet_location}}</option>
+                                        <option value="{{ $outlets->id}}" {{ old('outlet_id') == $outlets->id ? 'selected' : '' }}>{{ $outlets->outlet_location}}</option>
+                                        {{-- <option value="{{ $outlets->id}}">{{ $outlets->outlet_location}}</option> --}}
                                         @endforeach
 
                                     </select>
-                                    @error('outlet')
+                                    @error('outlet_id')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -111,68 +113,86 @@
                         </div>
                         <!-- End Color Options -->
 
-                        <div class="row form-element">
-                            <div class="col-lg-6">
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2" for="shift_id">Shift</label>
-                                    <select class="theme-input-style" id="shift_id" name="shift_id" autocomplete="off">
-                                        <option value="">Select Shift</option>
-                                        @foreach ($shifts as $shift)
-                                            <option value="{{ $shift->id }}" {{ old('shift_id') == $shift->id ? 'selected' : '' }}>{{$shift->shift_name}} - {{ $shift->formatted_shift_time }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('shift_id')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
+                        <div class="form-element">
+                            <div class="row">
+                                {{-- <div class="col-lg-6 mb-3"> --}}
 
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2" for="date_start">Start Date</label>
-                                    <input type="date" class="theme-input-style" id="date_start" name="date_start" autocomplete="off"  value="{{ old('date_start') }}" max="9999-12-31">
-                                    @error('date_start')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+                                    <!-- Form Group -->
+                                <div class="col-lg-6 mb-3">
+                                    <div class="form-group">
+                                        <label class="font-14 bold mb-2" for="date_start">Start Date
+                                            <span style="color:red;">*</span>
+                                        </label>
+                                        <input type="date" class="theme-input-style" id="date_start" name="date_start" autocomplete="off"  value="{{ old('date_start') }}" max="9999-12-31">
+                                        @error('date_start')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                 </div>
-                                <!-- End Form Group -->
+                                    <!-- End Form Group -->
 
-                                <div class="d-flex align-items-center mb-3" style="margin-top: 50px;">
-                                    <!-- Custom Checkbox -->
-                                    <label class="custom-checkbox solid position-relative mr-2">
-                                        <input type="checkbox" name="off_day" value="1">
-                                        <span class="checkmark"></span>
-                                    </label>
-                                    <!-- End Custom Checkbox -->
-                                    <label for="check26">Off Day</label>
+
+                                    {{-- <div class="d-flex align-items-center mb-3" style="margin-top: 50px;">
+                                        <!-- Custom Checkbox -->
+                                        <label class="custom-checkbox solid position-relative mr-2">
+                                            <input type="checkbox" name="off_day" value="1">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <!-- End Custom Checkbox -->
+                                        <label for="check26">Off Day</label>
+                                    </div> --}}
+
+                                {{-- </div> --}}
+
+                                {{-- <div class="col-lg-6 mb-3"> --}}
+
+                                    <!-- Form Group -->
+                                <div class="col-lg-6 mb-3">
+                                    <div class="form-group">
+                                        <label class="font-14 bold mb-2" for="date_end">End Date</label>
+                                        <input type="date" class="theme-input-style" id="date_end" name="date_end" autocomplete="off"  value="{{ old('date_end') }}" max="9999-12-31">
+                                        @error('date_end')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                 </div>
+                                    <!-- End Form Group -->
 
+                                    <!-- Form Group -->
+                                <div class="col-lg-6 mb-3">
+                                    <div class="form-group">
+                                        <label class="font-14 bold mb-2" for="shift_id">Shift
+                                            <span style="color:red;">*</span>
+                                        </label>
+                                        <select class="theme-input-style" id="shift_id" name="shift_id" autocomplete="off" onchange="displayShifts()">
+                                            <option value="">Select Shift</option>
+                                            @foreach ($shifts as $shift)
+                                                <option value="{{ $shift->id }}" {{ old('shift_id') == $shift->id ? 'selected' : '' }}>{{$shift->shift_name}} - {{ $shift->formatted_shift_time }}</option>
+                                                {{-- <option value="{{ $shift->id }}">{{$shift->shift_name}} - {{ $shift->formatted_shift_time }}</option> --}}
+                                            @endforeach
+                                        </select>
+                                        @error('shift_id')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                    <!-- End Form Group -->
+
+                                    <!-- Form Group -->
+                                <div class="col-lg-6 mb-3">
+                                    <div class="form-group">
+                                        <label class="font-14 bold mb-2" for="remarks">Remarks</label>
+                                        <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" placeholder="Remarks" value="{{ old('remarks') }}">
+                                        @error('remarks')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                    <!-- End Form Group --> 
+                                {{-- </div> --}}
                             </div>
 
-                            <div class="col-lg-6">
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2" for="remarks">Remarks</label>
-                                    <input type="text" class="theme-input-style" id="remarks" name="remarks" autocomplete="off" placeholder="Remarks" value="{{ old('remarks') }}">
-                                    @error('remarks')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label class="font-14 bold mb-2" for="date_end">End Date</label>
-                                    <input type="date" class="theme-input-style" id="date_end" name="date_end" autocomplete="off"  value="{{ old('date_end') }}" max="9999-12-31">
-                                    @error('date_end')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <!-- End Form Group -->
-                            </div>
-
-                            <div class="col-12">
+                            {{-- <div class="col-12">
                                 <!-- Form Element -->
                                 <div class="form-element py-30 mb-30">
                                     <!-- Repeater Html Start -->
@@ -237,23 +257,84 @@
                                                 <div class="repeater-remove-btn col-lg-1">
                                                     <button data-repeater-delete class="remove-btn">
                                                         {{-- <button data-repeater-delete class="">  --}}
-                                                    {{-- <button class="remove-extra" id="remove-extra" type="button" onclick="removeExtra()"> --}}
+                                                    {{-- <button class="remove-extra" id="remove-extra" type="button" onclick="removeExtra()">
                                                         <img src="{{ asset('assets/img/svg/remove.svg') }}" alt="" class="svg">
                                                     </button>
                                                 </div>
 
-                                            </div>
+                                            </div> 
                                             <hr />
-                                        </div>
+                                        </div> --}}
                                         <!-- End Repeater Items -->
 
-                                    </div>
+                                    {{-- </div>
                                     <!-- Repeater End -->
                                     <button data-repeater-create type="button" class="repeater-add-btn btn-circle">
                                         <img src="{{ asset('assets/img/svg/plus_white.svg') }}" alt="" class="svg">
                                     </button>
-                                </div>
+                                </div> 
                                 <!-- End Form Element -->
+                            </div> --}}
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="font-14 bold mb-2" for="check-all">Shift Days
+                                        <span style="color:red;">*</span>
+                                    </label>
+                                        <div data-repeater-item class="row text-center pt-2">
+                                            <input hidden type="checkbox" class="check-all" id="check-all">
+                                            <label class="btn btn-block bg-white border border-secondary text-primary col-lg-2 m-1" style="box-shadow: none !important;" for="check-all" >Select All</label>
+                                        
+                                                @php
+                                                    $days = [
+                                                        1 => 'Mon',
+                                                        2 => 'Tue',
+                                                        3 => 'Wed',
+                                                        4 => 'Thu',
+                                                        5 => 'Fri',
+                                                        6 => 'Sat',
+                                                        7 => 'Sun'
+                                                    ];
+                                                @endphp
+
+                                                @foreach ( $days as $dayValue => $dayName )
+                                                {{-- <div class="col-sm px-0"> --}}
+                                                    <input hidden class="btn-check" type="checkbox" id="checkbox-{{ $dayName }}" value="{{$dayValue}}" name="shift_days[]" {{ old('shift_days') == $dayName ? 'checked' : '' }} autocomplete="off" >
+                                                    <label class="btn btn-block bg-white border border-secondary text-primary col-lg-1 m-1" style="box-shadow: none !important;" for="check-all" >
+                                                        <span class="text">{{$dayName}}</span>
+                                                    </label>
+                                                {{-- </div> --}}
+                                                @endforeach
+                                        </div>
+                                        @error('shift_days')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row form-element pt-0">
+                            <div class="col-lg-12 col-md-12">
+                                <div class="form-group">
+                                    <div class="table-responsive"> 
+                                        <table class="text-nowrap bg-white dh-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Shift</th>
+                                                    <th>Start Time</th>
+                                                    <th>End Time</th>
+                                                    <th>Pick a Time</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="displayShift">
+                                                {{-- <th><label></label><span class="checkmark"></span></th> --}}
+                                            </tbody>
+                                        </table>
+                                        <div class="text-muted text-center pt-4" id="shiftText"> Select shift to view the details </div>
+                                    </div>
+                                </div>
+                                @error('shift_time')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
 
@@ -275,41 +356,84 @@
 <!-- End Main Content -->
 <script>
 
-    function removeExtra() {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#109130',
-            cancelButtonColor: '#d33',
-            confirmButtonText:'Yes, delete it!',
-            cancelButtonText: 'No, cancel!',
-        }).then((result) => {
+$(document).ready(function(){
 
-            if(result.isConfirmed){
-            const El = document.getElementById('remove-extra');
-                El.classList.add("zoomOut");
-            const repeater_item = document.getElementById('data-repeater-item');
-
-            setTimeout(() => {
-                repeater_item.remove();
-                Swal.fire(
-                'Deleted',
-                'Your item has been removed',
-                'success'
-                );
-            }, 1000);
-                
-        }else if (result.dismiss === Swal.DismissReason.cancel){
-            Swal.fire(
-                'Cancelled',
-                'Safe',
-                'Error'
-            );
-        }
+    function updateCheckAll(repeater){
+        var allChecked = true;
+        repeater.find('.btn-check').each(function() {
+            if (!$(this).prop('checked')){
+                allChecked = false;
+                return false;
+            }
         });
+
+        repeater.find('.check-all').prop('checked', allChecked);
+        return changeSelectAllLabel(allChecked);
     }
+
+    function changeSelectAllLabel(allChecked){
+        if(allChecked === true){
+            $('.check-all').next('label').removeClass('bg-white border border-secondary text-primary').addClass('');
+        }
+        else{
+            $('.check-all').next('label').removeClass('').addClass('bg-white border border-secondary text-primary');
+        }
+    }
+
+    function updateLabel(checkbox){
+        var label = checkbox.next('label');
+
+        if (checkbox.prop('checked')) {
+                label.removeClass('bg-white border-secondary text-primary').addClass('');
+            } else {
+                label.removeClass('').addClass('bg-white border border-secondary text-primary');
+            }
+            
+            updateCheckAll(checkbox.closest('[data-repeater-item]'));
+    }
+    
+    $(document).on('change', '.check-all', function(){
+        var isChecked = $(this).prop('checked');
+        var checkAll = $(this).next('label');
+
+        if ($(this).prop('checked')) {
+                checkAll.removeClass('bg-white border-secondary text-primary').addClass('');
+            } else {
+                checkAll.removeClass('').addClass('bg-white border border-secondary text-primary');
+            }
+
+        $(this).closest('[data-repeater-item]').find('.btn-check').prop('checked', isChecked).trigger('change');
+    });
+
+    $(document).on('click', '.btn-check + label', function(e){
+        e.preventDefault();
+
+        var checkbox = $(this).prev('.btn-check');
+            checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
+    });
+
+    $(document).on('change', '.btn-check', function(){
+        updateLabel($(this));
+    });
+
+    $('.btn-check').each(function(){
+        updateLabel($(this));
+    });
+
+    $('.check-all').each(function(){
+        var repeaterItem = $(this).closest('[data-repeater-item]');
+        updateCheckAll(repeaterItem);
+    });
+
+    $(document).ready( function(){
+        return displayName();
+    });
+
+    $(document).ready(function(){
+        return displayShifts();
+    });
+
+});
 
     // change the employees name display by outlet input
     function displayName() {
@@ -333,23 +457,15 @@
             },
             success:function(response){
                 employeeOption.innerHTML = null;
-                if (Array.isArray(response)){
-                    const placeHolder = document.createElement('option');
-                    employeeOption.appendChild(placeHolder);
+
                     response.forEach(item => {
-                        // let opt = '<option value="' + item.value + '{{ old(' + item.value +') ==' + item.value '? "selected" : "" }}">' + item.text + '</option>';
-                        // employeeOption.append('<option value="' + item.value + '">' + item.text + '</option>');
-                        // employeeOption.append(opt);
-                        let opt = document.createElement('option');
-                        opt.innerHTML = item.text;
-                        opt.value = item.value;
+                    let opt = document.createElement('option');
+                        opt.innerHTML = item.nickname;
+                        opt.value = item.id;
                         employeeOption.appendChild(opt);
-                        // console.log(opt);
+                        // employeeOption.insertAdjacentHTML('beforeend', opt);
                     });
-                }
-                else{
-                console.log('not array');
-                }
+
             },
             error:function(xhr,status,error){
                 console.log(error);
@@ -360,6 +476,91 @@
         employeeOption.innerHTML = null;
     }
 
+    }
+
+    //display table based on selected shift
+    function displayShifts() {
+        let shift_id = document.getElementById('shift_id').value;
+        let shiftTable = document.getElementById('displayShift');
+        let shiftText = document.getElementById('shiftText');
+        let details = '';
+
+        $.ajax({
+            url:"{{route('displayShift')}}",
+            type:"GET",
+            dataType:"json",
+            data:{
+                _token: "{{ csrf_token() }}",
+                'shift_id':shift_id
+            },
+            success:function(response){
+                if( shift_id != '' && shiftText != null){
+                    shiftText.remove();
+                }
+                
+                $('#displayShift').empty();
+
+                let idIndex = 0;
+                response.forEach(item => {
+                    let shift_name = item.shift_name;
+                    item.shift_schedules.forEach( array => {
+
+                        let shift_schedules_id = array.id;
+                        let shift_id = array.shift_id;
+                        let shift_start_str = array.shift_start;
+                        let shift_end_str = array.shift_end;
+                        let days = array.shift_days;
+
+                const [shift_start_24hours, shift_start_min] = shift_start_str.split(':').map(Number);
+                const [shift_end_24hours, shift_end_min] = shift_end_str.split(':').map(Number);
+
+                const dayMappings = [
+                    'Mon',
+                    'Tue',
+                    'Wed',
+                    'Thu',
+                    'Fri',
+                    'Sat',
+                    'Sun'
+                ];
+
+                const shift_start_ampm = shift_start_24hours >= 12? 'PM' : 'AM';
+                const shift_end_ampm = shift_end_24hours >= 12? 'PM' : 'AM';
+
+                    shift_start_12hour = shift_start_24hours % 12 || 12;
+                    shift_end_12hour = shift_end_24hours % 12 || 12;
+
+                const shift_start_fhour = shift_start_12hour < 10 ? '0' + shift_start_12hour : shift_start_12hour;
+                const shift_end_fhour = shift_end_12hour < 10 ? '0' + shift_end_12hour : shift_end_12hour;
+
+                const shift_start_fmin = shift_start_min < 10 ? '0' + shift_start_min : shift_start_min;
+                const shift_end_fmin = shift_end_min < 10 ? '0' + shift_end_min : shift_end_min;
+
+                let shift_start = shift_start_fhour + ':' + shift_start_fmin + ' ' + shift_start_ampm;
+                let shift_end = shift_end_fhour +':'+ shift_end_fmin + ' '+ shift_end_ampm;
+
+                // details = '<tr><td>' + shift_name +
+                //           '</td><td>' + shift_start +
+                //           '</td><td>' + shift_end +
+                //           '</td><td data-repeater-item class="row dayMo" id="dayMo-' + idIndex +'"><input hidden class="check-all" id="check-all" type="checkbox"><label for="check-all" class="btn btn-block bg-white border border-secondary text-primary col-3 m-1" style="box-shadow: none !important;">Select All</label></td></tr>';
+                
+                details = '<tr><td>' + shift_name +
+                          '</td><td>' + shift_start +
+                          '</td><td>' + shift_end +
+                        //   '</td><td class="row dayMo" id="dayMo-' + idIndex +'"></td></tr>'
+                        '</td><td><label><input class="time_check" type="checkbox" checked name="shift_schedule_id[' +idIndex + 
+                        ']" id="time_check" value="' + shift_schedules_id + '"></label></td></tr>'
+                        //   '</td><td><label class="custom-checkbox"><input type="checkbox" id="pickA"><span class="checkmark"></span></label></td>'
+                displayShift.insertAdjacentHTML('beforeend', details);
+
+                    idIndex = idIndex + 1;
+                    });
+                });
+            },
+            error:function(xhr,status,error){
+                console.log(error);
+            }
+        })
     }
 </script>
 @endsection

@@ -53,37 +53,28 @@ class RecordController extends Controller
     // Clock in at login page
     public function checkIn(Request $request) {
 
-        $userId = $request->input('userId');
+        // $userId = $request->input('employee_id');
+        $userId = User::select('id')->where('employee_id', $request->input('userId'));
         $status = $request->input('status');
-        $user = User::where('employee_id', $userId)->first();
-
+        $user = User::where('employee_id', $request->input('userId'))->first();
+        // $user = User::where('employee_id', $userId)->get();
         $currentDate = now()->toDateString();
         $currentDate = Carbon::parse($currentDate);
         $currentDateTime = now();
         $currentTimes = $currentDateTime->format('H:i:s');
 
-        $schedules = DB::table('schedules')
-            ->join('users', 'schedules.employee_id', '=', 'users.id')
-            ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-            ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
-            ->where('schedules.employee_id', $user->id)
-            ->whereDate('schedules.date', '=', $currentDate)
-            ->whereNull('schedules.deleted_at')
-            ->orderBy('shifts.shift_start', 'asc')
-            ->get();
+        $schedules = Schedule::with('shift_schedules')
+        ->with('user')
+        ->where('schedules.employee_id', $userId)
+        ->whereDate('schedules.date', '=', $currentDate)
+        ->where('off_day', 0)
+        ->whereNull('schedules.deleted_at')
+        ->get();
 
 
-        $lateThreshold = Setting::where('setting_name', 'Late Threshold (in minutes)')->value('value');
+        $lateThreshold = Setting::where('setting_name', 'Late Threshold Minutes')->value('value');
 
-        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation (in minutes)')->value('value');
-
-        if ($status === 'Clock In') {
-            $user->status = 2;
-            $user->save();
-        } elseif ($status === 'Clock Out') {
-            $user->status = 1;
-            $user->save();
-        }
+        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
 
         if ($schedules) {
 
@@ -149,32 +140,32 @@ class RecordController extends Controller
             // }
 
             if(!empty($firstShift)){
-                $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
+                $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_schedules->shift_start);
 
-                if ($firstShift->shift_start >= $firstShift->shift_end) {
-                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end)->addDay();
+                if ($firstShift->shift_schedules->shift_start >= $firstShift->shift_schedules->shift_end) {
+                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_schedules->shift_end)->addDay();
 
                     $firstShiftDate = Carbon::parse($firstShiftDate)->addDay();
                     $firstShiftDate = $firstShiftDate->format('Y-m-d');
 
                     $currentDate->addDay();
                 } else {
-                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end);
+                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_schedules->shift_end);
                 }
             }
 
             if(!empty($secondShift)){
-                $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
+                $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_schedules->shift_start);
 
-                if ($secondShift->shift_start >= $secondShift->shift_end) {
-                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end)->addDay();
+                if ($secondShift->shift_schedules->shift_start >= $secondShift->shift_schedules->shift_end) {
+                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_schedules->shift_end)->addDay();
 
                     $secondShiftDate = Carbon::parse($secondShiftDate)->addDay();
                     $secondShiftDate = $secondShiftDate->format('Y-m-d');
 
                     $currentDate->addDay();
                 } else {
-                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end);
+                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_schedules->shift_end);
                 }
             }
 
@@ -222,6 +213,17 @@ class RecordController extends Controller
 
 
             if(!empty($firstShift) && !empty($secondShift)){
+
+                // Check if the user has reached the limit (2 times for both clock in and clock out)
+                if ($status === 'Clock In' && $clockinCount >= 2) {
+                    // Clock In limit reached, display error message
+                    // return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-in actions.');
+                    return response()->json(['success' => false, 'error' => 'You have reached the limit of clock-in actions.']);
+                }elseif ($status === 'Clock Out' && $clockoutCount >= 2) {
+                    // Clock Out limit reached, display error message
+                    // return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-out actions.');
+                    return response()->json(['success' => false, 'error' => 'You have reached the limit of clock-out actions.']);
+                }
 
                 if($status === 'Clock In') {
                     if ($clockinCount == 0){
@@ -429,10 +431,23 @@ class RecordController extends Controller
                     }
 
                     $totalWorkInHours = number_format($secondTotalWork / 60, 2);
+                    // dd($totalWorkInHours);
                     $recordData['total_work'] = $totalWorkInHours;
                 }
 
             } else if (!empty($firstShift) && empty($secondShift)){
+
+                // Check if the user has reached the limit (2 times for both clock in and clock out)
+                if ($status === 'Clock In' && $clockinCount >= 1) {
+                    // Clock In limit reached, display error message
+                    // return redirect()->route('login')->with('error', 'You have reached the limit of clock-in actions.');
+                    return response()->json(['success' => false, 'error' => 'You have reached the limit of clock-in actions.']);
+                }
+                elseif ($status === 'Clock Out' && $clockoutCount >= 1) {
+                    // Clock Out limit reached, display error message
+                    // return redirect()->route('login')->with('error', 'You have reached the limit of clock-out actions.');
+                    return response()->json(['success' => false, 'error' => 'You have reached the limit of clock-out actions.']);
+                }
 
                 if($status === 'Clock In') {
 
@@ -507,8 +522,7 @@ class RecordController extends Controller
                 }
 
                 // Calculate total hours for the last clock out
-                if ($status === 'Clock Out' && $status_clock === 2) {
-
+                if ($status == 'Clock Out' && $status_clock === 2) {
                     $firstClockInTime = PunchRecord::where('employee_id', $user->id)
                         ->whereDate('created_at', $currentDate)
                         ->where('in', 'Clock In')
@@ -545,7 +559,16 @@ class RecordController extends Controller
 
             $record = PunchRecord::create($recordData);
 
-            return redirect()->route('homepage');
+            if ($status === 'Clock In') {
+                $user->status = 2;
+                $user->save();
+            } elseif ($status === 'Clock Out') {
+                $user->status = 1;
+                $user->save();
+            }
+
+            // return redirect()->route('login');
+            return response()->json(['success' => true]);
         } else {
 
             // Schedule information not found, insert "Clock In" and "Clock Out" records with null values
@@ -560,9 +583,9 @@ class RecordController extends Controller
                 'status_clock' => 1
             ];
 
-            $record = PunchRecord::create($recordData);
+            // $record = PunchRecord::create($recordData);
 
-            return redirect()->route('homepage')->with('error', 'Schedule information not found.');
+            return redirect()->route('login')->with('error', 'Schedule information not found.');
         }
     }
 
@@ -580,27 +603,24 @@ class RecordController extends Controller
         $currentDateTime = now();
         $currentTimes = $currentDateTime->format('H:i:s');
 
-        $schedules = DB::table('schedules')
-            ->join('users', 'schedules.employee_id', '=', 'users.id')
-            ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-            ->select('schedules.id', 'schedules.employee_id', 'users.full_name', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
+        // $schedules = DB::table('schedules')
+        $schedules = Schedule::with('shift_schedules')
+            // ->join('users', 'schedules.employee_id', '=', 'users.id')
+            // ->join('shift_schedules', 'shift_schedules.shift_id', '=', 'shift_schedules.id')
+            // ->with('shift_schedules')
+            ->with('user')
+            // ->select('schedules.id', 'schedules.employee_id', 'user.full_name', 'shift_schedules.shift_start', 'shift_schedules.shift_end', 'schedules.date')
+            // ->select('schedules.id', 'schedules.employee_id', 'shift_schedules.shift_start', 'shift_schedules.shift_end', 'schedules.date')
             ->where('schedules.employee_id', $user->id)
             ->whereDate('schedules.date', '=', $currentDate)
+            ->where('off_day', 0)
             ->whereNull('schedules.deleted_at')
-            ->orderBy('shifts.shift_start', 'asc')
+            // ->orderBy('shift_schedules.shift_start', 'asc')
             ->get();
 
-        $lateThreshold = Setting::where('setting_name', 'Late Threshold (in minutes)')->value('value');
-
-        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation (in minutes)')->value('value');
-
-        if ($status === 'Clock In') {
-            $user->status = 2;
-            $user->save();
-        } elseif ($status === 'Clock Out') {
-            $user->status = 1;
-            $user->save();
-        }
+        $lateThreshold = Setting::where('setting_name', 'Late Threshold Minutes')->value('value');
+        
+        $overtimeCalculation = Setting::where('setting_name', 'Overtime Calculation')->value('value');
 
         if ($schedules) {
             $currentTime = now();
@@ -631,32 +651,32 @@ class RecordController extends Controller
 
 
             if(!empty($firstShift)){
-                $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_start);
+                $firstShiftStartTime = now()->setTimeFromTimeString($firstShift->shift_schedules->shift_start);
 
-                if ($firstShift->shift_start >= $firstShift->shift_end) {
-                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end)->addDay();
+                if ($firstShift->shift_schedules->shift_start >= $firstShift->shift_schedules->shift_end) {
+                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_schedules->shift_end)->addDay();
 
                     $firstShiftDate = Carbon::parse($firstShiftDate)->addDay();
                     $firstShiftDate = $firstShiftDate->format('Y-m-d');
 
                     $currentDate->addDay();
                 } else {
-                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_end);
+                    $firstShiftEndTime = now()->setTimeFromTimeString($firstShift->shift_schedules->shift_end);
                 }
             }
 
             if(!empty($secondShift)){
-                $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_start);
+                $secondShiftStartTime = now()->setTimeFromTimeString($secondShift->shift_schedules->shift_start);
 
-                if ($secondShift->shift_start >= $secondShift->shift_end) {
-                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end)->addDay();
+                if ($secondShift->shift_schedules->shift_start >= $secondShift->shift_schedules->shift_end) {
+                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_schedules->shift_end)->addDay();
 
                     $secondShiftDate = Carbon::parse($secondShiftDate)->addDay();
                     $secondShiftDate = $secondShiftDate->format('Y-m-d');
 
                     $currentDate->addDay();
                 } else {
-                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_end);
+                    $secondShiftEndTime = now()->setTimeFromTimeString($secondShift->shift_schedules->shift_end);
                 }
             }
 
@@ -704,11 +724,16 @@ class RecordController extends Controller
 
             if(!empty($firstShift) && !empty($secondShift)){
 
-                // Check if the user has reached the limit (4 times for both clock in and clock out)
-                // if ($clockinCount + $clockoutCount >= 4) {
-                //     // Limit reached, disable the button
-                //     return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-in and clock-out actions.');
-                // }
+                // Check if the user has reached the limit (2 times for both clock in and clock out)
+                if ($status === 'Clock In' && $clockinCount >= 2) {
+                    // Clock In limit reached, display error message
+                    // return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-in actions.');
+                    return response()->json(['success' => false, 'error' => 'You have reached the limit of clock-in actions.']);
+                } elseif ($status === 'Clock Out' && $clockoutCount >= 2) {
+                    // Clock Out limit reached, display error message
+                    // return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-out actions.');
+                    return response()->json(['success' => false, 'error' => 'You have reached the limit of clock-out actions.']);
+                }
 
                 if($status === 'Clock In') {
                     if ($clockinCount == 0){
@@ -974,13 +999,15 @@ class RecordController extends Controller
             } else if (!empty($firstShift) && empty($secondShift)){
 
                 // Check if the user has reached the limit (2 times for both clock in and clock out)
-                // if ($status === 'Clock In' && $clockinCount >= 1) {
-                //     // Clock In limit reached, display error message
-                //     return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-in actions.');
-                // } elseif ($status === 'Clock Out' && $clockoutCount >= 1) {
-                //     // Clock Out limit reached, display error message
-                //     return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-out actions.');
-                // }
+                if ($status === 'Clock In' && $clockinCount >= 1) {
+                    // Clock In limit reached, display error message
+                    // return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-in actions.');
+                    return response()->json(['success' => false, 'error' => 'You have reached the limit of clock-in actions.']);
+                } elseif ($status === 'Clock Out' && $clockoutCount >= 1) {
+                    // Clock Out limit reached, display error message
+                    // return redirect()->route('homepage')->with('error', 'You have reached the limit of clock-out actions.');
+                    return response()->json(['success' => false, 'error' => 'You have reached the limit of clock-out actions.']);
+                }
 
                 if($status === 'Clock In') {
 
@@ -1089,10 +1116,20 @@ class RecordController extends Controller
 
             }
 
+            if ($status === 'Clock In') {
+                $user->status = 2;
+                $user->save();
+            } elseif ($status === 'Clock Out') {
+                $user->status = 1;
+                $user->save();
+            }
+
             $record = PunchRecord::create($recordData);
 
-            return redirect()->route('homepage');
-        } else {
+            // return redirect()->route('homepage')->with('success');
+            return response()->json(['success' => true]);
+        }
+        else {
 
             // Schedule information not found, insert "Clock In" and "Clock Out" records with null values
             $recordData = [

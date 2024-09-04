@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Models\Shift;
+use App\Models\ShiftSchedule;
 use App\Models\Duty;
 use App\Models\Position;
 use App\Models\PunchRecord;
@@ -40,12 +41,13 @@ class MemberController extends Controller
         }
         // Retrieve schedules related to the logged-in user (employee)
         $schedules = Schedule::where('employee_id', $user->id)->orderBy('date')->get();
-        $shifts = Shift::all();
+        $shifts = Shift::with('shift_schedules')->get();
         $duties = Duty::all();
         $tasks = Task::where('employee_id', $user->id)->with('user')->get();
         $periods = Period::all();
         $punchRecords = PunchRecord::with('user')->get();
 
+        // dd($shifts);
         // Modify the date and time columns
         $punchRecords->each(function ($punchRecord) {
             $punchRecord->date = Carbon::parse($punchRecord->created_at)->toDateString();
@@ -101,7 +103,7 @@ class MemberController extends Controller
         $user = User::where('id', '=', Auth::user()->id)->first();
         $today = Carbon::now()->toDateString();
 
-        $schedules = Schedule::join('shifts', 'schedules.shift_id', 'shifts.id')
+        $schedules = Schedule::join('shift_schedules', 'schedules.shift_id', 'shift_schedules.id')
                             ->where('schedules.employee_id', $user->id)
                             ->get();
 

@@ -156,8 +156,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('user/view-profile', [MemberController::class, 'viewProfile'])->name('viewProfile');
     Route::post('user/update-profile', [MemberController::class, 'updateProfile'])->name('updateProfile');
 
-    // Route::post('admin/create-schedule/a', [AjaxController::class, 'changeNameByOutlet'])->name('changeNameByOutlet');
-    Route::get('cahangeNameByOutlet', [AjaxController::class, 'changeNameByOutlet'])->name('changeNameByOutlet');
+    Route::get('changeNameByOutlet', [AjaxController::class, 'changeNameByOutlet'])->name('changeNameByOutlet');
+    Route::get('displayShift', [AjaxController::class, 'displayShift'])->name('displayShift');
+    Route::get('changeShiftTimeByShift', [AjaxController::class, 'displayShiftTime'])->name('changeShiftTimeByShift');
+    Route::get('filterScheduleByEmployee', [AjaxController::class, 'filterScheduleByEmployee'])->name('filterScheduleByEmployee');
+    Route::get('filterScheduleByDate', [AjaxController::class, 'filterScheduleByDate'])->name('filterScheduleByDate');
+
 });
 
 Route::get('/offline', function () {

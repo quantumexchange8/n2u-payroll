@@ -125,16 +125,17 @@ $(function() {
                 success: function(schedule) {
                     var scheduleTableBody = $('#scheduleTableBody');
                     scheduleTableBody.empty();
+                    console.log(schedule);
 
                     schedule.forEach(function(item) {
                         var row = '<tr>' +
-                            '<td>' + item.nickname + '</td>' +
-                            '<td>' + (item.shift_start ? moment(item.shift_start, 'HH:mm').format('hh:mm A') : 'Off Day') + '</td>' +
-                            '<td>' + (item.shift_end ? moment(item.shift_end, 'HH:mm').format('hh:mm A') : 'Off Day') + '</td>' +
+                            '<td>' + item.user.nickname + '</td>' +
+                            '<td>' + (item.off_day == 0 ? moment(item.shift_schedules.shift_start, 'HH:mm').format('hh:mm A') : '<b>Off Day</b>') + '</td>' +
+                            '<td>' + (item.off_day == 0 ? moment(item.shift_schedules.shift_end, 'HH:mm').format('hh:mm A') : '<b>Off Day</b>') + '</td>' +
                             '<td>' + (item.remarks ? item.remarks : '') + '</td>' +
                             '<td>' +
-                                '<button class="btn btn-primary btn-sm edit-schedule" data-schedule-id="' + item.id + '">Edit</button>' +
-                                '<button class="btn btn-danger btn-sm delete-schedule" data-schedule-id="' + item.id + '">Delete</button>' +
+                                '<button class="btn btn-primary btn-sm edit-schedule mx-1" data-schedule-id="' + item.id + '">Edit</button>' +
+                                '<button class="btn btn-danger btn-sm delete-schedule mx-1" data-schedule-id="' + item.id + '">Delete</button>' +
                             '</td>' +
                             '</tr>';
                         scheduleTableBody.append(row);

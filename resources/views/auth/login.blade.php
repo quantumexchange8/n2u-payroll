@@ -73,7 +73,7 @@
                     <form action="{{ route('checkIn') }}" method="POST"  >
                         @csrf
                         <input type="hidden" id="statusInput" name="status" value="Clock In">
-                        <button type="button" id="clockButton" class="btn" style="
+                        <button type="submit" id="clockButton" class="btn" style="
                             @if (!isset($status))
                                 background-color: #e69f5c;
                                 color: #FFFFFF;
@@ -211,7 +211,7 @@
 
             $('#employee_id').on('change', function() {
             var selectedUserId = $(this).val();
-
+                console.log(selectedUserId);
                 // Make an AJAX request to get the user status
                 $.ajax({
                     url: '/get-user-status/' + selectedUserId,
@@ -312,6 +312,13 @@
                             });
 
                             if (response.ok) {
+
+                                clockButton.style.display = 'none';
+                                const data = await response.json();
+
+                                // Display a success alert
+                                if (data.success){
+
                                 // Update the button text to the opposite.
                                 clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
 
@@ -324,10 +331,6 @@
                                     clockButton.style.color = '#FFFFFF';
                                     clockButton.style.border = '2px solid #6045E2';
                                 }
-
-                                clockButton.style.display = 'none';
-
-                                // Display a success alert
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Success',
@@ -339,7 +342,17 @@
                                         location.reload();
                                     }
                                 });
-
+                                }else{
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Success',
+                                        text: data.error,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            location.reload();
+                                        }
+                                    });
+                                }
                             } else {
                                 // Display an error alert
                                 Swal.fire({

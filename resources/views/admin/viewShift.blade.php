@@ -32,12 +32,12 @@
                                     <th>Shift</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>
-                                    <th>Days</th>
+                                    {{-- <th>Days</th> --}}
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @php
+                                {{-- @php
                                     $days = [
                                         1 => 'Mon',
                                         2 => 'Tue',
@@ -47,7 +47,7 @@
                                         6 => 'Sat',
                                         7 => 'Sun'
                                     ];
-                                @endphp
+                                @endphp --}}
 
                                 @foreach($shifts as $shift)
                                     @php
@@ -55,9 +55,9 @@
                                         $shiftAction = true;
                                     @endphp
                                     @foreach ($shift->shift_schedules as $schedule)
-                                        @php
+                                        {{-- @php
                                             $selectedDays = explode('-', trim($schedule->shift_days, '-'));
-                                        @endphp
+                                        @endphp --}}
                                         <tr>                                            
                                             @if ($shiftName)
                                                 <td rowspan="{{ $shift->shift_schedules->count() }}">{{ $shift->shift_name }}</td>
@@ -67,7 +67,7 @@
                                             @endif
                                             <td>{{ date('h:i A', strtotime($schedule->shift_start)) }}</td>
                                             <td>{{ date('h:i A', strtotime($schedule->shift_end)) }}</td>
-                                            <td class="row">
+                                            {{-- <td class="row">
                                                 @foreach($days as $dayValue => $dayName)
                                                     @if(in_array($dayValue, $selectedDays))
                                                         <span class="d-inline-block border rounded px-1 py-1 col text-center">
@@ -77,7 +77,7 @@
                                                         <span class="d-inline-block bg-light border border-light rounded px-1 py-1 col text-center">&nbsp;</span>
                                                     @endif
                                                 @endforeach
-                                            </td>
+                                            </td> --}}
                                             @if ($shiftAction)
                                                 <td rowspan="{{ $shift->shift_schedules->count() }}">
                                                     <a href="{{ route('editShift', ['id' => $shift->id]) }}" class="details-btn">

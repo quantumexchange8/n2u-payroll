@@ -6,7 +6,36 @@
 
 {{-- Sweet Alert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+{{-- <script>
+    $(document).ready(function(){
+    function filterByName(){
 
+        $.ajaxSetup({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            url:"{{route('filterScheduleByEmployee')}}",
+            type: "GET",
+            dataType: "json",
+            data:{
+                'employee_id':$('#employee_id').val(),
+            },
+            success:function(response){
+                $('#schedule-list').html(response.html);
+            },
+            error:function(xhr,status,error){
+                console.log(error);
+                console.log('a');
+            }
+        });
+
+    }
+    $('#employee_id').on('change', filterByName);
+});
+</script> --}}
 <!-- Main Content -->
 <div class="main-content">
     <div class="container-fluid">
@@ -28,6 +57,7 @@
 
 
                                 <!-- Dropdown Button -->
+                                {{-- make it send value when click on? --}}
                                 <div class="dropdown-button mt-3 mt-sm-0">
                                     <button class="btn style--two orange" type="button" id="user-filter-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         All Users <i class="icofont-simple-down"></i>
@@ -41,6 +71,37 @@
                                     </div>
                                 </div>
                                 <!-- End Dropdown Button -->
+
+                                {{-- <div class="dropdown-button mt-3 mt-sm-0">
+                                    <button class="btn style--two orange" type="button" id="user-filter-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        All Users <i class="icofont-simple-down"></i>
+                                    </button>
+
+                                    <div class="dropdown-menu" aria-labelledby="user-filter-dropdown">
+                                        <a class="dropdown-item" href="#" id="filter-all_users">All Users</a>
+                                        @foreach ($users as $user)
+                                            <a class="dropdown-item" href="#" id="employee_id-{{$user->id}}">{{ $user->nickname }}</a>
+                                        @endforeach
+                                    </div>
+                                </div> --}}
+
+                                {{-- <form action="{{route('filterScheduleByEmployee')}}" method="GET"> --}}
+                                    {{-- @csrf --}}
+                                {{-- <div class="dropdown-button mt-3 mt-sm-0">
+                                    <select class="btn style--two orange py-2 px-2 employee_id" name="employee_id" id="employee_id" onchange="filterByName()">
+                                            <option class="dropdown-item" value="">All User</option>
+                                        @foreach ($users as $user)
+                                            <option class="dropdown-item" value="{{$user->id}}">{{$user->nickname}}</option>
+                                        @endforeach
+                                    </select>
+                                </div> --}}
+                                {{-- </form> --}}
+
+                                {{-- <select name="employee_id" id="employee_id" onchange="filterByName()">
+                                    @foreach ($users as $user)
+                                        <option class="dropdown-item" value="{{$user->id}}">{{$user->nickname}}</option>
+                                    @endforeach
+                                </select> --}}
 
                                 <!-- Dropdown Button -->
                                 <div  class="dropdown-button mt-3 mt-sm-0  ml-2">
@@ -86,6 +147,8 @@
                                             <span class="checkmark"></span>
                                         </label>
                                     </th>
+                                    <th>ID</th>
+                                    <th>Shift Schedule ID</th>
                                     <th>Date</th>
                                     <th>Name</th>
                                     <th>Shift Start</th>
@@ -94,11 +157,12 @@
                                     <th style="text-align:center;">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="schedule-list">
+                                {{-- @include('admin.scheduleReportContent', ['schedules' => $schedules]) --}}
                                 @foreach ($schedules as $schedule)
                                     @php
                                         $recordDate = Carbon\Carbon::parse($schedule->date)->toDateString();
-                                        $employeeName = $schedule->user->nickname
+                                        $employeeName = $schedule->user->nickname;
                                     @endphp
 
                                     @if ($recordDate)
@@ -111,19 +175,21 @@
                                                 </label>
                                                 <!-- End Custom Checkbox -->
                                             </td>
+                                            <td>{{$schedule->id}}</td>
+                                            <td>{{$schedule->shift_schedule_id}} </td>
                                             <td>{{ Carbon\Carbon::parse($schedule->date)->format('d M Y') }}</td>
                                             <td>{{ $schedule->user->nickname }}</td>
                                             <td>
-                                                @if ($schedule->shift && $schedule->shift->shift_start)
-                                                    {{ Carbon\Carbon::parse($schedule->shift->shift_start)->format('g:i A') }}
+                                                @if ($schedule->shift_schedules && $schedule->shift_schedules->shift_start && $schedule->off_day === 0)
+                                                    {{ Carbon\Carbon::parse($schedule->shift_schedules->shift_start)->format('h:i A') }}
                                                 @else
                                                     <b>Off Day</b>
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($schedule->shift && $schedule->shift->shift_end)
-                                                    {{ Carbon\Carbon::parse($schedule->shift->shift_end)->format('g:i A') }}
-                                                @else
+                                                @if ($schedule->shift_schedules && $schedule->shift_schedules->shift_end && $schedule->off_day === 0)
+                                                    {{ Carbon\Carbon::parse($schedule->shift_schedules->shift_end)->format('h:i A') }}
+                                                 @else
                                                     <b>Off Day</b>
                                                 @endif
                                             </td>
@@ -190,7 +256,8 @@
                                 @endforeach
                             </tbody>
                         </table>
-
+                        {{-- {{  $schedules->appends('')->links('vendor.pagination.bootstrap-5') }} --}}
+                        {{  $schedules->links('vendor.pagination.bootstrap-5') }}
                         <!-- End Invoice List Table -->
                     </div>
                 </div>
@@ -205,6 +272,39 @@
 
 {{-- Filter by user's full name --}}
 <script>
+// $(document).ready(function(){
+//     // $(document).on('change', '.employee_id', function(){
+//     function filterByName(){
+//         // console.log('b');
+//         // let employee_id = document.getElementById('employee_id').value;
+
+//         $.ajaxSetup({
+//             headers: {
+//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//             }
+//         });
+
+//         // console.log(employee_id);
+
+//         $.ajax({
+//             url:"{{route('filterScheduleByEmployee')}}",
+//             type: "GET",
+//             dataType: "json",
+//             data:{
+//                 'employee_id':$('#employee_id').val(),
+//             },
+//             success:function(response){
+//                 $('#schedule-list').html(response.html);
+//             },
+//             error:function(xhr,status,error){
+//                 console.log(error);
+//             }
+//         });
+
+//     }
+//     $('#employee_id').on('change', filterByName);
+// });
+    
     document.addEventListener("DOMContentLoaded", function() {
         const tableRows = document.querySelectorAll('.invoice-list tbody tr');
         const dropdownItems = document.querySelectorAll('.dropdown-item[data-full-name]');

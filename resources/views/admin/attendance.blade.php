@@ -120,7 +120,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-
+                        {{  $punchRecords->links('vendor.pagination.bootstrap-5') }}
                         <!-- End Invoice List Table -->
                     </div>
                 </div>

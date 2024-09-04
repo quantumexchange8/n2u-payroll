@@ -22,6 +22,10 @@ class ShiftSchedule extends Model
         return $this->belongsTo(Shift::class, 'shift_id');
     }
 
+    public function schedule(){
+        return $this->hasMany(Schedule::class, 'shift_schedule_id', 'id');
+    }
+
     public function getFormattedShiftTimeAttribute()
     {
         $shift_start = Carbon::parse($this->shift_start);

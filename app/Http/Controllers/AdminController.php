@@ -671,7 +671,7 @@ class AdminController extends Controller
                 'date_format:H:i',
                 'shift_end_after_start:shift_schedules.*.shift_start',
             ],
-            'shift_schedules.*.shift_days' => 'required|array|min:1',
+            // 'shift_schedules.*.shift_days' => 'required|array|min:1',
         ];
 
         $messages = [
@@ -680,7 +680,7 @@ class AdminController extends Controller
             'shift_schedules.*.shift_start.required' => 'The Shift Start field is required.',
             'shift_schedules.*.shift_end.required' => 'The Shift End field is required.',
             'shift_schedules.*.shift_end.shift_end_after_start' => 'The end time must be after :shift_schedules.*.shift_start. or within 4 hours if midnight.',
-            'shift_schedules.*.shift_days.required' => 'There must be at least one day in shift.',
+            // 'shift_schedules.*.shift_days.required' => 'There must be at least one day in shift.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -705,7 +705,7 @@ class AdminController extends Controller
 
             // Convert selected shift days to a string (if needed)
             $shiftDaysString = '-' . implode('-', $scheduleData['shift_days']) . '-';
-            $shiftSchedule->shift_days = $shiftDaysString;
+            // $shiftSchedule->shift_days = $shiftDaysString;
 
             $shiftSchedule->save();
         }
@@ -732,7 +732,7 @@ class AdminController extends Controller
                 'date_format:H:i',
                 'shift_end_after_start:shift_schedules.*.shift_start',
             ],
-            'shift_schedules.*.shift_days' => 'required|array|min:1',
+            // 'shift_schedules.*.shift_days' => 'required|array|min:1',
         ];
 
         $messages = [
@@ -741,7 +741,7 @@ class AdminController extends Controller
             'shift_schedules.*.shift_start.required' => 'The Shift Start field is required.',
             'shift_schedules.*.shift_end.required' => 'The Shift End field is required.',
             'shift_schedules.*.shift_end.shift_end_after_start' => 'The end time must be after :shift_schedules.*.shift_start. or within 4 hours if midnight.',
-            'shift_schedules.*.shift_days.required' => 'There must be at least one day in shift.',
+            // 'shift_schedules.*.shift_days.required' => 'There must be at least one day in shift.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -753,8 +753,8 @@ class AdminController extends Controller
                 ->withInput();
         }
 
-        $selectedShiftDays = $request->input('shift_days', []);
-        $shiftDaysString = '-' . implode('-', $selectedShiftDays) . '-';
+        // $selectedShiftDays = $request->input('shift_days', []);
+        // $shiftDaysString = '-' . implode('-', $selectedShiftDays) . '-';
 
         $shift = Shift::find($id);
 
@@ -767,11 +767,11 @@ class AdminController extends Controller
         foreach ($shift_schedules as $index => $shift_schedule) {
             if (isset($request->input('shift_schedules')[$index]) && $request->input('shift_schedules')[$index] !== null) {
                 $scheduleData = $request->input('shift_schedules')[$index];
-                $shiftDaysString = '-' . implode('-', $scheduleData['shift_days']) . '-';
+                // $shiftDaysString = '-' . implode('-', $scheduleData['shift_days']) . '-';
                 $shift_schedule->update([
                     'shift_start' => $scheduleData['shift_start'],
                     'shift_end' => $scheduleData['shift_end'],
-                    'shift_days' => $shiftDaysString
+                    // 'shift_days' => $shiftDaysString
                 ]);
             } else {
                 $shift_schedule->delete();
@@ -781,12 +781,12 @@ class AdminController extends Controller
         $requestShiftSchedules = $request->input('shift_schedules');
         foreach ($requestShiftSchedules as $index => $scheduleData) {
             if (!isset($shift_schedules[$index])) {
-                $shiftDaysString = '-' . implode('-', $scheduleData['shift_days']) . '-';
+                // $shiftDaysString = '-' . implode('-', $scheduleData['shift_days']) . '-';
                 ShiftSchedule::create([
                     'shift_id' => $shift->id,
                     'shift_start' => $scheduleData['shift_start'],
                     'shift_end' => $scheduleData['shift_end'],
-                    'shift_days' => $shiftDaysString
+                    // 'shift_days' => $shiftDaysString
                 ]);
             }
         }
@@ -831,11 +831,30 @@ class AdminController extends Controller
         return view('admin.schedule', compact('schedules', 'users', 'shifts'));
     }
 
-    public function scheduleReport(){
-        $schedules = Schedule::orderBy('date', 'asc')->get();
+    public function scheduleReport(Request $request){
+        $schedules = Schedule::orderBy('date', 'asc')->paginate(30);
         $users = User::where('role', 'member')->with('position')->get();
         $shifts = Shift::all();
+        $shift_schedules = ShiftSchedule::all();
         $periods = Period::all();
+        // $schedules = Schedule::with([
+        //                 'shift_schedules' => function ($query){
+        //                     $query->select('id','shift_start', 'shift_end');
+        //                 },
+        //                 'user' => function ($query){
+        //                     $query->select('id','employee_id', 'nickname');
+        //                 }
+        //             ])
+        //             ->where('schedules.employee_id', $request->input('employee_id'))
+        //             // ->where('user.role', 'member')->with('position')
+        //             ->orderBy('date', 'asc')
+        //             ->paginate(15);
+        // dd($schedules);
+        // if($request->ajax()){
+        //     return response()->json([
+
+        //     ]);
+        // }
 
         foreach ($schedules as $schedule) {
             // Retrieve tasks related to the current schedule
@@ -849,21 +868,35 @@ class AdminController extends Controller
             $schedule->tasks = $tasks;
         }
 
-        return view('admin.scheduleReport', compact('schedules', 'users', 'shifts', 'periods'));
+        return view('admin.scheduleReport', compact('schedules', 'users', 'shifts', 'periods','shift_schedules'));
     }
 
     public function getSchedule(Request $request) {
         try {
             $date = $request->input('date');
 
-            $schedule = Schedule::leftJoin('users', 'schedules.employee_id', '=', 'users.id')
-                    ->leftJoin('shifts', 'schedules.shift_id', '=', 'shifts.id')
-                    ->select('schedules.id', 'schedules.employee_id', 'users.nickname',
-                        'shifts.shift_start', 'shifts.shift_end', 'schedules.remarks')
+            // $schedules = Schedule::leftjoin('users', 'schedules.employee_id', '=', 'users.id')
+            //         ->leftJoin('shift_schedules', 'schedules.shift_schedule_id', '=', 'shift_schedules.id')
+            //         ->select('schedules.id', 'schedules.employee_id', 'users.nickname',
+            //             'shift_schedules.shift_start', 'shift_schedules.shift_end', 'schedules.remarks')
+            //         ->where('schedules.date', $date)
+            //         ->get();
+
+            $schedules = Schedule::with([
+                        'shift_schedules' => function ($query){
+                            $query->select('id','shift_start', 'shift_end');
+                        },
+                        'user' => function ($query){
+                            $query->select('id','employee_id', 'nickname');
+                        }
+                        ])
+                    ->select('id', 'shift_schedule_id', 'employee_id', 'remarks', 'off_day')
                     ->where('schedules.date', $date)
+                    ->whereNull('schedules.deleted_at')
                     ->get();
 
-            return response()->json($schedule);
+
+            return response()->json($schedules);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -883,24 +916,36 @@ class AdminController extends Controller
     public function addSchedule(Request $request){
 
         $data = $request->all();
-        // dd($data);
 
-        // Validation
+        $dayMapping = [
+            1 => 'Monday',
+            2 => 'Tuesday',
+            3 => 'Wednesday',
+            4 => 'Thursday',
+            5 => 'Friday',
+            6 => 'Saturday',
+            7 => 'Sunday'
+        ];
+
         $validator = Validator::make($data, [
             'outlet_id'    => 'required',
             'date_start' => 'required|date',
             'date_end' => 'nullable|date|after_or_equal:date_start',
-            'shift_id' => 'nullable',
+            'shift_id' => 'required|integer',
             'remarks' => 'nullable',
             'selected_users' => 'required|array',
+            'shift_days' => 'required|array',
+            'shift_schedule_id' => 'required|array',
         ], [
             'date_start.required' => 'The Start Date is required.',
             'date_start.date' => 'The Start Date must be a valid date.',
             'date_end.date' => 'The End Date must be a valid date.',
             'date_end.after_or_equal' => 'The End Date must be after or equal to the start date.',
-            'shift_id.nullable' => 'The Shift ID can be nullable.',
+            'shift_id.required' => 'Please select a shift.',
             'selected_users.required' => 'Please select at least one user.',
-            'outlet_id.required' => 'Please select the outlet'
+            'outlet_id.required' => 'Please select the outlet',
+            'shift_days.required' => 'Please select at least one day',
+            'shift_schedule_id.required' => 'Please select at least one of the shift duration',
         ]);
 
         if ($validator->fails()) {
@@ -908,27 +953,29 @@ class AdminController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-        // dd($data);
 
-        if (isset($data['off_day']) && $data['off_day'] == 1) {
+        $shiftDaysString = '-' . implode('-', $data['shift_days']) . '-';
+        $selectedDays = $data['shift_days'];
+        $selectedDays = array_intersect_key($dayMapping, array_flip($selectedDays));
 
-            // Perform actions for off_day being 1 (e.g., save to database)
-            foreach ($data['selected_users'] as $userId) {
-                $start = Carbon::parse($data['date_start']);
-                $end = Carbon::parse($data['date_end']);
+        // if (isset($data['off_day']) && $data['off_day'] == true) {
+        //     // Perform actions for off_day being 1 (e.g., save to database)
+        //     foreach ($data['selected_users'] as $userId) {
+        //         $start = Carbon::parse($data['date_start']);
+        //         $end = Carbon::parse($data['date_end']);
 
-                // Loop through dates and save schedule for each date
-                while ($start->lte($end)) {
-                    $this->saveSchedule($userId, $start, true);
-                    $start->addDay();
+        //         // Loop through dates and save schedule for each date
+        //         while ($start->lte($end)) {
+        //             $this->saveSchedule($userId, $start, $offDay, $shiftDaysString);
+        //             $start->addDay();
+        //         }
 
-                }
-            }
+        //         // Redirect to the schedule page
+        //         Alert::success('Done', 'Schedule inserted successfully.');
+        //         return redirect()->route('schedule');
+        //         }
 
-            // Redirect to the schedule page
-            Alert::success('Done', 'Schedule inserted successfully.');
-            return redirect()->route('schedule');
-        }
+        // }
 
         $successMessages = [];
         $failedMessages = [];
@@ -954,22 +1001,62 @@ class AdminController extends Controller
             }
 
             foreach ($dates as $date) {
-                $result = $this->saveSchedule($userId, $date);
-                $userNicknames[] = User::find($userId)->nickname;
-                $userNickname = User::find($userId)->nickname;
-                $userNicknamesString = implode(', ', $userNicknames);
 
-                if ($result === true) {
-                    $formattedDate = \Carbon\Carbon::parse($date)->format('d M Y');
-                    $successInsertedDates[] = $formattedDate;
-                } elseif ($result === 'max_schedules_exceeded') {
-                    $formattedFailedDate = \Carbon\Carbon::parse($date)->format('d M Y');
-                    $failedMessages[] = "Failed to insert $formattedFailedDate for user(s) $userNickname due to exceeding the maximum of two schedules.";
-                    $failedDates[] = $formattedFailedDate;
-                } elseif ($result === 'shift_overlap') {
-                    $formattedFailedDate = \Carbon\Carbon::parse($date)->format('d M Y');
-                    $failedMessages[] = "Failed to insert $formattedFailedDate for user(s) $userNickname due to shift overlap.";
-                    $failedDates[] = $formattedFailedDate;
+                $dayOfWeek = Carbon::parse($date)->dayName;
+
+                foreach ($data['shift_schedule_id'] as $shift_schedule_id){
+                    $shift_schedules = ShiftSchedule::where('id', $shift_schedule_id)->first();
+                    $newShiftStart = $shift_schedules->shift_start;
+                    $newShiftEnd = $shift_schedules->shift_end;
+
+                    if(in_array($dayOfWeek, $selectedDays)){
+                        $offDay = false;
+                    }else{
+                        $offDay = true;
+                    }
+
+                    // if($offDay == true){// add checking as like else
+                    //     // $start = Carbon::parse($data['date_start']);
+                    //     // $end = Carbon::parse($data['date_end']);
+        
+                    //     // Loop through dates and save schedule for each date
+                    //     while ($start->lte($end)) {
+                            // $this->saveSchedule($userId, $date, $start, $shiftDaysString, $shift_schedule_id, $newShiftStart, $newShiftEnd);
+                    //         $start->addDay();
+                    //     }
+                    //     // Redirect to the schedule page
+                    //     Alert::success('Done', 'Schedule inserted successfully.');
+                    //     return redirect()->route('schedule');
+
+                    // }else{
+                    //     if ($data['date_end'] === null) {
+                    //         $dates[] = $start->toDateString();
+                    //     } else { //problem might be here
+                    //         while ($start->lte($end)) {
+                    //             $dates[] = $start->toDateString();
+                    //             $start->addDay();
+                    //         }
+                    //     }
+                    // }
+
+                    $result = $this->saveSchedule($userId, $date, $offDay, $shiftDaysString, $shift_schedule_id, $newShiftStart, $newShiftEnd);
+                    $userNicknames[] = User::find($userId)->nickname;
+                    $userNickname = User::find($userId)->nickname;
+                    $userNicknamesString = implode(', ', $userNicknames);
+
+                    if ($result === true) {
+                        $formattedDate = \Carbon\Carbon::parse($date)->format('d M Y');
+                        $successInsertedDates[] = $formattedDate;
+                    } elseif ($result === 'max_schedules_exceeded') {
+                        $formattedFailedDate = \Carbon\Carbon::parse($date)->format('d M Y');
+                        $failedMessages[] = "Failed to insert $formattedFailedDate for user(s) $userNickname due to exceeding the maximum of two schedules.";
+                        $failedDates[] = $formattedFailedDate;
+                    }elseif ($result === 'shift_overlap') {
+                        $formattedFailedDate = \Carbon\Carbon::parse($date)->format('d M Y');
+                        $failedMessages[] = "Failed to insert $formattedFailedDate for user(s) $userNickname due to shift overlap.";
+                        $failedDates[] = $formattedFailedDate;
+                    }
+                    // }
                 }
             }
         }
@@ -1022,15 +1109,15 @@ class AdminController extends Controller
         return true;
     }
 
-    private function saveSchedule($userId, $date, $offDay = false){
+    private function saveSchedule($userId, $date, $offDay = false, $shiftDaysString, $shift_schedule_id, $newShiftStart, $newShiftEnd){
 
         $existingSchedules = DB::table('schedules')
             ->where('employee_id', $userId)
             ->where('date', $date)
             ->whereNull('deleted_at')
             ->count();
-
-        if ($existingSchedules >= 2) {
+// dd($existingSchedules);
+        if ($existingSchedules >= 2) { //change to count on same date have same shift_schedule_id, >= 2 change later when shift time >2
             return 'max_schedules_exceeded';
         }
 
@@ -1038,26 +1125,19 @@ class AdminController extends Controller
             $shiftId = request('shift_id');
 
             // Retrieve shift details based on the selected shift_id
-            $shiftDetails = Shift::where('id', $shiftId)->first();
-
+            $shiftDetails = ShiftSchedule::where('shift_id', $shiftId)->first();
             // Check if the shift details are found
             if (!$shiftDetails) {
                 // Display an error message for invalid shift_id
                 return 'invalid_shift';
             }
 
-            $newShiftStart = $shiftDetails->shift_start;
-            $newShiftEnd = $shiftDetails->shift_end;
-
-            $existingShifts = DB::table('schedules')
-                                ->join('users', 'schedules.employee_id', '=', 'users.id')
-                                // ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-                                ->where('schedules.employee_id', $userId)
-                                ->where('schedules.date', $date)
-                                ->whereNull('schedules.deleted_at')
-                                // ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end')
-                                ->select('users.employee_id')
-                                ->get();
+            $existingShifts = Schedule::join('shift_schedules', 'schedules.shift_schedule_id', 'shift_schedules.id')
+                                      ->where('schedules.employee_id', $userId)
+                                      ->where('schedules.date', $date)
+                                      ->whereNull('schedules.deleted_at')
+                                      ->select('schedules.employee_id', 'shift_schedules.shift_start', 'shift_schedules.shift_end', 'schedules.date')
+                                      ->get();
 
             foreach ($existingShifts as $existingShift) {
                 $existingShiftStart = $existingShift->shift_start;
@@ -1075,6 +1155,9 @@ class AdminController extends Controller
         $schedule->off_day = $offDay ? 1 : 0;
         $schedule->shift_id = request('shift_id');
         $schedule->remarks = request('remarks');
+        $schedule->shift_days = $shiftDaysString;
+        $schedule->shift_schedule_id = $shift_schedule_id;
+        // dd($schedule);
         $schedule->save();
 
         return true;
@@ -1142,13 +1225,18 @@ class AdminController extends Controller
     public function editSchedule($id){
         $schedule = Schedule::find($id);
         $users = User::where('role', 'member')->with('position')->get();
+        // $users = Schedule::where('id', $id)->with('user')->get();
+        // dd($users);
+        $outlets = Outlet::all();
+        $shift_id = schedule::where('id', $id)->first();
+        $shift_schedules = ShiftSchedule::where('shift_id', $shift_id->shift_id)->get();
         $shifts = Shift::all();
         $duties = Duty::all();
         $periods = Period::all();
 
         $tasksAndDuties = $this->getTasksAndDuties($schedule->employee_id, $schedule->date);
 
-        return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'tasksAndDuties', 'duties', 'periods'));
+        return view('admin.editSchedule', compact('schedule', 'users', 'shifts', 'tasksAndDuties', 'duties', 'periods', 'outlets', 'shift_schedules'));
     }
 
     // Function to get tasks and duties based on employee ID and date
@@ -1168,28 +1256,83 @@ class AdminController extends Controller
     public function updateSchedule(Request $request, $id){
 
         $schedule = Schedule::find($id);
+        $data = $request->all();
+        // dd($data);
 
         $existingSchedule = Schedule::where('employee_id', $request->input('employee_id'))
                                     ->where('date', $request->input('date'))
                                     ->whereNull('deleted_at')
                                     ->exists();
 
-        if ($existingSchedule) {
+        $dayMapping = [
+            1 => 'Monday',
+            2 => 'Tuesday',
+            3 => 'Wednesday',
+            4 => 'Thursday',
+            5 => 'Friday',
+            6 => 'Saturday',
+            7 => 'Sunday'
+        ];
+
+        // $validator = Validator::make($data, [ //need to check date,shift overlap,
+        //     'outlet_id'    => 'required',
+        //     'date' => 'required|date',
+        //     'shift_id' => 'required|integer',
+        //     'remarks' => 'nullable',
+        //     'selected_users' => 'required|integer',
+        //     'shift_days' => 'required|array',
+        //     'shift_schedule_id' => 'required|integer',
+        // ], [
+        //     'date_start.required' => 'The Start Date is required.',
+        //     'date.date' => 'The Date must be a valid date.',
+        //     'shift_id.required' => 'Please select a shift.',
+        //     'selected_users.required' => 'Please select at least one user.',
+        //     'outlet_id.required' => 'Please select the outlet',
+        //     'shift_days.required' => 'Please select at least one day',
+        //     'shift_schedule_id.required' => 'Please select at least one of the shift duration',
+        // ]);
+
+        // if ($validator->fails()) {
+        //     return redirect()->back()
+        //         ->withErrors($validator)
+        //         ->withInput();
+        // }
+
+        $shiftDaysString = '-' . implode('-', $data['shift_days']) . '-';
+        $selectedDays = $data['shift_days'];
+        $selectedDays = array_intersect_key($dayMapping, array_flip($selectedDays));
+        $dayOfWeek = Carbon::parse($data['date'])->dayName;
+        // dd($dayOfWeek);
+
+        if(in_array($dayOfWeek, $selectedDays)){
+            $offDay = false;
+        }else{
+            $offDay = true;
+        }
+
+        if ($existingSchedule) {//need changes
             $shiftDetails = Shift::where('id', $request->shift_id)->first();
 
             $newShiftStart = $shiftDetails->shift_start;
             $newShiftEnd = $shiftDetails->shift_end;
 
-            $existingShifts = DB::table('schedules')
-                                ->join('users', 'schedules.employee_id', '=', 'users.id')
-                                ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
-                                ->where('schedules.employee_id', $request->input('employee_id'))
-                                ->where('schedules.date', $request->input('date'))
-                                ->whereNull('schedules.deleted_at')
-                                ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
-                                ->get();
+            // $existingShifts = DB::table('schedules')
+            //                     ->join('users', 'schedules.employee_id', '=', 'users.id')
+            //                     ->join('shifts', 'schedules.shift_id', '=', 'shifts.id')
+            //                     ->where('schedules.employee_id', $request->input('employee_id'))
+            //                     ->where('schedules.date', $request->input('date'))
+            //                     ->whereNull('schedules.deleted_at')
+            //                     ->select('users.employee_id', 'shifts.shift_start', 'shifts.shift_end', 'schedules.date')
+            //                     ->get();
 
-            if ($existingShifts->count() == 2) {
+            $existingShifts = Schedule::with('shift')
+                                       ->with('shift_schedules')
+                                       ->where('schedules.employee_id', $request->input('employee_id'))
+                                       ->where('schedules.date', $request->input('date'))
+                                       ->whereNull('schedules.deleted_at')
+                                       ->get();
+
+            if ($existingShifts->count() == 2) {//need adjustment when shift time > 2
 
                 $existingShiftStart1 = $existingShifts[0]->shift_start;
                 $existingShiftEnd1 = $existingShifts[0]->shift_end;
@@ -1203,12 +1346,17 @@ class AdminController extends Controller
                     return redirect()->back();
                 } else {
 
-                    $schedule->employee_id = $request->input('employee_id');
-                    $schedule->date = $request->input('date');
-                    $schedule->shift_id = $request->input('shift_id');
-                    $schedule->remarks = $request->input('remarks');
-
+                    $schedule->employee_id = $data['employee_id'];
+                    $schedule->date = $data['date'];
+                    $schedule->shift_id = $data['shift_id'];
+                    $schedule->remarks = $data['remarks'];
+                    $schedule->shift_schedule_id = $data['shift_schedule_id'];
+                    $schedule->shift_days = $shiftDaysString;
+                    $schedule->off_day = $offDay ? 1 : 0;
+                    // dd($schedule);
                     $schedule->save();
+                    Alert::success('Done', 'Schedule updated successfully.');
+                    return redirect()->route('schedule');
 
                     // Check if there are tasks and duties submitted in the request
                     $tasksAndDuties = $request->input('group-a', []);
@@ -1218,9 +1366,9 @@ class AdminController extends Controller
                         foreach ($tasksAndDuties as $taskData) {
                             // Check if all key fields are null
                             $fieldsNull = is_null($taskData['period_id']) ||
-                                                is_null($taskData['duty_id']) ||
-                                                is_null($taskData['start_time']) ||
-                                                is_null($taskData['end_time']);
+                                          is_null($taskData['duty_id']) ||
+                                          is_null($taskData['start_time']) ||
+                                          is_null($taskData['end_time']);
 
                             // If all key fields are not null, proceed with creating/updating the task
                             if (!$fieldsNull) {
@@ -1255,119 +1403,124 @@ class AdminController extends Controller
                         }
                     }
                 }
-
-                Alert::success('Done', 'Schedule updated successfully.');
-                return redirect()->route('schedule');
             } else {
-                $schedule->employee_id = $request->input('employee_id');
-                $schedule->date = $request->input('date');
-                $schedule->shift_id = $request->input('shift_id');
-                $schedule->remarks = $request->input('remarks');
-
+                $schedule->employee_id = $data['employee_id'];
+                $schedule->date = $data['date'];
+                $schedule->shift_id = $data['shift_id'];
+                $schedule->remarks = $data['remarks'];
+                $schedule->shift_schedule_id = $data['shift_schedule_id'];
+                $schedule->shift_days = $shiftDaysString;
+                $schedule->off_day = $offDay ? 1 : 0;
+                // dd($schedule);
                 $schedule->save();
 
-                // Check if there are tasks and duties submitted in the request
-                $tasksAndDuties = $request->input('group-a', []);
-
-                // If there are tasks and duties, update or insert them into the tasks table
-                if (!empty($tasksAndDuties)) {
-                    foreach ($tasksAndDuties as $taskData) {
-                        // Check if all key fields are null
-                        $fieldsNull = is_null($taskData['period_id']) ||
-                                            is_null($taskData['duty_id']) ||
-                                            is_null($taskData['start_time']) ||
-                                            is_null($taskData['end_time']);
-
-                        // If all key fields are not null, proceed with creating/updating the task
-                        if (!$fieldsNull) {
-
-                            $existingTask = Task::where([
-                                'date' => $schedule->date,
-                                'employee_id' => $schedule->employee_id,
-                                'period_id' => $taskData['period_id'],
-                            ])->first();
-
-                            if ($existingTask) {
-
-                                $existingTask->update([
-                                    'start_time' => $taskData['start_time'],
-                                    'end_time' => $taskData['end_time'],
-                                    'duty_id' => $taskData['duty_id'],
-                                ]);
-                            } else {
-
-                                $task = Task::Create(
-                                    [
-                                        'date' => $schedule->date,
-                                        'employee_id' => $schedule->employee_id,
-                                        'period_id' => $taskData['period_id'],
-                                        'start_time' => $taskData['start_time'],
-                                        'end_time' => $taskData['end_time'],
-                                        'duty_id' => $taskData['duty_id'],
-                                    ]
-                                );
-                            }
-                        }
-                    }
-                }
                 Alert::success('Done', 'Schedule updated successfully.');
                 return redirect()->route('schedule');
             }
-        } else {
-            $schedule->employee_id = $request->input('employee_id');
-            $schedule->date = $request->input('date');
-            $schedule->shift_id = $request->input('shift_id');
-            $schedule->remarks = $request->input('remarks');
-
-            $schedule->save();
-
-            // Check if there are tasks and duties submitted in the request
-            $tasksAndDuties = $request->input('group-a', []);
-
-            // If there are tasks and duties, update or insert them into the tasks table
-            if (!empty($tasksAndDuties)) {
-                foreach ($tasksAndDuties as $taskData) {
-                    // Check if all key fields are null
-                    $fieldsNull = is_null($taskData['period_id']) ||
-                                        is_null($taskData['duty_id']) ||
-                                        is_null($taskData['start_time']) ||
-                                        is_null($taskData['end_time']);
-
-                    // If all key fields are not null, proceed with creating/updating the task
-                    if (!$fieldsNull) {
-
-                        $existingTask = Task::where([
-                            'date' => $schedule->date,
-                            'employee_id' => $schedule->employee_id,
-                            'period_id' => $taskData['period_id'],
-                        ])->first();
-
-                        if ($existingTask) {
-
-                            $existingTask->update([
-                                'start_time' => $taskData['start_time'],
-                                'end_time' => $taskData['end_time'],
-                                'duty_id' => $taskData['duty_id'],
-                            ]);
-                        } else {
-
-                            $task = Task::Create(
-                                [
-                                    'date' => $schedule->date,
-                                    'employee_id' => $schedule->employee_id,
-                                    'period_id' => $taskData['period_id'],
-                                    'start_time' => $taskData['start_time'],
-                                    'end_time' => $taskData['end_time'],
-                                    'duty_id' => $taskData['duty_id'],
-                                ]
-                            );
-                        }
-                    }
-                }
-            }
-            Alert::success('Done', 'Schedule updated successfully.');
-            return redirect()->route('schedule');
+            
         }
+        //         // Check if there are tasks and duties submitted in the request
+        //         $tasksAndDuties = $request->input('group-a', []);
+
+        //         // If there are tasks and duties, update or insert them into the tasks table
+        //         if (!empty($tasksAndDuties)) {
+        //             foreach ($tasksAndDuties as $taskData) {
+        //                 // Check if all key fields are null
+        //                 $fieldsNull = is_null($taskData['period_id']) ||
+        //                                     is_null($taskData['duty_id']) ||
+        //                                     is_null($taskData['start_time']) ||
+        //                                     is_null($taskData['end_time']);
+
+        //                 // If all key fields are not null, proceed with creating/updating the task
+        //                 if (!$fieldsNull) {
+
+        //                     $existingTask = Task::where([
+        //                         'date' => $schedule->date,
+        //                         'employee_id' => $schedule->employee_id,
+        //                         'period_id' => $taskData['period_id'],
+        //                     ])->first();
+
+        //                     if ($existingTask) {
+
+        //                         $existingTask->update([
+        //                             'start_time' => $taskData['start_time'],
+        //                             'end_time' => $taskData['end_time'],
+        //                             'duty_id' => $taskData['duty_id'],
+        //                         ]);
+        //                     } else {
+
+        //                         $task = Task::Create(
+        //                             [
+        //                                 'date' => $schedule->date,
+        //                                 'employee_id' => $schedule->employee_id,
+        //                                 'period_id' => $taskData['period_id'],
+        //                                 'start_time' => $taskData['start_time'],
+        //                                 'end_time' => $taskData['end_time'],
+        //                                 'duty_id' => $taskData['duty_id'],
+        //                             ]
+        //                         );
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //         Alert::success('Done', 'Schedule updated successfully.');
+        //         return redirect()->route('schedule');
+        //     }
+        // } else {
+        //     $schedule->employee_id = $request->input('employee_id');
+        //     $schedule->date = $request->input('date');
+        //     $schedule->shift_id = $request->input('shift_id');
+        //     $schedule->remarks = $request->input('remarks');
+
+        //     $schedule->save();
+
+        //     // Check if there are tasks and duties submitted in the request
+        //     $tasksAndDuties = $request->input('group-a', []);
+
+        //     // If there are tasks and duties, update or insert them into the tasks table
+        //     if (!empty($tasksAndDuties)) {
+        //         foreach ($tasksAndDuties as $taskData) {
+        //             // Check if all key fields are null
+        //             $fieldsNull = is_null($taskData['period_id']) ||
+        //                                 is_null($taskData['duty_id']) ||
+        //                                 is_null($taskData['start_time']) ||
+        //                                 is_null($taskData['end_time']);
+
+        //             // If all key fields are not null, proceed with creating/updating the task
+        //             if (!$fieldsNull) {
+
+        //                 $existingTask = Task::where([
+        //                     'date' => $schedule->date,
+        //                     'employee_id' => $schedule->employee_id,
+        //                     'period_id' => $taskData['period_id'],
+        //                 ])->first();
+
+        //                 if ($existingTask) {
+
+        //                     $existingTask->update([
+        //                         'start_time' => $taskData['start_time'],
+        //                         'end_time' => $taskData['end_time'],
+        //                         'duty_id' => $taskData['duty_id'],
+        //                     ]);
+        //                 } else {
+
+        //                     $task = Task::Create(
+        //                         [
+        //                             'date' => $schedule->date,
+        //                             'employee_id' => $schedule->employee_id,
+        //                             'period_id' => $taskData['period_id'],
+        //                             'start_time' => $taskData['start_time'],
+        //                             'end_time' => $taskData['end_time'],
+        //                             'duty_id' => $taskData['duty_id'],
+        //                         ]
+        //                     );
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     Alert::success('Done', 'Schedule updated successfully.');
+        //     return redirect()->route('schedule');
+        // }
     }
 
     public function deleteSchedule($id){
@@ -2116,7 +2269,7 @@ class AdminController extends Controller
 
     public function attendance(){
 
-        $punchRecords = PunchRecord::with('user')->get();
+        $punchRecords = PunchRecord::with('user')->paginate(30);
 
         $punchRecords->each(function ($punchRecord) {
             $punchRecord->date = Carbon::parse($punchRecord->created_at)->toDateString();

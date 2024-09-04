@@ -36,7 +36,7 @@
                                     <!-- Repeater Content -->
                                     <div class="item-content align-items-center row">
                                         <!-- Form Group -->
-                                        <div class="form-group col-lg-7">
+                                        {{-- <div class="form-group col-lg-7">
                                             <div class="d-flex justify-content-between">
                                                 <label class="font-14 bold">Shift Days</label>
                                                 <div class="d-flex align-items-center">
@@ -69,7 +69,7 @@
                                             @error('shift_schedules.'.$index.'.shift_days')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
-                                        </div>
+                                        </div> --}}
                                         <!-- End Form Group -->
 
                                         <!-- Form Group -->

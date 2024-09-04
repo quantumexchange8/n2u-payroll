@@ -38,7 +38,7 @@
                     </button>
                 @endif --}}
 
-                <button type="button" id="clockButton" class="btn" style="width:100%;
+                <button type="submit" id="clockButton" class="btn" style="width:100%;
                 @if ($status == 1)
                     background-color: #6045E2;
                     color: #FFFFFF;
@@ -77,17 +77,17 @@
                                     $currentDate = \Carbon\Carbon::now();
 
                                     // Filter schedules for today
-                                    $todaySchedules = $schedules->filter(function ($schedule) use ($currentDate) {
-                                        $scheduleDate = \Carbon\Carbon::createFromFormat('Y-m-d', $schedule->date);
+                                    $todaySchedules = $schedules->filter(function ($schedules) use ($currentDate) {
+                                        $scheduleDate = \Carbon\Carbon::createFromFormat('Y-m-d', $schedules->date);
                                         // Filter out schedules that match the current date
                                         return $scheduleDate->isSameDay($currentDate);
                                     });
-
+                                    
                                     // Sort today's schedules by shift start time
-                                    $todaySchedules = $todaySchedules->sortBy(function ($schedule) {
+                                    $todaySchedules = $todaySchedules->sortBy(function ($shifts) {
                                         // Check if 'shift' relationship is null before accessing 'shift_start'
-                                        $shiftStart = optional($schedule->shift)->shift_start;
-
+                                        $shiftStart = optional($shifts->shift_schedules)->shift_start;
+                                        
                                         // Handle cases where shift_start is null
                                         if ($shiftStart === null) {
                                             return ''; // You can use an empty string or another default value
@@ -103,9 +103,9 @@
                                         <td>{{ $currentDate->format('d M Y') }}</td>
                                         <td>
                                             @if ($schedule->off_day == 1)
-                                                Off Day
+                                                <b>Off Day</b>
                                             @else
-                                                {{ \Carbon\Carbon::parse($schedule->shift->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($schedule->shift->shift_end)->format('h:i A') }}
+                                                {{ \Carbon\Carbon::parse($schedule->shift_schedules->shift_start)->format('h:i A') }} - {{ \Carbon\Carbon::parse($schedule->shift_schedules->shift_end)->format('h:i A') }}
                                             @endif
                                         </td>
                                         <td>{{ $schedule->remarks }}</td>
@@ -244,7 +244,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script>
+{{-- <script>
   // Get references to the button and form.
   const clockButton = document.getElementById('clockButton');
   const clockForm = document.getElementById('clockForm');
@@ -333,7 +333,110 @@
 
   });
 
-</script>
+</script> --}}
+
+<script>
+    // Get references to the button and form.
+    const clockButton = document.getElementById('clockButton');
+    const clockForm = document.getElementById('clockForm');
+  
+    // Add a click event listener to the button.
+    clockButton.addEventListener('click', async function (e) {
+      e.preventDefault(); // Prevent the default form submission.
+  
+      // Get the current button text.
+      const buttonText = clockButton.innerText;
+  
+      const userStatus = clockButton.getAttribute('data-status');
+  
+      // Determine the new status value.
+      const status = buttonText === 'Clock In' ? 'Clock In' : 'Clock Out';
+  
+      // Update the form input with the new status.
+      const statusInput = document.getElementById('statusInput');
+      statusInput.value = status;
+  
+       // Disable the button.
+      //  clockButton.disabled = true;
+  
+      // Use try-catch to handle form submission errors.
+      try {
+  
+          const response = await fetch('{{ route('clock_in') }}', {
+              method: 'POST',
+              body: new FormData(clockForm),
+          });
+  
+          if (response.ok) {
+
+              const data = await response.json();
+              console.log(data.success);
+
+              if(data.success){
+                 // Update the button text to the opposite.
+                clockButton.innerText = status === 'Clock In' ? 'Clock Out' : 'Clock In';
+  
+                // Apply styles based on the status
+                if (status === 'Clock In') {
+                clockButton.style.backgroundColor = '#b04654';
+                clockButton.style.color = '#FFFFFF';
+                clockButton.style.border = '2px solid #b04654';
+                } else {
+                clockButton.style.backgroundColor = '#6045E2';
+                clockButton.style.color = '#FFFFFF';
+                clockButton.style.border = '2px solid #6045E2';
+                }
+
+              // Display a success alert
+              Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: status === 'Clock In' ? 'You have successfully clocked in.' : 'You have successfully clocked out.',
+              }).then((result) => {
+                  if (result.isConfirmed) {
+  
+                  // Refresh the page
+                  location.reload(); // This will reload the current page
+                  }
+              });
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error,
+                    }).then((result) => {
+                        if(result.isConfirmed){
+                            location.reload();
+                        }
+                    });
+                }
+        }
+        //   else {
+        //       // Display an error alert
+        //       Swal.fire({
+        //       icon: 'error',
+        //       title: 'Oops..',
+        //       text: data.error,
+        //       });
+        //       console.log('b');
+        //   }
+      } catch (error) {
+        console.log('Error', error);
+        // Swal.fire({
+            // icon: 'error',
+            // title: 'Oops...',
+            // text: 'Form submission failed. An error occured while processing your request.'
+        // });
+      }
+  
+      // Set a timeout to enable the button after 5 minutes.
+      // setTimeout(function () {
+      //     clockButton.disabled = false;
+      // }, 60000); // 300,000 milliseconds = 5 minutes
+  
+    });
+  
+  </script>
 
 {{-- <script>
   $(document).ready(function() {
